@@ -1,0 +1,5 @@
+description: API craft example
+docker_registry: github.com/kilianpaquier/craft
+license: mit
+maintainers:
+    - name: kilianpaquier

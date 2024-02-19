@@ -1,0 +1,9 @@
+# helm values override configuration
+---
+dependencies: []
+workers:
+  external-worker:
+    image:
+      registry: docker.external.example.com
+      repository: image
+      tag: 1.21.0

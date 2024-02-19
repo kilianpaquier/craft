@@ -1,0 +1,44 @@
+swagger: "2.0"
+info:
+  title: craft
+  version: 0.1.0
+basePath: /api
+tags:
+  - name: Monitoring
+    description: monitoring endpoints
+paths:
+  /unsecured/ping:
+    get:
+      tags:
+        - Monitoring
+      summary: checks API health and retrieves ping result
+      description: checks API health and retrieves ping result
+      operationId: unsecuredPing
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: "success response returning ping results"
+          schema:
+            $ref: '#/definitions/UnsecuredPing'
+        default:
+          description: "default error response"
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int64
+        description: error code
+      message:
+        type: string
+        description: error message
+  UnsecuredPing:
+    type: object
+    properties:
+      status:
+        type: string
+        description: ping status

@@ -1,0 +1,4 @@
+description: Helm generic example
+maintainers:
+    - name: kilianpaquier
+no_api: true

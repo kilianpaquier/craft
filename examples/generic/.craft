@@ -1,0 +1,4 @@
+maintainers:
+    - email: generic@example.com
+      name: generic
+no_chart: true

@@ -1,0 +1,13 @@
+# helm values override configuration
+---
+dependencies: []
+crons:
+  cron-refresh:
+    env:
+      TEST: value
+workers:
+  external-worker:
+    image:
+      registry: docker.external.example.com
+      repository: image
+      tag: 1.21.0

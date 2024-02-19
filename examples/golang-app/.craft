@@ -1,0 +1,6 @@
+docker_registry: github.com/kilianpaquier/craft
+license: mit
+maintainers:
+    - email: golang-app@example.com
+      name: golang-app
+no_api: true
