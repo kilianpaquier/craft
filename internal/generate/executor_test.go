@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	filesystem "github.com/kilianpaquier/filesystem/pkg"
 	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
-	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -32,7 +32,7 @@ func TestExecute(t *testing.T) {
 
 	t.Run("success_generic", func(t *testing.T) {
 		// Arrange
-		destdir := t.TempDir()
+		destdir := filepath.Join(t.TempDir(), "generic")
 		assertdir := filepath.Join(assertdir, "generic")
 
 		opts := opts.Copy().
@@ -52,9 +52,38 @@ func TestExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir,
-			filesystem_tests.WithIgnoreDiff(func(filename string, _ diffmatchpatch.Diff) bool { return filename == models.Readme }),
-		)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+	})
+
+	t.Run("success_golang", func(t *testing.T) {
+		// Arrange
+		destdir := filepath.Join(t.TempDir(), "golang")
+		require.NoError(t, os.Mkdir(destdir, filesystem.RwxRxRxRx))
+		assertdir := filepath.Join(assertdir, "golang")
+
+		gomod := filepath.Join(destdir, models.GoMod)
+		err := os.WriteFile(gomod, []byte("module github.com/kilianpaquier/craft"), filesystem.RwRR)
+		require.NoError(t, err)
+		require.NoError(t, err)
+
+		opts := opts.Copy().
+			SetDestinationDir(destdir).
+			Build()
+
+		craft := craft.Copy().
+			SetNoAPI(true).
+			SetNoChart(true).
+			Build()
+
+		executor, err := generate.NewExecutor(*craft, *opts)
+		require.NoError(t, err)
+
+		// Act
+		err = executor.Execute(ctx)
+
+		// Assert
+		assert.NoError(t, err)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 

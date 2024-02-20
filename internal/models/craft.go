@@ -15,10 +15,11 @@ type CraftConfig struct {
 	License        *string      `json:"-"                        yaml:"license,omitempty"                          validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
 	Port           *uint16      `json:"port,omitempty"           yaml:"port,omitempty"`
 	OpenAPIVersion string       `json:"-"                        yaml:"openapi_version,omitempty"                  validate:"omitempty,oneof=v2 v3"`
+	CI             string       `json:"-"                        yaml:"ci,omitempty"                               validate:"omitempty,oneof=gitlab github"`
 	Maintainers    []Maintainer `json:"maintainers,omitempty"    yaml:"maintainers,omitempty"     builder:"append" validate:"required,dive,required"`
 	NoAPI          bool         `json:"noAPI,omitempty"          yaml:"no_api,omitempty"`
 	NoChart        bool         `json:"-"                        yaml:"no_chart,omitempty"`
-	NoCI           bool         `json:"-"                        yaml:"no_ci,omitempty"`
+	NoCodeCov      bool         `json:"-"                        yaml:"no_codecov,omitempty"`
 	NoDockerfile   bool         `json:"-"                        yaml:"no_dockerfile,omitempty"`
 	NoGoreleaser   bool         `json:"-"                        yaml:"no_goreleaser,omitempty"`
 	NoMakefile     bool         `json:"-"                        yaml:"no_makefile,omitempty"`

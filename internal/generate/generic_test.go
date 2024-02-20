@@ -45,12 +45,37 @@ func TestGenericExecute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetProjectName("craft")
 
-	t.Run("success_no_specific_config", func(t *testing.T) {
+	t.Run("success_with_github", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "no_specific_config")
+		assertdir := filepath.Join(assertdir, "with_github")
 
 		config := config.Copy().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(models.Github).
+				Build()).
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
+		// Act
+		err := generic.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.NoError(t, err)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+	})
+
+	t.Run("success_with_gitlab", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "with_gitlab")
+
+		config := config.Copy().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(models.Gitlab).
+				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
@@ -128,7 +153,6 @@ func TestGenericExecute(t *testing.T) {
 		// generate a first one to confirm optional files deletion behavior
 		err := generic.Execute(ctx, *config, generate.Tmpl)
 		require.NoError(t, err)
-		config.NoCI = true       // change options to confirm removal
 		config.NoMakefile = true // change options to confirm removal
 
 		// Act

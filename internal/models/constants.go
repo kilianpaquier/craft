@@ -14,8 +14,16 @@ const (
 	Dockerfile = "Dockerfile"
 	// Dockerignore represents the target filename for the generated project .dockerignore.
 	Dockerignore = ".dockerignore"
+	// Github is just the github constant.
+	Github = "github"
+	// GithubCI represents the folder name for github repository configuration files.
+	GithubCI = ".github"
+	// GithubWorkflows represents the folder name for github actions files.
+	GithubWorkflows = "workflows"
 	// Gitignore represents the target filename for the generated project .gitignore.
 	Gitignore = ".gitignore"
+	// Gitlab is just the gitlab constant.
+	Gitlab = "gitlab"
 	// GitlabCI represents the target filename for the generated project .gitlab-ci.yml.
 	GitlabCI = ".gitlab-ci.yml"
 	// GoCmd represents the cmd folder where go main.go should be placed according to go layout.
@@ -42,6 +50,8 @@ const (
 	PythonRequirements = "requirements.txt"
 	// Readme represents the target filename for the generated project README.md.
 	Readme = "README.md"
+	// Releaserc represents the target filename for semantic release configuration file.
+	Releaserc = ".releaserc.yml"
 	// SonarProperties represents the target filename for the generated project sonar properties.
 	SonarProperties = "sonar.properties"
 	// SwaggerFile represents the target filename for the generated project api.yml.
