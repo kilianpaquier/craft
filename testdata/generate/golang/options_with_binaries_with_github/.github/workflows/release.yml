@@ -10,7 +10,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    environment: production
+    environment: release
     if: github.ref_protected == true
     permissions:
       contents: write
