@@ -6,6 +6,7 @@ run-name: Go Integration
 on: push
 
 jobs:
+
   version:
     runs-on: ubuntu-latest
     permissions:
