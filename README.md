@@ -42,7 +42,9 @@ Craft project generation is based on root's `.craft` file, it can contain the fo
 - `no_api`: when provided, no API layer will be generated.
   - based on `go-swagger` when `openapi_version` is neither given or with `v2` value
 - `no_chart`: when provided, no helm chart in `chart` folder will be generated.
-- `no_ci`: when provided, no GitLab CI/CD file will be generated. Otherwise, continuous integration is based on [`kilianpaquier/cicd`](https://gitlab.com/kilianpaquier/cicd) integration templates.
+- `ci`: one of `gitlab github`.
+  - if `gitlab` is provided, continuous integration based on [`kilianpaquier/cicd`](https://gitlab.com/kilianpaquier/cicd) integration templates will be generated depending on project language.
+  - if `github` is provided, craft generated github workflows will be generated depending on project language.
 - `no_dockerfile`: when provided, no `Dockerfile` will be generated.
 - `no_goreleaser`: when provided, no `.goreleaser.yml` file will be generated (in any case, if the project isn't golang based, no file will be generated).
 - `no_makefile`: when provided, no `Makefile` will be generated.
@@ -69,6 +71,9 @@ Craft project generation for anything but golang (because it's the only coding l
 The following layout will be created:
 
 ```tree
+├── .github
+│   ├── workflows
+│   │   ├── main.yml
 ├── .craft (craft configuration file)
 ├── .gitlab-ci.yml (GitLab CI/CD file)
 ├── Makefile
@@ -82,6 +87,11 @@ It's a very simple generation with little features.
 Craft project generation for golang is following the present layout: https://github.com/golang-standards/project-layout.
 
 ```tree
+├── .github
+│   ├── workflows (Github actions workflows)
+│   │   ├── dependencies.yml
+│   │   ├── main.yml
+│   │   ├── publish.yml
 ├── cmd (executable binaries, prefix is useful for kubernetes identification)
 │   ├── xyz (as many as desired CLIs)
 │   │   ├── main.go
