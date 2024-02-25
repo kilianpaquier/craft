@@ -6,6 +6,7 @@ run-name: Go Integration
 on: push
 
 jobs:
+
   version:
     runs-on: ubuntu-latest
     permissions:
@@ -44,6 +45,8 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: env
+      - run: echo ${{ steps.semantic_release.outputs.new_release_version }}
 
   go-lint:
     runs-on: ubuntu-latest

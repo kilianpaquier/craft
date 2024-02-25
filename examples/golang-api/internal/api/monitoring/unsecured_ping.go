@@ -4,7 +4,8 @@ package monitoring
 
 import (
 	"github.com/go-openapi/runtime/middleware"
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
+
+	"github.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
 )
 
 // UnsecuredPing - GET /unsecured/ping.

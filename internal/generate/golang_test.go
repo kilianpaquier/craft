@@ -258,7 +258,7 @@ func TestGolangExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			SetClis(map[string]struct{}{"cli-name": {}}).
 			Build()
 
 		// Act
@@ -284,7 +284,7 @@ func TestGolangExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			SetClis(map[string]struct{}{"cli-name": {}}).
 			Build()
 
 		// Act
@@ -322,10 +322,10 @@ func TestGolangExecute(t *testing.T) {
 		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_options_with_binaries", func(t *testing.T) {
+	t.Run("success_options_with_binaries_with_github", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "options_with_binaries")
+		assertdir := filepath.Join(assertdir, "options_with_binaries_with_github")
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Build()).

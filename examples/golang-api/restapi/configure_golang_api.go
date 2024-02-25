@@ -12,10 +12,10 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	log "github.com/sirupsen/logrus"
 
-	internal_api "gitlab.com/kilianpaquier/craft/examples/golang-api/internal/api"
-	monitoring_api "gitlab.com/kilianpaquier/craft/examples/golang-api/internal/api/monitoring"
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/restapi/operations"
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
+	internal_api "github.com/kilianpaquier/craft/examples/golang-api/internal/api"
+	monitoring_api "github.com/kilianpaquier/craft/examples/golang-api/internal/api/monitoring"
+	"github.com/kilianpaquier/craft/examples/golang-api/restapi/operations"
+	"github.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
 )
 
 func configureFlags(api *operations.GolangAPIAPI) {

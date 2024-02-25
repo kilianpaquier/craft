@@ -12,7 +12,7 @@ COPY . .
 # hadolint ignore=DL3059
 RUN go mod download
 # hadolint ignore=DL3059
-RUN CGO_ENABLED=0 go build -o worker-name cmd/worker-name/main.go
+RUN CGO_ENABLED=0 go build -o cli-name cmd/cli-name/main.go
 
 #############################
 #         STAGE RUN         #
@@ -24,11 +24,11 @@ RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 WORKDIR /app
 
 COPY --from=build \
-    /app/worker-name \
+    /app/cli-name \
     ./
 
 EXPOSE 3000
 
 USER nonroot
 
-ENTRYPOINT [ "/app/worker-name" ]
+ENTRYPOINT [ "/app/cli-name" ]

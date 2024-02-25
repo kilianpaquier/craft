@@ -6,6 +6,7 @@ run-name: Go Integration
 on: push
 
 jobs:
+
   version:
     runs-on: ubuntu-latest
     permissions:
@@ -44,6 +45,8 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: env
+      - run: echo ${{ steps.semantic_release.outputs.new_release_version }}
 
   go-lint:
     runs-on: ubuntu-latest
@@ -93,31 +96,6 @@ jobs:
           retention-days: 1
 <<- end >>
 
-<<- if not .NoGoreleaser >>
-
-  go-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version-file: go.mod
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - id: args
-        run: git ls-remote --exit-code --tags origin || echo "args=--snapshot" >> $GITHUB_OUTPUT
-      - uses: goreleaser/goreleaser-action@v5
-        with:
-          args: release --clean --skip=validate --skip=announce --skip=publish ${{ steps.args.outputs.args }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: executables
-          path: |
-            dist/*
-            !dist/*/
-            checksums.txt
-          retention-days: 1
-<<- end >>
-
 <<- if not .NoSonar >>
 
   sonar-analysis:
@@ -159,10 +137,4 @@ jobs:
         with:
           path: $SONAR_USER_HOME
           key: sonar-cache
-<<- end >>
-
-<<- $binaries := dict >>
-<<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-
-<<- if and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
 <<- end >>

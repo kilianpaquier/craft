@@ -9,8 +9,8 @@ import (
 	"github.com/go-openapi/loads"
 	log "github.com/sirupsen/logrus"
 
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/restapi"
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/restapi/operations"
+	"github.com/kilianpaquier/craft/examples/golang-api/restapi"
+	"github.com/kilianpaquier/craft/examples/golang-api/restapi/operations"
 )
 
 type config struct {

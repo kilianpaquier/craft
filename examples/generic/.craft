@@ -1,3 +1,4 @@
+ci: gitlab
 maintainers:
     - email: generic@example.com
       name: generic

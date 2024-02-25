@@ -8,7 +8,7 @@ include:
       - pipeline/go.yml
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-<<- if and (not .NoDockerfile) (gt (len $binaries) 0) >>
+<<- if and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
       - pipeline/deployable.yml
 <<- end >>
 

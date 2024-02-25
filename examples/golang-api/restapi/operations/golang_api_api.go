@@ -19,7 +19,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
+	"github.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
 )
 
 // NewGolangAPIAPI creates a new GolangAPI instance
