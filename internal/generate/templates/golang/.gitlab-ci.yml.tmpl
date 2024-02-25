@@ -12,6 +12,13 @@ include:
       - pipeline/deployable.yml
 <<- end >>
 
+variables:
+  CICD_VERSION_ARTIFACT: version.env
+  CICD_VERSION_PREFIX: v
+  CICD_MAIN_BRANCH: main
+  CICD_STAGING_BRANCH: staging
+  CICD_DEVELOP_BRANCH:  develop
+
 <<- if gt (len .Clis) 0 >>
 
 <<- if not .NoGoreleaser >>

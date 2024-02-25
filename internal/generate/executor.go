@@ -77,8 +77,8 @@ func (e *Executor) Execute(ctx context.Context) error {
 	for _, plugin := range removals {
 		go func() {
 			defer wg.Done()
-			if err := plugin.Remove(ctx, e.config); err != nil {
-				log.WithError(err).Warnf("failed to remove plugin %q", plugin.Name())
+			if err := plugin.Remove(ctx, e.config); err != nil { // nolint:revive
+				log.WithError(err).Warnf("failed to remove plugin %q", plugin.Name()) // nolint:revive
 			}
 		}()
 	}
@@ -88,11 +88,11 @@ func (e *Executor) Execute(ctx context.Context) error {
 	for _, plugin := range executees {
 		go func() {
 			defer wg.Done()
-			log.Infof("start plugin %q generation", plugin.Name())
-			if err := plugin.Execute(ctx, e.config, e.fsys); err != nil {
-				log.WithError(err).Warnf("failed to execute plugin %q", plugin.Name())
+			log.Infof("start plugin %q generation", plugin.Name())        // nolint:revive
+			if err := plugin.Execute(ctx, e.config, e.fsys); err != nil { // nolint:revive
+				log.WithError(err).Warnf("failed to execute plugin %q", plugin.Name()) // nolint:revive
 			} else {
-				log.Infof("successfully generated plugin %q", plugin.Name())
+				log.Infof("successfully generated plugin %q", plugin.Name()) // nolint:revive
 			}
 		}()
 	}
