@@ -25,7 +25,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     environment: production
-    if: github.ref_protected == 'true'
     steps:
       - uses: actions/checkout@v4
       - id: sha
