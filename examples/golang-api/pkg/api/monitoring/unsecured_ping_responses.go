@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/models"
+	"github.com/kilianpaquier/craft/examples/golang-api/models"
 )
 
 // UnsecuredPingReader is a Reader for the UnsecuredPing structure.

@@ -258,7 +258,7 @@ func TestGolangExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			SetClis(map[string]struct{}{"cli-name": {}}).
 			Build()
 
 		// Act
@@ -284,7 +284,7 @@ func TestGolangExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			SetClis(map[string]struct{}{"cli-name": {}}).
 			Build()
 
 		// Act

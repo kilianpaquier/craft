@@ -93,7 +93,7 @@ jobs:
           retention-days: 1
 <<- end >>
 
-<<- if not .NoGoreleaser >>
+<<- if and (not .NoGoreleaser) (gt (len .Clis) 0) >>
 
   go-build:
     runs-on: ubuntu-latest

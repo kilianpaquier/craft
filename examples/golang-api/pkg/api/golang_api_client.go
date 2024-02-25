@@ -10,7 +10,7 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/pkg/api/monitoring"
+	"github.com/kilianpaquier/craft/examples/golang-api/pkg/api/monitoring"
 )
 
 // Default golang API HTTP client.

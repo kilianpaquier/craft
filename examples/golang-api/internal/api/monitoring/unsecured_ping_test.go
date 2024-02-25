@@ -7,8 +7,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	monitoring_api "gitlab.com/kilianpaquier/craft/examples/golang-api/internal/api/monitoring"
-	"gitlab.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
+
+	monitoring_api "github.com/kilianpaquier/craft/examples/golang-api/internal/api/monitoring"
+	"github.com/kilianpaquier/craft/examples/golang-api/restapi/operations/monitoring"
 )
 
 func TestUnsecuredPing(t *testing.T) {

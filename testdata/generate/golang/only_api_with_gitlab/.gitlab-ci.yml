@@ -6,6 +6,7 @@ include:
     ref: $CICD_INDUS_BRANCH # should be main or latest tag in most cases
     file:
       - pipeline/go.yml
+      - pipeline/deployable.yml
 
 variables:
   CICD_VERSION_ARTIFACT: version.env

@@ -1,5 +1,6 @@
 description: API craft example
 docker_registry: github.com/kilianpaquier/craft
 license: mit
+ci: gitlab
 maintainers:
     - name: kilianpaquier
