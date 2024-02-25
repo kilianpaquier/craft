@@ -195,14 +195,14 @@ func TestGolangExecute(t *testing.T) {
 		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_only_api", func(t *testing.T) {
+	t.Run("success_only_api_with_gitlab", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "only_api")
+		assertdir := filepath.Join(assertdir, "only_api_with_gitlab")
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetNoCI(true).
+				SetCI(models.Gitlab).
 				SetNoMakefile(true).
 				SetNoSonar(true).
 				Build()).
@@ -219,15 +219,65 @@ func TestGolangExecute(t *testing.T) {
 		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_one_binary", func(t *testing.T) {
+	t.Run("success_only_api_with_github", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "one_binary")
+		assertdir := filepath.Join(assertdir, "only_api_with_github")
+
+		config := config.Copy().
+			SetCraftConfig(*craft.Copy().
+				SetCI(models.Github).
+				SetNoMakefile(true).
+				SetNoSonar(true).
+				Build()).
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
+		// Act
+		err := golang.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.NoError(t, err)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+	})
+
+	t.Run("success_one_binary_with_gitlab", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "one_binary_with_gitlab")
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
 				SetNoAPI(true).
-				SetNoCI(true).
+				SetCI(models.Gitlab).
+				SetNoMakefile(true).
+				SetNoSonar(true).
+				Build()).
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				Build()).
+			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			Build()
+
+		// Act
+		err := golang.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.NoError(t, err)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+	})
+
+	t.Run("success_one_binary_with_github", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "one_binary_with_github")
+
+		config := config.Copy().
+			SetCraftConfig(*craft.Copy().
+				SetNoAPI(true).
+				SetCI(models.Github).
 				SetNoMakefile(true).
 				SetNoSonar(true).
 				Build()).
@@ -290,8 +340,10 @@ func TestGolangExecute(t *testing.T) {
 		config = config.
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
+				SetCI(models.Github).
 				SetLicense("mit"). // goreleaser indication of license
 				SetNoAPI(true).
+				SetNoCodeCov(true).
 				SetNoDockerfile(true).
 				SetNoGoreleaser(true).
 				SetPort(5000). // dockerfile exposed port

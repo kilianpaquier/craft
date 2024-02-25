@@ -62,10 +62,16 @@ func (*generic) Type() pluginType {
 // If src entry is a directory and this directory name is the same as plugin name then it dives into and executes defaultCopyDir inside.
 //
 // It takes the generate configuration as input to remove or create specific files depending on project options (no_chart, no_api, etc.).
-func defaultCopyDir(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS, srcdir, destdir string, plugin plugin) error {
+func defaultCopyDir(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS, srcdir, destdir string, plugin plugin) error { // nolint:cyclop
 	log := logrus.WithContext(ctx)
 	optionals := buildOptionalFiles(config)
 
+	// create destination directory
+	if err := os.Mkdir(destdir, filesystem.RwxRxRxRx); err != nil && !os.IsExist(err) {
+		return fmt.Errorf("failed to create destination directory: %w", err)
+	}
+
+	// read source directory
 	entries, err := fsys.ReadDir(srcdir)
 	if err != nil {
 		return fmt.Errorf("failed to read templates directory: %w", err)
@@ -73,29 +79,33 @@ func defaultCopyDir(ctx context.Context, config models.GenerateConfig, fsys file
 
 	errs := lo.Map(entries, func(entry fs.DirEntry, _ int) error {
 		src := filepath.Join(srcdir, entry.Name())
+		filename := strings.TrimSuffix(entry.Name(), models.TmplExtension)
+		dest := filepath.Join(destdir, filename)
 
-		// recursive call in call the entry is the plugin directory (templates will still be written at root destdir)
+		// check whether the file/directory should not be written to dest or not
+		apply, ok := optionals[filename]
+		if ok && !apply {
+			if err := os.RemoveAll(dest); err != nil && !os.IsNotExist(err) {
+				log.WithError(err).Warn("failed to delete non applicable file")
+			}
+			return nil
+		}
+
 		if entry.IsDir() {
+			// apply generation at root if the folder name is the plugin name
 			if entry.Name() == plugin.Name() {
-				// use destdir to copy all files to root directory without subfolders
 				return defaultCopyDir(ctx, config, fsys, src, destdir, plugin)
+			}
+
+			// apply generation for applicable folder
+			if apply {
+				return defaultCopyDir(ctx, config, fsys, src, dest, plugin)
 			}
 			return nil
 		}
 
 		// don't template files without .tmpl extension
 		if !strings.HasSuffix(entry.Name(), models.TmplExtension) {
-			return nil
-		}
-
-		filename := strings.TrimSuffix(entry.Name(), models.TmplExtension)
-		dest := filepath.Join(destdir, filename)
-
-		// check whether the file should not be written to dest or not
-		if apply, ok := optionals[filename]; ok && !apply {
-			if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
-				log.WithError(err).Warn("failed to delete non applicable file")
-			}
 			return nil
 		}
 
@@ -134,7 +144,11 @@ func buildOptionalFiles(config models.GenerateConfig) map[string]bool {
 		models.Dockerignore: !config.NoDockerfile && binaries > 0,
 		models.Launcher:     !config.NoDockerfile && binaries > 1,
 
-		models.GitlabCI:        !config.NoCI,
+		models.GithubCI:        config.CI == models.Github,
+		models.GithubWorkflows: config.CI == models.Github,
+		models.GitlabCI:        config.CI == models.Gitlab,
+		models.Releaserc:       config.CI != "",
+
 		models.Goreleaser:      !config.NoGoreleaser && len(config.Clis) > 0,
 		models.Makefile:        !config.NoMakefile,
 		models.SonarProperties: !config.NoSonar,
