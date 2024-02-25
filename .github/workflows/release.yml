@@ -24,9 +24,11 @@ jobs:
         with:
           name: executables
           path: |
-            dist/*
+            !dist/*.json
+            !dist/*.yaml
             !dist/*/
             checksums.txt
+            dist/*
           retention-days: 1
 
   release:
@@ -35,6 +37,7 @@ jobs:
     if: github.ref_protected == true
     permissions:
       contents: write
+      issues: write
     needs:
       - go-build
     env:
