@@ -31,6 +31,12 @@ func (b *CraftConfigBuilder) SetCI(ci string) *CraftConfigBuilder {
 	return b
 }
 
+// SetCodeCov sets CraftConfig's CodeCov.
+func (b *CraftConfigBuilder) SetCodeCov(codeCov bool) *CraftConfigBuilder {
+	b.CodeCov = codeCov
+	return b
+}
+
 // SetDescription sets CraftConfig's Description.
 func (b *CraftConfigBuilder) SetDescription(description string) *CraftConfigBuilder {
 	b.Description = &description
@@ -67,12 +73,6 @@ func (b *CraftConfigBuilder) SetNoChart(noChart bool) *CraftConfigBuilder {
 	return b
 }
 
-// SetNoCodeCov sets CraftConfig's NoCodeCov.
-func (b *CraftConfigBuilder) SetNoCodeCov(noCodeCov bool) *CraftConfigBuilder {
-	b.NoCodeCov = noCodeCov
-	return b
-}
-
 // SetNoDockerfile sets CraftConfig's NoDockerfile.
 func (b *CraftConfigBuilder) SetNoDockerfile(noDockerfile bool) *CraftConfigBuilder {
 	b.NoDockerfile = noDockerfile
@@ -91,12 +91,6 @@ func (b *CraftConfigBuilder) SetNoMakefile(noMakefile bool) *CraftConfigBuilder 
 	return b
 }
 
-// SetNoSonar sets CraftConfig's NoSonar.
-func (b *CraftConfigBuilder) SetNoSonar(noSonar bool) *CraftConfigBuilder {
-	b.NoSonar = noSonar
-	return b
-}
-
 // SetOpenAPIVersion sets CraftConfig's OpenAPIVersion.
 func (b *CraftConfigBuilder) SetOpenAPIVersion(openAPIVersion string) *CraftConfigBuilder {
 	b.OpenAPIVersion = openAPIVersion
@@ -106,5 +100,11 @@ func (b *CraftConfigBuilder) SetOpenAPIVersion(openAPIVersion string) *CraftConf
 // SetPort sets CraftConfig's Port.
 func (b *CraftConfigBuilder) SetPort(port uint16) *CraftConfigBuilder {
 	b.Port = &port
+	return b
+}
+
+// SetSonar sets CraftConfig's Sonar.
+func (b *CraftConfigBuilder) SetSonar(sonar bool) *CraftConfigBuilder {
+	b.Sonar = sonar
 	return b
 }

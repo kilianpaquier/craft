@@ -12,6 +12,7 @@ permissions:
   contents: write
 
 jobs:
+
   go-dependencies-submission:
     runs-on: ubuntu-latest
     steps:

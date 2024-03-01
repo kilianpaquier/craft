@@ -39,7 +39,7 @@ func (*helm) Detect(_ context.Context, config *models.GenerateConfig) bool {
 // Input fsys serves to retrieve templates used during generation (embed in binary, os filesystem, etc.).
 func (plugin *helm) Execute(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS) error {
 	srcdir := filepath.Join(config.Options.TemplatesDir, plugin.Name())
-	destdir := filepath.Join(config.Options.DestinationDir, models.ChartDir)
+	destdir := filepath.Join(config.Options.DestinationDir, "chart")
 
 	// transform craft configuration into generic chart configuration (easier to maintain)
 	var chart map[string]any
@@ -73,7 +73,7 @@ func (*helm) Name() string {
 //
 // GenerateConfig is given as copy because no modification should be done during Remove operation on it.
 func (*helm) Remove(_ context.Context, config models.GenerateConfig) error {
-	chartDir := filepath.Join(config.Options.DestinationDir, models.ChartDir)
+	chartDir := filepath.Join(config.Options.DestinationDir, "chart")
 	if err := os.RemoveAll(chartDir); err != nil {
 		return fmt.Errorf("failed to delete %s: %w", chartDir, err)
 	}
@@ -116,7 +116,7 @@ func (plugin *helm) iterateOver(ctx context.Context, config models.GenerateConfi
 		}
 
 		switch filename {
-		case models.ChartFile, models.Helpers, models.ValuesFile:
+		case "Chart.yaml", "values.yaml", "_helpers.tpl":
 			tmpl, err := template.New(path.Base(src)).
 				Funcs(sprig.FuncMap()).
 				Funcs(templating.FuncMap()).

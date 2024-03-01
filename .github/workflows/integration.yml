@@ -3,7 +3,9 @@
 name: Go Integration
 run-name: Go Integration
 
-on: push
+on:
+  - push
+  - workflow_dispatch
 
 jobs:
 
@@ -45,7 +47,6 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: env
       - run: echo ${{ steps.semantic_release.outputs.new_release_version }}
 
   go-lint:
@@ -72,7 +73,9 @@ jobs:
       - run: CGO_ENABLED="0" go test ./... -coverpkg=./... -covermode=count -coverprofile=coverage.out
       - uses: codecov/codecov-action@v4
         with:
+          codecov_yml_path: codecov.yml
           disable_search: true
+          fail_ci_if_error: true
           file: coverage.out
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

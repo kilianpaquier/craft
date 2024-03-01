@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate"
-	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 )
 
@@ -164,7 +163,7 @@ func TestHelmRemove(t *testing.T) {
 	helm := generate.Helm{}
 
 	destdir := t.TempDir()
-	dest := filepath.Join(destdir, models.ChartDir)
+	dest := filepath.Join(destdir, "chart")
 
 	config := tests.NewGenerateConfigBuilder().
 		SetOptions(*tests.NewGenerateOptionsBuilder().

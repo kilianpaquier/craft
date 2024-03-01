@@ -48,7 +48,8 @@ Craft project generation is based on root's `.craft` file, it can contain the fo
 - `no_dockerfile`: when provided, no `Dockerfile` will be generated.
 - `no_goreleaser`: when provided, no `.goreleaser.yml` file will be generated (in any case, if the project isn't golang based, no file will be generated).
 - `no_makefile`: when provided, no `Makefile` will be generated.
-- `no_sonar`: when provided, no `sonar.properties` will be generated. As such, no sonar analysis job will be executed if `no_ci` is either not provided or `false`.
+- `sonar`: when provided, a `sonar.properties` will be generated. As such, a sonar analysis job will be executed if `ci` is provided.
+- `codecov`: when provided, a `codecov.yml` will be generated. If `ci` is valued as `github`, then a codecov step will be added inside appropriate test job.
 - `openapi_version`: one of `v2, v3`. When provided and `no_api` is either not provided or `false`, then it will generate the appropriate API layer.
   - Note that `v3` is not implemented.
 - `port`: exposed port in docker images (injected as environment variable `BINARY_PORT` in helm values).
@@ -71,11 +72,14 @@ Craft project generation for anything but golang (because it's the only coding l
 The following layout will be created:
 
 ```tree
-├── .github
+├── .gitlab (if `ci` is "gitlab")
 │   ├── workflows
-│   │   ├── main.yml
+│   │   ├── .gitlab-ci.yml
+├── .github (if `ci` is "github")
+│   ├── workflows
+│   │   ├── integration.yml
 ├── .craft (craft configuration file)
-├── .gitlab-ci.yml (GitLab CI/CD file)
+├── .gitlab-ci.yml
 ├── Makefile
 └── README.md
 ```
@@ -87,10 +91,13 @@ It's a very simple generation with little features.
 Craft project generation for golang is following the present layout: https://github.com/golang-standards/project-layout.
 
 ```tree
+├── .gitlab (if `ci` is "gitlab")
+│   ├── workflows
+│   │   ├── .gitlab-ci.yml
 ├── .github
-│   ├── workflows (Github actions workflows)
+│   ├── workflows (if `ci` is "github")
 │   │   ├── dependencies.yml
-│   │   ├── main.yml
+│   │   ├── integration.yml
 │   │   ├── publish.yml
 ├── cmd (executable binaries, prefix is useful for kubernetes identification)
 │   ├── xyz (as many as desired CLIs)

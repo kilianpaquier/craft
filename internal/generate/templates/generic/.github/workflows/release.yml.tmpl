@@ -38,7 +38,9 @@ jobs:
             @semantic-release/github
             @semantic-release/release-notes-generator
             conventional-changelog-conventionalcommits
+<<- if .License >>
             semantic-release-license
+<<- end >>
           tag_format: v${version}
           branches: |
             [

@@ -40,7 +40,6 @@ plugins:
         - BREAKING CHANGES
         - BREAKING
   - "@semantic-release/changelog"
-  - "semantic-release-license"
   - - "@semantic-release/git"
     - assets: [ "CHANGELOG.md", "LICENSE" ]
       message: "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
@@ -61,5 +60,6 @@ branches:
   - { name: alpha, prerelease: true }
   - { name: staging, prerelease: beta }
   - { name: develop, prerelease: alpha }
-  - { name: "${CI_COMMIT_REF_NAME}", prerelease: "$(echo \"${CI_COMMIT_REF_NAME}\" | sha256sum | cut -c -8)" }
+  # both variables are replaced in kilianpaquier/cicd's jobs using .releaserc.yml
+  - { name: "CI_COMMIT_REF_NAME", prerelease: "CI_COMMIT_REF_NAME_SHA" }
 tagFormat: v${version}

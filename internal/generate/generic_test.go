@@ -45,6 +45,56 @@ func TestGenericExecute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetProjectName("craft")
 
+	t.Run("success_force_all", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "force_all")
+
+		config := config.Copy().
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				SetForceAll(true).
+				Build()).
+			Build()
+
+		// generate a first one to confirm --force-all behavior
+		err := generic.Execute(ctx, *config, generate.Tmpl)
+		require.NoError(t, err)
+		config.ProjectName = "new_craft" // change project name for modification
+
+		// Act
+		err = generic.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.NoError(t, err)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+	})
+
+	t.Run("success_force_one", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "force_one")
+
+		config := config.Copy().
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				SetForce("README.md").
+				Build()).
+			Build()
+
+		// generate a first one to confirm --force=filename behavior
+		err := generic.Execute(ctx, *config, generate.Tmpl)
+		require.NoError(t, err)
+		config.ProjectName = "new_craft" // change project name for modification
+
+		// Act
+		err = generic.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.NoError(t, err)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+	})
+
 	t.Run("success_with_github", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
@@ -83,80 +133,6 @@ func TestGenericExecute(t *testing.T) {
 
 		// Act
 		err := generic.Execute(ctx, *config, generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
-	})
-
-	t.Run("success_force_all", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "force_all")
-
-		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				SetForceAll(true).
-				Build()).
-			Build()
-
-		// generate a first one to confirm --force-all behavior
-		err := generic.Execute(ctx, *config, generate.Tmpl)
-		require.NoError(t, err)
-		config.ProjectName = "new_craft" // change project name for modification
-
-		// Act
-		err = generic.Execute(ctx, *config, generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
-	})
-
-	t.Run("success_force_one", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "force_one")
-
-		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				SetForce(models.Readme).
-				Build()).
-			Build()
-
-		// generate a first one to confirm --force=filename behavior
-		err := generic.Execute(ctx, *config, generate.Tmpl)
-		require.NoError(t, err)
-		config.ProjectName = "new_craft" // change project name for modification
-
-		// Act
-		err = generic.Execute(ctx, *config, generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
-	})
-
-	t.Run("success_optional_files", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "optional_files")
-
-		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-
-		// generate a first one to confirm optional files deletion behavior
-		err := generic.Execute(ctx, *config, generate.Tmpl)
-		require.NoError(t, err)
-		config.NoMakefile = true // change options to confirm removal
-
-		// Act
-		err = generic.Execute(ctx, *config, generate.Tmpl)
 
 		// Assert
 		assert.NoError(t, err)

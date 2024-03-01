@@ -3,7 +3,9 @@
 name: Go Integration
 run-name: Go Integration
 
-on: push
+on:
+  - push
+  - workflow_dispatch
 
 jobs:
 
@@ -28,7 +30,6 @@ jobs:
             @semantic-release/github
             @semantic-release/release-notes-generator
             conventional-changelog-conventionalcommits
-            semantic-release-license
           ci: false
           dry_run: true
           tag_format: v${version}
@@ -45,7 +46,6 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: env
       - run: echo ${{ steps.semantic_release.outputs.new_release_version }}
 
   go-lint:
@@ -70,10 +70,3 @@ jobs:
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: CGO_ENABLED="0" go test ./... -coverpkg=./... -covermode=count -coverprofile=coverage.out
-      - uses: codecov/codecov-action@v4
-        with:
-          disable_search: true
-          file: coverage.out
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-          slug: ${{ github.repository }}

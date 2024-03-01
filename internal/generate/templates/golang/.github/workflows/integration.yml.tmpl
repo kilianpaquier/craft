@@ -3,7 +3,9 @@
 name: Go Integration
 run-name: Go Integration
 
-on: push
+on:
+  - push
+  - workflow_dispatch
 
 jobs:
 
@@ -28,7 +30,9 @@ jobs:
             @semantic-release/github
             @semantic-release/release-notes-generator
             conventional-changelog-conventionalcommits
+<<- if .License >>
             semantic-release-license
+<<- end >>
           ci: false
           dry_run: true
           tag_format: v${version}
@@ -45,7 +49,6 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: env
       - run: echo ${{ steps.semantic_release.outputs.new_release_version }}
 
   go-lint:
@@ -59,7 +62,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: golangci/golangci-lint-action@v4
         with:
-<<- if .NoSonar >>
+<<- if not .Sonar >>
           args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format colored-line-number
 <<- else >>
           args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format checkstyle:sonar-report.xml,colored-line-number
@@ -79,16 +82,18 @@ jobs:
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: CGO_ENABLED="0" go test ./... -coverpkg=./... -covermode=count -coverprofile=coverage.out
-<<- if not .NoCodeCov >>
+<<- if .CodeCov >>
       - uses: codecov/codecov-action@v4
         with:
+          codecov_yml_path: codecov.yml
           disable_search: true
+          fail_ci_if_error: true
           file: coverage.out
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           slug: ${{ github.repository }}
 <<- end >>
-<<- if not .NoSonar >>
+<<- if .Sonar >>
       - uses: actions/upload-artifact@v4
         with:
           name: coverage
@@ -96,7 +101,7 @@ jobs:
           retention-days: 1
 <<- end >>
 
-<<- if not .NoSonar >>
+<<- if .Sonar >>
 
   sonar-analysis:
     runs-on: ubuntu-latest
