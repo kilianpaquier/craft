@@ -5,20 +5,6 @@
 
 <<- $maintainer := index .Maintainers 0 >>
 
-LABEL org.opencontainers.image.authors="<< $maintainer.Name >><< if $maintainer.Email >> <<"<">><< $maintainer.Email >><<">">><< end >>"
-LABEL org.opencontainers.image.vendor="<< $maintainer.Name >>"
-
-LABEL org.opencontainers.image.title="<< .ProjectName >>"
-<<- if .Description >>
-LABEL org.opencontainers.image.description="<< .Description >>"
-<<- end >>
-<<- if .License >>
-LABEL org.opencontainers.image.licenses="<< upper .License >>"
-<<- end >>
-LABEL org.opencontainers.image.url="<< .ModuleName >>"
-LABEL org.opencontainers.image.source="<< .ModuleName >>"
-LABEL org.opencontainers.image.documentation="<< .ModuleName >>"
-
 #############################
 #        STAGE BUILD        #
 #############################
@@ -44,9 +30,21 @@ RUN CGO_ENABLED=0 go build -o << $name >> cmd/<< $name >>/main.go
 #############################
 #         STAGE RUN         #
 #############################
-FROM gcr.io/distroless/static-debian12
+FROM gcr.io/distroless/static-debian12:nonroot
 
-RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
+LABEL org.opencontainers.image.authors="<< $maintainer.Name >><< if $maintainer.Email >> <<"<">><< $maintainer.Email >><<">">><< end >>"
+LABEL org.opencontainers.image.vendor="<< $maintainer.Name >>"
+
+LABEL org.opencontainers.image.title="<< .ProjectName >>"
+<<- if .Description >>
+LABEL org.opencontainers.image.description="<< .Description >>"
+<<- end >>
+<<- if .License >>
+LABEL org.opencontainers.image.licenses="<< upper .License >>"
+<<- end >>
+LABEL org.opencontainers.image.url="<< .ModuleName >>"
+LABEL org.opencontainers.image.source="<< .ModuleName >>"
+LABEL org.opencontainers.image.documentation="<< .ModuleName >>"
 
 WORKDIR /app
 
@@ -79,7 +77,5 @@ COPY launcher.sh launcher.sh
 <<- end >>
 
 EXPOSE << .Port | default 3000 >>
-
-USER nonroot
 
 ENTRYPOINT [ "/app/<< $entrypoint >>" ]
