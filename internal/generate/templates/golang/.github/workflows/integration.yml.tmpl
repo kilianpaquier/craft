@@ -90,6 +90,7 @@ jobs:
       - run: CGO_ENABLED="0" go test ./... -coverpkg=./... -covermode=count -coverprofile=coverage.out
 <<- if .CodeCov >>
       - uses: codecov/codecov-action@v4
+        if: ${{ ! startsWith(github.ref_name, 'dependabot') }} # ignore codecov on dependabot branches
         with:
           codecov_yml_path: codecov.yml
           disable_search: true
