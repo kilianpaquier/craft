@@ -83,6 +83,6 @@ jobs:
           disable_search: true
           fail_ci_if_error: true
           file: coverage.out
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           slug: ${{ github.repository }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+          
