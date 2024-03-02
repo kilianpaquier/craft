@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
-	"slices"
 	"sync"
 
 	"github.com/go-playground/validator/v10"
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
+	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
 
 	"github.com/kilianpaquier/craft/internal/models"
@@ -63,9 +63,15 @@ func (e *Executor) Execute(ctx context.Context) error {
 	executees, removals := SplitSlice(plugins(), func(p plugin, _ int) bool {
 		return p.Detect(ctx, &e.config)
 	})
+	primaries := lo.CountBy(executees, func(p plugin) bool { return p.Type() == primary })
+
+	// don't handle projects with multiple primary plugins yet
+	if primaries > 1 {
+		return fmt.Errorf("project contains %d primaries plugins, craft doesn't handle multiple primary plugins in the same repository yet", primaries)
+	}
 
 	// add generic plugin if no primary plugin were found
-	if !slices.ContainsFunc(executees, func(p plugin) bool { return p.Type() == primary }) {
+	if primaries == 0 {
 		executees = append(executees, &generic{})
 	}
 
