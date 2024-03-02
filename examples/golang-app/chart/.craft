@@ -1,5 +1,6 @@
 # helm values override configuration
 ---
+description: A description for Chart yaml file
 dependencies: []
 crons:
   cron-refresh:

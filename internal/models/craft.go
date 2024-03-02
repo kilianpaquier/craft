@@ -6,6 +6,27 @@ package models
 
 //go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions -d tests
 
+const (
+	// CraftFile is the craft configuration file name.
+	CraftFile = ".craft"
+
+	// TmplExtension is the extension for templates file.
+	TmplExtension = ".tmpl"
+
+	// Github is just the github constant.
+	Github = "github"
+	// Gitlab is just the gitlab constant.
+	Gitlab = "gitlab"
+	// GoCmd represents the cmd folder where go main.go should be placed according to go layout.
+	GoCmd = "cmd"
+	// GoMod represents the go.mod filename.
+	GoMod = "go.mod"
+	// License represents the target filename for the generated project LICENSE.
+	License = "LICENSE"
+	// SwaggerFile represents the target filename for the generated project api.yml.
+	SwaggerFile = "api.yml"
+)
+
 // CraftConfig represents all options configurable in .craft file at root project.
 //
 // yaml tags are for .craft file and json tags for templating.
@@ -17,13 +38,14 @@ type CraftConfig struct {
 	OpenAPIVersion string       `json:"-"                        yaml:"openapi_version,omitempty"                  validate:"omitempty,oneof=v2 v3"`
 	CI             string       `json:"-"                        yaml:"ci,omitempty"                               validate:"omitempty,oneof=gitlab github"`
 	Maintainers    []Maintainer `json:"maintainers,omitempty"    yaml:"maintainers,omitempty"     builder:"append" validate:"required,dive,required"`
+	CodeCov        bool         `json:"-"                        yaml:"codecov,omitempty"`
+	Dependabot     bool         `json:"-"                        yaml:"dependabot,omitempty"`
 	NoAPI          bool         `json:"noAPI,omitempty"          yaml:"no_api,omitempty"`
 	NoChart        bool         `json:"-"                        yaml:"no_chart,omitempty"`
-	NoCodeCov      bool         `json:"-"                        yaml:"no_codecov,omitempty"`
 	NoDockerfile   bool         `json:"-"                        yaml:"no_dockerfile,omitempty"`
 	NoGoreleaser   bool         `json:"-"                        yaml:"no_goreleaser,omitempty"`
 	NoMakefile     bool         `json:"-"                        yaml:"no_makefile,omitempty"`
-	NoSonar        bool         `json:"-"                        yaml:"no_sonar,omitempty"`
+	Sonar          bool         `json:"-"                        yaml:"sonar,omitempty"`
 }
 
 // Maintainer represents a project maintainer. It's inspired from helm Maintainer struct.

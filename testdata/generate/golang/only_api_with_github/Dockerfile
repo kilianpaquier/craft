@@ -17,9 +17,15 @@ RUN CGO_ENABLED=0 go build -o craft-api cmd/craft-api/main.go
 #############################
 #         STAGE RUN         #
 #############################
-FROM alpine:3
+FROM gcr.io/distroless/static-debian12:nonroot
 
-RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
+LABEL org.opencontainers.image.authors="kilianpaquier"
+LABEL org.opencontainers.image.vendor="kilianpaquier"
+
+LABEL org.opencontainers.image.title="craft"
+LABEL org.opencontainers.image.url="github.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.source="github.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.documentation="github.com/kilianpaquier/craft"
 
 WORKDIR /app
 
@@ -28,7 +34,5 @@ COPY --from=build \
     ./
 
 EXPOSE 3000
-
-USER nonroot
 
 ENTRYPOINT [ "/app/craft-api" ]

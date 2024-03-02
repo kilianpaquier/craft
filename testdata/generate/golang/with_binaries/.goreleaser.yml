@@ -7,7 +7,7 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -X github.com/kilianpaquier/craft/internal/cobra.version={{ .Version }}
+      - -X github.com/kilianpaquier/craft/internal/cobra.version={{ .Env.VERSION }}
     goos:
       - linux
       - windows

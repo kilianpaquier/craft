@@ -45,50 +45,6 @@ func TestGenericExecute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetProjectName("craft")
 
-	t.Run("success_with_github", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_github")
-
-		config := config.Copy().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(models.Github).
-				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-
-		// Act
-		err := generic.Execute(ctx, *config, generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
-	})
-
-	t.Run("success_with_gitlab", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_gitlab")
-
-		config := config.Copy().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(models.Gitlab).
-				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-
-		// Act
-		err := generic.Execute(ctx, *config, generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
-	})
-
 	t.Run("success_force_all", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
@@ -122,7 +78,7 @@ func TestGenericExecute(t *testing.T) {
 		config := config.Copy().
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
-				SetForce(models.Readme).
+				SetForce("README.md").
 				Build()).
 			Build()
 
@@ -139,24 +95,45 @@ func TestGenericExecute(t *testing.T) {
 		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_optional_files", func(t *testing.T) {
+	t.Run("success_with_github", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "optional_files")
+		assertdir := filepath.Join(assertdir, "with_github")
 
 		config := config.Copy().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(models.Github).
+				SetDependabot(true).
+				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
 			Build()
 
-		// generate a first one to confirm optional files deletion behavior
+		// Act
 		err := generic.Execute(ctx, *config, generate.Tmpl)
-		require.NoError(t, err)
-		config.NoMakefile = true // change options to confirm removal
+
+		// Assert
+		assert.NoError(t, err)
+		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+	})
+
+	t.Run("success_with_gitlab", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "with_gitlab")
+
+		config := config.Copy().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(models.Gitlab).
+				Build()).
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
 
 		// Act
-		err = generic.Execute(ctx, *config, generate.Tmpl)
+		err := generic.Execute(ctx, *config, generate.Tmpl)
 
 		// Assert
 		assert.NoError(t, err)

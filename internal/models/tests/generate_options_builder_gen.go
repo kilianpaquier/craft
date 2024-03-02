@@ -22,7 +22,8 @@ func (b *GenerateOptionsBuilder) Copy() *GenerateOptionsBuilder {
 
 // Build returns built GenerateOptions.
 func (b *GenerateOptionsBuilder) Build() *models.GenerateOptions {
-	return (*models.GenerateOptions)(b)
+	c := (models.GenerateOptions)(*b)
+	return &c
 }
 
 // SetDestinationDir sets GenerateOptions's DestinationDir.

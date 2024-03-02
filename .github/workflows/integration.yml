@@ -3,7 +3,9 @@
 name: Go Integration
 run-name: Go Integration
 
-on: push
+on:
+  - push
+  - workflow_dispatch
 
 jobs:
 
@@ -12,7 +14,8 @@ jobs:
     permissions:
       contents: write
     outputs:
-      version: ${{ steps.semantic_release.outputs.new_release_version }}
+      version: v${{ steps.semantic_release.outputs.new_release_version }}
+      release: ${{ steps.release.outputs.release }}
     steps:
       - uses: actions/checkout@v4
       - id: sha
@@ -45,8 +48,12 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: env
-      - run: echo ${{ steps.semantic_release.outputs.new_release_version }}
+      - run: echo v${{ steps.semantic_release.outputs.new_release_version }}
+      - id: release
+        run: |
+          if [[ ${{ steps.semantic_release.outputs.new_release_version }} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "release=true" >> $GITHUB_OUTPUT
+          fi
 
   go-lint:
     runs-on: ubuntu-latest
@@ -72,7 +79,9 @@ jobs:
       - run: CGO_ENABLED="0" go test ./... -coverpkg=./... -covermode=count -coverprofile=coverage.out
       - uses: codecov/codecov-action@v4
         with:
+          codecov_yml_path: codecov.yml
           disable_search: true
+          fail_ci_if_error: true
           file: coverage.out
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -9,12 +9,15 @@ import (
 	"text/template"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-
-	"github.com/kilianpaquier/craft/internal/models"
 )
 
 // Execute runs Execute function from input tmpl with input data and write result to given dest file.
 func Execute(tmpl *template.Template, dest string, data any) error {
+	// create destination directory only if one file would be generated
+	if err := os.MkdirAll(filepath.Dir(dest), filesystem.RwxRxRxRx); err != nil && !os.IsExist(err) {
+		return fmt.Errorf("failed to create destination directory: %w", err)
+	}
+
 	var result strings.Builder
 	if err := tmpl.Execute(&result, data); err != nil {
 		return fmt.Errorf("failed to template %s: %w", dest, err)
@@ -22,7 +25,7 @@ func Execute(tmpl *template.Template, dest string, data any) error {
 
 	// check dest rights to apply (644 or 755)
 	rights := func() fs.FileMode {
-		if filepath.Ext(dest) == models.ShellExtension {
+		if filepath.Ext(dest) == ".sh" {
 			return filesystem.RwxRxRxRx
 		}
 		return filesystem.RwRR

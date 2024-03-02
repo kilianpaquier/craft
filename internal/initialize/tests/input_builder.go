@@ -25,12 +25,6 @@ func NewInputBuilder() *InputBuilder {
 	}
 }
 
-// SetDescription sets the description.
-func (r *InputBuilder) SetDescription(description string) *InputBuilder {
-	r.CraftConfigBuilder.SetDescription(description)
-	return r
-}
-
 // SetMaintainers sets the maintainers.
 func (r *InputBuilder) SetMaintainers(maintainer ...models.Maintainer) *InputBuilder {
 	r.CraftConfigBuilder.SetMaintainers(maintainer...)
@@ -66,7 +60,6 @@ func (r *InputBuilder) Build() (*strings.Reader, error) {
 	}
 
 	values := []string{
-		lo.FromPtr(r.Description), "\n",
 		r.Maintainers[0].Name, "\n",
 		lo.FromPtr(r.Maintainers[0].Email), "\n",
 		lo.FromPtr(r.Maintainers[0].URL), "\n",

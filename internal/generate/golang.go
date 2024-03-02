@@ -79,7 +79,8 @@ func (plugin *golang) Detect(ctx context.Context, config *models.GenerateConfig)
 // GenerateConfig is given as copy because no modification should be done during execution on it.
 // Input fsys serves to retrieve templates used during generation (embed in binary, os filesystem, etc.).
 func (plugin *golang) Execute(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS) error {
-	return defaultCopyDir(ctx, config, fsys, config.Options.TemplatesDir, config.Options.DestinationDir, plugin)
+	return newDefaultCopyDir(config, fsys, plugin).
+		defaultCopyDir(ctx, config.Options.TemplatesDir, config.Options.DestinationDir)
 }
 
 // Name returns the plugin name.

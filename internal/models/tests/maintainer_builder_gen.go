@@ -22,7 +22,8 @@ func (b *MaintainerBuilder) Copy() *MaintainerBuilder {
 
 // Build returns built Maintainer.
 func (b *MaintainerBuilder) Build() *models.Maintainer {
-	return (*models.Maintainer)(b)
+	c := (models.Maintainer)(*b)
+	return &c
 }
 
 // SetEmail sets Maintainer's Email.
