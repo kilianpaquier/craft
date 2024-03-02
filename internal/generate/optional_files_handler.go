@@ -18,9 +18,10 @@ type handler func(src, dest, filename string) (ok bool, apply bool)
 
 // newOptionalHandlers creates the full slice of optional handlers to handle options during craft generation.
 func newOptionalHandlers(config models.GenerateConfig) []handler {
-	// order doesn't matter
+	// order is important since the first ok return will not execute the next ones
 	return []handler{
 		codeCovHandler(config),
+		dependabotHandler(config),
 		dockerHandler(config),
 		githubHandler(config),
 		gitlabHandler(config),
@@ -32,10 +33,17 @@ func newOptionalHandlers(config models.GenerateConfig) []handler {
 	}
 }
 
-// codeCovHandler returns the handler to handle codecov option generation matching.
+// codeCovHandler returns the handler for codecov github actions reporting.
 func codeCovHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "codecov.yml", config.CodeCov
+		return filename == "codecov.yml", config.CI == "github" && config.CodeCov
+	}
+}
+
+// dependabotHandler returns the handler for dependabot github maintenance.
+func dependabotHandler(config models.GenerateConfig) handler {
+	return func(_, _, filename string) (_ bool, _ bool) {
+		return filename == "dependabot.yml", config.CI == "github" && config.Dependabot
 	}
 }
 

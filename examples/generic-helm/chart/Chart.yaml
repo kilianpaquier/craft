@@ -2,7 +2,7 @@
 
 apiVersion: v2
 name: generic-helm
-description: Helm generic example
+description: blablabla
 
 # A chart can be either an 'application' or a 'library' chart.
 #

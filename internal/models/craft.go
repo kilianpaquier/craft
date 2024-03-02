@@ -39,6 +39,7 @@ type CraftConfig struct {
 	CI             string       `json:"-"                        yaml:"ci,omitempty"                               validate:"omitempty,oneof=gitlab github"`
 	Maintainers    []Maintainer `json:"maintainers,omitempty"    yaml:"maintainers,omitempty"     builder:"append" validate:"required,dive,required"`
 	CodeCov        bool         `json:"-"                        yaml:"codecov,omitempty"`
+	Dependabot     bool         `json:"-"                        yaml:"dependabot,omitempty"`
 	NoAPI          bool         `json:"noAPI,omitempty"          yaml:"no_api,omitempty"`
 	NoChart        bool         `json:"-"                        yaml:"no_chart,omitempty"`
 	NoDockerfile   bool         `json:"-"                        yaml:"no_dockerfile,omitempty"`

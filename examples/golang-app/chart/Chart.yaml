@@ -2,7 +2,7 @@
 
 apiVersion: v2
 name: golang-app
-description: A Helm chart for Kubernetes
+description: A description for Chart yaml file
 
 # A chart can be either an 'application' or a 'library' chart.
 #

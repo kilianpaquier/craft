@@ -22,7 +22,8 @@ func (b *CraftConfigBuilder) Copy() *CraftConfigBuilder {
 
 // Build returns built CraftConfig.
 func (b *CraftConfigBuilder) Build() *models.CraftConfig {
-	return (*models.CraftConfig)(b)
+	c := (models.CraftConfig)(*b)
+	return &c
 }
 
 // SetCI sets CraftConfig's CI.
@@ -34,6 +35,12 @@ func (b *CraftConfigBuilder) SetCI(ci string) *CraftConfigBuilder {
 // SetCodeCov sets CraftConfig's CodeCov.
 func (b *CraftConfigBuilder) SetCodeCov(codeCov bool) *CraftConfigBuilder {
 	b.CodeCov = codeCov
+	return b
+}
+
+// SetDependabot sets CraftConfig's Dependabot.
+func (b *CraftConfigBuilder) SetDependabot(dependabot bool) *CraftConfigBuilder {
+	b.Dependabot = dependabot
 	return b
 }
 

@@ -22,7 +22,8 @@ func (b *GenerateConfigBuilder) Copy() *GenerateConfigBuilder {
 
 // Build returns built GenerateConfig.
 func (b *GenerateConfigBuilder) Build() *models.GenerateConfig {
-	return (*models.GenerateConfig)(b)
+	c := (models.GenerateConfig)(*b)
+	return &c
 }
 
 // SetClis sets GenerateConfig's Clis.

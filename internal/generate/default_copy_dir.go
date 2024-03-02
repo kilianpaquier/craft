@@ -26,19 +26,19 @@ import (
 // It takes various inputs that will never change during recursive calls
 // to avoid passing them as input arguments.
 type defaultCopyDir struct {
-	config       models.GenerateConfig
-	fileHandlers []handler
-	fsys         filesystem.FS
-	plugin       plugin
+	config           models.GenerateConfig
+	optionalHandlers []handler
+	fsys             filesystem.FS
+	plugin           plugin
 }
 
 // newDefaultCopyDir creates a new defaultCopyDir executor.
 func newDefaultCopyDir(config models.GenerateConfig, fsys filesystem.FS, plugin plugin) *defaultCopyDir {
 	return &defaultCopyDir{
-		config:       config,
-		fsys:         fsys,
-		fileHandlers: newOptionalHandlers(config),
-		plugin:       plugin,
+		config:           config,
+		fsys:             fsys,
+		optionalHandlers: newOptionalHandlers(config),
+		plugin:           plugin,
 	}
 }
 
@@ -88,7 +88,7 @@ func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir str
 		}
 
 		// check if filename matches an optional file
-		for _, handler := range d.fileHandlers {
+		for _, handler := range d.optionalHandlers {
 			ok, apply := handler(src, dest, filename)
 			if !ok {
 				continue

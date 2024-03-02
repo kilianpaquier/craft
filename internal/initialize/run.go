@@ -22,9 +22,6 @@ func Run(ctx context.Context) (craft models.CraftConfig) {
 
 	scanner := bufio.NewScanner(reader)
 
-	// description
-	craft.Description = ask(ctx, scanner, "Would you like to give a project description ?")
-
 	// read main maintainer information
 	craft.Maintainers = append(craft.Maintainers, readMaintainer(ctx, scanner))
 

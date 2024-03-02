@@ -4,4 +4,5 @@ ci: github
 maintainers:
     - email: golang-app@example.com
       name: golang-app
+dependabot: true
 no_api: true

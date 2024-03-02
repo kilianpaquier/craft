@@ -311,6 +311,7 @@ func TestGolangExecute(t *testing.T) {
 			SetCraftConfig(*craft.Copy().
 				SetCI(models.Github).
 				SetCodeCov(true).
+				SetDependabot(true).
 				SetLicense("mit"). // goreleaser and releaserc indication of license
 				SetNoAPI(true).
 				SetNoDockerfile(true).

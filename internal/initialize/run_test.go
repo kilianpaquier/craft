@@ -21,7 +21,6 @@ func TestRun(t *testing.T) {
 			SetName("maintainer name").
 			Build()
 		builder := init_tests.NewInputBuilder().
-			SetDescription("description").
 			SetMaintainers(*maintainer)
 		expected := builder.CraftConfigBuilder.
 			SetOpenAPIVersion("v2").
@@ -44,7 +43,6 @@ func TestRun(t *testing.T) {
 			Build()
 		builder := init_tests.NewInputBuilder().
 			SetAPI("false").
-			SetDescription("description").
 			SetMaintainers(*maintainer)
 		expected := builder.CraftConfigBuilder.Build()
 		inputs, err := builder.Build()
@@ -65,7 +63,6 @@ func TestRun(t *testing.T) {
 			Build()
 		builder := init_tests.NewInputBuilder().
 			SetAPI("true").
-			SetDescription("description").
 			SetMaintainers(*maintainer).
 			SetOpenAPIVersion("v2")
 		expected := builder.CraftConfigBuilder.Build()
@@ -87,7 +84,6 @@ func TestRun(t *testing.T) {
 			Build()
 		builder := init_tests.NewInputBuilder().
 			SetAPI("true").
-			SetDescription("description").
 			SetMaintainers(*maintainer)
 		expected := builder.CraftConfigBuilder.
 			SetOpenAPIVersion("v2").
@@ -110,7 +106,6 @@ func TestRun(t *testing.T) {
 			Build()
 		builder := init_tests.NewInputBuilder().
 			SetChart("false").
-			SetDescription("description").
 			SetMaintainers(*maintainer)
 		expected := builder.CraftConfigBuilder.
 			SetOpenAPIVersion("v2").
@@ -136,7 +131,6 @@ func TestRun(t *testing.T) {
 		builder := init_tests.NewInputBuilder().
 			SetAPI("true").
 			SetChart("true").
-			SetDescription("description").
 			SetMaintainers(*maintainer).
 			SetOpenAPIVersion("v3")
 		expected := builder.CraftConfigBuilder.Build()
