@@ -2,7 +2,7 @@ docker_registry: github.com/kilianpaquier/craft
 license: mit
 ci: github
 maintainers:
-    - email: golang-app@example.com
-      name: golang-app
+    - email: kilianpaquier@users.noreply.github.com
+      name: kilianpaquier
 dependabot: true
 no_api: true

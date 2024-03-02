@@ -3,6 +3,22 @@
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
 
+<<- $maintainer := index .Maintainers 0 >>
+
+LABEL org.opencontainers.image.authors="<< $maintainer.Name >><< if $maintainer.Email >> <<"<">><< $maintainer.Email >><<">">><< end >>"
+LABEL org.opencontainers.image.vendor="<< $maintainer.Name >>"
+
+LABEL org.opencontainers.image.title="<< .ProjectName >>"
+<<- if .Description >>
+LABEL org.opencontainers.image.description="<< .Description >>"
+<<- end >>
+<<- if .License >>
+LABEL org.opencontainers.image.licenses="<< upper .License >>"
+<<- end >>
+LABEL org.opencontainers.image.url="<< .ModuleName >>"
+LABEL org.opencontainers.image.source="<< .ModuleName >>"
+LABEL org.opencontainers.image.documentation="<< .ModuleName >>"
+
 #############################
 #        STAGE BUILD        #
 #############################
@@ -28,7 +44,7 @@ RUN CGO_ENABLED=0 go build -o << $name >> cmd/<< $name >>/main.go
 #############################
 #         STAGE RUN         #
 #############################
-FROM alpine:3
+FROM gcr.io/distroless/static-debian12
 
 RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 

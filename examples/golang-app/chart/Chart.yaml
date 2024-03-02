@@ -28,5 +28,5 @@ appVersion: "0.1.0"
 dependencies: []
 
 maintainers:
-  - email: golang-app@example.com
-    name: golang-app
+  - email: kilianpaquier@users.noreply.github.com
+    name: kilianpaquier

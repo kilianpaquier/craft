@@ -22,9 +22,9 @@ updates:
     rebase-strategy: auto
     target-branch: main
     assignees:
-      - golang-app
+      - kilianpaquier
     reviewers:
-      - golang-app
+      - kilianpaquier
   - package-ecosystem: gomod
     directory: /
     schedule:
@@ -40,9 +40,9 @@ updates:
     rebase-strategy: auto
     target-branch: main
     assignees:
-      - golang-app
+      - kilianpaquier
     reviewers:
-      - golang-app
+      - kilianpaquier
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -58,6 +58,6 @@ updates:
     rebase-strategy: auto
     target-branch: main
     assignees:
-      - golang-app
+      - kilianpaquier
     reviewers:
-      - golang-app
+      - kilianpaquier
