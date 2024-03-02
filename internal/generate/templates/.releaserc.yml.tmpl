@@ -57,7 +57,7 @@ plugins:
 <<- end >>
 <<- if eq .CI "gitlab" >>
   - - "@semantic-release/exec"
-    - verifyReleaseCmd: echo 'IMAGE_VERSION=v${nextRelease.version}' > version.env
+    - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
 <<- else >>
   - "@semantic-release/exec"
 <<- end >>

@@ -51,7 +51,7 @@ plugins:
       failComment: false,
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
   - - "@semantic-release/exec"
-    - verifyReleaseCmd: echo 'IMAGE_VERSION=v${nextRelease.version}' > version.env
+    - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
 branches: 
   - (master|main)
   - v+([0-9])?(.{+([0-9]),x}).x
