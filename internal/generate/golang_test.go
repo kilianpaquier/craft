@@ -62,7 +62,7 @@ func TestGolangDetect(t *testing.T) {
 				SetDestinationDir(destdir).
 				Build()).
 			Build()
-		testlogrus.CatchLogs()
+		testlogrus.CatchLogs(t)
 
 		// Act
 		present := golang.Detect(ctx, current)
@@ -94,7 +94,7 @@ func TestGolangDetect(t *testing.T) {
 				SetDestinationDir(destdir).
 				Build()).
 			Build()
-		testlogrus.CatchLogs()
+		testlogrus.CatchLogs(t)
 
 		// Act
 		present := golang.Detect(ctx, current)

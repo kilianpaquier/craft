@@ -9,14 +9,14 @@ require (
 	github.com/go-swagger/go-swagger v0.30.5
 	github.com/imdario/mergo v0.3.16
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/kilianpaquier/filesystem v0.0.0-20240219113037-5c8632111ed7
-	github.com/kilianpaquier/testlogrus v0.0.0-20240219123613-889ea07393e7
+	github.com/kilianpaquier/filesystem v0.0.0-20240302124528-9cb3eb63b4f6
+	github.com/kilianpaquier/testlogrus v0.0.0-20240302124840-f94674d38ad3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/samber/lo v1.39.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
-	github.com/stretchr/testify v1.8.4
-	github.com/xanzy/go-gitlab v0.97.0
+	github.com/stretchr/testify v1.9.0
+	github.com/xanzy/go-gitlab v0.98.0
 	golang.org/x/mod v0.15.0
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -36,7 +36,7 @@ require (
 	github.com/go-openapi/jsonreference v0.20.4 // indirect
 	github.com/go-openapi/loads v0.21.5 // indirect
 	github.com/go-openapi/spec v0.20.14 // indirect
-	github.com/go-openapi/strfmt v0.22.0 // indirect
+	github.com/go-openapi/strfmt v0.22.1 // indirect
 	github.com/go-openapi/swag v0.22.9 // indirect
 	github.com/go-openapi/validate v0.23.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -74,8 +74,8 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.19.0 // indirect
-	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
+	golang.org/x/crypto v0.20.0 // indirect
+	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/oauth2 v0.17.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
