@@ -5,11 +5,11 @@ go 1.22.0
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/go-openapi/runtime v0.27.1
-	github.com/go-playground/validator/v10 v10.18.0
+	github.com/go-playground/validator/v10 v10.19.0
 	github.com/go-swagger/go-swagger v0.30.5
 	github.com/imdario/mergo v0.3.16
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/kilianpaquier/filesystem v0.0.0-20240302124528-9cb3eb63b4f6
+	github.com/kilianpaquier/filesystem v0.0.0-20240302190559-f1d55dfaf07d
 	github.com/kilianpaquier/testlogrus v0.0.0-20240302124840-f94674d38ad3
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/samber/lo v1.39.0
