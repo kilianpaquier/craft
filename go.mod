@@ -5,7 +5,7 @@ go 1.22.0
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/go-openapi/runtime v0.27.1
-	github.com/go-playground/validator/v10 v10.18.0
+	github.com/go-playground/validator/v10 v10.19.0
 	github.com/go-swagger/go-swagger v0.30.5
 	github.com/imdario/mergo v0.3.16
 	github.com/jarcoal/httpmock v1.3.1
