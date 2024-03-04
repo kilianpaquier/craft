@@ -166,7 +166,7 @@ func TestGolangExecute(t *testing.T) {
 
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("kilianpaquier").
+			SetName("maintainer name").
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
@@ -180,7 +180,6 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -202,7 +201,11 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetCI(models.Github).
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -225,7 +228,11 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetCI(models.Gitlab).
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Gitlab).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -248,8 +255,10 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				SetCI(models.Github).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -273,8 +282,10 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				SetCI(models.Gitlab).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Gitlab).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -309,15 +320,12 @@ func TestGolangExecute(t *testing.T) {
 		config = config.
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetCI(models.Github).
-				SetCodeCov(true).
-				SetDependabot(true).
-				SetLicense("mit"). // goreleaser and releaserc indication of license
-				SetNoAPI(true).
-				SetNoDockerfile(true).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					SetOptions(models.CodeCov, models.Dependabot, models.Sonar).
+					Build()).
+				SetLicense("mit").
 				SetNoGoreleaser(true).
-				SetPort(5000). // dockerfile exposed port
-				SetSonar(true).
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
@@ -339,8 +347,11 @@ func TestGolangExecute(t *testing.T) {
 		config := config.Copy().
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetLicense("mit"). // goreleaser and releaserc indication of license
-				SetPort(5000).     // dockerfile exposed port
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetDocker(*tests.NewDockerBuilder().
+					SetPort(5000).
+					Build()).
+				SetLicense("mit").
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).

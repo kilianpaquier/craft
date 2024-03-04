@@ -20,20 +20,20 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
-		builder := init_tests.NewInputBuilder().
-			SetMaintainers(*maintainer)
-		expected := builder.CraftConfigBuilder.
-			SetOpenAPIVersion("v2").
+		inputs, err := init_tests.NewInputBuilder().
+			SetMaintainer(*maintainer).
 			Build()
-		inputs, err := builder.Build()
 		require.NoError(t, err)
+		craft := models_tests.NewCraftConfigBuilder().
+			SetMaintainers(*maintainer).
+			Build()
 		initialize.SetReader(inputs)
 
 		// Act
 		config := initialize.Run(ctx)
 
 		// Assert
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *craft, config)
 	})
 
 	t.Run("success_no_api", func(t *testing.T) {
@@ -41,19 +41,21 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
-		builder := init_tests.NewInputBuilder().
-			SetAPI("false").
-			SetMaintainers(*maintainer)
-		expected := builder.CraftConfigBuilder.Build()
-		inputs, err := builder.Build()
+		inputs, err := init_tests.NewInputBuilder().
+			SetAPI(false).
+			SetMaintainer(*maintainer).
+			Build()
 		require.NoError(t, err)
+		craft := models_tests.NewCraftConfigBuilder().
+			SetMaintainers(*maintainer).
+			Build()
 		initialize.SetReader(inputs)
 
 		// Act
 		config := initialize.Run(ctx)
 
 		// Assert
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *craft, config)
 	})
 
 	t.Run("success_openapi_v2", func(t *testing.T) {
@@ -61,20 +63,26 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
-		builder := init_tests.NewInputBuilder().
-			SetAPI("true").
-			SetMaintainers(*maintainer).
-			SetOpenAPIVersion("v2")
-		expected := builder.CraftConfigBuilder.Build()
-		inputs, err := builder.Build()
+		inputs, err := init_tests.NewInputBuilder().
+			SetAPI(true).
+			SetMaintainer(*maintainer).
+			SetOpenAPIVersion("v2").
+			Build()
 		require.NoError(t, err)
+		craft := models_tests.NewCraftConfigBuilder().
+			SetAPI(*models_tests.NewAPIBuilder().
+				SetOpenAPIVersion("v2").
+				Build()).
+			SetNoChart(true).
+			SetMaintainers(*maintainer).
+			Build()
 		initialize.SetReader(inputs)
 
 		// Act
 		config := initialize.Run(ctx)
 
 		// Assert
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *craft, config)
 	})
 
 	t.Run("success_openapi_v2_default", func(t *testing.T) {
@@ -82,21 +90,26 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
-		builder := init_tests.NewInputBuilder().
-			SetAPI("true").
-			SetMaintainers(*maintainer)
-		expected := builder.CraftConfigBuilder.
+		inputs, err := init_tests.NewInputBuilder().
+			SetAPI(true).
+			SetMaintainer(*maintainer).
 			SetOpenAPIVersion("v2").
 			Build()
-		inputs, err := builder.Build()
 		require.NoError(t, err)
+		craft := models_tests.NewCraftConfigBuilder().
+			SetAPI(*models_tests.NewAPIBuilder().
+				SetOpenAPIVersion("v2").
+				Build()).
+			SetNoChart(true).
+			SetMaintainers(*maintainer).
+			Build()
 		initialize.SetReader(inputs)
 
 		// Act
 		config := initialize.Run(ctx)
 
 		// Assert
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *craft, config)
 	})
 
 	t.Run("success_no_chart", func(t *testing.T) {
@@ -104,21 +117,21 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
-		builder := init_tests.NewInputBuilder().
-			SetChart("false").
-			SetMaintainers(*maintainer)
-		expected := builder.CraftConfigBuilder.
-			SetOpenAPIVersion("v2").
+		inputs, err := init_tests.NewInputBuilder().
+			SetChart(false).
+			SetMaintainer(*maintainer).
 			Build()
-		inputs, err := builder.Build()
 		require.NoError(t, err)
+		craft := models_tests.NewCraftConfigBuilder().
+			SetMaintainers(*maintainer).
+			Build()
 		initialize.SetReader(inputs)
 
 		// Act
 		config := initialize.Run(ctx)
 
 		// Assert
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *craft, config)
 	})
 
 	t.Run("success_all_inputs", func(t *testing.T) {
@@ -128,20 +141,26 @@ func TestRun(t *testing.T) {
 			SetName("maintainer name").
 			SetURL("input not validated in this function").
 			Build()
-		builder := init_tests.NewInputBuilder().
-			SetAPI("true").
-			SetChart("true").
-			SetMaintainers(*maintainer).
-			SetOpenAPIVersion("v3")
-		expected := builder.CraftConfigBuilder.Build()
-		inputs, err := builder.Build()
+		inputs, err := init_tests.NewInputBuilder().
+			SetAPI(true).
+			SetChart(true).
+			SetMaintainer(*maintainer).
+			SetOpenAPIVersion("v3").
+			Build()
 		require.NoError(t, err)
+		craft := models_tests.NewCraftConfigBuilder().
+			SetAPI(*models_tests.NewAPIBuilder().
+				SetOpenAPIVersion("v3").
+				Build()).
+			SetMaintainers(*maintainer).
+			SetNoChart(false).
+			Build()
 		initialize.SetReader(inputs)
 
 		// Act
 		config := initialize.Run(ctx)
 
 		// Assert
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *craft, config)
 	})
 }

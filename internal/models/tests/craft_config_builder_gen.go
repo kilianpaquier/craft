@@ -26,21 +26,15 @@ func (b *CraftConfigBuilder) Build() *models.CraftConfig {
 	return &c
 }
 
+// SetAPI sets CraftConfig's API.
+func (b *CraftConfigBuilder) SetAPI(api models.API) *CraftConfigBuilder {
+	b.API = &api
+	return b
+}
+
 // SetCI sets CraftConfig's CI.
-func (b *CraftConfigBuilder) SetCI(ci string) *CraftConfigBuilder {
-	b.CI = ci
-	return b
-}
-
-// SetCodeCov sets CraftConfig's CodeCov.
-func (b *CraftConfigBuilder) SetCodeCov(codeCov bool) *CraftConfigBuilder {
-	b.CodeCov = codeCov
-	return b
-}
-
-// SetDependabot sets CraftConfig's Dependabot.
-func (b *CraftConfigBuilder) SetDependabot(dependabot bool) *CraftConfigBuilder {
-	b.Dependabot = dependabot
+func (b *CraftConfigBuilder) SetCI(ci models.CI) *CraftConfigBuilder {
+	b.CI = &ci
 	return b
 }
 
@@ -50,9 +44,9 @@ func (b *CraftConfigBuilder) SetDescription(description string) *CraftConfigBuil
 	return b
 }
 
-// SetDockerRegistry sets CraftConfig's DockerRegistry.
-func (b *CraftConfigBuilder) SetDockerRegistry(dockerRegistry string) *CraftConfigBuilder {
-	b.DockerRegistry = &dockerRegistry
+// SetDocker sets CraftConfig's Docker.
+func (b *CraftConfigBuilder) SetDocker(docker models.Docker) *CraftConfigBuilder {
+	b.Docker = &docker
 	return b
 }
 
@@ -68,21 +62,9 @@ func (b *CraftConfigBuilder) SetMaintainers(maintainers ...models.Maintainer) *C
 	return b
 }
 
-// SetNoAPI sets CraftConfig's NoAPI.
-func (b *CraftConfigBuilder) SetNoAPI(noAPI bool) *CraftConfigBuilder {
-	b.NoAPI = noAPI
-	return b
-}
-
 // SetNoChart sets CraftConfig's NoChart.
 func (b *CraftConfigBuilder) SetNoChart(noChart bool) *CraftConfigBuilder {
 	b.NoChart = noChart
-	return b
-}
-
-// SetNoDockerfile sets CraftConfig's NoDockerfile.
-func (b *CraftConfigBuilder) SetNoDockerfile(noDockerfile bool) *CraftConfigBuilder {
-	b.NoDockerfile = noDockerfile
 	return b
 }
 
@@ -95,23 +77,5 @@ func (b *CraftConfigBuilder) SetNoGoreleaser(noGoreleaser bool) *CraftConfigBuil
 // SetNoMakefile sets CraftConfig's NoMakefile.
 func (b *CraftConfigBuilder) SetNoMakefile(noMakefile bool) *CraftConfigBuilder {
 	b.NoMakefile = noMakefile
-	return b
-}
-
-// SetOpenAPIVersion sets CraftConfig's OpenAPIVersion.
-func (b *CraftConfigBuilder) SetOpenAPIVersion(openAPIVersion string) *CraftConfigBuilder {
-	b.OpenAPIVersion = openAPIVersion
-	return b
-}
-
-// SetPort sets CraftConfig's Port.
-func (b *CraftConfigBuilder) SetPort(port uint16) *CraftConfigBuilder {
-	b.Port = &port
-	return b
-}
-
-// SetSonar sets CraftConfig's Sonar.
-func (b *CraftConfigBuilder) SetSonar(sonar bool) *CraftConfigBuilder {
-	b.Sonar = sonar
 	return b
 }

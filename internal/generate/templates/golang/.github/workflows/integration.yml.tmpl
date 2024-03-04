@@ -27,7 +27,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: golangci/golangci-lint-action@v4
         with:
-<<- if not .Sonar >>
+<<- if not (has "sonar" .CI.Options) >>
           args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format colored-line-number
 <<- else >>
           args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format checkstyle:sonar-report.xml,colored-line-number
@@ -59,7 +59,7 @@ jobs:
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: ${{ matrix.os.args }} go test ./... -coverpkg="./..." -covermode="count" -coverprofile="coverage.out"
-<<- if .CodeCov >>
+<<- if has "codecov" .CI.Options >>
       - uses: codecov/codecov-action@v4
         if: ${{ ! startsWith(github.ref_name, 'dependabot') }} # ignore codecov on dependabot branches
         with:
@@ -71,7 +71,7 @@ jobs:
           slug: ${{ github.repository }}
           token: ${{ secrets.CODECOV_TOKEN }}
 <<- end >>
-<<- if .Sonar >>
+<<- if has "sonar" .CI.Options >>
       - uses: actions/upload-artifact@v4
         with:
           name: coverage
@@ -81,7 +81,7 @@ jobs:
 
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-<<- $docker := and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
+<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
 <<- if $docker >>
 
   docker-hadolint:
@@ -124,7 +124,7 @@ jobs:
             });
 <<- end >>
 
-<<- if .Sonar >>
+<<- if has "sonar" .CI.Options >>
 
   sonar-analysis:
     runs-on: ubuntu-latest

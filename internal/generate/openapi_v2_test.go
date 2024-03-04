@@ -28,7 +28,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 		destdir := filepath.Join(pwd, "..", "..")
 
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -47,7 +49,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetOpenAPIVersion("v2").
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v2").
+					Build()).
 				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
@@ -67,7 +71,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetOpenAPIVersion("v3").
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v3").
+					Build()).
 				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
@@ -86,9 +92,7 @@ func TestOpenAPIV2Detect(t *testing.T) {
 		destdir := filepath.Join(pwd, "..", "..")
 
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetNoAPI(true).
-				Build()).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -104,7 +108,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 	t.Run("success_false_without_gomod", func(t *testing.T) {
 		// Arrange
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().Build()).
 			Build()
 
@@ -135,9 +141,11 @@ func TestOpenAPIV2Execute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetCraftConfig(*tests.NewCraftConfigBuilder().
 			SetMaintainers(*tests.NewMaintainerBuilder().
-				SetName("kilianpaquier").
+				SetName("maintainer name").
 				Build()).
-			SetOpenAPIVersion("v2").
+			SetAPI(*tests.NewAPIBuilder().
+				SetOpenAPIVersion("v2").
+				Build()).
 			Build()).
 		SetModuleName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")

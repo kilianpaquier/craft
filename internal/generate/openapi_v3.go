@@ -26,7 +26,17 @@ var _ plugin = &openAPIV3{} // ensure interface is implemented
 // it returns a boolean indicating whether the plugin should be executed or removed.
 func (*openAPIV3) Detect(_ context.Context, config *models.GenerateConfig) bool {
 	gomod := filepath.Join(config.Options.DestinationDir, models.GoMod)
-	return !config.NoAPI && config.OpenAPIVersion == "v3" && filesystem.Exists(gomod)
+
+	if config.API == nil {
+		return false
+	}
+	if config.API.OpenAPIVersion == nil || *config.API.OpenAPIVersion != "v3" {
+		return false
+	}
+	if !filesystem.Exists(gomod) {
+		return false
+	}
+	return true
 }
 
 // Execute runs some commands for given plugin to "install" it.

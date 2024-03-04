@@ -29,10 +29,19 @@ func ReadCraft(srcdir string, out any) error {
 
 // WriteCraft writes the input craft into the input destdir in .craft file.
 func WriteCraft(destdir string, config models.CraftConfig) error {
-	bytes, err := yaml.Marshal(config)
-	if err != nil {
-		return fmt.Errorf("failed to marshal config: %w", err)
-	}
 	craft := filepath.Join(destdir, models.CraftFile)
-	return os.WriteFile(craft, bytes, filesystem.RwRR)
+	file, err := os.OpenFile(craft, os.O_RDWR|os.O_TRUNC|os.O_CREATE, filesystem.RwRR)
+	if err != nil {
+		return fmt.Errorf("failed to create '%s': %w", craft, err)
+	}
+	defer file.Close()
+
+	encoder := yaml.NewEncoder(file)
+	defer encoder.Close()
+
+	encoder.SetIndent(2)
+	if err := encoder.Encode(config); err != nil {
+		return fmt.Errorf("failed to write '%s': %w", craft, err)
+	}
+	return nil
 }

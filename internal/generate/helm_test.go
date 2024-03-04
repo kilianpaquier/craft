@@ -61,7 +61,7 @@ func TestHelmExecute(t *testing.T) {
 
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("kilianpaquier").
+			SetName("maintainer name").
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
@@ -77,9 +77,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				Build()).
+			SetCraftConfig(*craft.Copy().Build()).
 			Build()
 
 		// Act
@@ -103,9 +101,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				Build()).
+			SetCraftConfig(*craft.Copy().Build()).
 			Build()
 
 		// Act
@@ -124,8 +120,10 @@ func TestHelmExecute(t *testing.T) {
 		config := config.Copy().
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(false).
-				SetPort(5000).
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetDocker(*tests.NewDockerBuilder().
+					SetPort(5000).
+					Build()).
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).

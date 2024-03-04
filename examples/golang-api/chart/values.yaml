@@ -35,7 +35,7 @@ api:
   replicaCount: 1
   image:
     registry: ghcr.io/
-    repository: golang-api
+    repository: kilianpaquier/golang-api
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""

@@ -46,8 +46,8 @@ plugins:
   - - "@semantic-release/git"
     - assets: [ "CHANGELOG.md", "LICENSE" ]
       message: "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-<<- if or (eq .CI "github") (eq .CI "gitlab") >>
-  - - "@semantic-release/<< .CI >>"
+<<- if .CI >>
+  - - "@semantic-release/<< .CI.Name >>"
     - assets:
         - { path: CHANGELOG.md, label: CHANGELOG.md }
         - { path: checksums.txt }
@@ -55,13 +55,13 @@ plugins:
       failComment: false,
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
 <<- end >>
-<<- if eq .CI "gitlab" >>
+<<- if eq .CI.Name "gitlab" >>
   - - "@semantic-release/exec"
     - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
 <<- else >>
   - "@semantic-release/exec"
 <<- end >>
-<<- if eq .CI "gitlab" >>
+<<- if eq .CI.Name "gitlab" >>
 branches: 
   - (master|main)
   - v+([0-9])?(.{+([0-9]),x}).x

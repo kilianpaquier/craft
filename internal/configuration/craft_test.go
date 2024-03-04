@@ -10,20 +10,19 @@ import (
 
 	"github.com/kilianpaquier/craft/internal/configuration"
 	"github.com/kilianpaquier/craft/internal/models"
+	"github.com/kilianpaquier/craft/internal/models/tests"
 )
 
 func TestReadCraft(t *testing.T) {
 	tmp := t.TempDir()
-	expected := models.CraftConfig{
-		Maintainers: []models.Maintainer{
-			{
-				Name: "kilianpaquier",
-			},
-		},
-		NoAPI:   true,
-		NoChart: true,
-	}
-	err := configuration.WriteCraft(tmp, expected)
+	expected := tests.NewCraftConfigBuilder().
+		SetAPI(models.API{}).
+		SetMaintainers(*tests.NewMaintainerBuilder().
+			SetName("maintainer name").
+			Build()).
+		SetNoChart(true).
+		Build()
+	err := configuration.WriteCraft(tmp, *expected)
 	require.NoError(t, err)
 
 	t.Run("error_not_found", func(t *testing.T) {
@@ -45,7 +44,7 @@ func TestReadCraft(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		assert.Equal(t, expected, config)
+		assert.Equal(t, *expected, config)
 	})
 }
 
@@ -53,24 +52,22 @@ func TestWriteCraft(t *testing.T) {
 	tmp := t.TempDir()
 	t.Run("success", func(t *testing.T) {
 		// Arrange
-		expected := models.CraftConfig{
-			Maintainers: []models.Maintainer{
-				{
-					Name: "kilianpaquier",
-				},
-			},
-			NoAPI:   true,
-			NoChart: true,
-		}
+		expected := tests.NewCraftConfigBuilder().
+			SetAPI(models.API{}).
+			SetMaintainers(*tests.NewMaintainerBuilder().
+				SetName("maintainer name").
+				Build()).
+			SetNoChart(true).
+			Build()
 
 		// Act
-		err := configuration.WriteCraft(tmp, expected)
+		err := configuration.WriteCraft(tmp, *expected)
 		require.NoError(t, err)
 
 		// Assert
 		var config models.CraftConfig
 		err = configuration.ReadCraft(tmp, &config)
 		require.NoError(t, err)
-		assert.Equal(t, expected, config)
+		assert.Equal(t, *expected, config)
 	})
 }

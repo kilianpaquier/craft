@@ -27,7 +27,7 @@ func TestExecute(t *testing.T) {
 
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("kilianpaquier").
+			SetName("maintainer name").
 			Build())
 
 	t.Run("success_generic", func(t *testing.T) {
@@ -40,7 +40,6 @@ func TestExecute(t *testing.T) {
 			Build()
 
 		craft := craft.Copy().
-			SetNoAPI(true).
 			SetNoChart(true).
 			Build()
 
@@ -71,7 +70,6 @@ func TestExecute(t *testing.T) {
 			Build()
 
 		craft := craft.Copy().
-			SetNoAPI(true).
 			SetNoChart(true).
 			Build()
 

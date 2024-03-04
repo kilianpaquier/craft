@@ -36,7 +36,17 @@ var _ plugin = &openAPIV2{} // ensure interface is implemented
 // it returns a boolean indicating whether the plugin should be executed or removed.
 func (*openAPIV2) Detect(_ context.Context, config *models.GenerateConfig) bool {
 	gomod := filepath.Join(config.Options.DestinationDir, models.GoMod)
-	return !config.NoAPI && (config.OpenAPIVersion == "" || config.OpenAPIVersion == "v2") && filesystem.Exists(gomod)
+
+	if config.API == nil {
+		return false
+	}
+	if config.API.OpenAPIVersion != nil && *config.API.OpenAPIVersion != "" && *config.API.OpenAPIVersion != "v2" {
+		return false
+	}
+	if !filesystem.Exists(gomod) {
+		return false
+	}
+	return true
 }
 
 // Execute runs some commands for given plugin to "install" it.

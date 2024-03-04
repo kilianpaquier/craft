@@ -102,8 +102,10 @@ func TestGenericExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(models.Github).
-				SetDependabot(true).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					SetOptions(models.Dependabot).
+					Build()).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -125,7 +127,9 @@ func TestGenericExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(models.Gitlab).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Gitlab).
+					Build()).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).

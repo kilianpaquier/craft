@@ -93,7 +93,7 @@ jobs:
 
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-<<- $docker := and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
+<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
 <<- if $docker >>
 
   docker-build:
@@ -105,7 +105,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: << with .DockerRegistry >><< . >>/<< end >>${{ github.repository }}
+          images: << with .Docker.Registry >><< . >>/<< end >>${{ github.repository }}
           labels: |
             org.opencontainers.image.created={{date 'YYYY-MM-DDTHH:mm:ssZ'}}
             org.opencontainers.image.ref.name="${{ github.ref_name }}"
@@ -119,8 +119,8 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
-<<- if .DockerRegistry >>
-          registry: << .DockerRegistry >>
+<<- if .Docker.Registry >>
+          registry: << .Docker.Registry >>
 <<- end >>
           username: ${{ github.repository_owner }}
           password: ${{ secrets.REGISTRY_TOKEN }}
@@ -143,7 +143,7 @@ jobs:
       - uses: aquasecurity/trivy-action@master
         continue-on-error: true # enforce scan upload to codeql
         with:
-          image-ref: "<< with .DockerRegistry >><< . >>/<< end >>${{ github.repository }}:${{ needs.version.outputs.version }}"
+          image-ref: "<< with .Docker.Registry >><< . >>/<< end >>${{ github.repository }}:${{ needs.version.outputs.version }}"
           exit-code: "1"
           format: sarif
           output: trivy-results.sarif

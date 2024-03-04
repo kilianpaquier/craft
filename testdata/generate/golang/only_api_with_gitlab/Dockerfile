@@ -19,8 +19,8 @@ RUN CGO_ENABLED=0 go build -o craft-api cmd/craft-api/main.go
 #############################
 FROM gcr.io/distroless/static-debian12:nonroot
 
-LABEL org.opencontainers.image.authors="kilianpaquier"
-LABEL org.opencontainers.image.vendor="kilianpaquier"
+LABEL org.opencontainers.image.authors="maintainer name"
+LABEL org.opencontainers.image.vendor="maintainer name"
 
 LABEL org.opencontainers.image.title="craft"
 LABEL org.opencontainers.image.url="github.com/kilianpaquier/craft"

@@ -16,24 +16,8 @@ func FuncMap() template.FuncMap {
 	return template.FuncMap{
 		"fromYaml": fromYAML,
 		"map":      mergeMaps,
-		"prefix":   prefix,
-		"suffix":   suffix,
 		"toYaml":   toYAML,
 	}
-}
-
-func prefix(prefix string, v string) string {
-	if v == "" || strings.HasPrefix(v, prefix) {
-		return v
-	}
-	return prefix + v
-}
-
-func suffix(suffix string, v string) string {
-	if v == "" || strings.HasSuffix(v, suffix) {
-		return v
-	}
-	return v + suffix
 }
 
 func mergeMaps(dst map[string]any, src ...any) map[string]any {

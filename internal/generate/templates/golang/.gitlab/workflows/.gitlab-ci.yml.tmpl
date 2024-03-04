@@ -10,7 +10,7 @@ include:
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
 
-<<- $docker := and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
+<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
 <<- if $docker >>
       - pipeline/deployable.yml
 <<- end >>

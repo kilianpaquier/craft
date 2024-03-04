@@ -28,7 +28,9 @@ func TestOpenAPIV3Detect(t *testing.T) {
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetOpenAPIVersion("v3").
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v3").
+					Build()).
 				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
@@ -47,10 +49,7 @@ func TestOpenAPIV3Detect(t *testing.T) {
 		destdir := filepath.Join(pwd, "..", "..")
 
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetNoAPI(true).
-				SetOpenAPIVersion("v3").
-				Build()).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -67,7 +66,9 @@ func TestOpenAPIV3Detect(t *testing.T) {
 		// Arrange
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetOpenAPIVersion("v3").
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v3").
+					Build()).
 				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().Build()).
 			Build()
@@ -92,10 +93,12 @@ func TestOpenAPIV3Execute(t *testing.T) {
 
 	config := tests.NewGenerateConfigBuilder().
 		SetCraftConfig(*tests.NewCraftConfigBuilder().
-			SetMaintainers(*tests.NewMaintainerBuilder().
-				SetName("kilianpaquier").
+			SetAPI(*tests.NewAPIBuilder().
+				SetOpenAPIVersion("v3").
 				Build()).
-			SetOpenAPIVersion("v2").
+			SetMaintainers(*tests.NewMaintainerBuilder().
+				SetName("maintainer name").
+				Build()).
 			Build()).
 		SetModuleName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
