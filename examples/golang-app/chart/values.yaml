@@ -44,7 +44,7 @@ crons:
     completions: 1
     parallelism: 1
     image:
-      registry: github.com/kilianpaquier/craft/
+      registry: ghcr.io/
       repository: golang-app
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
@@ -277,7 +277,7 @@ workers:
     paused: true
     replicaCount: 1
     image:
-      registry: github.com/kilianpaquier/craft/
+      registry: ghcr.io/
       repository: golang-app
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.

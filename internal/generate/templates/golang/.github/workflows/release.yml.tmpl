@@ -5,6 +5,11 @@ run-name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Dry run
+        type: boolean
+        default: false
 
 jobs:
 
@@ -56,7 +61,8 @@ jobs:
             echo "release=true" >> $GITHUB_OUTPUT
           fi
 
-<<- if and (not .NoGoreleaser) (gt (len .Clis) 0) >>
+<<- $gobuild := and (not .NoGoreleaser) (gt (len .Clis) 0) >>
+<<- if $gobuild >>
 
   go-build:
     runs-on: ubuntu-latest
@@ -76,23 +82,22 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: executables
+          # order is important to filter unwanted globs after the filter or desired globs
           path: |
+            dist/*
             !dist/*.json
             !dist/*.yaml
             !dist/*/
-            checksums.txt
-            dist/*
           retention-days: 1
 <<- end >>
 
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-
-<<- if and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
+<<- $docker := and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
+<<- if $docker >>
 
   docker-build:
     runs-on: ubuntu-latest
-    environment: release
     needs:
       - version
     steps:
@@ -100,7 +105,7 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ github.repository }}
+          images: << with .DockerRegistry >><< . >>/<< end >>${{ github.repository }}
           labels: |
             org.opencontainers.image.created={{date 'YYYY-MM-DDTHH:mm:ssZ'}}
             org.opencontainers.image.ref.name="${{ github.ref_name }}"
@@ -114,26 +119,59 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+<<- if .DockerRegistry >>
+          registry: << .DockerRegistry >>
+<<- end >>
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
       - uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  docker-trivy:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    needs:
+      - version
+      - docker-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@master
+        continue-on-error: true # enforce scan upload to codeql
+        with:
+          image-ref: "<< with .DockerRegistry >><< . >>/<< end >>${{ github.repository }}:${{ needs.version.outputs.version }}"
+          exit-code: "1"
+          format: sarif
+          output: trivy-results.sarif
+          ignore-unfixed: false
+          severity: MEDIUM,HIGH,CRITICAL
+        env:
+          TRIVY_USERNAME: ${{ github.repository_owner }}
+          TRIVY_PASSWORD: ${{ secrets.REGISTRY_TOKEN }}
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+          category: docker-trivy
 <<- end >>
 
   release:
     runs-on: ubuntu-latest
-    environment: release
     if: github.ref_protected == true
     permissions:
       contents: write
       issues: write
-<<- if and (not .NoGoreleaser) (gt (len .Clis) 0) >>
+<<- if or $gobuild $docker >>
     needs:
+<<- if $gobuild >>
       - go-build
+<<- end >>
+<<- if $docker >>
+      - docker-build
+<<- end >>
 <<- end >>
     env:
       GIT_AUTHOR_NAME: ${{ github.triggering_actor }}
@@ -161,6 +199,7 @@ jobs:
 <<- if .License >>
             semantic-release-license
 <<- end >>
+          dry_run: ${{ inputs.dry_run }}
           tag_format: v${version}
           branches: |
             [

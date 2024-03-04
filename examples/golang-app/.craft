@@ -1,4 +1,4 @@
-docker_registry: github.com/kilianpaquier/craft
+docker_registry: ghcr.io
 license: mit
 ci: github
 maintainers:

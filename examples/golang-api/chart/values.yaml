@@ -34,7 +34,7 @@ api:
   paused: true
   replicaCount: 1
   image:
-    registry: github.com/kilianpaquier/craft/
+    registry: ghcr.io/
     repository: golang-api
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.

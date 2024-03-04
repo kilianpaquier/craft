@@ -13,7 +13,8 @@ import (
 
 // ReadCraft reads the .craft file in srcdir input into the out input.
 func ReadCraft(srcdir string, out any) error {
-	bytes, err := os.ReadFile(filepath.Join(srcdir, models.CraftFile))
+	craft := filepath.Join(srcdir, models.CraftFile)
+	bytes, err := os.ReadFile(craft)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return os.ErrNotExist
@@ -32,5 +33,6 @@ func WriteCraft(destdir string, config models.CraftConfig) error {
 	if err != nil {
 		return fmt.Errorf("failed to marshal config: %w", err)
 	}
-	return os.WriteFile(filepath.Join(destdir, models.CraftFile), bytes, filesystem.RwRR)
+	craft := filepath.Join(destdir, models.CraftFile)
+	return os.WriteFile(craft, bytes, filesystem.RwRR)
 }

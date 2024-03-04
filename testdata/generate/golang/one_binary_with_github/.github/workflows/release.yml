@@ -5,6 +5,11 @@ run-name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Dry run
+        type: boolean
+        default: false
 
 jobs:
 
@@ -71,17 +76,16 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: executables
+          # order is important to filter unwanted globs after the filter or desired globs
           path: |
+            dist/*
             !dist/*.json
             !dist/*.yaml
             !dist/*/
-            checksums.txt
-            dist/*
           retention-days: 1
 
   docker-build:
     runs-on: ubuntu-latest
-    environment: release
     needs:
       - version
     steps:
@@ -103,8 +107,8 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
       - uses: docker/build-push-action@v5
         with:
           context: .
@@ -112,15 +116,41 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
+  docker-trivy:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    needs:
+      - version
+      - docker-build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@master
+        continue-on-error: true # enforce scan upload to codeql
+        with:
+          image-ref: "${{ github.repository }}:${{ needs.version.outputs.version }}"
+          exit-code: "1"
+          format: sarif
+          output: trivy-results.sarif
+          ignore-unfixed: false
+          severity: MEDIUM,HIGH,CRITICAL
+        env:
+          TRIVY_USERNAME: ${{ github.repository_owner }}
+          TRIVY_PASSWORD: ${{ secrets.REGISTRY_TOKEN }}
+      - uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+          category: docker-trivy
+
   release:
     runs-on: ubuntu-latest
-    environment: release
     if: github.ref_protected == true
     permissions:
       contents: write
       issues: write
     needs:
       - go-build
+      - docker-build
     env:
       GIT_AUTHOR_NAME: ${{ github.triggering_actor }}
       GIT_AUTHOR_EMAIL: ${{ github.triggering_actor }}@users.noreply.github.com
@@ -144,6 +174,7 @@ jobs:
             @semantic-release/github
             @semantic-release/release-notes-generator
             conventional-changelog-conventionalcommits
+          dry_run: ${{ inputs.dry_run }}
           tag_format: v${version}
           branches: |
             [
