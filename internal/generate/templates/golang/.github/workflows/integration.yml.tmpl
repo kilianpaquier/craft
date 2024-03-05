@@ -102,26 +102,8 @@ jobs:
           category: docker-hadolint
       - id: hadolint
         uses: hadolint/hadolint-action@v3.1.0
-        continue-on-error: true # enforce scan upload pull request
         with:
           format: tty
-      - uses: actions/github-script@v7
-        if: github.event_name == 'pull_request'
-        with:
-          script: |
-            const output = `
-            #### Hadolint: \`${{ steps.hadolint.outcome }}\`
-            \`\`\`
-            ${process.env.HADOLINT_RESULTS}
-            \`\`\`
-            `;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            });
 <<- end >>
 
 <<- if has "sonar" .CI.Options >>
