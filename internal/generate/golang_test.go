@@ -71,8 +71,9 @@ func TestGolangDetect(t *testing.T) {
 		assert.False(t, present)
 		assert.Equal(t, expected, current)
 		logs := testlogrus.Logs()
-		assert.Contains(t, logs, "failed to retrieve go.mod module name")
+		assert.Contains(t, logs, "failed to parse go.mod statements")
 		assert.Contains(t, logs, "invalid go.mod, module statement is missing")
+		assert.Contains(t, logs, "invalid go.mod, go statement is missing")
 	})
 
 	t.Run("success_no_cmd", func(t *testing.T) {
@@ -80,11 +81,16 @@ func TestGolangDetect(t *testing.T) {
 		destdir := t.TempDir()
 
 		gomod := filepath.Join(destdir, models.GoMod) // create go.mod
-		err := os.WriteFile(gomod, []byte("module github.com/kilianpaquier/craft"), filesystem.RwRR)
+		err := os.WriteFile(gomod, []byte(
+			`module github.com/kilianpaquier/craft
+			
+			go 1.22`,
+		), filesystem.RwRR)
 		require.NoError(t, err)
 
 		expected := tests.NewGenerateConfigBuilder().
 			SetModuleName("github.com/kilianpaquier/craft").
+			SetModuleVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -110,7 +116,11 @@ func TestGolangDetect(t *testing.T) {
 		destdir := t.TempDir()
 
 		gomod := filepath.Join(destdir, models.GoMod) // create go.mod
-		err := os.WriteFile(gomod, []byte("module github.com/kilianpaquier/craft"), filesystem.RwRR)
+		err := os.WriteFile(gomod, []byte(
+			`module github.com/kilianpaquier/craft
+			
+			go 1.22`,
+		), filesystem.RwRR)
 		require.NoError(t, err)
 
 		gocmd := filepath.Join(destdir, models.GoCmd)
@@ -129,6 +139,7 @@ func TestGolangDetect(t *testing.T) {
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
 			SetModuleName("github.com/kilianpaquier/craft").
+			SetModuleVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -171,6 +182,7 @@ func TestGolangExecute(t *testing.T) {
 
 	config := tests.NewGenerateConfigBuilder().
 		SetModuleName("github.com/kilianpaquier/craft").
+		SetModuleVersion("1.22").
 		SetProjectName("craft")
 
 	t.Run("success_no_binaries", func(t *testing.T) {

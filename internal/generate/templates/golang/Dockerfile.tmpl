@@ -8,7 +8,7 @@
 #############################
 #        STAGE BUILD        #
 #############################
-FROM golang:latest AS build
+FROM golang:<< .ModuleVersion >> AS build
 
 WORKDIR /app
 

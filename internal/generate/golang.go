@@ -34,12 +34,13 @@ func (plugin *golang) Detect(ctx context.Context, config *models.GenerateConfig)
 	}
 
 	// retrieve module from go.mod
-	moduleName, err := plugin.moduleName(gomod)
+	statements, err := plugin.module(gomod)
 	if err != nil {
-		log.WithError(err).Warn("failed to retrieve go.mod module name")
+		log.WithError(err).Warn("failed to parse go.mod statements")
 		return false
 	}
-	config.ModuleName = moduleName
+	config.ModuleName = statements.ModuleName
+	config.ModuleVersion = statements.ModuleVersion
 
 	entries, err := os.ReadDir(gocmd)
 	if err != nil {
@@ -100,18 +101,42 @@ func (*golang) Type() pluginType {
 	return primary
 }
 
-// moduleName reads the go.mod file at modpath input and returns the module section.
-func (*golang) moduleName(modpath string) (string, error) {
+// gomod represents the parsed struct for go.mod file
+type gomod struct {
+	ModuleName    string
+	ModuleVersion string
+}
+
+// module reads the go.mod file at modpath input and returns its gomod representation.
+func (*golang) module(modpath string) (*gomod, error) {
+	// read go.mod at modpath
 	bytes, err := os.ReadFile(modpath)
 	if err != nil {
-		return "", fmt.Errorf("failed to read go.mod: %w", err)
+		return nil, fmt.Errorf("failed to read go.mod: %w", err)
 	}
+
+	// parse go.mod into it's modfile representation
 	file, err := modfile.Parse(modpath, bytes, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to parse go.mod: %w", err)
+		return nil, fmt.Errorf("failed to parse go.mod: %w", err)
 	}
+
+	var errs []error
+	gomod := &gomod{}
+
+	// parse module statement
 	if file.Module == nil {
-		return "", errors.New("invalid go.mod, module statement is missing")
+		errs = append(errs, errors.New("invalid go.mod, module statement is missing"))
+	} else {
+		gomod.ModuleName = file.Module.Mod.Path
 	}
-	return file.Module.Mod.Path, nil
+
+	// parse go statement
+	if file.Go == nil {
+		errs = append(errs, errors.New("invalid go.mod, go statement is missing"))
+	} else {
+		gomod.ModuleVersion = file.Go.Version
+	}
+
+	return gomod, errors.Join(errs...)
 }
