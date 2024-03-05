@@ -2,6 +2,7 @@
 
 - [How to use ?](#how-to-use-)
 - [Commands](#commands)
+  - [Generate](#generate)
 - [Craft file](#craft-file)
 - [Plugins](#plugins)
   - [Generic plugin](#generic-plugin)
@@ -20,17 +21,44 @@ go install github.com/kilianpaquier/craft/cmd/craft@latest
 
 ## Commands
 
-CLI commands:
+```sh
+Craft stands here to generate a similar project layout for all your projects. 
+Multiple coding languages are supported and even helm chart can be generated. 
+For more information please consult each command specificities.
 
-- `init`: initializes a new craft projects. A few questions will be asked in the terminal to tune the generated layout:
-  - project's description
-  - project's main maintainer (can be anything, a group name, a person's name, alias, etc.)
-  - will the project expose an api layer (golang based)
-  - which openapi version the api layer will be (only asked if api layer is true)
-  - will the project have a helm chart
-- `generate`: generates the craft layout. Only works if the project was initialized (it has a `.craft` file at project's root). Available options are:
-  - `--force`: forces the generation of a list of already generated files (`.gitlab-ci.yml`, `sonar.properties`, etc.)
-  - `--force-all`: forces the generation of all generated files even if they exist (you may stage or stash your changes before running `craft generate` with this option).
+Usage:
+  craft [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  generate    Generate the project layout
+  help        Help about any command
+  init        Initialize the project layout
+  version     Shows current craft version
+
+Flags:
+  -h, --help               help for craft
+  -l, --log-level string   set logging level
+
+Use "craft [command] --help" for more information about a command.
+```
+
+### Generate
+
+```sh
+Generate the project layout
+
+Usage:
+  craft generate [flags]
+
+Flags:
+  -f, --force strings   force regenerating a list of templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
+      --force-all       force regenerating all templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
+  -h, --help            help for generate
+
+Global Flags:
+  -l, --log-level string   set logging level
+```
 
 ## Craft file
 
