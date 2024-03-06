@@ -1,3 +1,10 @@
+## [1.0.0-alpha.4](https://github.com/kilianpaquier/craft/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2024-03-06)
+
+
+### Bug Fixes
+
+* **ci:** executables not being uploaded in release - [#14](https://github.com/kilianpaquier/craft/issues/14) ([dcb3e77](https://github.com/kilianpaquier/craft/commit/dcb3e7760a11dc3a29c4cea0be544f90dbe33f84))
+
 ## [1.0.0-alpha.3](https://github.com/kilianpaquier/craft/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2024-03-06)
 
 
