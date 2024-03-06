@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	testlogrus "github.com/kilianpaquier/testlogrus/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -49,8 +49,9 @@ func TestGolangDetect(t *testing.T) {
 		destdir := t.TempDir()
 
 		gomod := filepath.Join(destdir, models.GoMod) // create go.mod
-		_, err := os.Create(gomod)
+		file, err := os.Create(gomod)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		expected := tests.NewGenerateConfigBuilder().
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -108,7 +109,7 @@ func TestGolangDetect(t *testing.T) {
 		// Assert
 		assert.True(t, present)
 		assert.Equal(t, expected, current)
-		assert.Contains(t, testlogrus.Logs(), filepath.Join(destdir, models.GoCmd)+" doesn't exist")
+		assert.Contains(t, testlogrus.Logs(), models.GoCmd+" doesn't exist")
 	})
 
 	t.Run("success_all_binaries", func(t *testing.T) {
@@ -203,7 +204,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_only_api_with_github", func(t *testing.T) {
@@ -230,7 +231,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_only_api_with_gitlab", func(t *testing.T) {
@@ -257,7 +258,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_one_binary_with_github", func(t *testing.T) {
@@ -284,7 +285,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_one_binary_with_gitlab", func(t *testing.T) {
@@ -311,7 +312,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_options_binaries_github", func(t *testing.T) {
@@ -348,7 +349,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_binaries", func(t *testing.T) {
@@ -378,7 +379,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 

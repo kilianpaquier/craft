@@ -46,15 +46,15 @@ func (*openAPIV3) Detect(_ context.Context, config *models.GenerateConfig) bool 
 func (plugin *openAPIV3) Execute(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS) error {
 	log := logrus.WithContext(ctx)
 
-	tmpl := filepath.Join(config.Options.TemplatesDir, plugin.Name())
-	src := filepath.Join(tmpl, models.SwaggerFile+models.TmplExtension)
+	tmpl := path.Join(config.Options.TemplatesDir, plugin.Name())
+	src := path.Join(tmpl, models.SwaggerFile+models.TmplExtension)
 	dest := filepath.Join(config.Options.DestinationDir, models.SwaggerFile)
 
 	// generate api.yml file only if it doesn't exist
 	if !config.Options.ForceAll && filesystem.Exists(dest) && !slices.Contains(config.Options.Force, models.SwaggerFile) {
 		log.Warnf("not copying %s because it already exists", models.SwaggerFile)
 	} else {
-		tmpl, err := template.New(path.Base(src)).
+		tmpl, err := template.New(models.SwaggerFile+models.TmplExtension).
 			Funcs(sprig.FuncMap()).
 			Funcs(templating.FuncMap()).
 			Delims(config.Options.StartDelim, config.Options.EndDelim).

@@ -38,7 +38,7 @@ func (*helm) Detect(_ context.Context, config *models.GenerateConfig) bool {
 // GenerateConfig is given as copy because no modification should be done during execution on it.
 // Input fsys serves to retrieve templates used during generation (embed in binary, os filesystem, etc.).
 func (plugin *helm) Execute(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS) error {
-	srcdir := filepath.Join(config.Options.TemplatesDir, plugin.Name())
+	srcdir := path.Join(config.Options.TemplatesDir, plugin.Name())
 	destdir := filepath.Join(config.Options.DestinationDir, "chart")
 
 	// transform craft configuration into generic chart configuration (easier to maintain)
@@ -101,7 +101,7 @@ func (plugin *helm) iterateOver(ctx context.Context, config models.GenerateConfi
 	}
 
 	errs := lo.Map(entries, func(entry fs.DirEntry, _ int) error {
-		src := filepath.Join(srcdir, entry.Name())
+		src := path.Join(srcdir, entry.Name())
 		filename := strings.TrimSuffix(entry.Name(), models.TmplExtension)
 		dest := filepath.Join(destdir, filename)
 
@@ -117,7 +117,7 @@ func (plugin *helm) iterateOver(ctx context.Context, config models.GenerateConfi
 
 		switch filename {
 		case "Chart.yaml", "values.yaml", "_helpers.tpl":
-			tmpl, err := template.New(path.Base(src)).
+			tmpl, err := template.New(entry.Name()).
 				Funcs(sprig.FuncMap()).
 				Funcs(templating.FuncMap()).
 				Delims(config.Options.StartDelim, config.Options.EndDelim).

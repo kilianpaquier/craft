@@ -19,8 +19,10 @@ const (
 //go:embed all:templates
 var tmpl embed.FS
 
+var _ filesystem.FS = &embed.FS{} // ensure interface is implemented
+
 // generated is the regexp for generated files.
-var generated = regexp.MustCompile(`Code generated [a-z-0-9 ]+; DO NOT EDIT\.`)
+var generated = regexp.MustCompile(`Code generated [a-z-_0-9\ ]+; DO NOT EDIT\.`)
 
 type plugin interface {
 	// Detect takes the GenerateConfig in input to read or write values from or to it.

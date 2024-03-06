@@ -57,7 +57,7 @@ func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir str
 	}
 
 	errs := lo.Map(entries, func(entry fs.DirEntry, _ int) error {
-		src := filepath.Join(srcdir, entry.Name())
+		src := path.Join(srcdir, entry.Name())
 
 		if entry.IsDir() {
 			// apply generation at root if the folder name is the plugin name
@@ -66,7 +66,7 @@ func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir str
 			}
 
 			// apply templates on subdirs of plugin
-			subdir := filepath.Join(d.config.Options.TemplatesDir, d.plugin.Name())
+			subdir := path.Join(d.config.Options.TemplatesDir, d.plugin.Name())
 			if strings.HasPrefix(src, subdir) {
 				dest := filepath.Join(destdir, entry.Name())
 				return d.defaultCopyDir(ctx, src, dest)
@@ -104,7 +104,7 @@ func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir str
 			break // break loop since optional file was found
 		}
 
-		tmpl, err := template.New(path.Base(src)).
+		tmpl, err := template.New(entry.Name()).
 			Funcs(sprig.FuncMap()).
 			Funcs(templating.FuncMap()).
 			Delims(d.config.Options.StartDelim, d.config.Options.EndDelim).

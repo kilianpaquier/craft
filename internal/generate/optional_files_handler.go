@@ -1,7 +1,7 @@
 package generate
 
 import (
-	"path/filepath"
+	"path"
 	"slices"
 	"strings"
 
@@ -67,7 +67,7 @@ func dockerHandler(config models.GenerateConfig) handler {
 // githubHandler returns the handler for github option generation matching.
 func githubHandler(config models.GenerateConfig) handler {
 	return func(src, _, _ string) (_ bool, _ bool) {
-		dir := filepath.Join(".github", "workflows")
+		dir := path.Join(".github", "workflows")
 		return strings.Contains(src, dir), config.CI != nil && config.CI.Name == models.Github
 	}
 }
@@ -75,7 +75,7 @@ func githubHandler(config models.GenerateConfig) handler {
 // gitlabHandler returns the handler for gitlab option generation matching.
 func gitlabHandler(config models.GenerateConfig) handler {
 	return func(src, _, filename string) (_ bool, _ bool) {
-		dir := filepath.Join(".gitlab", "workflows")
+		dir := path.Join(".gitlab", "workflows")
 		return filename == ".gitlab-ci.yml" || strings.Contains(src, dir), config.CI != nil && config.CI.Name == models.Gitlab
 	}
 }
