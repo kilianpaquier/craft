@@ -1,3 +1,34 @@
+## [1.0.0-alpha.3](https://github.com/kilianpaquier/craft/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2024-03-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* **config:** many options moved to substructures, like openapi_version into api.openapi_version or docker_registry into docker.registry
+
+### Features
+
+* **github:** add docker-hadolint and docker-trivy analysis, remove version on integration, update codecov configuration ([f77eb46](https://github.com/kilianpaquier/craft/commit/f77eb46d72bb4ea87651b45df2f382a31020de3e))
+* **go:** handle go test with multiple OS ([c257ea3](https://github.com/kilianpaquier/craft/commit/c257ea33ccd26f7e03c3e11e115c8f716e7a40d2))
+* **go:** handle golang docker build stage version ([5815d62](https://github.com/kilianpaquier/craft/commit/5815d62556fc3ebfe04cd24c332342424b2cac71))
+
+
+### Bug Fixes
+
+* **ci:** handle correctly dependabot codecov ignore ([bea2c7c](https://github.com/kilianpaquier/craft/commit/bea2c7c37adcd68694ab8562b0835852f5d6818f))
+* **ci:** handle correctly push github actions rules with semantic release branches rules ([ca6f7fe](https://github.com/kilianpaquier/craft/commit/ca6f7fe4c6e004e83f84050074ec0d85a7dae3b6))
+* **go:** remove hadolint pull request comment ([f294d46](https://github.com/kilianpaquier/craft/commit/f294d46d1a1a21f97dabfae76f8a7db0b5e12a43))
+* handle correctly windows generation ([c3e8573](https://github.com/kilianpaquier/craft/commit/c3e8573be98b52830f34f3eca7f7351a80ce4b77))
+
+
+### Documentation
+
+* **readme:** add CC of craft commands instead of manul explanation ([867fd60](https://github.com/kilianpaquier/craft/commit/867fd60fd18625b412dcf547d53db8eef0dff02b))
+
+
+### Code Refactoring
+
+* **config:** rework craft config structure ([83aa207](https://github.com/kilianpaquier/craft/commit/83aa20766cccb0e3041d54fa9b3c6928b1e555ee))
+
 ## [1.0.0-alpha.2](https://github.com/kilianpaquier/craft/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2024-03-03)
 
 
