@@ -75,6 +75,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: executables
+          path: dist
       - id: semantic-release
         uses: cycjimmy/semantic-release-action@v4
         with:
