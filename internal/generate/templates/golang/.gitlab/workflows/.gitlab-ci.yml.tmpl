@@ -6,9 +6,12 @@ include:
     ref: $CICD_INDUS_BRANCH # should be main or latest tag in most cases
     file:
       - pipeline/go.yml
+
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-<<- if and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
+
+<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
+<<- if $docker >>
       - pipeline/deployable.yml
 <<- end >>
 

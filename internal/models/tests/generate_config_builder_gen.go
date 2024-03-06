@@ -56,6 +56,12 @@ func (b *GenerateConfigBuilder) SetModuleName(moduleName string) *GenerateConfig
 	return b
 }
 
+// SetModuleVersion sets GenerateConfig's ModuleVersion.
+func (b *GenerateConfigBuilder) SetModuleVersion(moduleVersion string) *GenerateConfigBuilder {
+	b.ModuleVersion = moduleVersion
+	return b
+}
+
 // SetOptions sets GenerateConfig's Options.
 func (b *GenerateConfigBuilder) SetOptions(options models.GenerateOptions) *GenerateConfigBuilder {
 	b.Options = options

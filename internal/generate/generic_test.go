@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -67,7 +67,7 @@ func TestGenericExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_force_one", func(t *testing.T) {
@@ -92,7 +92,7 @@ func TestGenericExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_github", func(t *testing.T) {
@@ -102,8 +102,10 @@ func TestGenericExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(models.Github).
-				SetDependabot(true).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					SetOptions(models.Dependabot).
+					Build()).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -115,7 +117,7 @@ func TestGenericExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_gitlab", func(t *testing.T) {
@@ -125,7 +127,9 @@ func TestGenericExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(models.Gitlab).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Gitlab).
+					Build()).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -137,7 +141,7 @@ func TestGenericExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 

@@ -1,8 +1,10 @@
-docker_registry: github.com/kilianpaquier/craft
+ci:
+  name: github
+  options:
+    - dependabot
+docker:
+  registry: ghcr.io
 license: mit
-ci: github
 maintainers:
-    - email: kilianpaquier@users.noreply.github.com
-      name: kilianpaquier
-dependabot: true
-no_api: true
+  - email: kilianpaquier@users.noreply.github.com
+    name: kilianpaquier

@@ -10,7 +10,7 @@
 
 <<- $packages := list "github-actions" "gomod" >>
 
-<<- if and (not .NoDockerfile) (or (not .NoAPI) (gt (len $binaries) 0)) >>
+<<- if and .Docker (or .API (gt (len $binaries) 0)) >>
 <<- $packages = append $packages "docker" >>
 <<- end >>
 

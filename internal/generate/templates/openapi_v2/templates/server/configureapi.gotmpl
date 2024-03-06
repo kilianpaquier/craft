@@ -18,9 +18,9 @@ import (
   log "github.com/sirupsen/logrus"
 
   {{ $internal := "internal/api" }}
-  internal_api {{ joinFilePath .TargetImportPath $internal | quote }}
+  internal_api {{ joinPath .TargetImportPath $internal | quote }}
   {{- range .Operations }}
-  {{ .Package }}_api {{ joinFilePath .TargetImportPath $internal .Package | quote }}
+  {{ .Package }}_api {{ joinPath .TargetImportPath $internal .Package | quote }}
   {{- end }}
   {{ imports .DefaultImports }}
   {{ imports .Imports }}

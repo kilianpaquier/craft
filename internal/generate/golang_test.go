@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	testlogrus "github.com/kilianpaquier/testlogrus/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -49,8 +49,9 @@ func TestGolangDetect(t *testing.T) {
 		destdir := t.TempDir()
 
 		gomod := filepath.Join(destdir, models.GoMod) // create go.mod
-		_, err := os.Create(gomod)
+		file, err := os.Create(gomod)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		expected := tests.NewGenerateConfigBuilder().
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -71,8 +72,9 @@ func TestGolangDetect(t *testing.T) {
 		assert.False(t, present)
 		assert.Equal(t, expected, current)
 		logs := testlogrus.Logs()
-		assert.Contains(t, logs, "failed to retrieve go.mod module name")
+		assert.Contains(t, logs, "failed to parse go.mod statements")
 		assert.Contains(t, logs, "invalid go.mod, module statement is missing")
+		assert.Contains(t, logs, "invalid go.mod, go statement is missing")
 	})
 
 	t.Run("success_no_cmd", func(t *testing.T) {
@@ -80,11 +82,16 @@ func TestGolangDetect(t *testing.T) {
 		destdir := t.TempDir()
 
 		gomod := filepath.Join(destdir, models.GoMod) // create go.mod
-		err := os.WriteFile(gomod, []byte("module github.com/kilianpaquier/craft"), filesystem.RwRR)
+		err := os.WriteFile(gomod, []byte(
+			`module github.com/kilianpaquier/craft
+			
+			go 1.22`,
+		), filesystem.RwRR)
 		require.NoError(t, err)
 
 		expected := tests.NewGenerateConfigBuilder().
 			SetModuleName("github.com/kilianpaquier/craft").
+			SetModuleVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -102,7 +109,7 @@ func TestGolangDetect(t *testing.T) {
 		// Assert
 		assert.True(t, present)
 		assert.Equal(t, expected, current)
-		assert.Contains(t, testlogrus.Logs(), filepath.Join(destdir, models.GoCmd)+" doesn't exist")
+		assert.Contains(t, testlogrus.Logs(), models.GoCmd+" doesn't exist")
 	})
 
 	t.Run("success_all_binaries", func(t *testing.T) {
@@ -110,7 +117,11 @@ func TestGolangDetect(t *testing.T) {
 		destdir := t.TempDir()
 
 		gomod := filepath.Join(destdir, models.GoMod) // create go.mod
-		err := os.WriteFile(gomod, []byte("module github.com/kilianpaquier/craft"), filesystem.RwRR)
+		err := os.WriteFile(gomod, []byte(
+			`module github.com/kilianpaquier/craft
+			
+			go 1.22`,
+		), filesystem.RwRR)
 		require.NoError(t, err)
 
 		gocmd := filepath.Join(destdir, models.GoCmd)
@@ -129,6 +140,7 @@ func TestGolangDetect(t *testing.T) {
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
 			SetModuleName("github.com/kilianpaquier/craft").
+			SetModuleVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -166,11 +178,12 @@ func TestGolangExecute(t *testing.T) {
 
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("kilianpaquier").
+			SetName("maintainer name").
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
 		SetModuleName("github.com/kilianpaquier/craft").
+		SetModuleVersion("1.22").
 		SetProjectName("craft")
 
 	t.Run("success_no_binaries", func(t *testing.T) {
@@ -180,7 +193,6 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -192,7 +204,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_only_api_with_github", func(t *testing.T) {
@@ -202,7 +214,11 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetCI(models.Github).
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -215,7 +231,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_only_api_with_gitlab", func(t *testing.T) {
@@ -225,7 +241,11 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetCI(models.Gitlab).
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Gitlab).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -238,7 +258,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_one_binary_with_github", func(t *testing.T) {
@@ -248,8 +268,10 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				SetCI(models.Github).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -263,7 +285,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_one_binary_with_gitlab", func(t *testing.T) {
@@ -273,8 +295,10 @@ func TestGolangExecute(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				SetCI(models.Gitlab).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Gitlab).
+					Build()).
+				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
 			SetOptions(*opts.Copy().
@@ -288,7 +312,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_options_binaries_github", func(t *testing.T) {
@@ -309,15 +333,12 @@ func TestGolangExecute(t *testing.T) {
 		config = config.
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetCI(models.Github).
-				SetCodeCov(true).
-				SetDependabot(true).
-				SetLicense("mit"). // goreleaser and releaserc indication of license
-				SetNoAPI(true).
-				SetNoDockerfile(true).
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Github).
+					SetOptions(models.CodeCov, models.Dependabot, models.Sonar).
+					Build()).
+				SetLicense("mit").
 				SetNoGoreleaser(true).
-				SetPort(5000). // dockerfile exposed port
-				SetSonar(true).
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
@@ -328,7 +349,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_binaries", func(t *testing.T) {
@@ -339,8 +360,11 @@ func TestGolangExecute(t *testing.T) {
 		config := config.Copy().
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetLicense("mit"). // goreleaser and releaserc indication of license
-				SetPort(5000).     // dockerfile exposed port
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetDocker(*tests.NewDockerBuilder().
+					SetPort(5000).
+					Build()).
+				SetLicense("mit").
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
@@ -355,7 +379,7 @@ func TestGolangExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 

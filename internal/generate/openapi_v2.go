@@ -36,7 +36,17 @@ var _ plugin = &openAPIV2{} // ensure interface is implemented
 // it returns a boolean indicating whether the plugin should be executed or removed.
 func (*openAPIV2) Detect(_ context.Context, config *models.GenerateConfig) bool {
 	gomod := filepath.Join(config.Options.DestinationDir, models.GoMod)
-	return !config.NoAPI && (config.OpenAPIVersion == "" || config.OpenAPIVersion == "v2") && filesystem.Exists(gomod)
+
+	if config.API == nil {
+		return false
+	}
+	if config.API.OpenAPIVersion != nil && *config.API.OpenAPIVersion != "" && *config.API.OpenAPIVersion != "v2" {
+		return false
+	}
+	if !filesystem.Exists(gomod) {
+		return false
+	}
+	return true
 }
 
 // Execute runs some commands for given plugin to "install" it.
@@ -45,11 +55,11 @@ func (*openAPIV2) Detect(_ context.Context, config *models.GenerateConfig) bool 
 // Input fsys serves to retrieve templates used during generation (embed in binary, os filesystem, etc.).
 func (plugin *openAPIV2) Execute(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS) error {
 	log := logrus.WithContext(ctx)
-	tmpl := filepath.Join(config.Options.TemplatesDir, plugin.Name())
+	tmpl := path.Join(config.Options.TemplatesDir, plugin.Name())
 
 	// goswagger doesn't handle specific fs, as such we copy all src into temp directory
 	srcdir := filepath.Join(os.TempDir(), plugin.Name())
-	if err := filesystem.CopyDir(tmpl, srcdir, filesystem.WithFS(fsys)); err != nil {
+	if err := filesystem.CopyDir(tmpl, srcdir, filesystem.WithFS(fsys), filesystem.WithJoin(path.Join)); err != nil {
 		return fmt.Errorf("failed to copy embedded openapi v2 templates into temp directory: %w", err)
 	}
 
@@ -60,11 +70,11 @@ func (plugin *openAPIV2) Execute(ctx context.Context, config models.GenerateConf
 	if !config.Options.ForceAll && filesystem.Exists(dest) && !slices.Contains(config.Options.Force, models.SwaggerFile) {
 		log.Warnf("not copying %s because it already exists", models.SwaggerFile)
 	} else {
-		tmpl, err := template.New(path.Base(src)).
+		tmpl, err := template.New(models.SwaggerFile+models.TmplExtension).
 			Funcs(sprig.FuncMap()).
 			Funcs(templating.FuncMap()).
 			Delims(config.Options.StartDelim, config.Options.EndDelim).
-			ParseFS(filesystem.OS(), src)
+			ParseFiles(src)
 		if err != nil {
 			return fmt.Errorf("failed to parse %s: %w", src, err)
 		}

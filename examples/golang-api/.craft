@@ -1,6 +1,9 @@
+api: {}
+ci:
+  name: gitlab
 description: API craft example
-docker_registry: github.com/kilianpaquier/craft
+docker:
+  registry: ghcr.io
 license: mit
-ci: gitlab
 maintainers:
-    - name: kilianpaquier
+  - name: kilianpaquier

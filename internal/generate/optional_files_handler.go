@@ -1,7 +1,7 @@
 package generate
 
 import (
-	"path/filepath"
+	"path"
 	"slices"
 	"strings"
 
@@ -36,21 +36,21 @@ func newOptionalHandlers(config models.GenerateConfig) []handler {
 // codeCovHandler returns the handler for codecov github actions reporting.
 func codeCovHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "codecov.yml", config.CI == "github" && config.CodeCov
+		return filename == "codecov.yml", config.CI != nil && config.CI.Name == models.Github && slices.Contains(config.CI.Options, models.CodeCov)
 	}
 }
 
 // dependabotHandler returns the handler for dependabot github maintenance.
 func dependabotHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "dependabot.yml", config.CI == "github" && config.Dependabot
+		return filename == "dependabot.yml", config.CI != nil && config.CI.Name == models.Github && slices.Contains(config.CI.Options, models.Dependabot)
 	}
 }
 
 // dockerHandler returns the handler for docker option generation matching.
 func dockerHandler(config models.GenerateConfig) handler {
 	var binaries int
-	if !config.NoAPI {
+	if config.API != nil {
 		binaries++
 	}
 	binaries += len(config.Clis)
@@ -60,23 +60,23 @@ func dockerHandler(config models.GenerateConfig) handler {
 
 	return func(_, _, filename string) (_ bool, _ bool) {
 		files := []string{"Dockerfile", ".dockerignore"}
-		return slices.Contains(files, filename), !config.NoDockerfile && binaries > 0
+		return slices.Contains(files, filename), config.Docker != nil && binaries > 0
 	}
 }
 
 // githubHandler returns the handler for github option generation matching.
 func githubHandler(config models.GenerateConfig) handler {
 	return func(src, _, _ string) (_ bool, _ bool) {
-		dir := filepath.Join(".github", "workflows")
-		return strings.Contains(src, dir), config.CI == models.Github
+		dir := path.Join(".github", "workflows")
+		return strings.Contains(src, dir), config.CI != nil && config.CI.Name == models.Github
 	}
 }
 
 // gitlabHandler returns the handler for gitlab option generation matching.
 func gitlabHandler(config models.GenerateConfig) handler {
 	return func(src, _, filename string) (_ bool, _ bool) {
-		dir := filepath.Join(".gitlab", "workflows")
-		return filename == ".gitlab-ci.yml" || strings.Contains(src, dir), config.CI == models.Gitlab
+		dir := path.Join(".gitlab", "workflows")
+		return filename == ".gitlab-ci.yml" || strings.Contains(src, dir), config.CI != nil && config.CI.Name == models.Gitlab
 	}
 }
 
@@ -90,7 +90,7 @@ func goreleaserHandler(config models.GenerateConfig) handler {
 // launcherHandler returns the handler for launcher option generation matching.
 func launcherHandler(config models.GenerateConfig) handler {
 	var binaries int
-	if !config.NoAPI {
+	if config.API != nil {
 		binaries++
 	}
 	binaries += len(config.Clis)
@@ -99,7 +99,7 @@ func launcherHandler(config models.GenerateConfig) handler {
 	binaries += len(config.Workers)
 
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "launcher.sh", !config.NoDockerfile && binaries > 1
+		return filename == "launcher.sh", config.Docker != nil && binaries > 1
 	}
 }
 
@@ -113,13 +113,13 @@ func makefileHandler(config models.GenerateConfig) handler {
 // releasercHandler returns the handler for releaserc option generation matching.
 func releasercHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == ".releaserc.yml", config.CI != ""
+		return filename == ".releaserc.yml", config.CI != nil
 	}
 }
 
 // sonarHandler returns the handler for sonar option generation matching.
 func sonarHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "sonar.properties", config.Sonar
+		return filename == "sonar.properties", config.CI != nil && slices.Contains(config.CI.Options, models.Sonar)
 	}
 }

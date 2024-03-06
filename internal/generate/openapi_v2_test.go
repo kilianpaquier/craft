@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -28,7 +28,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 		destdir := filepath.Join(pwd, "..", "..")
 
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -47,7 +49,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetOpenAPIVersion("v2").
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v2").
+					Build()).
 				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
@@ -67,7 +71,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetOpenAPIVersion("v3").
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v3").
+					Build()).
 				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
@@ -86,9 +92,7 @@ func TestOpenAPIV2Detect(t *testing.T) {
 		destdir := filepath.Join(pwd, "..", "..")
 
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetNoAPI(true).
-				Build()).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -104,7 +108,9 @@ func TestOpenAPIV2Detect(t *testing.T) {
 	t.Run("success_false_without_gomod", func(t *testing.T) {
 		// Arrange
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().Build()).
 			Build()
 
@@ -135,9 +141,11 @@ func TestOpenAPIV2Execute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetCraftConfig(*tests.NewCraftConfigBuilder().
 			SetMaintainers(*tests.NewMaintainerBuilder().
-				SetName("kilianpaquier").
+				SetName("maintainer name").
 				Build()).
-			SetOpenAPIVersion("v2").
+			SetAPI(*tests.NewAPIBuilder().
+				SetOpenAPIVersion("v2").
+				Build()).
 			Build()).
 		SetModuleName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
@@ -161,7 +169,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_api_yml", func(t *testing.T) {
@@ -186,7 +194,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 
@@ -242,8 +250,9 @@ func TestOpenAPIV2Remove(t *testing.T) {
 		require.NoError(t, os.MkdirAll(binarydir, filesystem.RwxRxRxRx))
 		require.NoError(t, os.MkdirAll(internal, filesystem.RwxRxRxRx))
 
-		_, err := os.Create(swagger)
+		file, err := os.Create(swagger)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		// Act
 		err = api.Remove(ctx, *config)

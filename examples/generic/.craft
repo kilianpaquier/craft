@@ -1,4 +1,5 @@
-ci: gitlab
+ci:
+  name: gitlab
 maintainers:
-    - name: kilianpaquier
+  - name: kilianpaquier
 no_chart: true

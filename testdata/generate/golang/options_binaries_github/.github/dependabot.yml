@@ -22,9 +22,9 @@ updates:
     rebase-strategy: auto
     target-branch: main
     assignees:
-      - kilianpaquier
+      - maintainer name
     reviewers:
-      - kilianpaquier
+      - maintainer name
   - package-ecosystem: gomod
     directory: /
     schedule:
@@ -40,6 +40,6 @@ updates:
     rebase-strategy: auto
     target-branch: main
     assignees:
-      - kilianpaquier
+      - maintainer name
     reviewers:
-      - kilianpaquier
+      - maintainer name

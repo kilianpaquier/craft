@@ -8,7 +8,7 @@
 #############################
 #        STAGE BUILD        #
 #############################
-FROM golang:latest AS build
+FROM golang:<< .ModuleVersion >> AS build
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ COPY . .
 # hadolint ignore=DL3059
 RUN go mod download
 
-<<- if not .NoAPI >>
+<<- if .API >>
 # hadolint ignore=DL3059
 RUN CGO_ENABLED=0 go build -o << .ProjectName >>-api cmd/<< .ProjectName >>-api/main.go
 <<- end >>
@@ -49,7 +49,7 @@ LABEL org.opencontainers.image.documentation="<< .ModuleName >>"
 WORKDIR /app
 
 COPY --from=build \
-<<- if not .NoAPI >>
+<<- if .API >>
     /app/<< .ProjectName >>-api \
 <<- end >>
 <<- range $name, $config := $binaries >>
@@ -60,12 +60,12 @@ COPY --from=build \
 <<- $entrypoint := "launcher.sh" >>
 
 <<- /* directly use api binary if it is the only binary */>>
-<<- if and (not .NoAPI) (eq (len $binaries) 0) >>
+<<- if and .API (eq (len $binaries) 0) >>
 <<- $entrypoint = print .ProjectName "-api" >>
 <<- end >>
 
 <<- /* directly use the only binary */>>
-<<- if and .NoAPI (eq (len $binaries) 1) >>
+<<- if and (not .API) (eq (len $binaries) 1) >>
 <<- range $name, $config := $binaries >>
 <<- $entrypoint = $name >>
 <<- end >>
@@ -76,6 +76,6 @@ COPY --from=build \
 COPY launcher.sh launcher.sh
 <<- end >>
 
-EXPOSE << .Port | default 3000 >>
+EXPOSE << .Docker.Port | default 3000 >>
 
 ENTRYPOINT [ "/app/<< $entrypoint >>" ]

@@ -25,20 +25,20 @@ test-cover: lint
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
 
-<<- if or (not .NoAPI) (gt (len $binaries) 0) >>
+<<- if or .API (gt (len $binaries) 0) >>
 
 .PHONY: buildall
-buildall:<< if not .NoAPI >> build-<< .ProjectName >>-api<< end >><< range $name, $config := $binaries >> build-<< $name >><< end >>
+buildall:<< if .API >> build-<< .ProjectName >>-api<< end >><< range $name, $config := $binaries >> build-<< $name >><< end >>
 
-.PHONY:<< if not .NoAPI >> << .ProjectName >>-api<< end >><< range $name, $config := $binaries >> << $name >><< end >>
+.PHONY:<< if .API >> << .ProjectName >>-api<< end >><< range $name, $config := $binaries >> << $name >><< end >>
 build-%:
 	@CGO_ENABLED=0 go build -o $* cmd/$*/main.go
 
-.PHONY:<< if not .NoAPI >> << .ProjectName >>-api<< end >><< range $name, $config := $binaries >> << $name >><< end >>
+.PHONY:<< if .API >> << .ProjectName >>-api<< end >><< range $name, $config := $binaries >> << $name >><< end >>
 local-%:
 	@go run cmd/$*/main.go
 
-<<- if not .NoDockerfile >>
+<<- if .Docker >>
 
 build-docker:
 	@docker build -t << .ProjectName >> .

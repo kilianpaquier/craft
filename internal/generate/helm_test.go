@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -61,7 +61,7 @@ func TestHelmExecute(t *testing.T) {
 
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("kilianpaquier").
+			SetName("maintainer name").
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
@@ -77,9 +77,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				Build()).
+			SetCraftConfig(*craft.Copy().Build()).
 			Build()
 
 		// Act
@@ -87,7 +85,7 @@ func TestHelmExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_dependencies", func(t *testing.T) {
@@ -103,9 +101,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().
-				SetNoAPI(true).
-				Build()).
+			SetCraftConfig(*craft.Copy().Build()).
 			Build()
 
 		// Act
@@ -113,7 +109,7 @@ func TestHelmExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_resources", func(t *testing.T) {
@@ -124,8 +120,10 @@ func TestHelmExecute(t *testing.T) {
 		config := config.Copy().
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetNoAPI(false).
-				SetPort(5000).
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetDocker(*tests.NewDockerBuilder().
+					SetPort(5000).
+					Build()).
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
@@ -140,7 +138,7 @@ func TestHelmExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 
