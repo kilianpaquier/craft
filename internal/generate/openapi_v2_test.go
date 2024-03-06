@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -169,7 +169,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_api_yml", func(t *testing.T) {
@@ -194,7 +194,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 
@@ -250,8 +250,9 @@ func TestOpenAPIV2Remove(t *testing.T) {
 		require.NoError(t, os.MkdirAll(binarydir, filesystem.RwxRxRxRx))
 		require.NoError(t, os.MkdirAll(internal, filesystem.RwxRxRxRx))
 
-		_, err := os.Create(swagger)
+		file, err := os.Create(swagger)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		// Act
 		err = api.Remove(ctx, *config)

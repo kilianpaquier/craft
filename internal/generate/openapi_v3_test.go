@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -124,7 +124,7 @@ func TestOpenAPIV3Execute(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, errors.New("openapi v3 applications are not implemented"), err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_with_api_yml", func(t *testing.T) {
@@ -149,7 +149,7 @@ func TestOpenAPIV3Execute(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, errors.New("openapi v3 applications are not implemented"), err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 

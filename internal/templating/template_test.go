@@ -2,8 +2,8 @@ package templating_test
 
 import (
 	"os"
-	"path"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"text/template"
 
@@ -21,14 +21,15 @@ func TestExecute(t *testing.T) {
 		tmp := t.TempDir()
 		src := filepath.Join(tmp, "template.txt")
 		dest := filepath.Join(tmp, "template-result.txt")
-		_, err := os.Create(dest)
+		file, err := os.Create(dest)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		err = os.WriteFile(src, []byte("{{ .name }}"), filesystem.RwRR)
 		require.NoError(t, err)
 		data := map[string]string{"name": "hey ! A name"}
 
-		tmpl, err := template.New(path.Base(src)).
+		tmpl, err := template.New("template.txt").
 			Funcs(sprig.FuncMap()).
 			Funcs(templating.FuncMap()).
 			ParseFiles(src)
@@ -41,7 +42,7 @@ func TestExecute(t *testing.T) {
 		assert.NoError(t, err)
 		bytes, err := os.ReadFile(dest)
 		assert.NoError(t, err)
-		assert.Equal(t, string(bytes), "hey ! A name")
+		assert.Equal(t, "hey ! A name", string(bytes))
 	})
 
 	t.Run("success_shell", func(t *testing.T) {
@@ -54,7 +55,7 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, err)
 		data := map[string]string{"name": "hey ! A name"}
 
-		tmpl, err := template.New(path.Base(src)).
+		tmpl, err := template.New("template.txt").
 			Funcs(sprig.FuncMap()).
 			Funcs(templating.FuncMap()).
 			ParseFiles(src)
@@ -67,9 +68,11 @@ func TestExecute(t *testing.T) {
 		assert.NoError(t, err)
 		info, err := os.Stat(dest)
 		assert.NoError(t, err)
-		assert.Equal(t, info.Mode(), filesystem.RwxRxRxRx)
+		if runtime.GOOS == "linux" {
+			assert.Equal(t, info.Mode(), filesystem.RwxRxRxRx)
+		}
 		bytes, err := os.ReadFile(dest)
 		assert.NoError(t, err)
-		assert.Equal(t, string(bytes), "hey ! A name")
+		assert.Equal(t, "hey ! A name", string(bytes))
 	})
 }

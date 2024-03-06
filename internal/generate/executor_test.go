@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
-	filesystem_tests "github.com/kilianpaquier/filesystem/pkg/tests"
+	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -52,7 +52,7 @@ func TestExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
 	t.Run("success_golang", func(t *testing.T) {
@@ -85,8 +85,8 @@ func TestExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		filesystem_tests.AssertEqualDir(t, assertdir, destdir,
-			filesystem_tests.WithIgnoreDiff(func(filename string, _ diffmatchpatch.Diff) bool {
+		testfs.AssertEqualDir(t, assertdir, destdir,
+			testfs.WithIgnoreDiff(func(filename string, _ diffmatchpatch.Diff) bool {
 				return filename == models.GoMod
 			}))
 	})

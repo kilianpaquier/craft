@@ -112,8 +112,9 @@ func TestLicenseExecute(t *testing.T) {
 
 	t.Run("success_no_call", func(t *testing.T) {
 		// Arrange
-		_, err := os.Create(dest)
+		file, err := os.Create(dest)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		// Act
 		err = license.Execute(ctx, *config.Build(), generate.Tmpl)
@@ -125,8 +126,9 @@ func TestLicenseExecute(t *testing.T) {
 
 	t.Run("success_force_option", func(t *testing.T) {
 		// Arrange
-		_, err := os.Create(dest)
+		file, err := os.Create(dest)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := config.Copy().
 			SetOptions(*opts.Copy().
@@ -152,8 +154,9 @@ func TestLicenseExecute(t *testing.T) {
 
 	t.Run("success_force_all_option", func(t *testing.T) {
 		// Arrange
-		_, err := os.Create(dest)
+		file, err := os.Create(dest)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := config.Copy().
 			SetOptions(*opts.Copy().
@@ -220,8 +223,9 @@ func TestLicenseRemove(t *testing.T) {
 		license := generate.License{}
 
 		dest := filepath.Join(destdir, models.License)
-		_, err := os.Create(dest)
+		file, err := os.Create(dest)
 		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		// Act
 		err = license.Remove(ctx, *config)
