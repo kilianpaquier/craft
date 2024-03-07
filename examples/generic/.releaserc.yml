@@ -49,6 +49,7 @@ plugins:
         - { path: checksums.txt }
         - { path: dist }
       failComment: true
+      failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
   - - "@semantic-release/exec"
     - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env

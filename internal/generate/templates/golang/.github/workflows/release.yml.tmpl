@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     outputs:
       version: v${{ steps.semantic_release.outputs.new_release_version }}
       release: ${{ steps.release.outputs.release }}
@@ -164,6 +166,7 @@ jobs:
     permissions:
       contents: write
       issues: write
+      pull-requests: write
 <<- if or $gobuild $docker >>
     needs:
 <<- if $gobuild >>
