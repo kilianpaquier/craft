@@ -49,6 +49,7 @@ func newDefaultCopyDir(config models.GenerateConfig, fsys filesystem.FS, plugin 
 // It takes the generate configuration as input to remove or create specific files depending on project options (no_chart, no_api, etc.).
 func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir string) error {
 	log := logrus.WithContext(ctx)
+	plugins := lo.Map(plugins(), func(p plugin, _ int) string { return p.Name() })
 
 	// read source directory
 	entries, err := d.fsys.ReadDir(srcdir)
@@ -65,9 +66,8 @@ func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir str
 				return d.defaultCopyDir(ctx, src, destdir)
 			}
 
-			// apply templates on subdirs of plugin
-			subdir := path.Join(d.config.Options.TemplatesDir, d.plugin.Name())
-			if strings.HasPrefix(src, subdir) {
+			// apply templates on subdirs not being those associated to a plugin
+			if !slices.Contains(plugins, entry.Name()) {
 				dest := filepath.Join(destdir, entry.Name())
 				return d.defaultCopyDir(ctx, src, dest)
 			}

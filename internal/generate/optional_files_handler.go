@@ -29,6 +29,7 @@ func newOptionalHandlers(config models.GenerateConfig) []handler {
 		launcherHandler(config),
 		makefileHandler(config),
 		releasercHandler(config),
+		renovateHandler(config),
 		sonarHandler(config),
 	}
 }
@@ -76,7 +77,7 @@ func githubHandler(config models.GenerateConfig) handler {
 func gitlabHandler(config models.GenerateConfig) handler {
 	return func(src, _, filename string) (_ bool, _ bool) {
 		dir := path.Join(".gitlab", "workflows")
-		return filename == ".gitlab-ci.yml" || strings.Contains(src, dir), config.CI != nil && config.CI.Name == models.Gitlab
+		return slices.Contains([]string{".gitlab-ci.yml", "semrel-plugins.txt"}, filename) || strings.Contains(src, dir), config.CI != nil && config.CI.Name == models.Gitlab
 	}
 }
 
@@ -106,7 +107,7 @@ func launcherHandler(config models.GenerateConfig) handler {
 // makefileHandler returns the handler for makefile option generation matching.
 func makefileHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "Makefile", !config.NoMakefile
+		return filename == "Makefile" || strings.HasSuffix(filename, ".mk"), !config.NoMakefile
 	}
 }
 
@@ -114,6 +115,13 @@ func makefileHandler(config models.GenerateConfig) handler {
 func releasercHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
 		return filename == ".releaserc.yml", config.CI != nil
+	}
+}
+
+// renovateHandler returns the handler for renovate option in gitlab cicd generation.
+func renovateHandler(config models.GenerateConfig) handler {
+	return func(_, _, filename string) (_ bool, _ bool) {
+		return filename == "renovate.jsonc", config.CI != nil && config.CI.Name == models.Gitlab && slices.Contains(config.CI.Options, models.Renovate)
 	}
 }
 

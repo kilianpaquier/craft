@@ -71,7 +71,5 @@ branches:
   - { name: alpha, prerelease: true }
   - { name: staging, prerelease: beta }
   - { name: develop, prerelease: alpha }
-  # both variables are replaced in kilianpaquier/cicd's jobs using .releaserc.yml
-  - { name: "CI_COMMIT_REF_NAME", prerelease: "CI_COMMIT_REF_NAME_SHA" }
 tagFormat: v${version}
 <<- end >>
