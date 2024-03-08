@@ -2,8 +2,10 @@ package initialize_test
 
 import (
 	"context"
+	"strings"
 	"testing"
 
+	testlogrus "github.com/kilianpaquier/testlogrus/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -20,13 +22,14 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
+		craft := models_tests.NewCraftConfigBuilder().
+			SetMaintainers(*maintainer).
+			Build()
+
 		inputs, err := init_tests.NewInputBuilder().
 			SetMaintainer(*maintainer).
 			Build()
 		require.NoError(t, err)
-		craft := models_tests.NewCraftConfigBuilder().
-			SetMaintainers(*maintainer).
-			Build()
 		initialize.SetReader(inputs)
 
 		// Act
@@ -36,19 +39,20 @@ func TestRun(t *testing.T) {
 		assert.Equal(t, *craft, config)
 	})
 
-	t.Run("success_no_api", func(t *testing.T) {
+	t.Run("success_no_api_with_input", func(t *testing.T) {
 		// Arrange
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
+		craft := models_tests.NewCraftConfigBuilder().
+			SetMaintainers(*maintainer).
+			Build()
+
 		inputs, err := init_tests.NewInputBuilder().
 			SetAPI(false).
 			SetMaintainer(*maintainer).
 			Build()
 		require.NoError(t, err)
-		craft := models_tests.NewCraftConfigBuilder().
-			SetMaintainers(*maintainer).
-			Build()
 		initialize.SetReader(inputs)
 
 		// Act
@@ -58,25 +62,24 @@ func TestRun(t *testing.T) {
 		assert.Equal(t, *craft, config)
 	})
 
-	t.Run("success_openapi_v2", func(t *testing.T) {
+	t.Run("success_no_api_no_input", func(t *testing.T) {
 		// Arrange
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
-		inputs, err := init_tests.NewInputBuilder().
-			SetAPI(true).
-			SetMaintainer(*maintainer).
-			SetOpenAPIVersion("v2").
-			Build()
-		require.NoError(t, err)
 		craft := models_tests.NewCraftConfigBuilder().
-			SetAPI(*models_tests.NewAPIBuilder().
-				SetOpenAPIVersion("v2").
-				Build()).
-			SetNoChart(true).
 			SetMaintainers(*maintainer).
 			Build()
-		initialize.SetReader(inputs)
+
+		inputs := []string{
+			"maintainer name", "\n",
+			"", "\n", // no email
+			"", "\n", // no url
+			"", "\n", // default api (no api)
+			"t", "\n", // with chart
+		}
+		reader := strings.NewReader(strings.Join(inputs, ""))
+		initialize.SetReader(reader)
 
 		// Act
 		config := initialize.Run(ctx)
@@ -90,12 +93,36 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
-		inputs, err := init_tests.NewInputBuilder().
-			SetAPI(true).
-			SetMaintainer(*maintainer).
-			SetOpenAPIVersion("v2").
+		craft := models_tests.NewCraftConfigBuilder().
+			SetAPI(*models_tests.NewAPIBuilder().
+				SetOpenAPIVersion("v2").
+				Build()).
+			SetMaintainers(*maintainer).
 			Build()
-		require.NoError(t, err)
+
+		inputs := []string{
+			"maintainer name", "\n",
+			"", "\n", // no email
+			"", "\n", // no url
+			"t", "\n",
+			"", "\n",
+			"t", "\n", // with chart
+		}
+		reader := strings.NewReader(strings.Join(inputs, ""))
+		initialize.SetReader(reader)
+
+		// Act
+		config := initialize.Run(ctx)
+
+		// Assert
+		assert.Equal(t, *craft, config)
+	})
+
+	t.Run("success_openapi_v2", func(t *testing.T) {
+		// Arrange
+		maintainer := models_tests.NewMaintainerBuilder().
+			SetName("maintainer name").
+			Build()
 		craft := models_tests.NewCraftConfigBuilder().
 			SetAPI(*models_tests.NewAPIBuilder().
 				SetOpenAPIVersion("v2").
@@ -103,6 +130,13 @@ func TestRun(t *testing.T) {
 			SetNoChart(true).
 			SetMaintainers(*maintainer).
 			Build()
+
+		inputs, err := init_tests.NewInputBuilder().
+			SetAPI(true).
+			SetMaintainer(*maintainer).
+			SetOpenAPIVersion("v2").
+			Build()
+		require.NoError(t, err)
 		initialize.SetReader(inputs)
 
 		// Act
@@ -117,14 +151,15 @@ func TestRun(t *testing.T) {
 		maintainer := models_tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build()
+		craft := models_tests.NewCraftConfigBuilder().
+			SetMaintainers(*maintainer).
+			Build()
+
 		inputs, err := init_tests.NewInputBuilder().
 			SetChart(false).
 			SetMaintainer(*maintainer).
 			Build()
 		require.NoError(t, err)
-		craft := models_tests.NewCraftConfigBuilder().
-			SetMaintainers(*maintainer).
-			Build()
 		initialize.SetReader(inputs)
 
 		// Act
@@ -141,13 +176,6 @@ func TestRun(t *testing.T) {
 			SetName("maintainer name").
 			SetURL("input not validated in this function").
 			Build()
-		inputs, err := init_tests.NewInputBuilder().
-			SetAPI(true).
-			SetChart(true).
-			SetMaintainer(*maintainer).
-			SetOpenAPIVersion("v3").
-			Build()
-		require.NoError(t, err)
 		craft := models_tests.NewCraftConfigBuilder().
 			SetAPI(*models_tests.NewAPIBuilder().
 				SetOpenAPIVersion("v3").
@@ -155,6 +183,14 @@ func TestRun(t *testing.T) {
 			SetMaintainers(*maintainer).
 			SetNoChart(false).
 			Build()
+
+		inputs, err := init_tests.NewInputBuilder().
+			SetAPI(true).
+			SetChart(true).
+			SetMaintainer(*maintainer).
+			SetOpenAPIVersion("v3").
+			Build()
+		require.NoError(t, err)
 		initialize.SetReader(inputs)
 
 		// Act
@@ -162,5 +198,46 @@ func TestRun(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, *craft, config)
+	})
+
+	t.Run("success_retryable_inputs", func(t *testing.T) {
+		// Arrange
+		maintainer := models_tests.NewMaintainerBuilder().
+			SetName("maintainer name").
+			Build()
+		craft := models_tests.NewCraftConfigBuilder().
+			SetAPI(*models_tests.NewAPIBuilder().
+				SetOpenAPIVersion("v2").
+				Build()).
+			SetMaintainers(*maintainer).
+			Build()
+
+		inputs := []string{
+			"", "\n",
+			"maintainer name", "\n",
+			"", "\n", // no email
+			"", "\n", // no url
+			"invalid api value", "\n",
+			"t", "\n",
+			"invalid openapi version", "\n",
+			"v2", "\n",
+			"invalid chart value", "\n",
+			"t", "\n",
+		}
+		reader := strings.NewReader(strings.Join(inputs, ""))
+		initialize.SetReader(reader)
+
+		testlogrus.CatchLogs(t)
+
+		// Act
+		config := initialize.Run(ctx)
+
+		// Assert
+		assert.Equal(t, *craft, config)
+		logs := testlogrus.Logs()
+		assert.Contains(t, logs, "maintainer name is mandatory")
+		assert.Contains(t, logs, "invalid api value, must be a boolean")
+		assert.Contains(t, logs, "openapi version must be either 'v2' or 'v3'")
+		assert.Contains(t, logs, "invalid chart answer, must be a boolean")
 	})
 }

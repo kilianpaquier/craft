@@ -6,5 +6,5 @@ generate:
 
 .PHONY: clean
 clean:
-	@go clean -modcache
+	@go clean
 	@git clean -Xf ./*

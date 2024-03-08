@@ -2,9 +2,11 @@ package configuration_test
 
 import (
 	"io/fs"
+	"os"
 	"path/filepath"
 	"testing"
 
+	filesystem "github.com/kilianpaquier/filesystem/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -14,33 +16,64 @@ import (
 )
 
 func TestReadCraft(t *testing.T) {
-	tmp := t.TempDir()
-	expected := tests.NewCraftConfigBuilder().
-		SetAPI(models.API{}).
-		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("maintainer name").
-			Build()).
-		SetNoChart(true).
-		Build()
-	err := configuration.WriteCraft(tmp, *expected)
-	require.NoError(t, err)
-
 	t.Run("error_not_found", func(t *testing.T) {
 		// Arrange
-		path := filepath.Join(tmp, "invalid")
+		srcdir := t.TempDir()
+		invalid := filepath.Join(srcdir, "invalid")
 
 		// Act
 		var config models.CraftConfig
-		err := configuration.ReadCraft(path, &config)
+		err := configuration.ReadCraft(invalid, &config)
 
 		// Assert
 		assert.Equal(t, fs.ErrNotExist, err)
 	})
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("error_read", func(t *testing.T) {
+		// Arrange
+		srcdir := t.TempDir()
+		file := filepath.Join(srcdir, models.CraftFile)
+		require.NoError(t, os.Mkdir(file, filesystem.RwxRxRxRx))
+
 		// Act
 		var config models.CraftConfig
-		err := configuration.ReadCraft(tmp, &config)
+		err := configuration.ReadCraft(filepath.Dir(file), &config)
+
+		// Assert
+		assert.ErrorContains(t, err, "failed to read file")
+	})
+
+	t.Run("error_unmarshal", func(t *testing.T) {
+		// Arrange
+		srcdir := t.TempDir()
+		err := os.WriteFile(filepath.Join(srcdir, models.CraftFile), []byte(`{ "key":: "value" }`), filesystem.RwRR)
+		require.NoError(t, err)
+
+		// Act
+		var config models.CraftConfig
+		err = configuration.ReadCraft(srcdir, &config)
+
+		// Assert
+		assert.ErrorContains(t, err, "failed to unmarshal file")
+		assert.ErrorContains(t, err, "did not find expected node content")
+	})
+
+	t.Run("success", func(t *testing.T) {
+		// Arrange
+		srcdir := t.TempDir()
+		expected := tests.NewCraftConfigBuilder().
+			SetAPI(models.API{}).
+			SetMaintainers(*tests.NewMaintainerBuilder().
+				SetName("maintainer name").
+				Build()).
+			SetNoChart(true).
+			Build()
+		err := configuration.WriteCraft(srcdir, *expected)
+		require.NoError(t, err)
+
+		// Act
+		var config models.CraftConfig
+		err = configuration.ReadCraft(srcdir, &config)
 
 		// Assert
 		assert.NoError(t, err)
@@ -49,9 +82,22 @@ func TestReadCraft(t *testing.T) {
 }
 
 func TestWriteCraft(t *testing.T) {
-	tmp := t.TempDir()
+	t.Run("error_open_craft", func(t *testing.T) {
+		// Arrange
+		srcdir := t.TempDir()
+		file := filepath.Join(srcdir, models.CraftFile)
+		require.NoError(t, os.Mkdir(file, filesystem.RwxRxRxRx))
+
+		// Act
+		err := configuration.WriteCraft(srcdir, *tests.NewCraftConfigBuilder().Build())
+
+		// Assert
+		assert.ErrorContains(t, err, "failed to open or create")
+	})
+
 	t.Run("success", func(t *testing.T) {
 		// Arrange
+		tmp := t.TempDir()
 		expected := tests.NewCraftConfigBuilder().
 			SetAPI(models.API{}).
 			SetMaintainers(*tests.NewMaintainerBuilder().

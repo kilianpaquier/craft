@@ -23,48 +23,6 @@ func TestOpenAPIV2Detect(t *testing.T) {
 	pwd, _ := os.Getwd()
 	api := generate.OpenAPIV2{}
 
-	t.Run("success_true", func(t *testing.T) {
-		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
-
-		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().Build()).
-				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-
-		// Act
-		present := api.Detect(ctx, config)
-
-		// Assert
-		assert.True(t, present)
-	})
-
-	t.Run("success_true_with_v2", func(t *testing.T) {
-		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
-
-		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().
-					SetOpenAPIVersion("v2").
-					Build()).
-				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-
-		// Act
-		present := api.Detect(ctx, config)
-
-		// Assert
-		assert.True(t, present)
-	})
-
 	t.Run("success_false_with_v3", func(t *testing.T) {
 		// Arrange
 		destdir := filepath.Join(pwd, "..", "..")
@@ -119,6 +77,48 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 		// Assert
 		assert.False(t, present)
+	})
+
+	t.Run("success_true", func(t *testing.T) {
+		// Arrange
+		destdir := filepath.Join(pwd, "..", "..")
+
+		config := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				Build()).
+			SetOptions(*tests.NewGenerateOptionsBuilder().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
+		// Act
+		present := api.Detect(ctx, config)
+
+		// Assert
+		assert.True(t, present)
+	})
+
+	t.Run("success_true_with_v2", func(t *testing.T) {
+		// Arrange
+		destdir := filepath.Join(pwd, "..", "..")
+
+		config := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v2").
+					Build()).
+				Build()).
+			SetOptions(*tests.NewGenerateOptionsBuilder().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
+		// Act
+		present := api.Detect(ctx, config)
+
+		// Assert
+		assert.True(t, present)
 	})
 }
 

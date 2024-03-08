@@ -22,14 +22,14 @@ func TestOpenAPIV3Detect(t *testing.T) {
 	pwd, _ := os.Getwd()
 	api := generate.OpenAPIV3{}
 
-	t.Run("success_true_with_v3", func(t *testing.T) {
+	t.Run("success_false_with_v2", func(t *testing.T) {
 		// Arrange
 		destdir := filepath.Join(pwd, "..", "..")
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
 				SetAPI(*tests.NewAPIBuilder().
-					SetOpenAPIVersion("v3").
+					SetOpenAPIVersion("v2").
 					Build()).
 				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -41,7 +41,7 @@ func TestOpenAPIV3Detect(t *testing.T) {
 		present := api.Detect(ctx, config)
 
 		// Assert
-		assert.True(t, present)
+		assert.False(t, present)
 	})
 
 	t.Run("success_false_no_api_with_gomod", func(t *testing.T) {
@@ -78,6 +78,28 @@ func TestOpenAPIV3Detect(t *testing.T) {
 
 		// Assert
 		assert.False(t, present)
+	})
+
+	t.Run("success_true_with_v3", func(t *testing.T) {
+		// Arrange
+		destdir := filepath.Join(pwd, "..", "..")
+
+		config := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v3").
+					Build()).
+				Build()).
+			SetOptions(*tests.NewGenerateOptionsBuilder().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
+		// Act
+		present := api.Detect(ctx, config)
+
+		// Assert
+		assert.True(t, present)
 	})
 }
 

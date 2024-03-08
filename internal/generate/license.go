@@ -29,8 +29,7 @@ func (plugin *license) Detect(ctx context.Context, config *models.GenerateConfig
 	if config.License != nil {
 		client, err := gitlab.NewClient(os.Getenv("GITLAB_TOKEN"),
 			gitlab.WithBaseURL(gitlabURL),
-			gitlab.WithoutRetries(),
-		)
+			gitlab.WithoutRetries())
 		if err != nil {
 			logrus.WithContext(ctx).
 				WithError(err).
@@ -57,16 +56,17 @@ func (plugin *license) Execute(ctx context.Context, config models.GenerateConfig
 	}
 
 	// fetch license template
-	license, _, err := plugin.GitlabClient.LicenseTemplates.GetLicenseTemplate(*config.License, &gitlab.GetLicenseTemplateOptions{
-		Fullname: &config.Maintainers[0].Name,
-		Project:  &config.ProjectName,
-	}, gitlab.WithContext(ctx))
+	license, _, err := plugin.GitlabClient.LicenseTemplates.GetLicenseTemplate(*config.License,
+		&gitlab.GetLicenseTemplateOptions{
+			Fullname: &config.Maintainers[0].Name,
+			Project:  &config.ProjectName,
+		}, gitlab.WithContext(ctx))
 	if err != nil {
 		return fmt.Errorf("failed to retrieve license from gitlab: %w", err)
 	}
 
 	// write license template
-	if err := os.WriteFile(filepath.Join(config.Options.DestinationDir, models.License), []byte(license.Content), filesystem.RwRR); err != nil {
+	if err := os.WriteFile(dest, []byte(license.Content), filesystem.RwRR); err != nil {
 		return fmt.Errorf("failed to write license: %w", err)
 	}
 	return nil
@@ -81,7 +81,8 @@ func (*license) Name() string {
 //
 // GenerateConfig is given as copy because no modification should be done during Remove operation on it.
 func (*license) Remove(_ context.Context, config models.GenerateConfig) error {
-	if err := os.Remove(filepath.Join(config.Options.DestinationDir, models.License)); err != nil && !os.IsNotExist(err) {
+	dest := filepath.Join(config.Options.DestinationDir, models.License)
+	if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove LICENSE file: %w", err)
 	}
 	return nil

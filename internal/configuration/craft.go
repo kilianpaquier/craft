@@ -30,9 +30,9 @@ func ReadCraft(srcdir string, out any) error {
 // WriteCraft writes the input craft into the input destdir in .craft file.
 func WriteCraft(destdir string, config models.CraftConfig) error {
 	craft := filepath.Join(destdir, models.CraftFile)
-	file, err := os.OpenFile(craft, os.O_RDWR|os.O_TRUNC|os.O_CREATE, filesystem.RwRR)
+	file, err := os.OpenFile(craft, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, filesystem.RwRR)
 	if err != nil {
-		return fmt.Errorf("failed to create '%s': %w", craft, err)
+		return fmt.Errorf("failed to open or create '%s': %w", craft, err)
 	}
 	defer file.Close()
 
