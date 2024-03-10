@@ -2,6 +2,7 @@ package generate_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -103,7 +104,7 @@ func TestLicenseExecute(t *testing.T) {
 
 		destdir := t.TempDir()
 		dest := filepath.Join(destdir, models.License)
-		require.NoError(t, os.Mkdir(dest, filesystem.RwxRxRxRx))
+		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), filesystem.RwxRxRxRx))
 
 		opts := *tests.NewGenerateOptionsBuilder().
 			SetForce(models.License).
@@ -116,7 +117,7 @@ func TestLicenseExecute(t *testing.T) {
 		err := license.Execute(ctx, *config, generate.Tmpl)
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to write license")
+		assert.ErrorContains(t, err, fmt.Sprintf("failed to remove %s before rewritting it", dest))
 	})
 
 	t.Run("success_no_specific_config", func(t *testing.T) {

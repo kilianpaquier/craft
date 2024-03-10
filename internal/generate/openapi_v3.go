@@ -62,7 +62,7 @@ func (plugin *openAPIV3) Execute(ctx context.Context, config models.GenerateConf
 		if err != nil {
 			return fmt.Errorf("failed to parse %s: %w", src, err)
 		}
-		if err := templating.Execute(tmpl, dest, config); err != nil {
+		if err := templating.Execute(tmpl, config, dest); err != nil {
 			return fmt.Errorf("failed to apply template for openapi v3: %w", err)
 		}
 	}

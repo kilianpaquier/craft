@@ -37,7 +37,7 @@ func newOptionalHandlers(config models.GenerateConfig) []handler {
 // codeCovHandler returns the handler for codecov github actions reporting.
 func codeCovHandler(config models.GenerateConfig) handler {
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "codecov.yml", config.CI != nil && config.CI.Name == models.Github && slices.Contains(config.CI.Options, models.CodeCov)
+		return filename == ".codecov.yml", config.CI != nil && config.CI.Name == models.Github && slices.Contains(config.CI.Options, models.CodeCov)
 	}
 }
 

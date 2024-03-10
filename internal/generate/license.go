@@ -65,6 +65,11 @@ func (plugin *license) Execute(ctx context.Context, config models.GenerateConfig
 		return fmt.Errorf("failed to retrieve license from gitlab: %w", err)
 	}
 
+	// remove file before rewritting it (in case rights changed)
+	if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
+		return fmt.Errorf("failed to remove %s before rewritting it: %w", dest, err)
+	}
+
 	// write license template
 	if err := os.WriteFile(dest, []byte(license.Content), filesystem.RwRR); err != nil {
 		return fmt.Errorf("failed to write license: %w", err)

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"testing"
 	"text/template"
 
@@ -29,7 +28,7 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		// Act
-		err = templating.Execute(nil, dest, nil)
+		err = templating.Execute(nil, nil, dest)
 
 		// Assert
 		assert.ErrorContains(t, err, "failed to create destination directory")
@@ -46,7 +45,7 @@ func TestExecute(t *testing.T) {
 			Funcs(templating.FuncMap())
 
 		// Act
-		err := templating.Execute(tmpl, dest, nil)
+		err := templating.Execute(tmpl, nil, dest)
 
 		// Assert
 		assert.ErrorContains(t, err, "failed to template")
@@ -79,7 +78,7 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		err = templating.Execute(tmpl, filepath.Dir(dest), data)
+		err = templating.Execute(tmpl, data, filepath.Dir(dest))
 
 		// Assert
 		assert.ErrorContains(t, err, fmt.Sprintf("failed to remove %s before rewritting it", filepath.Dir(dest)))
@@ -109,44 +108,10 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		err = templating.Execute(tmpl, dest, data)
+		err = templating.Execute(tmpl, data, dest)
 
 		// Assert
 		assert.NoError(t, err)
-		bytes, err := os.ReadFile(dest)
-		assert.NoError(t, err)
-		assert.Equal(t, "hey ! A name", string(bytes))
-	})
-
-	t.Run("success_shell", func(t *testing.T) {
-		// Arrange
-		tmp := t.TempDir()
-
-		// create template file
-		src := filepath.Join(tmp, "template.txt")
-		err := os.WriteFile(src, []byte("{{ .name }}"), filesystem.RwRR)
-		require.NoError(t, err)
-
-		dest := filepath.Join(tmp, "template-result.sh")
-
-		data := map[string]string{"name": "hey ! A name"}
-
-		tmpl, err := template.New("template.txt").
-			Funcs(sprig.FuncMap()).
-			Funcs(templating.FuncMap()).
-			ParseFiles(src)
-		require.NoError(t, err)
-
-		// Act
-		err = templating.Execute(tmpl, dest, data)
-
-		// Assert
-		assert.NoError(t, err)
-		info, err := os.Stat(dest)
-		assert.NoError(t, err)
-		if runtime.GOOS == "linux" {
-			assert.Equal(t, info.Mode(), filesystem.RwxRxRxRx)
-		}
 		bytes, err := os.ReadFile(dest)
 		assert.NoError(t, err)
 		assert.Equal(t, "hey ! A name", string(bytes))

@@ -112,7 +112,7 @@ func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir str
 		if err != nil {
 			return fmt.Errorf("failed to parse %s: %w", src, err)
 		}
-		return templating.Execute(tmpl, dest, d.config)
+		return templating.Execute(tmpl, d.config, dest)
 	})
 	return errors.Join(errs...)
 }

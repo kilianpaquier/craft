@@ -21,7 +21,7 @@ variables:
   GO_TEST_IMAGE: "registry.hub.docker.com/library/golang:latest"
   GO_TEST_FLAGS: "-coverpkg=./... -covermode=count"
   GO_CI_LINT_IMAGE: "registry.hub.docker.com/golangci/golangci-lint:latest-alpine"
-  GO_CI_LINT_ARGS: "--config build/ci/.golangci.yml --timeout 240s --fast --sort-results"
+  GO_CI_LINT_ARGS: "--config .golangci.yml --timeout 240s --fast --sort-results"
   GO_SBOM_DISABLED: "true"
 
   DOCKER_KANIKO_IMAGE: "gcr.io/kaniko-project/executor:debug"

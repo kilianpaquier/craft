@@ -38,7 +38,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: golangci/golangci-lint-action@v4
         with:
-          args: --config build/ci/.golangci.yml --timeout 240s --fast --sort-results --out-format checkstyle:sonar-report.xml,colored-line-number
+          args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format checkstyle:sonar-report.xml,colored-line-number
       - uses: actions/upload-artifact@v4
         with:
           name: sonar-report
@@ -70,7 +70,7 @@ jobs:
       - uses: codecov/codecov-action@v4
         if: ${{ ! startsWith(github.base_ref, 'dependabot') }} # ignore codecov on dependabot branches
         with:
-          codecov_yml_path: codecov.yml
+          codecov_yml_path: .codecov.yml
           disable_search: true
           env_vars: OS
           fail_ci_if_error: true
@@ -104,7 +104,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: |
-            -Dproject.settings=build/ci/sonar.properties
+            -Dproject.settings=sonar.properties
             -Dsonar.projectVersion=${{ needs.version.outputs.version }}
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.pullrequest.branch=${{ github.ref_name }}

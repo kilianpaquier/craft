@@ -13,7 +13,7 @@ variables:
   GIT_COMMITTER_EMAIL: ${GITLAB_USER_EMAIL}
 
   SEMREL_TAG_FORMAT: "v$${version}"
-  SEMREL_REQUIRED_PLUGINS_FILE: "build/ci/semrel-plugins.txt"
+  SEMREL_REQUIRED_PLUGINS_FILE: ".gitlab/semrel-plugins.txt"
   SEMREL_HOOKS_DIR: "scripts"
   SEMREL_INFO_ON: "protected"
 

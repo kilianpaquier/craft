@@ -119,7 +119,7 @@ func (plugin *helm) iterateOver(ctx context.Context, config models.GenerateConfi
 			if err != nil {
 				return fmt.Errorf("failed to parse %s: %w", src, err)
 			}
-			return templating.Execute(tmpl, dest, chart)
+			return templating.Execute(tmpl, chart, dest)
 		case models.CraftFile:
 			if !filesystem.Exists(dest) {
 				return filesystem.CopyFile(src, dest, filesystem.WithFS(fsys))
