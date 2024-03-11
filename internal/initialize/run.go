@@ -61,9 +61,9 @@ func readMaintainer(ctx context.Context, scanner *bufio.Scanner) (maintainer mod
 func readAPI(ctx context.Context, scanner *bufio.Scanner) *models.API {
 	// API generation
 	for {
-		api := ask(ctx, scanner, "Would you like to generate a golang based API (optional, default is falsy) 0/1 ?")
+		api := ask(ctx, scanner, "Would you like to generate a golang based API (optional, default is false) 0/1 ?")
 		if api == nil {
-			break // response not provided, going through next questions
+			return nil // no api wanted
 		}
 
 		value, err := strconv.ParseBool(*api)

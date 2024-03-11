@@ -2,12 +2,14 @@ package generate_test
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
+	filesystem "github.com/kilianpaquier/filesystem/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/xanzy/go-gitlab"
@@ -50,8 +52,6 @@ func TestLicenseDetect(t *testing.T) {
 
 func TestLicenseExecute(t *testing.T) {
 	ctx := context.Background()
-	destdir := t.TempDir()
-	dest := filepath.Join(destdir, models.License)
 
 	// setup gitlab API call mock
 	httpmock.Activate()
@@ -64,9 +64,6 @@ func TestLicenseExecute(t *testing.T) {
 	require.NoError(t, err)
 	license := generate.License{GitlabClient: client}
 
-	opts := *tests.NewGenerateOptionsBuilder().
-		SetDestinationDir(destdir)
-
 	config := tests.NewGenerateConfigBuilder().
 		SetCraftConfig(*tests.NewCraftConfigBuilder().
 			SetLicense("mit").
@@ -74,7 +71,6 @@ func TestLicenseExecute(t *testing.T) {
 				SetName("name").
 				Build()).
 			Build()).
-		SetOptions(*opts.Build()).
 		SetProjectName("craft")
 
 	url := generate.GitlabURL + "/templates/licenses/mit"
@@ -85,11 +81,43 @@ func TestLicenseExecute(t *testing.T) {
 		httpmock.RegisterResponder(http.MethodGet, url,
 			httpmock.NewStringResponder(http.StatusInternalServerError, "error message"))
 
+		destdir := t.TempDir()
+		opts := *tests.NewGenerateOptionsBuilder().
+			SetDestinationDir(destdir)
+		config := config.Copy().
+			SetOptions(*opts.Build()).
+			Build()
+
 		// Act
-		err := license.Execute(ctx, *config.Build(), generate.Tmpl)
+		err := license.Execute(ctx, *config, generate.Tmpl)
 
 		// Assert
 		assert.ErrorContains(t, err, "failed to retrieve license from gitlab")
+	})
+
+	t.Run("error_write_license", func(t *testing.T) {
+		// Arrange
+		expected := gitlab.LicenseTemplate{Content: "some content to appear in assert"}
+		t.Cleanup(httpmock.Reset)
+		httpmock.RegisterResponder(http.MethodGet, url,
+			httpmock.NewJsonResponderOrPanic(http.StatusOK, expected))
+
+		destdir := t.TempDir()
+		dest := filepath.Join(destdir, models.License)
+		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), filesystem.RwxRxRxRx))
+
+		opts := *tests.NewGenerateOptionsBuilder().
+			SetForce(models.License).
+			SetDestinationDir(destdir)
+		config := config.Copy().
+			SetOptions(*opts.Build()).
+			Build()
+
+		// Act
+		err := license.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.ErrorContains(t, err, fmt.Sprintf("failed to remove %s before rewritting it", dest))
 	})
 
 	t.Run("success_no_specific_config", func(t *testing.T) {
@@ -99,8 +127,16 @@ func TestLicenseExecute(t *testing.T) {
 		httpmock.RegisterResponder(http.MethodGet, url,
 			httpmock.NewJsonResponderOrPanic(http.StatusOK, expected))
 
+		destdir := t.TempDir()
+		dest := filepath.Join(destdir, models.License)
+		opts := *tests.NewGenerateOptionsBuilder().
+			SetDestinationDir(destdir)
+		config := config.Copy().
+			SetOptions(*opts.Build()).
+			Build()
+
 		// Act
-		err := license.Execute(ctx, *config.Build(), generate.Tmpl)
+		err := license.Execute(ctx, *config, generate.Tmpl)
 
 		// Assert
 		assert.NoError(t, err)
@@ -112,12 +148,20 @@ func TestLicenseExecute(t *testing.T) {
 
 	t.Run("success_no_call", func(t *testing.T) {
 		// Arrange
+		destdir := t.TempDir()
+		dest := filepath.Join(destdir, models.License)
+		opts := *tests.NewGenerateOptionsBuilder().
+			SetDestinationDir(destdir)
+		config := config.Copy().
+			SetOptions(*opts.Build()).
+			Build()
+
 		file, err := os.Create(dest)
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
 		// Act
-		err = license.Execute(ctx, *config.Build(), generate.Tmpl)
+		err = license.Execute(ctx, *config, generate.Tmpl)
 
 		// Assert
 		assert.NoError(t, err)
@@ -126,15 +170,18 @@ func TestLicenseExecute(t *testing.T) {
 
 	t.Run("success_force_option", func(t *testing.T) {
 		// Arrange
+		destdir := t.TempDir()
+		dest := filepath.Join(destdir, models.License)
+		opts := *tests.NewGenerateOptionsBuilder().
+			SetDestinationDir(destdir).
+			SetForce(models.License)
+		config := config.Copy().
+			SetOptions(*opts.Build()).
+			Build()
+
 		file, err := os.Create(dest)
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
-
-		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetForce(models.License).
-				Build()).
-			Build()
 
 		expected := gitlab.LicenseTemplate{Content: "some content to appear in assert"}
 		t.Cleanup(httpmock.Reset)
@@ -154,15 +201,18 @@ func TestLicenseExecute(t *testing.T) {
 
 	t.Run("success_force_all_option", func(t *testing.T) {
 		// Arrange
+		destdir := t.TempDir()
+		dest := filepath.Join(destdir, models.License)
+		opts := *tests.NewGenerateOptionsBuilder().
+			SetDestinationDir(destdir).
+			SetForceAll(true)
+		config := config.Copy().
+			SetOptions(*opts.Build()).
+			Build()
+
 		file, err := os.Create(dest)
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
-
-		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetForceAll(true).
-				Build()).
-			Build()
 
 		expected := gitlab.LicenseTemplate{Content: "some content to appear in assert"}
 		t.Cleanup(httpmock.Reset)
@@ -197,17 +247,39 @@ func TestLicensePluginType(t *testing.T) {
 
 func TestLicenseRemove(t *testing.T) {
 	ctx := context.Background()
-	destdir := t.TempDir()
 
-	config := tests.NewGenerateConfigBuilder().
-		SetOptions(*tests.NewGenerateOptionsBuilder().
-			SetDestinationDir(destdir).
-			Build()).
-		Build()
+	t.Run("error_remove_file", func(t *testing.T) {
+		// Arrange
+		license := generate.License{}
+
+		destdir := t.TempDir()
+		config := tests.NewGenerateConfigBuilder().
+			SetOptions(*tests.NewGenerateOptionsBuilder().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
+		dest := filepath.Join(destdir, models.License)
+		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), filesystem.RwxRxRxRx))
+
+		// Act
+		err := license.Remove(ctx, *config)
+
+		// Assert
+		assert.ErrorContains(t, err, "failed to remove LICENSE file")
+	})
 
 	t.Run("success_no_file", func(t *testing.T) {
 		// Arrange
 		license := generate.License{}
+
+		destdir := t.TempDir()
+		config := tests.NewGenerateConfigBuilder().
+			SetOptions(*tests.NewGenerateOptionsBuilder().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
 		dest := filepath.Join(destdir, models.License)
 
 		// Act
@@ -221,6 +293,13 @@ func TestLicenseRemove(t *testing.T) {
 	t.Run("success_with_file", func(t *testing.T) {
 		// Arrange
 		license := generate.License{}
+
+		destdir := t.TempDir()
+		config := tests.NewGenerateConfigBuilder().
+			SetOptions(*tests.NewGenerateOptionsBuilder().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
 
 		dest := filepath.Join(destdir, models.License)
 		file, err := os.Create(dest)

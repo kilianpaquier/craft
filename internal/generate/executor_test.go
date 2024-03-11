@@ -17,6 +17,38 @@ import (
 	"github.com/kilianpaquier/craft/internal/models/tests"
 )
 
+func TestNewExecutor(t *testing.T) {
+	t.Run("error_invalid_opts", func(t *testing.T) {
+		// Arrange
+		opts := tests.NewGenerateOptionsBuilder().Build()
+		craft := tests.NewCraftConfigBuilder().Build()
+
+		// Act
+		_, err := generate.NewExecutor(*craft, *opts)
+
+		// Assert
+		assert.ErrorContains(t, err, "invalid options")
+	})
+
+	t.Run("success", func(t *testing.T) {
+		// Arrange
+		opts := tests.NewGenerateOptionsBuilder().
+			SetDestinationDir(".").
+			SetEndDelim(">>").
+			SetStartDelim("<<").
+			SetTemplatesDir(".").
+			Build()
+		craft := tests.NewCraftConfigBuilder().Build()
+
+		// Act
+		executor, err := generate.NewExecutor(*craft, *opts)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.NotNil(t, executor)
+	})
+}
+
 func TestExecute(t *testing.T) {
 	ctx := context.Background()
 	pwd, _ := os.Getwd()
@@ -25,7 +57,6 @@ func TestExecute(t *testing.T) {
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
 		SetStartDelim("<<")
-
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
 			SetName("maintainer name").
@@ -39,7 +70,6 @@ func TestExecute(t *testing.T) {
 		opts := opts.Copy().
 			SetDestinationDir(destdir).
 			Build()
-
 		craft := craft.Copy().
 			SetNoChart(true).
 			Build()
@@ -61,18 +91,12 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, os.Mkdir(destdir, filesystem.RwxRxRxRx))
 		assertdir := filepath.Join(assertdir, "golang")
 
-		gomod := filepath.Join(destdir, models.GoMod)
-		err := os.WriteFile(gomod, []byte(
-			`module github.com/kilianpaquier/craft
-			
-			go 1.22`,
-		), filesystem.RwRR)
+		err := filesystem.CopyFile(filepath.Join(assertdir, models.GoMod), filepath.Join(destdir, models.GoMod))
 		require.NoError(t, err)
 
 		opts := opts.Copy().
 			SetDestinationDir(destdir).
 			Build()
-
 		craft := craft.Copy().
 			SetNoChart(true).
 			Build()

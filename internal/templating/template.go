@@ -2,7 +2,6 @@ package templating
 
 import (
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,7 +11,7 @@ import (
 )
 
 // Execute runs Execute function from input tmpl with input data and write result to given dest file.
-func Execute(tmpl *template.Template, dest string, data any) error {
+func Execute(tmpl *template.Template, data any, dest string) error {
 	// create destination directory only if one file would be generated
 	if err := os.MkdirAll(filepath.Dir(dest), filesystem.RwxRxRxRx); err != nil && !os.IsExist(err) {
 		return fmt.Errorf("failed to create destination directory: %w", err)
@@ -23,22 +22,29 @@ func Execute(tmpl *template.Template, dest string, data any) error {
 		return fmt.Errorf("failed to template %s: %w", dest, err)
 	}
 
-	// check dest rights to apply (644 or 755)
-	rights := func() fs.FileMode {
-		if filepath.Ext(dest) == ".sh" {
-			return filesystem.RwxRxRxRx
-		}
-		return filesystem.RwRR
-	}()
+	return WriteFile(dest, []byte(result.String()))
+}
 
+// WriteFile removes dest and rewrites it with input content.
+// It's done as is to ensure file rights are recalculated.
+func WriteFile(dest string, content []byte) error {
 	// remove file before rewritting it (in case rights changed)
 	if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
 		return fmt.Errorf("failed to remove %s before rewritting it: %w", dest, err)
 	}
 
 	// write new file content
-	if err := os.WriteFile(dest, []byte(result.String()), rights); err != nil {
+	if err := os.WriteFile(dest, content, GetRights(dest)); err != nil {
 		return fmt.Errorf("failed to write %s: %w", dest, err)
 	}
+
 	return nil
+}
+
+// GetRights returns the appropriate file mode according to input file path.
+func GetRights(dest string) os.FileMode {
+	if strings.HasSuffix(dest, ".sh") {
+		return filesystem.RwxRxRxRx
+	}
+	return filesystem.RwRR
 }

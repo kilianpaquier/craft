@@ -109,7 +109,7 @@ func (e *Executor) Execute(ctx context.Context) error {
 
 // plugins returns the main slice of plugins (generic is excluded since it operates differently).
 func plugins() []plugin {
-	return []plugin{&golang{}, &openAPIV2{}, &openAPIV3{}, &helm{}, &license{}}
+	return []plugin{&golang{}, &generic{}, &openAPIV2{}, &openAPIV3{}, &helm{}, &license{}}
 }
 
 // SplitSlice splits an input slice into two output slices depending on the iteratee function.
