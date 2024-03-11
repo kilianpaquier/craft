@@ -16,9 +16,14 @@ var _ plugin = &nodejs{} // ensure interface is implemented
 // Detect takes the GenerateConfig in input to read or write values from or to it.
 //
 // it returns a boolean indicating whether the plugin should be executed or removed.
-func (*nodejs) Detect(_ context.Context, config *models.GenerateConfig) bool {
+func (plugin *nodejs) Detect(_ context.Context, config *models.GenerateConfig) bool {
 	packageJSON := filepath.Join(config.Options.DestinationDir, models.PackageJSON)
-	return filesystem.Exists(packageJSON)
+	if !filesystem.Exists(packageJSON) {
+		return false
+	}
+
+	config.Languages = append(config.Languages, plugin.Name())
+	return true
 }
 
 // Execute runs some commands for given plugin to "install" it.

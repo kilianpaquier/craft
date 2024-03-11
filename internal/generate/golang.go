@@ -39,6 +39,8 @@ func (plugin *golang) Detect(ctx context.Context, config *models.GenerateConfig)
 		log.WithError(err).Warn("failed to parse go.mod statements")
 		return false
 	}
+
+	config.Languages = append(config.Languages, plugin.Name())
 	config.ModuleName = statements.ModuleName
 	config.ModuleVersion = statements.ModuleVersion
 

@@ -50,6 +50,12 @@ func (b *GenerateConfigBuilder) SetJobs(jobs map[string]struct{}) *GenerateConfi
 	return b
 }
 
+// SetLanguages sets GenerateConfig's Languages.
+func (b *GenerateConfigBuilder) SetLanguages(languages ...string) *GenerateConfigBuilder {
+	b.Languages = append(b.Languages, languages...)
+	return b
+}
+
 // SetModuleName sets GenerateConfig's ModuleName.
 func (b *GenerateConfigBuilder) SetModuleName(moduleName string) *GenerateConfigBuilder {
 	b.ModuleName = moduleName

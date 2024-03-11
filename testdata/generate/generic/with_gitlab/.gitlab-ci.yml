@@ -1,9 +1,7 @@
 # This file is safe to edit. Once it exists it will not be overwritten.
 
 ---
-include:
-  - .gitlab/workflows/version.yml
-  - .gitlab/workflows/integration.yml
+include: .gitlab/workflows/version.yml
 
 # secret variables
 # (define the variables below in your GitLab group/project variables)

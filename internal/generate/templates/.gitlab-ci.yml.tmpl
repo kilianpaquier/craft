@@ -2,12 +2,20 @@
 
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
+
+<<- $docker := .Docker >>
+<<- if not (has "nodejs" .Languages) >>
+<<- $docker = and .Docker (or .API (gt (len $binaries) 0)) >>
+<<- end >>
 
 ---
+<<- if gt (len .Languages) 0 >>
 include:
   - .gitlab/workflows/version.yml
   - .gitlab/workflows/integration.yml
+<<- else >>
+include: .gitlab/workflows/version.yml
+<<- end >>
 
 # secret variables
 # (define the variables below in your GitLab group/project variables)
