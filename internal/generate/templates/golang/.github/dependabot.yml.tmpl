@@ -7,10 +7,11 @@
 
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
+<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
 
 <<- $packages := list "github-actions" "gomod" >>
 
-<<- if and .Docker (or .API (gt (len $binaries) 0)) >>
+<<- if $docker >>
 <<- $packages = append $packages "docker" >>
 <<- end >>
 

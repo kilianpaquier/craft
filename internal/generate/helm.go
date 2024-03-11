@@ -43,13 +43,8 @@ func (plugin *helm) Execute(ctx context.Context, config models.GenerateConfig, f
 
 	// transform craft configuration into generic chart configuration (easier to maintain)
 	var chart map[string]any
-	bytes, err := json.Marshal(config)
-	if err != nil {
-		return fmt.Errorf("failed to convert craft configuration to chart configuration: %w", err)
-	}
-	if err := json.Unmarshal(bytes, &chart); err != nil {
-		return fmt.Errorf("failed to convert craft configuration to chart configuration: %w", err)
-	}
+	bytes, _ := json.Marshal(config)
+	_ = json.Unmarshal(bytes, &chart)
 
 	// read overrides values
 	var overrides map[string]any
@@ -61,6 +56,7 @@ func (plugin *helm) Execute(ctx context.Context, config models.GenerateConfig, f
 	if err := mergo.Merge(&chart, overrides, mergo.WithOverride); err != nil {
 		return fmt.Errorf("failed to merge default chart configuration and overrides: %w", err)
 	}
+
 	return plugin.iterateOver(ctx, config, chart, fsys, srcdir, destdir)
 }
 
@@ -89,10 +85,8 @@ func (*helm) Type() pluginType {
 //
 // If src entry is a directory, the function will dive into it and executes iterateOver in it.
 func (plugin *helm) iterateOver(ctx context.Context, config models.GenerateConfig, chart map[string]any, fsys filesystem.FS, srcdir, destdir string) error {
-	if !filesystem.Exists(destdir) {
-		if err := os.Mkdir(destdir, filesystem.RwxRxRxRx); err != nil {
-			return fmt.Errorf("failed to create directory: %w", err)
-		}
+	if err := os.Mkdir(destdir, filesystem.RwxRxRxRx); err != nil && !os.IsExist(err) {
+		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
 	entries, err := fsys.ReadDir(srcdir)
@@ -125,7 +119,7 @@ func (plugin *helm) iterateOver(ctx context.Context, config models.GenerateConfi
 			if err != nil {
 				return fmt.Errorf("failed to parse %s: %w", src, err)
 			}
-			return templating.Execute(tmpl, dest, chart)
+			return templating.Execute(tmpl, chart, dest)
 		case models.CraftFile:
 			if !filesystem.Exists(dest) {
 				return filesystem.CopyFile(src, dest, filesystem.WithFS(fsys))

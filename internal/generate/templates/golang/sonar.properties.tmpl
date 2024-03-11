@@ -14,5 +14,13 @@ sonar.exclusions=**/examples/**,**/testdata/**,**/vendor/**
 sonar.coverage.exclusions=cmd/**,**/cobra/**,**/tests/**,**/testutils/**
 sonar.test.inclusions=**/*_test.go
 
+<<- if eq .CI.Name "gitlab" >>
+
+sonar.go.tests.reportPaths=reports/go-test.native.json
+sonar.go.coverage.reportPaths=reports/go-coverage.native.out
+sonar.go.golangci-lint.reportPaths=reports/go-ci-lint.checkstyle.xml
+<<- else >>
+
 sonar.go.coverage.reportPaths=coverage.out
 sonar.go.golangci-lint.reportPaths=sonar-report.xml
+<<- end >>

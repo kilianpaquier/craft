@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate"
+	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 )
 
@@ -67,6 +68,25 @@ func TestHelmExecute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetModuleName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
+
+	t.Run("error_invalid_overrides", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		overrides := filepath.Join(destdir, "chart", models.CraftFile)
+		require.NoError(t, os.MkdirAll(overrides, filesystem.RwxRxRxRx))
+
+		config := config.Copy().
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				Build()).
+			Build()
+
+		// Act
+		err := helm.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.ErrorContains(t, err, "failed to read custom chart overrides")
+	})
 
 	t.Run("success_empty_values", func(t *testing.T) {
 		// Arrange

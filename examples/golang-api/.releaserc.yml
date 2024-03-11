@@ -49,18 +49,17 @@ plugins:
         - { path: CHANGELOG.md, label: CHANGELOG.md }
         - { path: checksums.txt }
         - { path: dist }
-      failComment: false,
+      failComment: true
+      failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
   - - "@semantic-release/exec"
     - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
-branches: 
+branches:
   - (master|main)
-  - v+([0-9])?(.{+([0-9]),x}).x
+  - v+([0-9])
   - { name: next, prerelease: true }
   - { name: beta, prerelease: true }
   - { name: alpha, prerelease: true }
   - { name: staging, prerelease: beta }
   - { name: develop, prerelease: alpha }
-  # both variables are replaced in kilianpaquier/cicd's jobs using .releaserc.yml
-  - { name: "CI_COMMIT_REF_NAME", prerelease: "CI_COMMIT_REF_NAME_SHA" }
 tagFormat: v${version}

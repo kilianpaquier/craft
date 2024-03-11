@@ -21,6 +21,8 @@ const (
 	GoCmd = "cmd"
 	// GoMod represents the go.mod filename.
 	GoMod = "go.mod"
+	// PackageJSON represents the package.json filename.
+	PackageJSON = "package.json"
 	// License represents the target filename for the generated project LICENSE.
 	License = "LICENSE"
 	// SwaggerFile represents the target filename for the generated project api.yml.
@@ -32,6 +34,8 @@ const (
 	CodeCov string = "codecov"
 	// Dependabot is the dependabot option for CI tuning.
 	Dependabot string = "dependabot"
+	// Renovate is the renovate option for CI tuning.
+	Renovate string = "renovate"
 	// Sonar is the sonar option for CI tuning.
 	Sonar string = "sonar"
 )
@@ -54,7 +58,7 @@ type CraftConfig struct {
 // CI is the struct for craft ci tuning.
 type CI struct {
 	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required,oneof=github gitlab"`
-	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov dependabot sonar"`
+	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov dependabot sonar renovate"`
 }
 
 // API is the struct for craft api tuning.
