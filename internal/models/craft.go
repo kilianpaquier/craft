@@ -89,13 +89,15 @@ type Maintainer struct {
 // yaml tags are for .craft file and json tags for templating.
 type GenerateConfig struct {
 	CraftConfig
+
 	Clis          map[string]struct{} `json:"-"                     yaml:"-"`
 	Crons         map[string]struct{} `json:"crons,omitempty"       yaml:"-"`
 	Jobs          map[string]struct{} `json:"jobs,omitempty"        yaml:"-"`
-	Workers       map[string]struct{} `json:"workers,omitempty"     yaml:"-"`
+	Languages     []string            `json:"-"                     yaml:"-" builder:"append"`
 	ModuleName    string              `json:"-"                     yaml:"-"`
 	ModuleVersion string              `json:"-"                     yaml:"-"`
 	ProjectName   string              `json:"projectName,omitempty" yaml:"-"`
+	Workers       map[string]struct{} `json:"workers,omitempty"     yaml:"-"`
 
 	Options GenerateOptions `json:"-" yaml:"-"`
 }

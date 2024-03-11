@@ -90,6 +90,7 @@ func TestGolangDetect(t *testing.T) {
 		require.NoError(t, err)
 
 		expected := tests.NewGenerateConfigBuilder().
+			SetLanguages(golang.Name()).
 			SetModuleName("github.com/kilianpaquier/craft").
 			SetModuleVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -139,6 +140,7 @@ func TestGolangDetect(t *testing.T) {
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
+			SetLanguages(golang.Name()).
 			SetModuleName("github.com/kilianpaquier/craft").
 			SetModuleVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -194,6 +196,7 @@ func TestGolangExecute(t *testing.T) {
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
 				Build()).
+			SetLanguages(golang.Name()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
@@ -221,6 +224,7 @@ func TestGolangExecute(t *testing.T) {
 				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
+			SetLanguages(golang.Name()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
@@ -248,6 +252,7 @@ func TestGolangExecute(t *testing.T) {
 				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
+			SetLanguages(golang.Name()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
@@ -274,6 +279,7 @@ func TestGolangExecute(t *testing.T) {
 				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
+			SetLanguages(golang.Name()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
@@ -301,6 +307,7 @@ func TestGolangExecute(t *testing.T) {
 				SetDocker(*tests.NewDockerBuilder().Build()).
 				SetNoMakefile(true).
 				Build()).
+			SetLanguages(golang.Name()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
@@ -342,6 +349,7 @@ func TestGolangExecute(t *testing.T) {
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
+			SetLanguages(golang.Name()).
 			SetWorkers(map[string]struct{}{"worker-name": {}})
 
 		// Act
@@ -368,6 +376,7 @@ func TestGolangExecute(t *testing.T) {
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
+			SetLanguages(golang.Name()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
