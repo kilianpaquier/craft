@@ -135,3 +135,17 @@ jobs:
         with:
           path: ${{ env.SONAR_USER_HOME }}
           key: sonar-cache
+
+  merge-check:
+    name: Merge Check
+    runs-on: ubuntu-latest
+    if: ${{ ! cancelled() && github.event_name == 'pull_request' }}
+    needs:
+      - run-workflow
+      - go-vulncheck
+      - go-lint
+      - go-test
+      - sonar-analysis
+    steps:
+      - run: exit 1
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}

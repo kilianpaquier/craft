@@ -100,3 +100,17 @@ jobs:
         uses: hadolint/hadolint-action@v3.1.0
         with:
           format: tty
+
+  merge-check:
+    name: Merge Check
+    runs-on: ubuntu-latest
+    if: ${{ ! cancelled() && github.event_name == 'pull_request' }}
+    needs:
+      - run-workflow
+      - go-vulncheck
+      - go-lint
+      - go-test
+      - docker-hadolint
+    steps:
+      - run: exit 1
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}
