@@ -47,7 +47,14 @@ plugins:
   - "@semantic-release/npm"
 <<- end >>
   - - "@semantic-release/git"
-    - assets: [ "CHANGELOG.md", "LICENSE" ]
+    - assets:
+        - CHANGELOG.md
+<<- if .License >>
+        - LICENSE
+<<- end >>
+<<- if has "nodejs" .Languages >>
+        - package.json
+<<- end >>
       message: "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
 <<- if .CI >>
   - - "@semantic-release/<< .CI.Name >>"
