@@ -360,6 +360,44 @@ func TestGolangExecute(t *testing.T) {
 		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
+	t.Run("success_options_binaries_gitlab", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "options_binaries_gitlab")
+
+		config := config.Copy().
+			SetCraftConfig(*craft.Build()).
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				Build())
+
+		// generate a first one to confirm optional files deletion behavior
+		err := golang.Execute(ctx, *config.Build(), generate.Tmpl)
+		require.NoError(t, err)
+
+		config = config.
+			SetClis(map[string]struct{}{"cli-name": {}}).
+			SetCraftConfig(*craft.Copy().
+				SetCI(*tests.NewCIBuilder().
+					SetName(models.Gitlab).
+					SetOptions(models.CodeCov, models.Dependabot, models.Sonar).
+					Build()).
+				SetLicense("mit").
+				SetNoGoreleaser(true).
+				Build()).
+			SetCrons(map[string]struct{}{"cron-name": {}}).
+			SetJobs(map[string]struct{}{"job-name": {}}).
+			SetLanguages(golang.Name()).
+			SetWorkers(map[string]struct{}{"worker-name": {}})
+
+		// Act
+		err = golang.Execute(ctx, *config.Build(), generate.Tmpl)
+
+		// Assert
+		assert.NoError(t, err)
+		testfs.AssertEqualDir(t, assertdir, destdir)
+	})
+
 	t.Run("success_with_binaries", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()

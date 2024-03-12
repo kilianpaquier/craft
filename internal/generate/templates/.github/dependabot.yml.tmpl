@@ -7,9 +7,25 @@
 
 <<- $binaries := dict >>
 <<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
 
-<<- $packages := list "github-actions" "gomod" >>
+<<- $docker := .Docker >>
+<<- if not (has "nodejs" .Languages) >>
+<<- $docker = and .Docker (or .API (gt (len $binaries) 0)) >>
+<<- end >>
+
+<<- $packages := list "github-actions" >>
+
+<<- if has "golang" .Languages >>
+<<- $packages = append $packages "gomod" >>
+<<- end >>
+
+<<- if has "nodejs" .Languages >>
+<<- $packages = append $packages "npm" >>
+<<- end >>
+
+<<- if has "python" .Languages >>
+<<- $packages = append $packages "pip" >>
+<<- end >>
 
 <<- if $docker >>
 <<- $packages = append $packages "docker" >>
