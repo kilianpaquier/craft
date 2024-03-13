@@ -24,8 +24,11 @@ jobs:
     name: Run Workflow
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.ref_protected != true) }}
+    outputs:
+      skip: ${{ steps.skip.outputs.skip }}
     steps:
-      - run: echo "Running workflow"
+      - id: skip
+        run: echo "Running workflow" && echo "skip=false" >> $GITHUB_OUTPUT
 
   go-vulncheck:
     name: Go Vulnerability Check
@@ -101,10 +104,10 @@ jobs:
         with:
           format: tty
 
-  merge-check:
-    name: Merge Check
+  workflow-result:
+    name: Workflow Result
     runs-on: ubuntu-latest
-    if: ${{ ! cancelled() && github.event_name == 'pull_request' }}
+    if: ${{ needs.run-workflow.outputs.skip == 'false' && ! cancelled() }}
     needs:
       - run-workflow
       - go-vulncheck
