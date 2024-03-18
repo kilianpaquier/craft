@@ -9,6 +9,7 @@
   - [Golang plugin](#golang-plugin)
     - [With API layout](#with-api-layout)
     - [With Docker layout](#with-docker-layout)
+  - [Nodejs plugin](#nodejs-plugin)
   - [Helm plugin](#helm-plugin)
   - [License plugin](#license-plugin)
 - [Examples](#examples)
@@ -131,13 +132,6 @@ no_makefile: true | false
 
 Craft generation is based on plugins. Each plugin detects from `.craft` configuration and project's files if it needs to generate its part (or not).
 
-Overall, the following plugins are implemented:
-- [`generic`](#generic-plugin)
-- [`golang`](#golang-plugin)
-- [`helm`](#helm-plugin)
-- [`license`](#license-plugin)
-- [`openapi_v2`](#with-api-layout)
-
 ### Generic plugin
 
 Craft project generation for anything but golang (because it's the only coding language implemented for now) will be generated with the generic plugin.
@@ -232,6 +226,8 @@ When the docker option is present and there's at least one executable, then the 
 ├── Dockerfile
 └── launcher.sh (only when there's at least two main.go in cmd folder, parses the BINARY_NAME environment variable to run the right executable)
 ```
+
+### Nodejs plugin
 
 ### Helm plugin
 

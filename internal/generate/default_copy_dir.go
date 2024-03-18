@@ -96,7 +96,7 @@ func (d *defaultCopyDir) defaultCopyDir(ctx context.Context, srcdir, destdir str
 
 			// handle optional file deletion
 			if !apply {
-				if err := os.RemoveAll(dest); err != nil && !os.IsNotExist(err) {
+				if err := os.RemoveAll(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
 					log.WithError(err).Warn("failed to delete non applicable file")
 				}
 				return nil

@@ -2,12 +2,30 @@ package generate
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
+	"io/fs"
+	"os"
 	"path/filepath"
 
+	"github.com/go-playground/validator/v10"
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
+	"github.com/sirupsen/logrus"
 
 	"github.com/kilianpaquier/craft/internal/models"
 )
+
+// packageJSON represents the node package json descriptor.
+type packageJSON struct {
+	Author         *string `json:"author,omitempty"`
+	Description    *string `json:"description,omitempty"`
+	License        *string `json:"license,omitempty"`
+	Main           *string `json:"main,omitempty"`
+	Name           string  `json:"name,omitempty"           validate:"required"`
+	PackageManager *string `json:"packageManager,omitempty"`
+	Private        bool    `json:"private,omitempty"`
+	Version        string  `json:"version,omitempty"`
+}
 
 type nodejs struct{}
 
@@ -16,13 +34,40 @@ var _ plugin = &nodejs{} // ensure interface is implemented
 // Detect takes the GenerateConfig in input to read or write values from or to it.
 //
 // it returns a boolean indicating whether the plugin should be executed or removed.
-func (plugin *nodejs) Detect(_ context.Context, config *models.GenerateConfig) bool {
-	packageJSON := filepath.Join(config.Options.DestinationDir, models.PackageJSON)
-	if !filesystem.Exists(packageJSON) {
+func (plugin *nodejs) Detect(ctx context.Context, config *models.GenerateConfig) bool {
+	log := logrus.WithContext(ctx)
+
+	packagejson := filepath.Join(config.Options.DestinationDir, models.PackageJSON)
+	bytes, err := os.ReadFile(packagejson)
+	if err != nil {
+		if !errors.Is(err, fs.ErrNotExist) {
+			log.WithError(err).Info("failed to read package.json")
+		}
+		return false
+	}
+
+	var descriptor packageJSON
+	if err := json.Unmarshal(bytes, &descriptor); err != nil {
+		log.WithError(err).Info("failed to unmarshal package.json")
+		return false
+	}
+
+	if err := validator.New().Struct(descriptor); err != nil {
+		log.WithError(err).Error("invalid package.json file, proceeding without nodejs plugin")
 		return false
 	}
 
 	config.Languages = append(config.Languages, plugin.Name())
+	config.LongProjectName = descriptor.Name
+	config.ProjectName = descriptor.Name
+
+	// deactivate makefile because commands are facilitated by package.json scripts
+	config.NoMakefile = true
+
+	// automatically add one binary because there's no such things
+	if descriptor.Main != nil {
+		config.Binaries++
+	}
 	return true
 }
 

@@ -66,7 +66,7 @@ func TestHelmExecute(t *testing.T) {
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
-		SetModuleName("github.com/kilianpaquier/craft").
+		SetLongProjectName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
 
 	t.Run("error_invalid_overrides", func(t *testing.T) {
@@ -97,7 +97,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().Build()).
+			SetCraftConfig(*craft.Build()).
 			Build()
 
 		// Act
@@ -121,7 +121,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().Build()).
+			SetCraftConfig(*craft.Build()).
 			Build()
 
 		// Act

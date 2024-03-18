@@ -79,3 +79,9 @@ func (b *CraftConfigBuilder) SetNoMakefile(noMakefile bool) *CraftConfigBuilder 
 	b.NoMakefile = noMakefile
 	return b
 }
+
+// SetPackageManager sets CraftConfig's PackageManager.
+func (b *CraftConfigBuilder) SetPackageManager(packageManager string) *CraftConfigBuilder {
+	b.PackageManager = &packageManager
+	return b
+}

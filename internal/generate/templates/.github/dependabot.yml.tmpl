@@ -5,14 +5,7 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
-<<- $binaries := dict >>
-<<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-
-<<- $docker := .Docker >>
-<<- if not (has "nodejs" .Languages) >>
-<<- $docker = and .Docker (or .API (gt (len $binaries) 0)) >>
-<<- end >>
-
+<<- $docker := and .Docker (gt .Binaries 0) >>
 <<- $packages := list "github-actions" >>
 
 <<- if has "golang" .Languages >>

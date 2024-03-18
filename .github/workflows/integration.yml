@@ -55,9 +55,10 @@ jobs:
           check-latest: true
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
+      - run: mkdir -p reports/
       - uses: golangci/golangci-lint-action@v4
         with:
-          args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format colored-line-number
+          args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format checkstyle:reports/go-ci-lint.checkstyle.xml,colored-line-number
 
   go-test:
     name: Go Test
@@ -79,7 +80,8 @@ jobs:
           check-latest: true
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: go test ./... -coverpkg="./..." -covermode="count" -coverprofile="coverage.out"
+      - run: mkdir -p reports/
+      - run: go test ./... -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out"
       - uses: codecov/codecov-action@v4
         if: ${{ ! startsWith(github.head_ref, 'dependabot') }} # ignore codecov on dependabot branches
         with:
@@ -87,7 +89,7 @@ jobs:
           disable_search: true
           env_vars: OS
           fail_ci_if_error: true
-          file: coverage.out
+          file: reports/go-coverage.native.out
           slug: ${{ github.repository }}
           token: ${{ secrets.CODECOV_TOKEN }}
 
