@@ -33,7 +33,7 @@ func NewExecutor(config models.CraftConfig, opts models.GenerateOptions) (*Execu
 		config: models.GenerateConfig{
 			CraftConfig: config,
 
-			// read project folder
+			// read project folder (may be overridden by some primary plugins for a more appropriate value)
 			ProjectName: filepath.Base(opts.DestinationDir),
 
 			// initialize pointers

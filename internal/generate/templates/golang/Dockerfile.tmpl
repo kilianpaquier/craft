@@ -8,7 +8,7 @@
 #############################
 #        STAGE BUILD        #
 #############################
-FROM golang:<< .ModuleVersion >> AS build
+FROM golang:<< .LangVersion >> AS build
 
 WORKDIR /app
 
@@ -42,9 +42,9 @@ LABEL org.opencontainers.image.description="<< .Description >>"
 <<- if .License >>
 LABEL org.opencontainers.image.licenses="<< upper .License >>"
 <<- end >>
-LABEL org.opencontainers.image.url="<< .ModuleName >>"
-LABEL org.opencontainers.image.source="<< .ModuleName >>"
-LABEL org.opencontainers.image.documentation="<< .ModuleName >>"
+LABEL org.opencontainers.image.url="<< .LongProjectName >>"
+LABEL org.opencontainers.image.source="<< .LongProjectName >>"
+LABEL org.opencontainers.image.documentation="<< .LongProjectName >>"
 
 WORKDIR /app
 
@@ -59,15 +59,19 @@ COPY --from=build \
 
 <<- $entrypoint := "launcher.sh" >>
 
+<<- if eq .Binaries 1 >>
+<<- if .API >>
+
 <<- /* directly use api binary if it is the only binary */>>
-<<- if and .API (eq (len $binaries) 0) >>
 <<- $entrypoint = print .ProjectName "-api" >>
-<<- end >>
+
+<<- else >>
 
 <<- /* directly use the only binary */>>
-<<- if and (not .API) (eq (len $binaries) 1) >>
 <<- range $name, $config := $binaries >>
 <<- $entrypoint = $name >>
+<<- end >>
+
 <<- end >>
 <<- end >>
 

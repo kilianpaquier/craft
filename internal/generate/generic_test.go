@@ -48,7 +48,7 @@ func TestGenericExecute(t *testing.T) {
 	t.Run("success_force_all", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "force_all")
+		assertdir := filepath.Join(assertdir, "success_force_all")
 
 		config := config.Copy().
 			SetOptions(*opts.Copy().
@@ -73,7 +73,7 @@ func TestGenericExecute(t *testing.T) {
 	t.Run("success_force_one", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "force_one")
+		assertdir := filepath.Join(assertdir, "success_force_one")
 
 		config := config.Copy().
 			SetOptions(*opts.Copy().
@@ -95,10 +95,10 @@ func TestGenericExecute(t *testing.T) {
 		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_with_github", func(t *testing.T) {
+	t.Run("success_github", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_github")
+		assertdir := filepath.Join(assertdir, "success_github")
 
 		config := config.Copy().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
@@ -120,10 +120,10 @@ func TestGenericExecute(t *testing.T) {
 		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_with_gitlab", func(t *testing.T) {
+	t.Run("success_gitlab", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_gitlab")
+		assertdir := filepath.Join(assertdir, "success_gitlab")
 
 		config := config.Copy().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().

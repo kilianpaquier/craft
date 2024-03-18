@@ -1,12 +1,6 @@
 # This file is safe to edit. Once it exists it will not be overwritten.
 
-<<- $binaries := dict >>
-<<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-
-<<- $docker := .Docker >>
-<<- if not (has "nodejs" .Languages) >>
-<<- $docker = and .Docker (or .API (gt (len $binaries) 0)) >>
-<<- end >>
+<<- $docker := and .Docker (gt .Binaries 0) >>
 
 ---
 <<- if gt (len .Languages) 0 >>

@@ -1,7 +1,9 @@
 package templating
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,7 +31,7 @@ func Execute(tmpl *template.Template, data any, dest string) error {
 // It's done as is to ensure file rights are recalculated.
 func WriteFile(dest string, content []byte) error {
 	// remove file before rewritting it (in case rights changed)
-	if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("failed to remove %s before rewritting it: %w", dest, err)
 	}
 

@@ -19,12 +19,16 @@ import (
 
 func TestOpenAPIV3Detect(t *testing.T) {
 	ctx := context.Background()
-	pwd, _ := os.Getwd()
 	api := generate.OpenAPIV3{}
 
 	t.Run("success_false_with_v2", func(t *testing.T) {
 		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
+		destdir := t.TempDir()
+
+		gomod := filepath.Join(destdir, models.Gomod)
+		file, err := os.Create(gomod)
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
@@ -46,7 +50,12 @@ func TestOpenAPIV3Detect(t *testing.T) {
 
 	t.Run("success_false_no_api_with_gomod", func(t *testing.T) {
 		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
+		destdir := t.TempDir()
+
+		gomod := filepath.Join(destdir, models.Gomod)
+		file, err := os.Create(gomod)
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
@@ -82,7 +91,12 @@ func TestOpenAPIV3Detect(t *testing.T) {
 
 	t.Run("success_true_with_v3", func(t *testing.T) {
 		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
+		destdir := t.TempDir()
+
+		gomod := filepath.Join(destdir, models.Gomod)
+		file, err := os.Create(gomod)
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
@@ -122,7 +136,7 @@ func TestOpenAPIV3Execute(t *testing.T) {
 				SetName("maintainer name").
 				Build()).
 			Build()).
-		SetModuleName("github.com/kilianpaquier/craft").
+		SetLongProjectName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
 
 	api := generate.OpenAPIV3{}
@@ -132,7 +146,7 @@ func TestOpenAPIV3Execute(t *testing.T) {
 		destdir := t.TempDir()
 		assertdir := filepath.Join(assertdir, "no_api_yml")
 
-		err := filesystem.CopyFile(filepath.Join(assertdir, models.GoMod), filepath.Join(destdir, models.GoMod))
+		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
 
 		config := config.Copy().
@@ -154,7 +168,7 @@ func TestOpenAPIV3Execute(t *testing.T) {
 		destdir := t.TempDir()
 		assertdir := filepath.Join(assertdir, "with_api_yml")
 
-		err := filesystem.CopyFile(filepath.Join(assertdir, models.GoMod), filepath.Join(destdir, models.GoMod))
+		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
 
 		err = filesystem.CopyFile(filepath.Join(assertdir, models.SwaggerFile), filepath.Join(destdir, models.SwaggerFile))

@@ -1,6 +1,8 @@
 package cobra
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 
 	"github.com/go-playground/validator/v10"
@@ -33,7 +35,7 @@ var (
 			// read craft configuration
 			var craft models.CraftConfig
 			if err := configuration.ReadCraft(generateOpts.DestinationDir, &craft); err != nil {
-				if !os.IsNotExist(err) {
+				if !errors.Is(err, fs.ErrNotExist) {
 					log.WithError(err).Fatal("failed to read craft configuration, file exists but is not readable")
 				}
 

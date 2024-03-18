@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -35,7 +36,7 @@ var _ plugin = &openAPIV2{} // ensure interface is implemented
 //
 // it returns a boolean indicating whether the plugin should be executed or removed.
 func (*openAPIV2) Detect(_ context.Context, config *models.GenerateConfig) bool {
-	gomod := filepath.Join(config.Options.DestinationDir, models.GoMod)
+	gomod := filepath.Join(config.Options.DestinationDir, models.Gomod)
 
 	if config.API == nil {
 		return false
@@ -46,6 +47,8 @@ func (*openAPIV2) Detect(_ context.Context, config *models.GenerateConfig) bool 
 	if !filesystem.Exists(gomod) {
 		return false
 	}
+
+	config.Binaries++
 	return true
 }
 
@@ -118,12 +121,12 @@ func (*openAPIV2) Name() string {
 func (*openAPIV2) Remove(_ context.Context, config models.GenerateConfig) error {
 	removals := []string{
 		modelsPackage, serverPackage, filepath.Join("internal", "api"), models.SwaggerFile,
-		filepath.Join(models.GoCmd, fmt.Sprint(config.ProjectName, "-api")),
+		filepath.Join(models.Gocmd, fmt.Sprint(config.ProjectName, "-api")),
 	}
 
 	errs := lo.Map(removals, func(item string, _ int) error {
 		dest := filepath.Join(config.Options.DestinationDir, item)
-		if err := os.RemoveAll(dest); err != nil && !os.IsNotExist(err) {
+		if err := os.RemoveAll(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return fmt.Errorf("failed to delete %s: %w", dest, err)
 		}
 		return nil
@@ -157,7 +160,7 @@ func (*openAPIV2) generateServer(destdir, templatesDir, projectName string) erro
 			IncludeSupport:         true,
 			IncludeURLBuilder:      true,
 			IncludeValidator:       true,
-			MainPackage:            path.Join(models.GoCmd, projectName+"-api"),
+			MainPackage:            path.Join(models.Gocmd, projectName+"-api"),
 			ModelPackage:           modelsPackage,
 			Principal:              "models.Principal",
 			PrincipalCustomIface:   true,

@@ -26,6 +26,12 @@ func (b *GenerateConfigBuilder) Build() *models.GenerateConfig {
 	return &c
 }
 
+// SetBinaries sets GenerateConfig's Binaries.
+func (b *GenerateConfigBuilder) SetBinaries(binaries uint8) *GenerateConfigBuilder {
+	b.Binaries = binaries
+	return b
+}
+
 // SetClis sets GenerateConfig's Clis.
 func (b *GenerateConfigBuilder) SetClis(clis map[string]struct{}) *GenerateConfigBuilder {
 	b.Clis = clis
@@ -56,15 +62,15 @@ func (b *GenerateConfigBuilder) SetLanguages(languages ...string) *GenerateConfi
 	return b
 }
 
-// SetModuleName sets GenerateConfig's ModuleName.
-func (b *GenerateConfigBuilder) SetModuleName(moduleName string) *GenerateConfigBuilder {
-	b.ModuleName = moduleName
+// SetLangVersion sets GenerateConfig's LangVersion.
+func (b *GenerateConfigBuilder) SetLangVersion(langVersion string) *GenerateConfigBuilder {
+	b.LangVersion = langVersion
 	return b
 }
 
-// SetModuleVersion sets GenerateConfig's ModuleVersion.
-func (b *GenerateConfigBuilder) SetModuleVersion(moduleVersion string) *GenerateConfigBuilder {
-	b.ModuleVersion = moduleVersion
+// SetLongProjectName sets GenerateConfig's LongProjectName.
+func (b *GenerateConfigBuilder) SetLongProjectName(longProjectName string) *GenerateConfigBuilder {
+	b.LongProjectName = longProjectName
 	return b
 }
 

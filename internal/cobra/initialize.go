@@ -1,6 +1,8 @@
 package cobra
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -23,7 +25,7 @@ var initCmd = &cobra.Command{
 		// read craft configuration
 		var craft models.CraftConfig
 		if err := configuration.ReadCraft(destdir, &craft); err != nil {
-			if !os.IsNotExist(err) {
+			if !errors.Is(err, fs.ErrNotExist) {
 				log.WithError(err).Fatal("failed to read craft configuration, file exists but is not readable")
 			}
 

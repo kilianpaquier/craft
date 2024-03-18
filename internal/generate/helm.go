@@ -48,7 +48,7 @@ func (plugin *helm) Execute(ctx context.Context, config models.GenerateConfig, f
 
 	// read overrides values
 	var overrides map[string]any
-	if err := configuration.ReadCraft(destdir, &overrides); err != nil && !os.IsNotExist(err) {
+	if err := configuration.ReadCraft(destdir, &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("failed to read custom chart overrides: %w", err)
 	}
 

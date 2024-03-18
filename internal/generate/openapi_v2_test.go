@@ -20,12 +20,16 @@ import (
 
 func TestOpenAPIV2Detect(t *testing.T) {
 	ctx := context.Background()
-	pwd, _ := os.Getwd()
 	api := generate.OpenAPIV2{}
 
 	t.Run("success_false_with_v3", func(t *testing.T) {
 		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
+		destdir := t.TempDir()
+
+		gomod := filepath.Join(destdir, models.Gomod)
+		file, err := os.Create(gomod)
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
@@ -47,7 +51,12 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 	t.Run("success_false_with_gomod", func(t *testing.T) {
 		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
+		destdir := t.TempDir()
+
+		gomod := filepath.Join(destdir, models.Gomod)
+		file, err := os.Create(gomod)
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
@@ -81,7 +90,12 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 	t.Run("success_true", func(t *testing.T) {
 		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
+		destdir := t.TempDir()
+
+		gomod := filepath.Join(destdir, models.Gomod)
+		file, err := os.Create(gomod)
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
@@ -101,7 +115,12 @@ func TestOpenAPIV2Detect(t *testing.T) {
 
 	t.Run("success_true_with_v2", func(t *testing.T) {
 		// Arrange
-		destdir := filepath.Join(pwd, "..", "..")
+		destdir := t.TempDir()
+
+		gomod := filepath.Join(destdir, models.Gomod)
+		file, err := os.Create(gomod)
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
@@ -147,7 +166,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 				SetOpenAPIVersion("v2").
 				Build()).
 			Build()).
-		SetModuleName("github.com/kilianpaquier/craft").
+		SetLongProjectName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
 
 	t.Run("success_no_api_yml", func(t *testing.T) {
@@ -155,7 +174,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 		destdir := t.TempDir()
 		assertdir := filepath.Join(assertdir, "no_api_yml")
 
-		err := filesystem.CopyFile(filepath.Join(assertdir, models.GoMod), filepath.Join(destdir, models.GoMod))
+		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
 
 		config := config.Copy().
@@ -177,7 +196,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 		destdir := t.TempDir()
 		assertdir := filepath.Join(assertdir, "with_api_yml")
 
-		err := filesystem.CopyFile(filepath.Join(assertdir, models.GoMod), filepath.Join(destdir, models.GoMod))
+		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
 
 		err = filesystem.CopyFile(filepath.Join(assertdir, models.SwaggerFile), filepath.Join(destdir, models.SwaggerFile))
@@ -224,7 +243,7 @@ func TestOpenAPIV2Remove(t *testing.T) {
 		SetProjectName("project_name").
 		Build()
 
-	binarydir := filepath.Join(destdir, models.GoCmd, config.ProjectName+"-api")
+	binarydir := filepath.Join(destdir, models.Gocmd, config.ProjectName+"-api")
 	modelsdir := filepath.Join(destdir, "models")
 	restapidir := filepath.Join(destdir, "restapi")
 	internal := filepath.Join(destdir, "internal", "api")

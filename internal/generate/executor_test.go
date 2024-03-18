@@ -8,7 +8,6 @@ import (
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
 	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
-	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -65,6 +64,7 @@ func TestExecute(t *testing.T) {
 	t.Run("success_generic", func(t *testing.T) {
 		// Arrange
 		destdir := filepath.Join(t.TempDir(), "generic")
+		require.NoError(t, os.Mkdir(destdir, filesystem.RwxRxRxRx))
 		assertdir := filepath.Join(assertdir, "generic")
 
 		opts := opts.Copy().
@@ -91,7 +91,7 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, os.Mkdir(destdir, filesystem.RwxRxRxRx))
 		assertdir := filepath.Join(assertdir, "golang")
 
-		err := filesystem.CopyFile(filepath.Join(assertdir, models.GoMod), filepath.Join(destdir, models.GoMod))
+		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
 
 		opts := opts.Copy().
@@ -109,10 +109,34 @@ func TestExecute(t *testing.T) {
 
 		// Assert
 		assert.NoError(t, err)
-		testfs.AssertEqualDir(t, assertdir, destdir,
-			testfs.WithIgnoreDiff(func(filename string, _ diffmatchpatch.Diff) bool {
-				return filename == models.GoMod
-			}))
+		testfs.AssertEqualDir(t, assertdir, destdir)
+	})
+
+	t.Run("success_nodejs", func(t *testing.T) {
+		// Arrange
+		destdir := filepath.Join(t.TempDir(), "nodejs")
+		require.NoError(t, os.Mkdir(destdir, filesystem.RwxRxRxRx))
+		assertdir := filepath.Join(assertdir, "nodejs")
+
+		err := filesystem.CopyFile(filepath.Join(assertdir, models.PackageJSON), filepath.Join(destdir, models.PackageJSON))
+		require.NoError(t, err)
+
+		opts := opts.Copy().
+			SetDestinationDir(destdir).
+			Build()
+		craft := craft.Copy().
+			SetNoChart(true).
+			Build()
+
+		executor, err := generate.NewExecutor(*craft, *opts)
+		require.NoError(t, err)
+
+		// Act
+		err = executor.Execute(ctx)
+
+		// Assert
+		assert.NoError(t, err)
+		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 }
 
