@@ -100,6 +100,7 @@ jobs:
           env_vars: OS
           fail_ci_if_error: true
           file: reports/go-coverage.native.out
+          flags: ${{ matrix.os }}
           slug: ${{ github.repository }}
           token: ${{ secrets.CODECOV_TOKEN }}
 <<- end >>
@@ -123,16 +124,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: hadolint/hadolint-action@v3.1.0
-        continue-on-error: true # enforce scan upload to codeql
         with:
           format: sarif
           output-file: hadolint-results.sarif
       - uses: github/codeql-action/upload-sarif@v3
+        if: ${{ ! cancelled() }}
         with:
           sarif_file: hadolint-results.sarif
           category: docker-hadolint
       - id: hadolint
         uses: hadolint/hadolint-action@v3.1.0
+        if: ${{ ! cancelled() }}
         with:
           format: tty
 <<- end >>
