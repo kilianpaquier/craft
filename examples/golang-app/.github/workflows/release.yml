@@ -24,9 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: sha
-        run: echo "sha=$(echo "$REF_NAME" | sha256sum | cut -c -8)" >> $GITHUB_OUTPUT
-        env:
-          REF_NAME: ${{ github.ref_name }}
+        run: echo "sha=$(echo "$GITHUB_REF_NAME" | sha256sum | cut -c -8)" >> $GITHUB_OUTPUT
       - id: semantic_release
         uses: cycjimmy/semantic-release-action@v4
         with:
@@ -69,14 +67,24 @@ jobs:
   docker-build:
     name: Docker Build
     runs-on: ubuntu-latest
-    needs:
-      - version
+    needs: version
+    outputs:
+      image: ${{ steps.image.outputs.image }}
     steps:
       - uses: actions/checkout@v4
+      - id: image
+        run: |
+          IMAGE="ghcr.io/$GITHUB_REPOSITORY"
+          if [ "$RELEASE" != "true" ]; then
+            IMAGE="$IMAGE/snapshot"
+          fi
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+        env:
+          RELEASE: ${{ needs.version.outputs.release }}
       - id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ steps.image.outputs.image }}
           labels: |
             org.opencontainers.image.created={{date 'YYYY-MM-DDTHH:mm:ssZ'}}
             org.opencontainers.image.ref.name="${{ github.ref_name }}"
@@ -97,13 +105,12 @@ jobs:
         with:
           context: .
           labels: ${{ steps.meta.outputs.labels }}
-          push: ${{ github.ref_protected == true }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
 
   docker-trivy:
     name: Docker Trivy
     runs-on: ubuntu-latest
-    if: github.ref_protected == true
     permissions:
       security-events: write
     needs:
@@ -112,12 +119,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: aquasecurity/trivy-action@master
-        continue-on-error: true # enforce scan upload to codeql
         with:
-          exit-code: "1"
           format: sarif
           ignore-unfixed: false
-          image-ref: "ghcr.io/${{ github.repository }}:${{ needs.version.outputs.version }}"
+          image-ref: "${{ needs.docker-build.outputs.image }}:${{ needs.version.outputs.version }}"
           output: trivy-results.sarif
           severity: MEDIUM,HIGH,CRITICAL
         env:
@@ -127,6 +132,15 @@ jobs:
         with:
           category: docker-trivy
           sarif_file: trivy-results.sarif
+      - uses: aquasecurity/trivy-action@master
+        with:
+          exit-code: "1"
+          ignore-unfixed: false
+          image-ref: "${{ needs.docker-build.outputs.image }}:${{ needs.version.outputs.version }}"
+          severity: MEDIUM,HIGH,CRITICAL
+        env:
+          TRIVY_USERNAME: ${{ github.repository_owner }}
+          TRIVY_PASSWORD: ${{ secrets.REGISTRY_TOKEN }}
 
   release:
     name: Release

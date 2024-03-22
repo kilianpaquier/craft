@@ -14,7 +14,17 @@ coverage:
         threshold: 2.5%
 
 ignore:
+<<- if has "golang" .Languages >>
+  - "cmd"
+  - "examples"
+  - "**/cobra"
+  - "**/mocks"
+  - "**/tests"
+  - "**/testutils"
+<<- end >>
+<<- if has "nodejs" .Languages >>
   - "dist"
   - "node_modules"
   - "**/*.spec.ts"
   - "**/*.test.js"
+<<- end >>
