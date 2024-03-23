@@ -166,7 +166,6 @@ func TestOpenAPIV2Execute(t *testing.T) {
 				SetOpenAPIVersion("v2").
 				Build()).
 			Build()).
-		SetLongProjectName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
 
 	t.Run("success_no_api_yml", func(t *testing.T) {

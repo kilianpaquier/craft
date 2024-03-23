@@ -68,21 +68,27 @@ func (b *GenerateConfigBuilder) SetLangVersion(langVersion string) *GenerateConf
 	return b
 }
 
-// SetLongProjectName sets GenerateConfig's LongProjectName.
-func (b *GenerateConfigBuilder) SetLongProjectName(longProjectName string) *GenerateConfigBuilder {
-	b.LongProjectName = longProjectName
-	return b
-}
-
 // SetOptions sets GenerateConfig's Options.
 func (b *GenerateConfigBuilder) SetOptions(options models.GenerateOptions) *GenerateConfigBuilder {
 	b.Options = options
 	return b
 }
 
+// SetProjectHost sets GenerateConfig's ProjectHost.
+func (b *GenerateConfigBuilder) SetProjectHost(projectHost string) *GenerateConfigBuilder {
+	b.ProjectHost = projectHost
+	return b
+}
+
 // SetProjectName sets GenerateConfig's ProjectName.
 func (b *GenerateConfigBuilder) SetProjectName(projectName string) *GenerateConfigBuilder {
 	b.ProjectName = projectName
+	return b
+}
+
+// SetProjectPath sets GenerateConfig's ProjectPath.
+func (b *GenerateConfigBuilder) SetProjectPath(projectPath string) *GenerateConfigBuilder {
+	b.ProjectPath = projectPath
 	return b
 }
 

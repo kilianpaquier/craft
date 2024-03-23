@@ -7,7 +7,7 @@ sonar.qualitygate.wait=true
 
 sonar.organization=<< $maintainer.Name >>
 sonar.projectBaseDir=.
-sonar.projectKey=<< print $maintainer.Name "_" .ProjectName >>
+sonar.projectKey=<< .ProjectPath | replace "/" "_" >>
 sonar.projectName=<< .ProjectName >>
 
 sonar.exclusions=node_modules/**,dist/**,**/*.spec.ts,**/*.test.js

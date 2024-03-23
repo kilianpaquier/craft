@@ -77,7 +77,6 @@ func TestNodejsDetect(t *testing.T) {
 				SetNoMakefile(true).
 				Build()).
 			SetLanguages(nodejs.Name()).
-			SetLongProjectName("craft").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -106,6 +105,7 @@ func TestNodejsExecute(t *testing.T) {
 
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
+		SetForceAll(true).
 		SetStartDelim("<<").
 		SetTemplatesDir("templates")
 
@@ -118,8 +118,9 @@ func TestNodejsExecute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetBinaries(1).
 		SetLanguages(nodejs.Name()).
-		SetLongProjectName("craft").
-		SetProjectName("craft")
+		SetProjectHost("example.com").
+		SetProjectName("craft").
+		SetProjectPath("kilianpaquier/craft")
 
 	t.Run("success_github", func(t *testing.T) {
 		// Arrange
@@ -131,6 +132,7 @@ func TestNodejsExecute(t *testing.T) {
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Github).
 					Build()).
+				SetPlatform(models.Github).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -156,6 +158,7 @@ func TestNodejsExecute(t *testing.T) {
 					SetName(models.Github).
 					Build()).
 				SetDocker(*tests.NewDockerBuilder().Build()).
+				SetPlatform(models.Github).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -182,6 +185,7 @@ func TestNodejsExecute(t *testing.T) {
 					SetName(models.Gitlab).
 					Build()).
 				SetNoMakefile(true).
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -207,6 +211,7 @@ func TestNodejsExecute(t *testing.T) {
 					SetName(models.Gitlab).
 					Build()).
 				SetDocker(*tests.NewDockerBuilder().Build()).
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -234,6 +239,7 @@ func TestNodejsExecute(t *testing.T) {
 					Build()).
 				SetLicense("mit").
 				SetPackageManager("npm").
+				SetPlatform(models.Github).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -260,7 +266,8 @@ func TestNodejsExecute(t *testing.T) {
 					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
 					Build()).
 				SetLicense("mit").
-				SetPackageManager("npm").
+				SetPackageManager("yarn").
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).

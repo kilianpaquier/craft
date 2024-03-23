@@ -1,6 +1,8 @@
 module github.com/kilianpaquier/craft/examples/golang-api
 
-go 1.22
+go 1.22.0
+
+toolchain go1.22.1
 
 require (
 	github.com/caarlos0/env/v10 v10.0.0

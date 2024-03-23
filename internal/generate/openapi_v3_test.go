@@ -136,7 +136,6 @@ func TestOpenAPIV3Execute(t *testing.T) {
 				SetName("maintainer name").
 				Build()).
 			Build()).
-		SetLongProjectName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
 
 	api := generate.OpenAPIV3{}

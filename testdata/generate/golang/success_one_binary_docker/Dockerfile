@@ -23,9 +23,9 @@ LABEL org.opencontainers.image.authors="maintainer name"
 LABEL org.opencontainers.image.vendor="maintainer name"
 
 LABEL org.opencontainers.image.title="craft"
-LABEL org.opencontainers.image.url="github.com/kilianpaquier/craft"
-LABEL org.opencontainers.image.source="github.com/kilianpaquier/craft"
-LABEL org.opencontainers.image.documentation="github.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.url="example.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.source="example.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.documentation="example.com/kilianpaquier/craft"
 
 WORKDIR /app
 

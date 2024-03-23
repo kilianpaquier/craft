@@ -90,13 +90,17 @@ func TestGolangDetect(t *testing.T) {
 		require.NoError(t, err)
 
 		expected := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetPlatform(models.Github).
+				Build()).
 			SetLanguages(golang.Name()).
-			SetLongProjectName("github.com/kilianpaquier/craft").
 			SetLangVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
+			SetProjectHost("github.com").
 			SetProjectName("craft").
+			SetProjectPath("kilianpaquier/craft").
 			Build()
 		current := tests.NewGenerateConfigBuilder().
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -127,13 +131,17 @@ func TestGolangDetect(t *testing.T) {
 		require.NoError(t, err)
 
 		expected := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetPlatform(models.Github).
+				Build()).
 			SetLanguages(golang.Name()).
-			SetLongProjectName("github.com/kilianpaquier/craft/v2").
 			SetLangVersion("1.22").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
+			SetProjectHost("github.com").
 			SetProjectName("craft").
+			SetProjectPath("kilianpaquier/craft").
 			Build()
 		current := tests.NewGenerateConfigBuilder().
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -159,7 +167,7 @@ func TestGolangDetect(t *testing.T) {
 		err := os.WriteFile(gomod, []byte(
 			`module github.com/kilianpaquier/craft
 			
-			go 1.22`,
+			go 1.22.1`,
 		), filesystem.RwRR)
 		require.NoError(t, err)
 
@@ -177,15 +185,19 @@ func TestGolangDetect(t *testing.T) {
 		expected := tests.NewGenerateConfigBuilder().
 			SetBinaries(4).
 			SetClis(map[string]struct{}{"cli-name": {}}).
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetPlatform(models.Github).
+				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
 			SetLanguages(golang.Name()).
-			SetLongProjectName("github.com/kilianpaquier/craft").
-			SetLangVersion("1.22").
+			SetLangVersion("1.22.1").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
+			SetProjectHost("github.com").
 			SetProjectName("craft").
+			SetProjectPath("kilianpaquier/craft").
 			SetWorkers(map[string]struct{}{"worker-name": {}}).
 			Build()
 		current := tests.NewGenerateConfigBuilder().
@@ -215,6 +227,7 @@ func TestGolangExecute(t *testing.T) {
 
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
+		SetForceAll(true).
 		SetStartDelim("<<").
 		SetTemplatesDir("templates")
 
@@ -226,8 +239,39 @@ func TestGolangExecute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetLanguages(golang.Name()).
 		SetLangVersion("1.22").
-		SetLongProjectName("github.com/kilianpaquier/craft").
-		SetProjectName("craft")
+		SetProjectHost("example.com").
+		SetProjectName("craft").
+		SetProjectPath("kilianpaquier/craft")
+
+	t.Run("success_binaries", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "success_binaries")
+
+		config := config.Copy().
+			SetClis(map[string]struct{}{"cli-name": {}}).
+			SetCraftConfig(*craft.Copy().
+				SetAPI(*tests.NewAPIBuilder().Build()).
+				SetDocker(*tests.NewDockerBuilder().
+					SetPort(5000).
+					Build()).
+				SetLicense("mit").
+				Build()).
+			SetCrons(map[string]struct{}{"cron-name": {}}).
+			SetJobs(map[string]struct{}{"job-name": {}}).
+			SetOptions(*opts.Copy().
+				SetDestinationDir(destdir).
+				Build()).
+			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			Build()
+
+		// Act
+		err := golang.Execute(ctx, *config, generate.Tmpl)
+
+		// Assert
+		assert.NoError(t, err)
+		testfs.AssertEqualDir(t, assertdir, destdir)
+	})
 
 	t.Run("success_no_binaries", func(t *testing.T) {
 		// Arrange
@@ -316,6 +360,7 @@ func TestGolangExecute(t *testing.T) {
 					Build()).
 				SetLicense("mit").
 				SetNoGoreleaser(true).
+				SetPlatform(models.Github).
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
@@ -346,6 +391,7 @@ func TestGolangExecute(t *testing.T) {
 					Build()).
 				SetLicense("mit").
 				SetNoGoreleaser(true).
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetCrons(map[string]struct{}{"cron-name": {}}).
 			SetJobs(map[string]struct{}{"job-name": {}}).
@@ -356,36 +402,6 @@ func TestGolangExecute(t *testing.T) {
 
 		// Act
 		err := golang.Execute(ctx, *config.Build(), generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		testfs.AssertEqualDir(t, assertdir, destdir)
-	})
-
-	t.Run("success_binaries", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "success_binaries")
-
-		config := config.Copy().
-			SetClis(map[string]struct{}{"cli-name": {}}).
-			SetCraftConfig(*craft.Copy().
-				SetAPI(*tests.NewAPIBuilder().Build()).
-				SetDocker(*tests.NewDockerBuilder().
-					SetPort(5000).
-					Build()).
-				SetLicense("mit").
-				Build()).
-			SetCrons(map[string]struct{}{"cron-name": {}}).
-			SetJobs(map[string]struct{}{"job-name": {}}).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
-			Build()
-
-		// Act
-		err := golang.Execute(ctx, *config, generate.Tmpl)
 
 		// Assert
 		assert.NoError(t, err)

@@ -17,27 +17,13 @@ lint-fix: reports
 	@ARGS="--fix" make -s lint
 
 .PHONY: test
-test: lint
+test:
 	@go test ./... -count 1
 
 .PHONY: test-race
-test-race: lint
+test-race:
 	@go test ./... -race
 
 .PHONY: test-cover
-test-cover: lint reports
+test-cover: reports
 	@go test ./... -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out"
-
-.PHONY: buildall
-buildall: build-craft-api build-cli-name build-cron-name build-job-name build-worker-name
-
-.PHONY: craft-api cli-name cron-name job-name worker-name
-build-%:
-	@CGO_ENABLED=0 go build -o $* cmd/$*/main.go
-
-.PHONY: craft-api cli-name cron-name job-name worker-name
-local-%:
-	@go run cmd/$*/main.go
-
-build-docker:
-	@docker build -t craft .

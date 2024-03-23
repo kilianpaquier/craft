@@ -35,7 +35,7 @@ api:
   replicaCount: 1
   image:
     registry: /
-    repository: maintainer name/craft
+    repository: kilianpaquier/craft
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
@@ -170,7 +170,7 @@ crons:
     parallelism: 1
     image:
       registry: /
-      repository: maintainer name/craft
+      repository: kilianpaquier/craft
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
@@ -272,7 +272,7 @@ jobs:
     parallelism: 1
     image:
       registry: /
-      repository: maintainer name/craft
+      repository: kilianpaquier/craft
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
@@ -370,7 +370,7 @@ workers:
     replicaCount: 1
     image:
       registry: /
-      repository: maintainer name/craft
+      repository: kilianpaquier/craft
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""

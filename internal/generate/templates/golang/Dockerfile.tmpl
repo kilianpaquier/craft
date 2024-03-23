@@ -42,9 +42,9 @@ LABEL org.opencontainers.image.description="<< .Description >>"
 <<- if .License >>
 LABEL org.opencontainers.image.licenses="<< upper .License >>"
 <<- end >>
-LABEL org.opencontainers.image.url="<< .LongProjectName >>"
-LABEL org.opencontainers.image.source="<< .LongProjectName >>"
-LABEL org.opencontainers.image.documentation="<< .LongProjectName >>"
+LABEL org.opencontainers.image.url="<< print .ProjectHost "/" .ProjectPath >>"
+LABEL org.opencontainers.image.source="<< print .ProjectHost "/" .ProjectPath >>"
+LABEL org.opencontainers.image.documentation="<< print .ProjectHost "/" .ProjectPath >>"
 
 WORKDIR /app
 
