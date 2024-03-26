@@ -2,6 +2,7 @@ package templating
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 	"text/template"
 
@@ -15,11 +16,13 @@ import (
 // Available functions are fromYaml, map, prefix, suffix and toYaml.
 func FuncMap() template.FuncMap {
 	return template.FuncMap{
-		"map":    mergeMaps,
-		"toYaml": toYAML,
+		"map":     mergeMaps,
+		"toQuery": toQuery,
+		"toYaml":  toYAML,
 	}
 }
 
+// mergeMaps mergs all src maps (an error is added to result map if those aren't maps) into dst map.
 func mergeMaps(dst map[string]any, src ...any) map[string]any {
 	for i, in := range src {
 		var cast map[string]any
@@ -33,6 +36,11 @@ func mergeMaps(dst map[string]any, src ...any) map[string]any {
 		}
 	}
 	return dst
+}
+
+// toQuery transforms a specific into its query parameter format.
+func toQuery(in string) string {
+	return url.QueryEscape(in)
 }
 
 // toYAML takes an interface, marshals it to yaml, and returns a string. It will

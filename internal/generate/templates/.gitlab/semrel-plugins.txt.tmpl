@@ -3,6 +3,9 @@
 @semantic-release/exec
 @semantic-release/git
 @semantic-release/github
+<<- if has "nodejs" .Languages >>
+@semantic-release/npm
+<<- end >>
 @semantic-release/release-notes-generator
 conventional-changelog-conventionalcommits
 <<- if .License >>

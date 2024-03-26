@@ -57,17 +57,20 @@ func TestHelmExecute(t *testing.T) {
 
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
+		SetForceAll(true).
 		SetStartDelim("<<").
 		SetTemplatesDir("templates")
 
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
 			SetName("maintainer name").
-			Build())
+			Build()).
+		SetPlatform("github")
 
 	config := tests.NewGenerateConfigBuilder().
-		SetModuleName("github.com/kilianpaquier/craft").
-		SetProjectName("craft")
+		SetProjectHost("example.com").
+		SetProjectName("craft").
+		SetProjectPath("kilianpaquier/craft")
 
 	t.Run("error_invalid_overrides", func(t *testing.T) {
 		// Arrange
@@ -97,7 +100,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().Build()).
+			SetCraftConfig(*craft.Build()).
 			Build()
 
 		// Act
@@ -121,7 +124,7 @@ func TestHelmExecute(t *testing.T) {
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Copy().Build()).
+			SetCraftConfig(*craft.Build()).
 			Build()
 
 		// Act

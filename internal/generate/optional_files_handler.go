@@ -50,26 +50,23 @@ func dependabotHandler(config models.GenerateConfig) handler {
 
 // dockerHandler returns the handler for docker option generation matching.
 func dockerHandler(config models.GenerateConfig) handler {
-	var binaries int
-	if config.API != nil {
-		binaries++
-	}
-	binaries += len(config.Clis)
-	binaries += len(config.Crons)
-	binaries += len(config.Jobs)
-	binaries += len(config.Workers)
-
 	return func(_, _, filename string) (_ bool, _ bool) {
 		files := []string{"Dockerfile", ".dockerignore"}
-		return slices.Contains(files, filename), config.Docker != nil && binaries > 0
+		return slices.Contains(files, filename), config.Docker != nil && config.Binaries > 0
 	}
 }
 
 // githubHandler returns the handler for github option generation matching.
 func githubHandler(config models.GenerateConfig) handler {
-	return func(src, _, _ string) (_ bool, _ bool) {
+	return func(src, _, filename string) (_ bool, _ bool) {
 		dir := path.Join(".github", "workflows")
-		return strings.Contains(src, dir), config.CI != nil && config.CI.Name == models.Github
+		github := strings.Contains(src, dir)
+		apply := config.CI != nil && config.CI.Name == models.Github
+
+		if filename == "codeql.yml" {
+			return github, apply && slices.Contains(config.CI.Options, models.CodeQL) && len(config.Languages) > 0
+		}
+		return github, apply
 	}
 }
 
@@ -90,17 +87,8 @@ func goreleaserHandler(config models.GenerateConfig) handler {
 
 // launcherHandler returns the handler for launcher option generation matching.
 func launcherHandler(config models.GenerateConfig) handler {
-	var binaries int
-	if config.API != nil {
-		binaries++
-	}
-	binaries += len(config.Clis)
-	binaries += len(config.Crons)
-	binaries += len(config.Jobs)
-	binaries += len(config.Workers)
-
 	return func(_, _, filename string) (_ bool, _ bool) {
-		return filename == "launcher.sh", config.Docker != nil && binaries > 1
+		return filename == "launcher.sh", config.Docker != nil && config.Binaries > 1
 	}
 }
 

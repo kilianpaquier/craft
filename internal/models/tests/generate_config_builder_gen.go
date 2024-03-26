@@ -26,6 +26,12 @@ func (b *GenerateConfigBuilder) Build() *models.GenerateConfig {
 	return &c
 }
 
+// SetBinaries sets GenerateConfig's Binaries.
+func (b *GenerateConfigBuilder) SetBinaries(binaries uint8) *GenerateConfigBuilder {
+	b.Binaries = binaries
+	return b
+}
+
 // SetClis sets GenerateConfig's Clis.
 func (b *GenerateConfigBuilder) SetClis(clis map[string]struct{}) *GenerateConfigBuilder {
 	b.Clis = clis
@@ -50,15 +56,15 @@ func (b *GenerateConfigBuilder) SetJobs(jobs map[string]struct{}) *GenerateConfi
 	return b
 }
 
-// SetModuleName sets GenerateConfig's ModuleName.
-func (b *GenerateConfigBuilder) SetModuleName(moduleName string) *GenerateConfigBuilder {
-	b.ModuleName = moduleName
+// SetLanguages sets GenerateConfig's Languages.
+func (b *GenerateConfigBuilder) SetLanguages(languages ...string) *GenerateConfigBuilder {
+	b.Languages = append(b.Languages, languages...)
 	return b
 }
 
-// SetModuleVersion sets GenerateConfig's ModuleVersion.
-func (b *GenerateConfigBuilder) SetModuleVersion(moduleVersion string) *GenerateConfigBuilder {
-	b.ModuleVersion = moduleVersion
+// SetLangVersion sets GenerateConfig's LangVersion.
+func (b *GenerateConfigBuilder) SetLangVersion(langVersion string) *GenerateConfigBuilder {
+	b.LangVersion = langVersion
 	return b
 }
 
@@ -68,9 +74,21 @@ func (b *GenerateConfigBuilder) SetOptions(options models.GenerateOptions) *Gene
 	return b
 }
 
+// SetProjectHost sets GenerateConfig's ProjectHost.
+func (b *GenerateConfigBuilder) SetProjectHost(projectHost string) *GenerateConfigBuilder {
+	b.ProjectHost = projectHost
+	return b
+}
+
 // SetProjectName sets GenerateConfig's ProjectName.
 func (b *GenerateConfigBuilder) SetProjectName(projectName string) *GenerateConfigBuilder {
 	b.ProjectName = projectName
+	return b
+}
+
+// SetProjectPath sets GenerateConfig's ProjectPath.
+func (b *GenerateConfigBuilder) SetProjectPath(projectPath string) *GenerateConfigBuilder {
+	b.ProjectPath = projectPath
 	return b
 }
 

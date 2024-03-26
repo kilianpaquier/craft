@@ -3,7 +3,7 @@ package generate
 import (
 	"context"
 	"fmt"
-	"path/filepath"
+	"path"
 	"sync"
 
 	"github.com/go-playground/validator/v10"
@@ -29,12 +29,23 @@ func NewExecutor(config models.CraftConfig, opts models.GenerateOptions) (*Execu
 		return nil, fmt.Errorf("invalid options: %w", err)
 	}
 
+	// parse remote information
+	rawRemote, err := getRemoteURL()
+	if err != nil {
+		return nil, err // wrap is handled in function
+	}
+	host, subpath := parseRemote(rawRemote)
+	if platform, _ := parsePlatform(host); config.Platform == "" {
+		config.Platform = platform
+	}
+
 	e := &Executor{
 		config: models.GenerateConfig{
 			CraftConfig: config,
 
-			// read project folder
-			ProjectName: filepath.Base(opts.DestinationDir),
+			ProjectHost: host,
+			ProjectName: path.Base(subpath),
+			ProjectPath: subpath,
 
 			// initialize pointers
 			Clis:    map[string]struct{}{},
@@ -60,6 +71,7 @@ func NewExecutor(config models.CraftConfig, opts models.GenerateOptions) (*Execu
 func (e *Executor) Execute(ctx context.Context) error {
 	log := logrus.WithContext(ctx)
 
+	// separate detected from undetected plugins
 	executees, removals := SplitSlice(plugins(), func(p plugin, _ int) bool {
 		return p.Detect(ctx, &e.config)
 	})
@@ -109,7 +121,7 @@ func (e *Executor) Execute(ctx context.Context) error {
 
 // plugins returns the main slice of plugins (generic is excluded since it operates differently).
 func plugins() []plugin {
-	return []plugin{&golang{}, &generic{}, &openAPIV2{}, &openAPIV3{}, &helm{}, &license{}}
+	return []plugin{&golang{}, &nodejs{}, &generic{}, &openAPIV2{}, &openAPIV3{}, &helm{}, &license{}}
 }
 
 // SplitSlice splits an input slice into two output slices depending on the iteratee function.

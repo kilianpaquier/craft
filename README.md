@@ -1,4 +1,18 @@
+<!-- This file is safe to edit. Once it exists it will not be overwritten. -->
+
 # craft <!-- omit in toc -->
+
+<p align="center">
+  <img alt="GitHub Actions" src="https://img.shields.io/github/actions/workflow/status/kilianpaquier/craft/integration.yml?branch=main&style=for-the-badge">
+  <img alt="GitHub Release" src="https://img.shields.io/github/v/release/kilianpaquier/craft?include_prereleases&sort=semver&style=for-the-badge">
+  <img alt="GitHub Issues" src="https://img.shields.io/github/issues-raw/kilianpaquier/craft?style=for-the-badge">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/kilianpaquier/craft?style=for-the-badge">
+  <img alt="Coverage" src="https://img.shields.io/codecov/c/github/kilianpaquier/craft/main?style=for-the-badge">
+  <img alt="Go Version" src="https://img.shields.io/github/go-mod/go-version/kilianpaquier/craft/main?style=for-the-badge&label=Go+Version">
+  <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/kilianpaquier/craft?style=for-the-badge">
+</p>
+
+---
 
 - [How to use ?](#how-to-use-)
 - [Commands](#commands)
@@ -9,6 +23,7 @@
   - [Golang plugin](#golang-plugin)
     - [With API layout](#with-api-layout)
     - [With Docker layout](#with-docker-layout)
+  - [Nodejs plugin](#nodejs-plugin)
   - [Helm plugin](#helm-plugin)
   - [License plugin](#license-plugin)
 - [Examples](#examples)
@@ -131,13 +146,6 @@ no_makefile: true | false
 
 Craft generation is based on plugins. Each plugin detects from `.craft` configuration and project's files if it needs to generate its part (or not).
 
-Overall, the following plugins are implemented:
-- [`generic`](#generic-plugin)
-- [`golang`](#golang-plugin)
-- [`helm`](#helm-plugin)
-- [`license`](#license-plugin)
-- [`openapi_v2`](#with-api-layout)
-
 ### Generic plugin
 
 Craft project generation for anything but golang (because it's the only coding language implemented for now) will be generated with the generic plugin.
@@ -232,6 +240,8 @@ When the docker option is present and there's at least one executable, then the 
 ├── Dockerfile
 └── launcher.sh (only when there's at least two main.go in cmd folder, parses the BINARY_NAME environment variable to run the right executable)
 ```
+
+### Nodejs plugin
 
 ### Helm plugin
 

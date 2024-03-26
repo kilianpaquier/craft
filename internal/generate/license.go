@@ -2,7 +2,9 @@ package generate
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
@@ -66,7 +68,7 @@ func (plugin *license) Execute(ctx context.Context, config models.GenerateConfig
 	}
 
 	// remove file before rewritting it (in case rights changed)
-	if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("failed to remove %s before rewritting it: %w", dest, err)
 	}
 
@@ -87,7 +89,7 @@ func (*license) Name() string {
 // GenerateConfig is given as copy because no modification should be done during Remove operation on it.
 func (*license) Remove(_ context.Context, config models.GenerateConfig) error {
 	dest := filepath.Join(config.Options.DestinationDir, models.License)
-	if err := os.Remove(dest); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("failed to remove LICENSE file: %w", err)
 	}
 	return nil

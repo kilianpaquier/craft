@@ -1,7 +1,9 @@
 package configuration
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 
@@ -16,8 +18,8 @@ func ReadCraft(srcdir string, out any) error {
 	craft := filepath.Join(srcdir, models.CraftFile)
 	bytes, err := os.ReadFile(craft)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return os.ErrNotExist
+		if errors.Is(err, fs.ErrNotExist) {
+			return fs.ErrNotExist
 		}
 		return fmt.Errorf("failed to read file: %w", err)
 	}

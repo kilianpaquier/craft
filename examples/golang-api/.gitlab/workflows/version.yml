@@ -12,10 +12,10 @@ variables:
   GIT_AUTHOR_EMAIL: ${GITLAB_USER_EMAIL}
   GIT_COMMITTER_EMAIL: ${GITLAB_USER_EMAIL}
 
-  SEMREL_TAG_FORMAT: "v$${version}"
-  SEMREL_REQUIRED_PLUGINS_FILE: ".gitlab/semrel-plugins.txt"
-  SEMREL_HOOKS_DIR: "scripts"
-  SEMREL_INFO_ON: "protected"
+  SEMREL_TAG_FORMAT: v$${version}
+  SEMREL_REQUIRED_PLUGINS_FILE: .gitlab/semrel-plugins.txt
+  SEMREL_HOOKS_DIR: scripts
+  SEMREL_INFO_ON: protected
 
 version:
   image: $SEMREL_IMAGE

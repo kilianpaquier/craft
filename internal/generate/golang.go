@@ -4,8 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
@@ -25,27 +28,29 @@ var _ plugin = &golang{} // ensure interface is implemented
 func (plugin *golang) Detect(ctx context.Context, config *models.GenerateConfig) bool {
 	log := logrus.WithContext(ctx)
 
-	gomod := filepath.Join(config.Options.DestinationDir, models.GoMod)
-	gocmd := filepath.Join(config.Options.DestinationDir, models.GoCmd)
-
-	// check go.mod existence
-	if !filesystem.Exists(gomod) {
-		return false
-	}
+	gomod := filepath.Join(config.Options.DestinationDir, models.Gomod)
+	gocmd := filepath.Join(config.Options.DestinationDir, models.Gocmd)
 
 	// retrieve module from go.mod
-	statements, err := plugin.module(gomod)
+	statements, err := plugin.readGomod(gomod)
 	if err != nil {
-		log.WithError(err).Warn("failed to parse go.mod statements")
+		if !errors.Is(err, fs.ErrNotExist) {
+			log.WithError(err).Warn("failed to parse go.mod statements")
+		}
 		return false
 	}
-	config.ModuleName = statements.ModuleName
-	config.ModuleVersion = statements.ModuleVersion
+
+	config.Languages = append(config.Languages, plugin.Name())
+	config.LangVersion = statements.LangVersion
+	config.Platform = statements.Platform
+	config.ProjectHost = statements.ProjectHost
+	config.ProjectName = statements.ProjectName
+	config.ProjectPath = statements.ProjectPath
 
 	entries, err := os.ReadDir(gocmd)
 	if err != nil {
 		// check cmd folder existence
-		if os.IsNotExist(err) {
+		if errors.Is(err, fs.ErrNotExist) {
 			log.Warnf("%s doesn't exist", gocmd)
 			// still returning true because there's at least a go.mod which means it's a library
 			return true
@@ -70,6 +75,7 @@ func (plugin *golang) Detect(ctx context.Context, config *models.GenerateConfig)
 				// by default, executables in cmd folder are CLI
 				config.Clis[entry.Name()] = struct{}{}
 			}
+			config.Binaries++
 		}
 	}
 	return true
@@ -103,12 +109,15 @@ func (*golang) Type() pluginType {
 
 // gomod represents the parsed struct for go.mod file
 type gomod struct {
-	ModuleName    string
-	ModuleVersion string
+	LangVersion string
+	Platform    string
+	ProjectHost string
+	ProjectName string
+	ProjectPath string
 }
 
-// module reads the go.mod file at modpath input and returns its gomod representation.
-func (*golang) module(modpath string) (*gomod, error) {
+// readGomod reads the go.mod file at modpath input and returns its gomod representation.
+func (*golang) readGomod(modpath string) (*gomod, error) {
 	// read go.mod at modpath
 	bytes, err := os.ReadFile(modpath)
 	if err != nil {
@@ -125,17 +134,31 @@ func (*golang) module(modpath string) (*gomod, error) {
 	gomod := &gomod{}
 
 	// parse module statement
-	if file.Module == nil {
+	if file.Module == nil || file.Module.Mod.Path == "" {
 		errs = append(errs, errors.New("invalid go.mod, module statement is missing"))
 	} else {
-		gomod.ModuleName = file.Module.Mod.Path
+		gomod.ProjectHost, gomod.ProjectPath = func() (host, subpath string) {
+			sections := strings.Split(file.Module.Mod.Path, "/")
+			if regexp.MustCompile("^v[0-9]+$").MatchString(sections[len(sections)-1]) {
+				return sections[0], strings.Join(sections[1:len(sections)-1], "/") // retrieve all sections but the last element
+			}
+			return sections[0], strings.Join(sections[1:], "/") // retrieve all sections
+		}()
+		gomod.Platform, _ = parsePlatform(gomod.ProjectHost)
+		gomod.ProjectName = path.Base(gomod.ProjectPath)
 	}
 
 	// parse go statement
 	if file.Go == nil {
 		errs = append(errs, errors.New("invalid go.mod, go statement is missing"))
 	} else {
-		gomod.ModuleVersion = file.Go.Version
+		gomod.LangVersion = file.Go.Version
+	}
+
+	// override lang version if toolchain is present
+	// it's preempting provided go version for build purposes
+	if file.Toolchain != nil {
+		gomod.LangVersion = file.Toolchain.Name[2:]
 	}
 
 	return gomod, errors.Join(errs...)

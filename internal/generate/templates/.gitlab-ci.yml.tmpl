@@ -1,13 +1,15 @@
 # This file is safe to edit. Once it exists it will not be overwritten.
 
-<<- $binaries := dict >>
-<<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
-<<- $docker := and .Docker (or .API (gt (len $binaries) 0)) >>
+<<- $docker := and .Docker (gt .Binaries 0) >>
 
 ---
+<<- if gt (len .Languages) 0 >>
 include:
   - .gitlab/workflows/version.yml
   - .gitlab/workflows/integration.yml
+<<- else >>
+include: .gitlab/workflows/version.yml
+<<- end >>
 
 # secret variables
 # (define the variables below in your GitLab group/project variables)
