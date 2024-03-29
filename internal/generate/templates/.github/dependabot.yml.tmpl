@@ -27,6 +27,7 @@
 version: 2
 updates:
 <<- range $packages >>
+
   - package-ecosystem: << . >>
     directory: /
     schedule:
@@ -34,6 +35,11 @@ updates:
       day: wednesday
       time: "12:00"
       timezone: Etc/UTC
+    groups:
+      all:
+        update-types:
+          - minor
+          - patch
     commit-message:
       include: scope
       prefix: chore

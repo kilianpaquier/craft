@@ -52,22 +52,24 @@ func TestHelmDetect(t *testing.T) {
 func TestHelmExecute(t *testing.T) {
 	ctx := context.Background()
 	helm := generate.Helm{}
-	pwd, _ := os.Getwd()
-	assertdir := filepath.Join(pwd, "..", "..", "testdata", "generate", "helm")
+	assertdir := filepath.Join("testdata", helm.Name())
 
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
+		SetForceAll(true).
 		SetStartDelim("<<").
 		SetTemplatesDir("templates")
 
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
 			SetName("maintainer name").
-			Build())
+			Build()).
+		SetPlatform("github")
 
 	config := tests.NewGenerateConfigBuilder().
-		SetLongProjectName("github.com/kilianpaquier/craft").
-		SetProjectName("craft")
+		SetProjectHost("example.com").
+		SetProjectName("craft").
+		SetProjectPath("kilianpaquier/craft")
 
 	t.Run("error_invalid_overrides", func(t *testing.T) {
 		// Arrange

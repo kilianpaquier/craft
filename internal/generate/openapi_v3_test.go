@@ -119,8 +119,8 @@ func TestOpenAPIV3Detect(t *testing.T) {
 
 func TestOpenAPIV3Execute(t *testing.T) {
 	ctx := context.Background()
-	pwd, _ := os.Getwd()
-	assertdir := filepath.Join(pwd, "..", "..", "testdata", "generate", "openapi_v3")
+	api := generate.OpenAPIV3{}
+	assertdir := filepath.Join("testdata", api.Name())
 
 	opts := *tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
@@ -136,10 +136,7 @@ func TestOpenAPIV3Execute(t *testing.T) {
 				SetName("maintainer name").
 				Build()).
 			Build()).
-		SetLongProjectName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
-
-	api := generate.OpenAPIV3{}
 
 	t.Run("success_no_api_yml", func(t *testing.T) {
 		// Arrange

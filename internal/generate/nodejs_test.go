@@ -8,13 +8,14 @@ import (
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
 	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
-	testlogrus "github.com/kilianpaquier/testlogrus/pkg"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate"
 	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
+	"github.com/kilianpaquier/craft/internal/testlogs"
 )
 
 func TestNodejsDetect(t *testing.T) {
@@ -53,14 +54,16 @@ func TestNodejsDetect(t *testing.T) {
 				Build()).
 			Build()
 
-		testlogrus.CatchLogs(t)
+		hook := test.NewGlobal()
+		t.Cleanup(func() { hook.Reset() })
 
 		// Act
 		present := nodejs.Detect(ctx, config)
 
 		// Assert
 		assert.False(t, present)
-		assert.Contains(t, testlogrus.Logs(), "failed to unmarshal package.json")
+		logs := testlogs.ToString(hook.AllEntries())
+		assert.Contains(t, logs, "failed to unmarshal package.json")
 	})
 
 	t.Run("success_true", func(t *testing.T) {
@@ -77,7 +80,6 @@ func TestNodejsDetect(t *testing.T) {
 				SetNoMakefile(true).
 				Build()).
 			SetLanguages(nodejs.Name()).
-			SetLongProjectName("craft").
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
@@ -101,11 +103,11 @@ func TestNodejsDetect(t *testing.T) {
 func TestNodejsExecute(t *testing.T) {
 	ctx := context.Background()
 	nodejs := generate.Nodejs{}
-	pwd, _ := os.Getwd()
-	assertdir := filepath.Join(pwd, "..", "..", "testdata", "generate", "nodejs")
+	assertdir := filepath.Join("testdata", nodejs.Name())
 
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
+		SetForceAll(true).
 		SetStartDelim("<<").
 		SetTemplatesDir("templates")
 
@@ -118,8 +120,9 @@ func TestNodejsExecute(t *testing.T) {
 	config := tests.NewGenerateConfigBuilder().
 		SetBinaries(1).
 		SetLanguages(nodejs.Name()).
-		SetLongProjectName("craft").
-		SetProjectName("craft")
+		SetProjectHost("example.com").
+		SetProjectName("craft").
+		SetProjectPath("kilianpaquier/craft")
 
 	t.Run("success_github", func(t *testing.T) {
 		// Arrange
@@ -131,6 +134,7 @@ func TestNodejsExecute(t *testing.T) {
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Github).
 					Build()).
+				SetPlatform(models.Github).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -156,6 +160,7 @@ func TestNodejsExecute(t *testing.T) {
 					SetName(models.Github).
 					Build()).
 				SetDocker(*tests.NewDockerBuilder().Build()).
+				SetPlatform(models.Github).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -182,6 +187,7 @@ func TestNodejsExecute(t *testing.T) {
 					SetName(models.Gitlab).
 					Build()).
 				SetNoMakefile(true).
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -207,6 +213,7 @@ func TestNodejsExecute(t *testing.T) {
 					SetName(models.Gitlab).
 					Build()).
 				SetDocker(*tests.NewDockerBuilder().Build()).
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -234,6 +241,7 @@ func TestNodejsExecute(t *testing.T) {
 					Build()).
 				SetLicense("mit").
 				SetPackageManager("npm").
+				SetPlatform(models.Github).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -260,7 +268,8 @@ func TestNodejsExecute(t *testing.T) {
 					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
 					Build()).
 				SetLicense("mit").
-				SetPackageManager("npm").
+				SetPackageManager("yarn").
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).

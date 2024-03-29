@@ -85,3 +85,9 @@ func (b *CraftConfigBuilder) SetPackageManager(packageManager string) *CraftConf
 	b.PackageManager = &packageManager
 	return b
 }
+
+// SetPlatform sets CraftConfig's Platform.
+func (b *CraftConfigBuilder) SetPlatform(platform string) *CraftConfigBuilder {
+	b.Platform = platform
+	return b
+}

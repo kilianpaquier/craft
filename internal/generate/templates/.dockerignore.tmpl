@@ -6,6 +6,7 @@
 
 # basic root files
 .editorconfig
+.env
 .vscode
 AUTHORS.md
 CONTRIBUTING.md
@@ -14,5 +15,44 @@ Makefile
 NOTICE
 README.md
 
-# docs
+# various folders
 docs/
+reports/
+dist/
+
+<<- if has "nodejs" .Languages >>
+
+# vendor dependencies
+node_modules/
+<<- end >>
+
+<<- if has "golang" .Languages >>
+
+# binaries
+<<- range $name, $config := .Clis >>
+<< $name >>
+<< printf "!%s/" $name >>
+<<- end >>
+
+<<- if gt (len .Crons) 0 >>
+cron-*
+!cron-*/
+<<- end >>
+
+<<- if gt (len .Jobs) 0 >>
+job-*
+!job-*/
+<<- end >>
+
+<<- if gt (len .Workers) 0 >>
+worker-*
+!worker-*/
+<<- end >>
+
+# test files
+**/*_test.go
+**/*.test
+
+# vendor dependencies
+vendor/
+<<- end >>

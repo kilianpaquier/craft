@@ -45,7 +45,7 @@ crons:
     parallelism: 1
     image:
       registry: ghcr.io/
-      repository: kilianpaquier/golang-app
+      repository: kilianpaquier/craft/examples/golang-app
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
@@ -278,7 +278,7 @@ workers:
     replicaCount: 1
     image:
       registry: ghcr.io/
-      repository: kilianpaquier/golang-app
+      repository: kilianpaquier/craft/examples/golang-app
       pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""

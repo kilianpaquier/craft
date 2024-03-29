@@ -5,13 +5,14 @@ import (
 	"strings"
 	"testing"
 
-	testlogrus "github.com/kilianpaquier/testlogrus/pkg"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/initialize"
 	init_tests "github.com/kilianpaquier/craft/internal/initialize/tests"
 	models_tests "github.com/kilianpaquier/craft/internal/models/tests"
+	"github.com/kilianpaquier/craft/internal/testlogs"
 )
 
 func TestRun(t *testing.T) {
@@ -227,14 +228,15 @@ func TestRun(t *testing.T) {
 		reader := strings.NewReader(strings.Join(inputs, ""))
 		initialize.SetReader(reader)
 
-		testlogrus.CatchLogs(t)
+		hook := test.NewGlobal()
+		t.Cleanup(func() { hook.Reset() })
 
 		// Act
 		config := initialize.Run(ctx)
 
 		// Assert
 		assert.Equal(t, *craft, config)
-		logs := testlogrus.Logs()
+		logs := testlogs.ToString(hook.AllEntries())
 		assert.Contains(t, logs, "maintainer name is mandatory")
 		assert.Contains(t, logs, "invalid api value, must be a boolean")
 		assert.Contains(t, logs, "openapi version must be either 'v2' or 'v3'")

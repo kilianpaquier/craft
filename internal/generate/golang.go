@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -41,8 +42,10 @@ func (plugin *golang) Detect(ctx context.Context, config *models.GenerateConfig)
 
 	config.Languages = append(config.Languages, plugin.Name())
 	config.LangVersion = statements.LangVersion
-	config.LongProjectName = statements.LongProjectName
+	config.Platform = statements.Platform
+	config.ProjectHost = statements.ProjectHost
 	config.ProjectName = statements.ProjectName
+	config.ProjectPath = statements.ProjectPath
 
 	entries, err := os.ReadDir(gocmd)
 	if err != nil {
@@ -106,9 +109,11 @@ func (*golang) Type() pluginType {
 
 // gomod represents the parsed struct for go.mod file
 type gomod struct {
-	LangVersion     string
-	LongProjectName string
-	ProjectName     string
+	LangVersion string
+	Platform    string
+	ProjectHost string
+	ProjectName string
+	ProjectPath string
 }
 
 // readGomod reads the go.mod file at modpath input and returns its gomod representation.
@@ -129,17 +134,18 @@ func (*golang) readGomod(modpath string) (*gomod, error) {
 	gomod := &gomod{}
 
 	// parse module statement
-	if file.Module == nil {
+	if file.Module == nil || file.Module.Mod.Path == "" {
 		errs = append(errs, errors.New("invalid go.mod, module statement is missing"))
 	} else {
-		gomod.LongProjectName = file.Module.Mod.Path
-		gomod.ProjectName = func() string {
+		gomod.ProjectHost, gomod.ProjectPath = func() (host, subpath string) {
 			sections := strings.Split(file.Module.Mod.Path, "/")
 			if regexp.MustCompile("^v[0-9]+$").MatchString(sections[len(sections)-1]) {
-				return sections[len(sections)-2] // retrieve second to last elements because there's a version
+				return sections[0], strings.Join(sections[1:len(sections)-1], "/") // retrieve all sections but the last element
 			}
-			return sections[len(sections)-1] // retrieve last element because there's no version
+			return sections[0], strings.Join(sections[1:], "/") // retrieve all sections
 		}()
+		gomod.Platform, _ = parsePlatform(gomod.ProjectHost)
+		gomod.ProjectName = path.Base(gomod.ProjectPath)
 	}
 
 	// parse go statement

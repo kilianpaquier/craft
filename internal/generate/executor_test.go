@@ -50,11 +50,11 @@ func TestNewExecutor(t *testing.T) {
 
 func TestExecute(t *testing.T) {
 	ctx := context.Background()
-	pwd, _ := os.Getwd()
-	assertdir := filepath.Join(pwd, "..", "..", "testdata", "generate", "executor")
+	assertdir := filepath.Join("testdata", "executor")
 
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
+		SetForceAll(true).
 		SetStartDelim("<<")
 	craft := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().

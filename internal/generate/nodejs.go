@@ -58,7 +58,6 @@ func (plugin *nodejs) Detect(ctx context.Context, config *models.GenerateConfig)
 	}
 
 	config.Languages = append(config.Languages, plugin.Name())
-	config.LongProjectName = descriptor.Name
 	config.ProjectName = descriptor.Name
 
 	// deactivate makefile because commands are facilitated by package.json scripts
