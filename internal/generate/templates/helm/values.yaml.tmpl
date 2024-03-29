@@ -64,7 +64,7 @@ api:
   replicaCount: << .api.replicaCount | default 1 >>
   image:
     registry: << .api.image.registry | default $.docker.registry | default "" >>/
-    repository: << .api.image.repository | default (print $maintainer.name "/" $.projectName) >>
+    repository: << .api.image.repository | default $.projectPath >>
     pullPolicy: << .api.image.pullPolicy | default "IfNotPresent" >>
     # Overrides the image tag whose default is the chart appVersion.
     tag: << .api.image.tag | default "" | quote >>
@@ -269,7 +269,7 @@ crons:
     parallelism: << $config.parallelism | default 1 >>
     image:
       registry: << $config.image.registry | default $.docker.registry | default "" >>/
-      repository: << $config.image.repository | default (print $maintainer.name "/" $.projectName) >>
+      repository: << $config.image.repository | default $.projectPath >>
       pullPolicy: << $config.image.pullPolicy | default "IfNotPresent" >>
       # Overrides the image tag whose default is the chart appVersion.
       tag: << $config.image.tag | default "" | quote >>
@@ -429,7 +429,7 @@ jobs:
     <<- end >>
     image:
       registry: << $config.image.registry | default $.docker.registry | default "" >>/
-      repository: << $config.image.repository | default (print $maintainer.name "/" $.projectName) >>
+      repository: << $config.image.repository | default $.projectPath >>
       pullPolicy: << $config.image.pullPolicy | default "IfNotPresent" >>
       # Overrides the image tag whose default is the chart appVersion.
       tag: << $config.image.tag | default "" | quote >>
@@ -582,7 +582,7 @@ workers:
     replicaCount: << $config.replicaCount | default 1 >>
     image:
       registry: << $config.image.registry | default $.docker.registry | default "" >>/
-      repository: << $config.image.repository | default (print $maintainer.name "/" $.projectName) >>
+      repository: << $config.image.repository | default $.projectPath >>
       pullPolicy: << $config.image.pullPolicy | default "IfNotPresent" >>
       # Overrides the image tag whose default is the chart appVersion.
       tag: << $config.image.tag | default "" | quote >>

@@ -149,8 +149,7 @@ func TestOpenAPIV2Execute(t *testing.T) {
 
 	ctx := context.Background()
 	api := generate.OpenAPIV2{}
-	pwd, _ := os.Getwd()
-	assertdir := filepath.Join(pwd, "..", "..", "testdata", "generate", "openapi_v2")
+	assertdir := filepath.Join("testdata", api.Name())
 
 	opts := *tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
@@ -166,7 +165,6 @@ func TestOpenAPIV2Execute(t *testing.T) {
 				SetOpenAPIVersion("v2").
 				Build()).
 			Build()).
-		SetLongProjectName("github.com/kilianpaquier/craft").
 		SetProjectName("craft")
 
 	t.Run("success_no_api_yml", func(t *testing.T) {

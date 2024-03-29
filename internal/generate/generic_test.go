@@ -2,13 +2,11 @@ package generate_test
 
 import (
 	"context"
-	"os"
 	"path/filepath"
 	"testing"
 
 	testfs "github.com/kilianpaquier/filesystem/pkg/tests"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate"
 	"github.com/kilianpaquier/craft/internal/models"
@@ -34,66 +32,18 @@ func TestGenericDetect(t *testing.T) {
 func TestGenericExecute(t *testing.T) {
 	ctx := context.Background()
 	generic := generate.Generic{}
-	pwd, _ := os.Getwd()
-	assertdir := filepath.Join(pwd, "..", "..", "testdata", "generate", "generic")
+	assertdir := filepath.Join("testdata", generic.Name())
 
 	opts := tests.NewGenerateOptionsBuilder().
 		SetEndDelim(">>").
+		SetForceAll(true).
 		SetStartDelim("<<").
 		SetTemplatesDir("templates")
 
 	config := tests.NewGenerateConfigBuilder().
-		SetProjectName("craft")
-
-	t.Run("success_force_all", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "success_force_all")
-
-		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				SetForceAll(true).
-				Build()).
-			Build()
-
-		// generate a first one to confirm --force-all behavior
-		err := generic.Execute(ctx, *config, generate.Tmpl)
-		require.NoError(t, err)
-		config.ProjectName = "new_craft" // change project name for modification
-
-		// Act
-		err = generic.Execute(ctx, *config, generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		testfs.AssertEqualDir(t, assertdir, destdir)
-	})
-
-	t.Run("success_force_one", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "success_force_one")
-
-		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				SetForce("README.md").
-				Build()).
-			Build()
-
-		// generate a first one to confirm --force=filename behavior
-		err := generic.Execute(ctx, *config, generate.Tmpl)
-		require.NoError(t, err)
-		config.ProjectName = "new_craft" // change project name for modification
-
-		// Act
-		err = generic.Execute(ctx, *config, generate.Tmpl)
-
-		// Assert
-		assert.NoError(t, err)
-		testfs.AssertEqualDir(t, assertdir, destdir)
-	})
+		SetProjectHost("example.com").
+		SetProjectName("craft").
+		SetProjectPath("kilianpaquier/craft")
 
 	t.Run("success_github", func(t *testing.T) {
 		// Arrange
@@ -106,6 +56,7 @@ func TestGenericExecute(t *testing.T) {
 					SetName(models.Github).
 					SetOptions(models.Dependabot).
 					Build()).
+				SetPlatform(models.Github).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
@@ -130,6 +81,7 @@ func TestGenericExecute(t *testing.T) {
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Gitlab).
 					Build()).
+				SetPlatform(models.Gitlab).
 				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).

@@ -9,20 +9,29 @@ const (
 	// TmplExtension is the extension for templates file.
 	TmplExtension = ".tmpl"
 
-	// Github is just the github constant.
-	Github = "github"
-	// Gitlab is just the gitlab constant.
-	Gitlab = "gitlab"
 	// Gocmd represents the cmd folder where go main.go should be placed according to go layout.
 	Gocmd = "cmd"
 	// Gomod represents the go.mod filename.
 	Gomod = "go.mod"
 	// PackageJSON represents the package.json filename.
 	PackageJSON = "package.json"
+
 	// License represents the target filename for the generated project LICENSE.
 	License = "LICENSE"
+
 	// SwaggerFile represents the target filename for the generated project api.yml.
 	SwaggerFile = "api.yml"
+)
+
+const (
+	// Bitbucket is just the bitbucket constant.
+	Bitbucket = "bitbucket"
+	// Gitea is just the gitea constant.
+	Gitea = "gitea"
+	// Github is just the github constant.
+	Github = "github"
+	// Gitlab is just the gitlab constant.
+	Gitlab = "gitlab"
 )
 
 const (
@@ -54,6 +63,7 @@ type CraftConfig struct {
 	NoGoreleaser   bool         `json:"-"                        yaml:"no_goreleaser,omitempty"`
 	NoMakefile     bool         `json:"-"                        yaml:"no_makefile,omitempty"`
 	PackageManager *string      `json:"packageManager,omitempty" yaml:"package_manager,omitempty"                  validate:"omitempty,oneof=npm pnpm yarn"`
+	Platform       string       `json:"-"                        yaml:"platform,omitempty"`
 }
 
 // CI is the struct for craft ci tuning.
@@ -87,19 +97,20 @@ type Maintainer struct {
 // Those additional properties will be enriched during generate execution and project parsing.
 // They will be used for files and helm chart templating (if applicable).
 //
-// yaml tags are for .craft file and json tags for templating.
+// yaml tags are for .craft file and json tags for helm templating.
 type GenerateConfig struct {
 	CraftConfig
 
-	Binaries        uint8               `json:"-"                     yaml:"-"`
-	Clis            map[string]struct{} `json:"-"                     yaml:"-"`
-	Crons           map[string]struct{} `json:"crons,omitempty"       yaml:"-"`
-	Jobs            map[string]struct{} `json:"jobs,omitempty"        yaml:"-"`
-	Languages       []string            `json:"-"                     yaml:"-" builder:"append"`
-	LangVersion     string              `json:"-"                     yaml:"-"`
-	LongProjectName string              `json:"-"                     yaml:"-"`
-	ProjectName     string              `json:"projectName,omitempty" yaml:"-"`
-	Workers         map[string]struct{} `json:"workers,omitempty"     yaml:"-"`
+	Binaries    uint8               `json:"-"                     yaml:"-"`
+	Clis        map[string]struct{} `json:"-"                     yaml:"-"`
+	Crons       map[string]struct{} `json:"crons,omitempty"       yaml:"-"`
+	Jobs        map[string]struct{} `json:"jobs,omitempty"        yaml:"-"`
+	Languages   []string            `json:"-"                     yaml:"-" builder:"append"`
+	LangVersion string              `json:"-"                     yaml:"-"`
+	ProjectHost string              `json:"projectHost"           yaml:"-"`
+	ProjectName string              `json:"projectName,omitempty" yaml:"-"`
+	ProjectPath string              `json:"projectPath"           yaml:"-"`
+	Workers     map[string]struct{} `json:"workers,omitempty"     yaml:"-"`
 
 	Options GenerateOptions `json:"-" yaml:"-"`
 }
