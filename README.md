@@ -18,6 +18,7 @@
 - [Commands](#commands)
   - [Generate](#generate)
 - [Craft file](#craft-file)
+  - [VSCode association and schema](#vscode-association-and-schema)
 - [Plugins](#plugins)
   - [Generic](#generic)
   - [Golang](#golang)
@@ -155,6 +156,24 @@ no_goreleaser: true | false
 # whether to generate a Makefile with useful commands (optional)
 # this option is automatically disabled when working with nodejs plugin
 no_makefile: true | false
+```
+
+### VSCode association and schema
+
+When working on vscode, feel free to use craft's schema to help use setup your project:
+
+```json
+{
+    "files.associations": {
+        ".craft": "yaml"
+    },
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/craft.schema.json": [
+            "**/.craft", 
+            "!**/chart/.craft"
+        ]
+    }
+}
 ```
 
 ## Plugins
