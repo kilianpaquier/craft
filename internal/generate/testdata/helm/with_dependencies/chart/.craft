@@ -1,4 +1,4 @@
-# craft helm overrides configuration file
+# Helm values overrides configuration
 ---
 dependencies:
   - name: dependency-name

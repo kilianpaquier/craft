@@ -26,13 +26,12 @@ version: 0.1.0
 appVersion: "0.1.0"
 
 dependencies:
-  - name: "dependency-name"
+  - name: dependency-name
     version: v0.1.0
-    repository: "http://example.com/dependency-name"
-  - name: "second-dependency-name"
+    repository: http://example.com/dependency-name
+  - name: second-dependency-name
     version: v0.1.0
-    repository: "http://example.com/second-dependency-name"
-
+    repository: http://example.com/second-dependency-name
 
 maintainers:
   - name: maintainer name

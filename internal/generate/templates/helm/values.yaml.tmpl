@@ -10,8 +10,8 @@ imagePullSecrets:
 imagePullSecrets: []
 <<- end >>
 
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: << .nameOverride | default ("" | quote) >>
+fullnameOverride: << .fullnameOverride | default ("" | quote) >>
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -41,9 +41,9 @@ crons:
     completions: << $config.completions | default 1 >>
     parallelism: << $config.parallelism | default 1 >>
     image:
-      registry: << $config.image.registry | default $.docker.registry | default "" >>/
+      registry: << $config.image.registry | default $.docker.registry | default ("" | quote) >>
       repository: << $config.image.repository | default $.projectPath >>
-      pullPolicy: << $config.image.pullPolicy | default "IfNotPresent" >>
+      pullPolicy: << $config.image.pullPolicy | default ("" | quote) >>
       # Overrides the image tag whose default is the chart appVersion.
       tag: << $config.image.tag | default "" | quote >>
     env:
@@ -69,7 +69,7 @@ crons:
         cpu: << $config.resources.requests.cpu | default "50m" >>
         memory: << $config.resources.requests.memory | default "128Mi" >>
         storage: << $config.resources.requests.storage | default "5Gi" >>
-    failedJobsHistoryLimit: << $config.failedJobsHistoryLimit | default 3 >>
+    failedJobsHistoryLimit: << $config.failedJobsHistoryLimit | default 1 >>
     successfulJobsHistoryLimit: << $config.successfulJobsHistoryLimit | default 3 >>
     restartPolicy: << $config.restartPolicy | default "OnFailure" >>
     <<- with $config.configMap >>
@@ -77,7 +77,7 @@ crons:
       <<- toYaml . | nindent 6 >>
     <<- else >>
     configMap: {}
-      # mountPoint: /etc/config/
+      # mountPath: /etc/config/
       # tpl_folders: # folders to be included in configmap with tpl
       #   - folder_name
       # include_folders: # folders to be included in configmap without tpl
@@ -154,6 +154,7 @@ crons:
       # runAsUser: 1001
     <<- end >>
     
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#nodeselector-v1-core
     << with $config.nodeSelector ->>
     nodeSelector:
       <<- toYaml . | nindent 6 >>
@@ -201,9 +202,9 @@ jobs:
     ttlSecondsAfterFinished: << . >>
     <<- end >>
     image:
-      registry: << $config.image.registry | default $.docker.registry | default "" >>/
+      registry: << $config.image.registry | default $.docker.registry | default ("" | quote) >>
       repository: << $config.image.repository | default $.projectPath >>
-      pullPolicy: << $config.image.pullPolicy | default "IfNotPresent" >>
+      pullPolicy: << $config.image.pullPolicy | default ("" | quote) >>
       # Overrides the image tag whose default is the chart appVersion.
       tag: << $config.image.tag | default "" | quote >>
     env:
@@ -235,7 +236,7 @@ jobs:
       <<- toYaml . | nindent 6 >>
     <<- else >>
     configMap: {}
-      # mountPoint: /etc/config/
+      # mountPath: /etc/config/
       # tpl_folders: # folders to be included in configmap with tpl
       #   - folder_name
       # include_folders: # folders to be included in configmap without tpl
@@ -312,6 +313,7 @@ jobs:
       # runAsUser: 1001
     <<- end >>
     
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#nodeselector-v1-core
     << with $config.nodeSelector ->>
     nodeSelector:
       <<- toYaml . | nindent 6 >>
@@ -354,9 +356,9 @@ workers:
     paused: true
     replicaCount: << $config.replicaCount | default 1 >>
     image:
-      registry: << $config.image.registry | default $.docker.registry | default "" >>/
+      registry: << $config.image.registry | default $.docker.registry | default ("" | quote) >>
       repository: << $config.image.repository | default $.projectPath >>
-      pullPolicy: << $config.image.pullPolicy | default "IfNotPresent" >>
+      pullPolicy: << $config.image.pullPolicy | default ("" | quote) >>
       # Overrides the image tag whose default is the chart appVersion.
       tag: << $config.image.tag | default "" | quote >>
     env:
@@ -429,15 +431,31 @@ workers:
       enabled: << $config.autoscaling.enabled | default "false" >>
       minReplicas: << $config.autoscaling.minReplicas | default 1 >>
       maxReplicas: << $config.autoscaling.maxReplicas | default 10 >>
-      targetCPUUtilizationPercentage: << $config.autoscaling.targetCPUUtilizationPercentage | default 80 >>
-      targetMemoryUtilizationPercentage: << $config.autoscaling.targetMemoryUtilizationPercentage | default 80 >>
+      <<- with $config.autoscaling.metrics >>
+      metrics:
+        <<- toYaml . | nindent 8 >>
+      <<- else >>
+      metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 80
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: Utilization
+              averageUtilization: 80
+      <<- end >>
     restartPolicy: << $config.restartPolicy | default "Always" >>
     <<- with $config.configMap >>
     configMap:
       <<- toYaml . | nindent 6 >>
     <<- else >>
     configMap: {}
-      # mountPoint: /etc/config/
+      # mountPath: /etc/config/
       # tpl_folders: # folders to be included in configmap with tpl
       #   - folder_name
       # include_folders: # folders to be included in configmap without tpl
@@ -514,6 +532,7 @@ workers:
       # runAsUser: 1001
     <<- end >>
     
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#nodeselector-v1-core
     << with $config.nodeSelector ->>
     nodeSelector:
       <<- toYaml . | nindent 6 >>

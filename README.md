@@ -178,7 +178,7 @@ no_makefile: true | false
 
 ### VSCode association and schema
 
-When working on vscode, feel free to use craft's schema to help use setup your project:
+When working on vscode, feel free to use craft's schemas to help setup your project:
 
 ```json
 {
@@ -189,6 +189,9 @@ When working on vscode, feel free to use craft's schema to help use setup your p
         "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/craft.schema.json": [
             "**/.craft", 
             "!**/chart/.craft"
+        ],
+        "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/chart.schema.json": [ 
+            "**/chart/.craft"
         ]
     }
 }

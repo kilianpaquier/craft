@@ -40,8 +40,14 @@ spec:
         - name: {{ $name }}
           securityContext:
             {{- toYaml $config.securityContext | nindent 12 }}
-          image: "{{ $config.image.registry }}{{ $config.image.repository }}:{{ $config.image.tag | default $.Chart.AppVersion }}"
-          imagePullPolicy: {{ $config.image.pullPolicy }}
+          {{- if $config.image.registry }}
+          image: "{{ $config.image.registry }}/{{ $config.image.repository }}:{{ $config.image.tag | default $.Chart.AppVersion }}"
+          {{- else }}
+          image: "{{ $config.image.repository }}:{{ $config.image.tag | default $.Chart.AppVersion }}"
+          {{- end }}
+          {{- with $config.image.pullPolicy }}
+          imagePullPolicy: {{ . }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ $config.service.port }}

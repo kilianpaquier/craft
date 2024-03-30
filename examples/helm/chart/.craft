@@ -1,9 +1,24 @@
-# craft helm overrides configuration file
+# Helm values overrides configuration
 ---
 description: Custom description for Chart.yml file
-dependencies: []
+dependencies:
+  - name: external-dependency
+    version: 1.0.0
+    repository: helm.chartmuseum.example.com
 workers:
   external-worker:
+    image:
+      registry: docker.external.example.com
+      repository: image
+      tag: 1.21.0
+crons:
+  external-cronjob:
+    image:
+      registry: docker.external.example.com
+      repository: image
+      tag: 1.21.0
+jobs:
+  external-job:
     image:
       registry: docker.external.example.com
       repository: image
