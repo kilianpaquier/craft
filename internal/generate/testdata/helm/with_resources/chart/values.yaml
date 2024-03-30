@@ -26,9 +26,9 @@ crons:
     completions: 1
     parallelism: 1
     image:
-      registry: /
+      registry: ""
       repository: kilianpaquier/craft
-      pullPolicy: IfNotPresent
+      pullPolicy: ""
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
     env:
@@ -49,11 +49,11 @@ crons:
         cpu: 50m
         memory: 128Mi
         storage: 5Gi
-    failedJobsHistoryLimit: 3
+    failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 3
     restartPolicy: OnFailure
     configMap: {}
-      # mountPoint: /etc/config/
+      # mountPath: /etc/config/
       # tpl_folders: # folders to be included in configmap with tpl
       #   - folder_name
       # include_folders: # folders to be included in configmap without tpl
@@ -104,6 +104,7 @@ crons:
       # runAsNonRoot: true
       # runAsUser: 1001
     
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#nodeselector-v1-core
     nodeSelector: {}
     
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#toleration-v1-core
@@ -128,9 +129,9 @@ jobs:
     completions: 1
     parallelism: 1
     image:
-      registry: /
+      registry: ""
       repository: kilianpaquier/craft
-      pullPolicy: IfNotPresent
+      pullPolicy: ""
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
     env:
@@ -153,7 +154,7 @@ jobs:
         storage: 5Gi
     restartPolicy: OnFailure
     configMap: {}
-      # mountPoint: /etc/config/
+      # mountPath: /etc/config/
       # tpl_folders: # folders to be included in configmap with tpl
       #   - folder_name
       # include_folders: # folders to be included in configmap without tpl
@@ -204,6 +205,7 @@ jobs:
       # runAsNonRoot: true
       # runAsUser: 1001
     
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#nodeselector-v1-core
     nodeSelector: {}
     
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#toleration-v1-core
@@ -226,9 +228,9 @@ workers:
     paused: true
     replicaCount: 1
     image:
-      registry: /
+      registry: ""
       repository: kilianpaquier/craft
-      pullPolicy: IfNotPresent
+      pullPolicy: ""
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
     env:
@@ -281,11 +283,22 @@ workers:
       enabled: false
       minReplicas: 1
       maxReplicas: 10
-      targetCPUUtilizationPercentage: 80
-      targetMemoryUtilizationPercentage: 80
+      metrics:
+        - type: Resource
+          resource:
+            name: cpu
+            target:
+              type: Utilization
+              averageUtilization: 80
+        - type: Resource
+          resource:
+            name: memory
+            target:
+              type: Utilization
+              averageUtilization: 80
     restartPolicy: Always
     configMap: {}
-      # mountPoint: /etc/config/
+      # mountPath: /etc/config/
       # tpl_folders: # folders to be included in configmap with tpl
       #   - folder_name
       # include_folders: # folders to be included in configmap without tpl
@@ -336,6 +349,7 @@ workers:
       # runAsNonRoot: true
       # runAsUser: 1001
     
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#nodeselector-v1-core
     nodeSelector: {}
     
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#toleration-v1-core

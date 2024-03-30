@@ -1,0 +1,331 @@
+{
+    "$id": "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/chart.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Helm values for craft",
+    "description": "Helm values overrides for craft chart file",
+    "type": "object",
+    "additionalProperties": false,
+    "$defs": {
+        "dependency": {
+            "descriptions": "Dependency represents the configuration of a given helm chart dependency. It's a simplified configuration.",
+            "type": "object",
+            "required": [
+                "name",
+                "version",
+                "repository"
+            ],
+            "properties": {
+                "name": {
+                    "$ref": "https://json.schemastore.org/chart.json#/properties/dependencies/items/properties/name"
+                },
+                "version": {
+                    "$ref": "https://json.schemastore.org/chart.json#/properties/dependencies/items/properties/version"
+                },
+                "repository": {
+                    "$ref": "https://json.schemastore.org/chart.json#/properties/dependencies/items/properties/repository"
+                },
+                "values": {
+                    "descriptions": "Values is the configuration to override the dependency values.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": false
+        },
+        "serviceAccount": {
+            "descriptions": "ServiceAccount binds together: * a name, understood by users, and perhaps by peripheral systems, for an identity * a principal that can be authenticated and authorized * a set of secrets",
+            "type": "object",
+            "properties": {
+                "create": {
+                    "description": "Enable or disable the service account creation. By default it's false.",
+                    "type": "boolean",
+                    "default": false
+                },
+                "annotations": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta/properties/annotations"
+                },
+                "name": {
+                    "description": "The service account name. By default it's empty.",
+                    "type": "string",
+                    "default": ""
+                }
+            },
+            "additionalProperties": false
+        },
+        "image": {
+            "description": "Image is the configuration for the container image pull (image name, registry, policy, tag/version).",
+            "type": "object",
+            "properties": {
+                "registry": {
+                    "description": "Registry is the target docker registry where the docker image is saved. By default it's empty, redirecting to docker.io.",
+                    "type": "string",
+                    "default": ""
+                },
+                "repository": {
+                    "description": "Repository is the target repository or docker image name (without its tag). It's prefixed with the registry in deployments configuration.",
+                    "type": "string"
+                },
+                "pullPolicy": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/imagePullPolicy"
+                },
+                "tag": {
+                    "description": "Tag is the specific tag to use for the given repository image. By default it's empty (meaning the helm chart AppVersion).",
+                    "type": "string",
+                    "default": ""
+                }
+            },
+            "additionalProperties": false
+        },
+        "configMap": {
+            "description": "ConfigMap holds configuration data for pods to consume.",
+            "type": "object",
+            "properties": {
+                "mountPath": {
+                    "description": "MountPath is the target path where the configmap will be mount in the pod container.",
+                    "type": "string"
+                },
+                "tpl_folders": {
+                    "description": "All files provided in those folders will be evaluated with tpl (helm feature) to replace like values template properties or even functions. They will additionally be put into given configmap.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "include_folders": {
+                    "description": "All files provided in those folders will be put into given configmap.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "data": {
+                    "description": "Data is a simple way to add files in given configmap without going through the creation of files in chart folder.",
+                    "type": "object",
+                    "additionalProperties": true
+                }
+            },
+            "required": [
+                "mountPath"
+            ],
+            "additionalProperties": false
+        },
+        "resource": {
+            "description": "Resource represents a shared configuration for all workers, cronjobs and jobs.",
+            "type": "object",
+            "properties": {
+                "image": {
+                    "$ref": "#/$defs/image"
+                },
+                "env": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/env"
+                },
+                "envFrom": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/envFrom"
+                },
+                "resources": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/resources"
+                },
+                "restartPolicy": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/restartPolicy"
+                },
+                "configMap": {
+                    "$ref": "#/$defs/configMap"
+                },
+                "volumes": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/volumes"
+                },
+                "volumeMounts": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/volumeMounts"
+                },
+                "podAnnotations": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta/properties/annotations"
+                },
+                "podSecurityContext": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/securityContext"
+                },
+                "securityContext": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/securityContext"
+                },
+                "nodeSelector": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/nodeSelector"
+                },
+                "tolerations": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/tolerations"
+                },
+                "affinity": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/affinity"
+                }
+            }
+        },
+        "cronjob": {
+            "description": "CronJob represents the configuration of a single cron job.",
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/resource"
+                },
+                {
+                    "properties": {
+                        "suspend": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.CronJobSpec/properties/suspend"
+                        },
+                        "schedule": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.CronJobSpec/properties/schedule"
+                        },
+                        "concurrencyPolicy": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.CronJobSpec/properties/concurrencyPolicy"
+                        },
+                        "completionMode": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.JobSpec/properties/completionMode"
+                        },
+                        "completions": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.JobSpec/properties/completions"
+                        },
+                        "parallelism": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.JobSpec/properties/parallelism"
+                        },
+                        "failedJobsHistoryLimit": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.CronJobSpec/properties/failedJobsHistoryLimit"
+                        },
+                        "successfulJobsHistoryLimit": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.CronJobSpec/properties/successfulJobsHistoryLimit"
+                        }
+                    }
+                }
+            ]
+        },
+        "job": {
+            "description": "Job represents the configuration of a single job.",
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/resource"
+                },
+                {
+                    "properties": {
+                        "suspend": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.CronJobSpec/properties/suspend"
+                        },
+                        "completionMode": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.JobSpec/properties/completionMode"
+                        },
+                        "completions": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.JobSpec/properties/completions"
+                        },
+                        "parallelism": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.JobSpec/properties/parallelism"
+                        },
+                        "ttlSecondsAfterFinished": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.batch.v1.JobSpec/properties/ttlSecondsAfterFinished"
+                        }
+                    }
+                }
+            ]
+        },
+        "worker": {
+            "description": "Deployment enables declarative updates for Pods and ReplicaSets.",
+            "type": "object",
+            "allOf": [
+                {
+                    "$ref": "#/$defs/resource"
+                },
+                {
+                    "properties": {
+                        "paused": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.apps.v1.DeploymentSpec/properties/paused"
+                        },
+                        "replicaCount": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.apps.v1.DeploymentSpec/properties/replicas"
+                        },
+                        "livenessProbe": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/livenessProbe"
+                        },
+                        "readinessProbe": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/readinessProbe"
+                        },
+                        "startupProbe": {
+                            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.Container/properties/startupProbe"
+                        },
+                        "autoscaling": {
+                            "$ref": "#/$defs/hpa"
+                        }
+                    }
+                }
+            ]
+        },
+        "hpa": {
+            "description": "HorizontalPodAutoscaler is the configuration for a horizontal pod autoscaler, which automatically manages the replica count of any resource implementing the scale subresource based on the metrics specified.",
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "Enable or disable the HPA configuration. By default HorizontalPodAutoscaler is disabled.",
+                    "type": "boolean",
+                    "default": false
+                },
+                "minReplicas": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerSpec/properties/minReplicas"
+                },
+                "maxReplicas": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerSpec/properties/maxReplicas"
+                },
+                "metrics": {
+                    "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.autoscaling.v2.HorizontalPodAutoscalerSpec/properties/metrics"
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "description": {
+            "$ref": "https://json.schemastore.org/chart.json#/properties/description"
+        },
+        "dependencies": {
+            "description": "In Helm, one chart may depend on any number of other charts. These dependencies can be dynamically linked using the dependencies field in Chart.yaml or brought in to the charts/ directory and managed manually.\nThe charts required by the current chart are defined as a list in the dependencies field.",
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/dependency"
+            }
+        },
+        "maintainers": {
+            "$ref": "https://json.schemastore.org/chart.json#/properties/maintainers"
+        },
+        "imagePullSecrets": {
+            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.2/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/imagePullSecrets"
+        },
+        "nameOverride": {
+            "description": "",
+            "type": "string"
+        },
+        "fullnameOverride": {
+            "description": "",
+            "type": "string"
+        },
+        "serviceAccount": {
+            "$ref": "#/$defs/serviceAccount"
+        },
+        "crons": {
+            "description": "In kubernetes, a cronjob is an executable resource given by its schedule property. It's possible to define an ensemble of cronjobs.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "$ref": "#/$defs/cronjob"
+            }
+        },
+        "jobs": {
+            "description": "In kubernetes, a job represents an executable resource, it's commonly executed when an helm chart is deployed for instance to initialize some global configuration (wide concept).",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "$ref": "#/$defs/job"
+            }
+        },
+        "workers": {
+            "description": "Workers is an ensemble of simplified kubernetes deployments. Meaning that a worker is a resource continuously running and only stop when a upgrade occurs.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "$ref": "#/$defs/worker"
+            }
+        }
+    }
+}

@@ -25,18 +25,21 @@ version: 0.1.0
 # It is recommended to use it with quotes.
 appVersion: "0.1.0"
 
-<< with .dependencies ->>
+<<- with .dependencies >>
+
 dependencies:
 <<- range . >>
-  - name: << .name | quote >>
+  - name: << .name >>
     version: << .version | default "v1.0.0" >>
-    repository: << .repository | quote >>
+    repository: << .repository >>
 <<- end >>
-<< else ->>
+<<- else >>
+
 dependencies: []
 <<- end >>
 
-<< with .maintainers ->>
+<<- with .maintainers >>
+
 maintainers:
   <<- toYaml . | nindent 2 >>
 <<- end >>

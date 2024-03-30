@@ -5,7 +5,7 @@
 
 {{ range $name, $config := .Values.workers }}
 {{- if $config.autoscaling.enabled }}
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ print $fullname "-" $name }}
@@ -19,17 +19,6 @@ spec:
   minReplicas: {{ $config.autoscaling.minReplicas }}
   maxReplicas: {{ $config.autoscaling.maxReplicas }}
   metrics:
-    {{- if $config.autoscaling.targetCPUUtilizationPercentage }}
-    - type: Resource
-      resource:
-        name: cpu
-        targetAverageUtilization: {{ $config.autoscaling.targetCPUUtilizationPercentage }}
-    {{- end }}
-    {{- if $config.autoscaling.targetMemoryUtilizationPercentage }}
-    - type: Resource
-      resource:
-        name: memory
-        targetAverageUtilization: {{ $config.autoscaling.targetMemoryUtilizationPercentage }}
-    {{- end }}
+    {{- toYaml $config.autoscaling.metrics | nindent 4 }}
 {{- end }}
 {{ end }}

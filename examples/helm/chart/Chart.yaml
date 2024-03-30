@@ -25,7 +25,10 @@ version: 0.1.0
 # It is recommended to use it with quotes.
 appVersion: "0.1.0"
 
-dependencies: []
+dependencies:
+  - name: external-dependency
+    version: 1.0.0
+    repository: helm.chartmuseum.example.com
 
 maintainers:
   - name: kilianpaquier
