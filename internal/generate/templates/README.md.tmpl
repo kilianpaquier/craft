@@ -7,7 +7,9 @@
 <<- $branch := "main" >>
 
 <<- if eq .Platform "github" >>
+<<- if gt (len .Languages) 0 >>
   <img alt="GitHub Actions" src="https://img.shields.io/github/actions/workflow/status/<< .ProjectPath >>/integration.yml?branch=<< $branch >>&style=<< $style >>">
+<<- end >>
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/<< .ProjectPath >>?include_prereleases&sort=semver&style=<< $style >>">
   <img alt="GitHub Issues" src="https://img.shields.io/github/issues-raw/<< .ProjectPath >>?style=<< $style >>">
 <<- if .License >>
