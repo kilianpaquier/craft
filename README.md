@@ -19,14 +19,12 @@
   - [Generate](#generate)
 - [Craft file](#craft-file)
 - [Plugins](#plugins)
-  - [Generic plugin](#generic-plugin)
-  - [Golang plugin](#golang-plugin)
-    - [With API layout](#with-api-layout)
-    - [With Docker layout](#with-docker-layout)
-  - [Nodejs plugin](#nodejs-plugin)
-  - [Helm plugin](#helm-plugin)
-  - [License plugin](#license-plugin)
-- [Examples](#examples)
+  - [Generic](#generic)
+  - [Golang](#golang)
+  - [Helm](#helm)
+  - [License](#license)
+  - [Nodejs](#nodejs)
+  - [OpenAPI v2](#openapi-v2)
 
 ## How to use ?
 
@@ -112,7 +110,23 @@ ci:
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
   # ci options, providing one or multiple options with tune the ci generation (optional)
-  options: [codecov, dependabot, sonar]
+  options:
+    - codecov
+    - codeql
+    - dependabot
+    - pages
+    - renovate
+    - sonar
+
+# platform override in case of gitlab on premise, bitbucket on premise, etc.
+# by default, an on premise gitlab will be matched if the host contains "gitlab"
+# by default, an on premise bitbucket will be matched if the host contains "bitbucket" or "stash"
+# when not overridden, the platform is matched based on "git config --get remote.origin.url" on the returned host (github.com, gitlab.com, ...)
+platform: bitbucket | gitea | github | gitlab
+
+# specific property to override package manager used for generation on nodejs projects.
+# by default, it's "pnpm" because it's faster than npm and more near (in terms of culture) npm than yarn would be.
+package_manager: pnpm | npm | yarn
 
 # project's api configuration
 # providing it will create an api layer with golang
@@ -139,6 +153,7 @@ no_chart: true | false
 no_goreleaser: true | false
 
 # whether to generate a Makefile with useful commands (optional)
+# this option is automatically disabled when working with nodejs plugin
 no_makefile: true | false
 ```
 
@@ -146,121 +161,42 @@ no_makefile: true | false
 
 Craft generation is based on plugins. Each plugin detects from `.craft` configuration and project's files if it needs to generate its part (or not).
 
-### Generic plugin
+Multiple plugins are implemented, and generates various files (please consult the [`examples`](./examples/) folder for more information):
 
-Craft project generation for anything but golang (because it's the only coding language implemented for now) will be generated with the generic plugin.
+### Generic
 
-The following layout will be created:
+When no primary plugins is detected (golang or nodejs), then this plugin is automatically used for generation. 
 
-```tree
-├── .gitlab
-│   ├── workflows
-│   │   ├── .gitlab-ci.yml
-├── .github
-│   ├── workflows
-│   │   ├── integration.yml
-├── .craft (craft configuration file)
-├── .gitlab-ci.yml
-├── Makefile
-└── README.md
-```
+It doesn't generate much, just some CI files (in case CI option is provided) for versioning (semantic release), a README.md and makefiles (to easily generate again and clean the git repository).
 
-It's a very simple generation with little features.
+Feel free to check either [`generic_github`](./examples/generic_github/) or [`generic_gitlab`](./examples/generic_gitlab/) to see what this plugin specifically generates.
 
-### Golang plugin
+### Golang
 
-Craft project generation for golang is following the present layout: https://github.com/golang-standards/project-layout.
+When golang plugin is detected (a `go.mod` is present at root and is valid), it will generate the appropriate files around golang testing, makefiles, CI integration (in case CI option is given), etc.
 
-```tree
-├── .gitlab
-│   ├── workflows
-│   │   ├── .gitlab-ci.yml
-├── .github
-│   ├── workflows
-│   │   ├── dependencies.yml
-│   │   ├── integration.yml
-│   │   ├── publish.yml
-├── cmd (executable binaries, prefix is useful for kubernetes identification)
-│   ├── xyz (as many as desired CLIs)
-│   │   ├── main.go
-│   ├── cron-xyz (as many as desired cronjobs)
-│   │   ├── main.go
-│   ├── job-xyz (as many as desired jobs)
-│   │   ├── main.go
-│   ├── worker-xyz (as many as desired workers)
-│   │   ├── main.go
-├── internal
-├── pkg
-├── .craft
-├── .gitignore
-├── .gitlab-ci.yml
-├── .golangci.yml
-├── go.mod
-├── go.sum
-├── Makefile
-├── README.md
-└── sonar.properties
-```
+Feel free to check either [`golang_github`](./examples/golang_github/) or [`golang_gitlab`](./examples/golang_gitlab/) to see what this plugin specifically generates.
 
-#### With API layout
+### Helm
 
-When the API option is present, then the following layout will be generated.
+When helm plugin is detected (`no_chart` is either not provided or false), it will generate a specific helm chart capable of easily deploying cronjobs, jobs, workers or even chart dependencies.
 
-```tree
-├── cmd
-│   ├── <project_name>-api
-│   │   ├── main.go (main associated to API layer)
-├── internal
-│   ├── api
-│   │   ├── manual implementation with business layer for API layer
-├── models
-│   ├── generated models files by go-swagger for the API layer
-├── pkg
-│   ├── api
-│   │   ├── generated client files by go-swagger for the API layer (consumers)
-├── restapi
-│   ├── generated server files by go-swagger for the API layer
-```
+Feel free to check [`helm`](./examples/helm/) to see what this plugin specifically generates.
 
-#### With Docker layout
+### License
 
-When the docker option is present and there's at least one executable, then the following files: `Dockerfile`, `.dockerignore` and `launcher.sh` will be generated.
+When license plugin is detected (`license` is provided in `.craft` root file and is valid), it will generate the appropriate license file.
 
-```tree
-├── cmd (executable binaries, prefix is useful for kubernetes identification)
-│   ├── xyz (as many as desired CLIs)
-│   │   ├── main.go
-│   ├── cron-xyz (as many as desired cronjobs)
-│   │   ├── main.go
-│   ├── job-xyz (as many as desired jobs)
-│   │   ├── main.go
-│   ├── worker-xyz (as many as desired workers)
-│   │   ├── main.go
-├── .dockerignore
-├── Dockerfile
-└── launcher.sh (only when there's at least two main.go in cmd folder, parses the BINARY_NAME environment variable to run the right executable)
-```
+### Nodejs
 
-### Nodejs plugin
+When nodejs plugin is detected (a `package.json` is present at root and is valid), it will the appropriate files around nodejs testing, integration, etc.
 
-### Helm plugin
+Feel free to check either [`nodejs_github`](./examples/nodejs_github/) or [`nodejs_gitlab`](./examples/nodejs_gitlab/) to see what this plugin specifically generates.
 
-The helm plugin is in charge of generating the helm chart for the project. Depending on implemented coding languages, `values.yaml` file will contain values for `cronjobs`, `jobs` or `workers`.
+### OpenAPI v2
 
-For instance, associated with [golang plugin](#golang-plugin), kubernetes executables will be parsed from `cmd` folder.
+When openapi_v2 plugin is detected (`api` is present in `.craft` and a `go.mod` is present at root and is valid), it will generate a `go-swagger` based API. 
 
-The following layout will be created:
+Additional files will be generated in `internal` to easily separate generated code from business code.
 
-```tree
-├── chart
-│   ├── .craft (override values for helm chart)
-└── .craft
-```
-
-### License plugin
-
-The license plugin is only in charge of retrieving the appropriate `LICENSE` file according to `.craft > license` value.
-
-## Examples
-
-You may consult the `examples` for more information and details on generated files.
+Feel free to check [`openapi_v2`](./examples/openapi_v2/) to see what this plugin specifically generates.

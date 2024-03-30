@@ -4,7 +4,11 @@ include ./scripts/*.mk
 
 .PHONY: examples
 examples:
-	@(cd examples/generic && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/generic-helm && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/golang-api && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/golang-app && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/generic_github && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/generic_gitlab && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/golang_github && go mod tidy && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/golang_gitlab && go mod tidy && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/helm && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/nodejs_github && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/nodejs_gitlab && go run ../../cmd/craft/main.go generate --force-all)
+	@(cd examples/openapi_v2 && go mod tidy && go run ../../cmd/craft/main.go generate --force-all)

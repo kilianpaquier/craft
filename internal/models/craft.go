@@ -63,7 +63,7 @@ type CraftConfig struct {
 	NoGoreleaser   bool         `json:"-"                        yaml:"no_goreleaser,omitempty"`
 	NoMakefile     bool         `json:"-"                        yaml:"no_makefile,omitempty"`
 	PackageManager *string      `json:"packageManager,omitempty" yaml:"package_manager,omitempty"                  validate:"omitempty,oneof=npm pnpm yarn"`
-	Platform       string       `json:"-"                        yaml:"platform,omitempty"`
+	Platform       string       `json:"-"                        yaml:"platform,omitempty"                         validate:"omitempty,oneof=bitbucket gitea github gitlab"`
 }
 
 // CI is the struct for craft ci tuning.

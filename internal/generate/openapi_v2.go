@@ -120,8 +120,12 @@ func (*openAPIV2) Name() string {
 // GenerateConfig is given as copy because no modification should be done during Remove operation on it.
 func (*openAPIV2) Remove(_ context.Context, config models.GenerateConfig) error {
 	removals := []string{
-		modelsPackage, serverPackage, filepath.Join("internal", "api"), models.SwaggerFile,
+		filepath.Join("internal", "api"),
+		filepath.Join("pkg", "api"),
 		filepath.Join(models.Gocmd, fmt.Sprint(config.ProjectName, "-api")),
+		models.SwaggerFile,
+		modelsPackage,
+		serverPackage,
 	}
 
 	errs := lo.Map(removals, func(item string, _ int) error {

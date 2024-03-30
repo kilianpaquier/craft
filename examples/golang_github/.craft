@@ -1,0 +1,13 @@
+ci:
+  name: github
+  options:
+    - codecov
+    - codeql
+    - dependabot
+    - sonar
+docker:
+  registry: ghcr.io
+license: mit
+maintainers:
+  - name: kilianpaquier
+no_chart: true

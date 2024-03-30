@@ -1,0 +1,7 @@
+ci:
+  name: gitlab
+  options:
+    - renovate
+maintainers:
+  - name: kilianpaquier
+no_chart: true

@@ -1,0 +1,11 @@
+ci:
+  name: github
+  options:
+    - sonar
+    - renovate
+docker:
+  registry: ghcr.io
+license: mit
+maintainers:
+  - name: kilianpaquier
+no_chart: true

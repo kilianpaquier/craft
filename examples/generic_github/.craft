@@ -1,0 +1,7 @@
+ci:
+  name: github
+  options:
+    - dependabot
+maintainers:
+  - name: kilianpaquier
+no_chart: true

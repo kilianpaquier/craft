@@ -1,0 +1,12 @@
+{
+    "name": "nodejs",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {},
+    "author": "kilianpaquier",
+    "license": "MIT",
+    "devDependencies": {
+        "npm-check-updates": "^16.14.18"
+    }
+}

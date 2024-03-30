@@ -1,0 +1,14 @@
+ci:
+  name: github
+  options:
+    - codecov
+    - codeql
+    - dependabot
+    - sonar
+description: Nodejs' craft project example for github
+docker:
+  registry: ghcr.io
+license: mit
+maintainers:
+  - name: kilianpaquier
+no_chart: true
