@@ -1,0 +1,178 @@
+{
+    "$id": "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/craft.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Craft",
+    "description": "Craft configuration file",
+    "type": "object",
+    "additionalProperties": false,
+    "$defs": {
+        "maintainer": {
+            "description": "Maintainer definition",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "description": "Maintainer name (can be any entity, person name, group name, etc.).",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "Maintainer email.",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "Maintainer URL.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "ci": {
+            "description": "CI definition to help generate specific files.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "description": "CI Name.",
+                    "type": "string",
+                    "default": "github",
+                    "enum": [
+                        "github",
+                        "gitlab"
+                    ]
+                },
+                "options": {
+                    "description": "CI Options.",
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "enum": [
+                            "codecov",
+                            "codeql",
+                            "dependabot",
+                            "pages",
+                            "renovate",
+                            "sonar"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
+        "api": {
+            "description": "API definition (to define and generate a golang API based with either openapi v2 or v3).",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "openapi_version": {
+                    "description": "OpenAPI version to use for code generation.",
+                    "type": "string",
+                    "default": "v2",
+                    "enum": [
+                        "v2",
+                        "v3"
+                    ]
+                }
+            }
+        },
+        "docker": {
+            "description": "Docker definition.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "registry": {
+                    "description": "Docker registry associated to project. It will be used for CI docker build & push alongside chart image pull.",
+                    "type": "string",
+                    "default": "ghcr.io"
+                },
+                "port": {
+                    "description": "Container port to override the default one, 3000.",
+                    "type": "integer",
+                    "default": 3000
+                }
+            }
+        }
+    },
+    "properties": {
+        "description": {
+            "description": "Description, only useful when working with docker option, openapi_v2, openapi_v3 and helm plugins.",
+            "type": "string"
+        },
+        "maintainers": {
+            "description": "List of maintainers.",
+            "type": "array",
+            "$ref": "#/$defs/maintainer",
+            "minItems": 1
+        },
+        "license": {
+            "description": "License.",
+            "type": "string",
+            "default": "mit",
+            "enum": [
+                "agpl-3.0",
+                "apache-2.0",
+                "bsd-2-clause",
+                "bsd-3-clause",
+                "bsl-1.0",
+                "cc0-1.0",
+                "epl-2.0",
+                "gpl-2.0",
+                "gpl-3.0",
+                "lgpl-2.1",
+                "mit",
+                "mpl-2.0",
+                "unlicense"
+            ]
+        },
+        "ci": {
+            "description": "CI definition to help generate specific files.",
+            "type": "object",
+            "$ref": "#/$defs/ci"
+        },
+        "platform": {
+            "description": "Platform for README.md badges (automatically parsed with git origin URL by default).",
+            "type": "string"
+        },
+        "package_manager": {
+            "description": "Package manager for nodejs projects (by default it will be pnpm). Useful for github actions integration.",
+            "type": "string",
+            "default": "pnpm",
+            "enum": [
+                "npm",
+                "pnpm",
+                "yarn"
+            ]
+        },
+        "api": {
+            "description": "API definition (to define and generate a golang API based with either openapi v2 or v3).",
+            "type": "object",
+            "$ref": "#/$defs/api"
+        },
+        "docker": {
+            "description": "Docker definition.",
+            "type": "object",
+            "$ref": "#/$defs/docker"
+        },
+        "no_chart": {
+            "description": "Disable and remove chart generation.",
+            "type": "boolean",
+            "default": false
+        },
+        "no_goreleaser": {
+            "description": "Disable and remote goreleaser configuration for golang based projects with a CLI.",
+            "type": "boolean",
+            "default": false
+        },
+        "no_makefile": {
+            "description": "Disable and remote makefile generation.",
+            "type": "boolean",
+            "default": false
+        }
+    },
+    "required": [
+        "maintainers"
+    ]
+}
