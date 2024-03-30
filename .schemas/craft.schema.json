@@ -162,12 +162,12 @@
             "default": false
         },
         "no_goreleaser": {
-            "description": "Disable and remote goreleaser configuration for golang based projects with a CLI.",
+            "description": "Disable and remove goreleaser configuration for golang based projects with a CLI.",
             "type": "boolean",
             "default": false
         },
         "no_makefile": {
-            "description": "Disable and remote makefile generation.",
+            "description": "Disable and remove makefile generation.",
             "type": "boolean",
             "default": false
         }
