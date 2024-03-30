@@ -36,7 +36,7 @@ go install github.com/kilianpaquier/craft/cmd/craft@latest
 
 ## Commands
 
-```sh
+```
 Craft stands here to generate a similar project layout for all your projects. 
 Multiple coding languages are supported and even helm chart can be generated. 
 For more information please consult each command specificities.
@@ -60,7 +60,7 @@ Use "craft [command] --help" for more information about a command.
 
 ### Generate
 
-```sh
+```
 Generate the project layout
 
 Usage:
