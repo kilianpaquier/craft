@@ -75,7 +75,7 @@ func NewRunner(ctx context.Context, config models.CraftConfig, opts models.Gener
 
 // Run initializes all languages found in current directory
 // and execute all templates found in executor srcdir to executor destdir directory.
-func (e *Runner) Run(ctx context.Context) error {
+func (e *Runner) Run(ctx context.Context) (models.CraftConfig, error) {
 	// detect all available generates in current project
 	var generates []detectgen.GenerateFunc
 	for _, f := range detectgen.AllDetectFuncs() {
@@ -101,7 +101,7 @@ func (e *Runner) Run(ctx context.Context) error {
 	wg.Wait()
 	close(errs)
 
-	return errors.Join(lo.ChannelToSlice(errs)...)
+	return e.config.CraftConfig, errors.Join(lo.ChannelToSlice(errs)...)
 }
 
 // SplitSlice splits an input slice into two output slices depending on the iteratee function.

@@ -48,13 +48,6 @@ var (
 				log.WithError(err).Fatal("failed to validate craft configuration")
 			}
 
-			// defer craft configuration save
-			defer func() {
-				if err := configuration.WriteCraft(generateOpts.DestinationDir, craft); err != nil {
-					log.WithError(err).Warn("failed to write config file")
-				}
-			}()
-
 			// create craft runner
 			runner, err := generate.NewRunner(ctx, craft, generateOpts)
 			if err != nil {
@@ -63,8 +56,12 @@ var (
 
 			// generate all files
 			log.Infof("start craft generation in %s", generateOpts.DestinationDir)
-			if err := runner.Run(ctx); err != nil {
-				log.WithError(err).Error("failed to execute craft generation")
+			if craft, err := runner.Run(ctx); err == nil {
+				if err := configuration.WriteCraft(generateOpts.DestinationDir, craft); err != nil {
+					log.WithError(err).Warn("failed to write config file")
+				}
+			} else {
+				log.WithError(err).Fatal("failed to execute craft generation")
 			}
 		},
 	}

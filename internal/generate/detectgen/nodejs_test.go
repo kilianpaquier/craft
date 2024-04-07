@@ -81,6 +81,7 @@ func TestDetectNodejs(t *testing.T) {
 			SetBinaries(1).
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
 				SetNoMakefile(true).
+				SetPackageManager("pnpm").
 				Build()).
 			SetLanguages(string(detectgen.NameNodejs)).
 			SetOptions(*tests.NewGenerateOptionsBuilder().

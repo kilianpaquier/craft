@@ -17,14 +17,16 @@ import (
 // ReadCraft reads the .craft file in srcdir input into the out input.
 func ReadCraft(srcdir string, out any) error {
 	craft := filepath.Join(srcdir, models.CraftFile)
-	bytes, err := os.ReadFile(craft)
+
+	content, err := os.ReadFile(craft)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			return fs.ErrNotExist
 		}
 		return fmt.Errorf("failed to read file: %w", err)
 	}
-	if err := yaml.Unmarshal(bytes, out); err != nil {
+
+	if err := yaml.Unmarshal(content, out); err != nil {
 		return fmt.Errorf("failed to unmarshal file: %w", err)
 	}
 	return nil

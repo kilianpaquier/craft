@@ -59,7 +59,7 @@ func TestExecute(t *testing.T) {
 		SetEndDelim(">>").
 		SetForceAll(true).
 		SetStartDelim("<<")
-	craft := tests.NewCraftConfigBuilder().
+	input := tests.NewCraftConfigBuilder().
 		SetMaintainers(*tests.NewMaintainerBuilder().
 			SetName("maintainer name").
 			Build())
@@ -71,17 +71,19 @@ func TestExecute(t *testing.T) {
 		assertdir := filepath.Join(assertdir, string(detectgen.NameGeneric))
 
 		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := craft.Copy().SetNoChart(true).Build()
+		craft := input.Copy().SetNoChart(true).Build()
+		expected := input.Copy().SetNoChart(true).Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)
 		require.NoError(t, err)
 
 		// Act
-		err = executor.Run(ctx)
+		output, err := executor.Run(ctx)
 
 		// Assert
 		assert.NoError(t, err)
 		testfs.AssertEqualDir(t, assertdir, destdir)
+		assert.Equal(t, *expected, output)
 	})
 
 	t.Run("success_golang", func(t *testing.T) {
@@ -94,17 +96,22 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, err)
 
 		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := craft.Copy().SetNoChart(true).Build()
+		craft := input.Copy().SetNoChart(true).Build()
+		expected := input.Copy().
+			SetNoChart(true).
+			SetPlatform(models.Github).
+			Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)
 		require.NoError(t, err)
 
 		// Act
-		err = executor.Run(ctx)
+		output, err := executor.Run(ctx)
 
 		// Assert
 		assert.NoError(t, err)
 		testfs.AssertEqualDir(t, assertdir, destdir)
+		assert.Equal(t, *expected, output)
 	})
 
 	t.Run("success_hugo", func(t *testing.T) {
@@ -119,17 +126,22 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, err)
 
 		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := craft.Copy().SetNoChart(true).Build()
+		craft := input.Copy().SetNoChart(true).Build()
+		expected := input.Copy().
+			SetNoChart(true).
+			SetPlatform(models.Github).
+			Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)
 		require.NoError(t, err)
 
 		// Act
-		err = executor.Run(ctx)
+		output, err := executor.Run(ctx)
 
 		// Assert
 		assert.NoError(t, err)
 		testfs.AssertEqualDir(t, assertdir, destdir)
+		assert.Equal(t, *expected, output)
 	})
 
 	t.Run("success_nodejs", func(t *testing.T) {
@@ -142,17 +154,23 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, err)
 
 		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := craft.Copy().SetNoChart(true).Build()
+		craft := input.Copy().SetNoChart(true).Build()
+		expected := input.Copy().
+			SetNoChart(true).
+			SetNoMakefile(true).
+			SetPackageManager("pnpm").
+			Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)
 		require.NoError(t, err)
 
 		// Act
-		err = executor.Run(ctx)
+		output, err := executor.Run(ctx)
 
 		// Assert
 		assert.NoError(t, err)
 		testfs.AssertEqualDir(t, assertdir, destdir)
+		assert.Equal(t, *expected, output)
 	})
 }
 

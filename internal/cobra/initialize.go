@@ -30,9 +30,9 @@ var initCmd = &cobra.Command{
 			}
 
 			// init repository if craft configuration wasn't found
-			craft = initialize.Run(ctx)
+			craft := initialize.Run(ctx)
 			if err := configuration.WriteCraft(destdir, craft); err != nil {
-				log.WithError(err).Warn("failed to write config file")
+				log.WithError(err).Fatal("failed to write config file")
 			}
 		} else {
 			log.Infof("project already initialized, %s file exists", models.CraftFile)

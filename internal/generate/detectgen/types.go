@@ -48,6 +48,8 @@ func ReservedNames() []string {
 type GenerateFunc func(ctx context.Context, config models.GenerateConfig, fsys filesystem.FS) error
 
 // DetectFunc is the signature function to implement to add a new language or framework detection in craft.
+//
+// The input configuration can be altered in any way.
 type DetectFunc func(ctx context.Context, config *models.GenerateConfig) []GenerateFunc
 
 // AllDetectFuncs returns the slice of all detects options,

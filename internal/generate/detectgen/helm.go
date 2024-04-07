@@ -25,8 +25,7 @@ func detectHelm(ctx context.Context, config *models.GenerateConfig) []GenerateFu
 		return []GenerateFunc{removeHelm}
 	}
 
-	logrus.WithContext(ctx).
-		Infof("helm chart detected, %s doesn't have no_chart key", models.CraftFile)
+	logrus.WithContext(ctx).Infof("helm chart detected, %s doesn't have no_chart key", models.CraftFile)
 	return []GenerateFunc{generateHelm}
 }
 

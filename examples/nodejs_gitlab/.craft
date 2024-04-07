@@ -12,3 +12,5 @@ maintainers:
   - name: kilianpaquier
 no_chart: true
 no_makefile: true
+package_manager: pnpm
+platform: github
