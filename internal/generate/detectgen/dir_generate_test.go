@@ -70,8 +70,9 @@ func TestIsGenerated(t *testing.T) {
 	t.Run("generated_no_lines", func(t *testing.T) {
 		// Arrange
 		dest := filepath.Join(t.TempDir(), "file.txt")
-		_, err := os.Create(dest)
+		file, err := os.Create(dest)
 		require.NoError(t, err)
+		t.Cleanup(func() { assert.NoError(t, file.Close()) })
 
 		// Act
 		generated := detectgen.IsGenerated(dest)

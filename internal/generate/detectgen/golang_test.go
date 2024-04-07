@@ -82,10 +82,9 @@ func TestDetectGolang(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		gomod := filepath.Join(destdir, models.Gomod)
-		file, err := os.Create(gomod)
+		gomod, err := os.Create(filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
-		require.NoError(t, file.Close())
+		require.NoError(t, gomod.Close())
 
 		input := tests.NewGenerateConfigBuilder().
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -169,8 +168,9 @@ func TestDetectGolang(t *testing.T) {
 		), filesystem.RwRR)
 		require.NoError(t, err)
 
-		_, err = os.Create(filepath.Join(destdir, "hugo.toml"))
+		hugo, err := os.Create(filepath.Join(destdir, "hugo.toml"))
 		require.NoError(t, err)
+		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
 		input := tests.NewGenerateConfigBuilder().
 			SetOptions(*tests.NewGenerateOptionsBuilder().
