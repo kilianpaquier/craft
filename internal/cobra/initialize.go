@@ -35,7 +35,7 @@ var initCmd = &cobra.Command{
 				log.WithError(err).Warn("failed to write config file")
 			}
 		} else {
-			log.Info("project already initialized, .craft file exists")
+			log.Infof("project already initialized, %s file exists", models.CraftFile)
 		}
 	},
 }

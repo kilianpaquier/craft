@@ -121,7 +121,7 @@ jobs:
         with:
           merge-multiple: true
           path: reports
-      - uses: actions/cache/restore@v4
+      - uses: actions/cache@v4
         with:
           path: ${{ env.SONAR_USER_HOME }}
           key: sonar-cache
@@ -143,10 +143,6 @@ jobs:
           args: |
             -Dproject.settings=sonar.properties
             -Dsonar.branch.name=${{ github.ref_name }}
-      - uses: actions/cache/save@v4
-        with:
-          path: ${{ env.SONAR_USER_HOME }}
-          key: sonar-cache
 
   workflow-result:
     name: Workflow Result

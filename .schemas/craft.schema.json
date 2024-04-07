@@ -98,7 +98,7 @@
     },
     "properties": {
         "description": {
-            "description": "Description, only useful when working with docker option, openapi_v2, openapi_v3 and helm plugins.",
+            "description": "Description, only useful when working with docker option, openapi_v2, openapi_v3 and helm generations.",
             "type": "string"
         },
         "maintainers": {

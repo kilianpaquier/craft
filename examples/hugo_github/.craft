@@ -1,0 +1,10 @@
+ci:
+  name: github
+  options:
+    - dependabot
+    - pages
+    - sonar
+license: mit
+maintainers:
+  - name: kilianpaquier
+no_chart: true

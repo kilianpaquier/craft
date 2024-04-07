@@ -55,15 +55,15 @@ var (
 				}
 			}()
 
-			// create craft executor
-			executor, err := generate.NewExecutor(craft, generateOpts)
+			// create craft runner
+			runner, err := generate.NewRunner(ctx, craft, generateOpts)
 			if err != nil {
 				log.WithError(err).Fatal("failed to create craft executor")
 			}
 
 			// generate all files
 			log.Infof("start craft generation in %s", generateOpts.DestinationDir)
-			if err := executor.Execute(ctx); err != nil {
+			if err := runner.Run(ctx); err != nil {
 				log.WithError(err).Error("failed to execute craft generation")
 			}
 		},
