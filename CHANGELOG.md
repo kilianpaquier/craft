@@ -1,3 +1,30 @@
+## [1.0.0-beta.2](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2024-04-07)
+
+
+### Features
+
+* **generate:** add craft notice in .craft configuration file ([72382bd](https://github.com/kilianpaquier/craft/commit/72382bd5dbf23404637208bb902b42a2d6395c65))
+* **generate:** save edited .craft configuration from generate ([a03b11e](https://github.com/kilianpaquier/craft/commit/a03b11e10dc5b90f63e0229cfe0775e75ae98fa2))
+
+
+### Bug Fixes
+
+* **generic:** remove readme github actions since there's no integration workflow ([26e3a4f](https://github.com/kilianpaquier/craft/commit/26e3a4fcd4c5522d9c1ea06440a765a5ade74a4b))
+* **github:** add branches for integration actions workflow (next, beta, alpha) ([6285f1e](https://github.com/kilianpaquier/craft/commit/6285f1e84642fbc6a6985e1c692d3f369b3d8079))
+* **github:** bad path on npm-build and hugo-build artifacts for github-pages ([74615f9](https://github.com/kilianpaquier/craft/commit/74615f9010192ee2a63d780ca1bed63d4a81d781))
+* **github:** let github actions set the github-pages job's token ([ba97741](https://github.com/kilianpaquier/craft/commit/ba97741c149c24e9583ac109fd321840aa98a42c))
+* **hugo:** put specific exclusions of hugo files in gitignore to avoid ignoring hugo configuration files ([9a1d6d7](https://github.com/kilianpaquier/craft/commit/9a1d6d7a24f29c08a65f01edd552b93ba7649cf7))
+
+
+### Chores
+
+* **github:** update cache action for hugo build ([2119229](https://github.com/kilianpaquier/craft/commit/21192298af59215fce4298d3f49d56e0cf810558))
+
+
+### Code Refactoring
+
+* **generate:** drop plugin notion in favor of something more flexible to handle languages frameworks ([1f757b8](https://github.com/kilianpaquier/craft/commit/1f757b88f2a7e0d04694ab4370e1bee725f58449))
+
 ## 1.0.0-beta.1 (2024-03-31)
 
 
