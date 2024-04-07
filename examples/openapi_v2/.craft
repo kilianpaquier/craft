@@ -6,3 +6,4 @@ description: Golang's craft openapi v2 example
 maintainers:
   - name: kilianpaquier
 no_chart: true
+platform: github

@@ -7,3 +7,4 @@ ci:
 maintainers:
   - name: kilianpaquier
 no_chart: true
+platform: github

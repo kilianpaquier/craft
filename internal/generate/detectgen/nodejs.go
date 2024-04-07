@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
 
 	"github.com/kilianpaquier/craft/internal/models"
@@ -57,6 +58,11 @@ func detectNodejs(ctx context.Context, config *models.GenerateConfig) []Generate
 
 	config.Languages = append(config.Languages, string(NameNodejs))
 	config.ProjectName = descriptor.Name
+
+	// automatically set default package manager if none was given
+	if config.PackageManager == nil {
+		config.PackageManager = lo.ToPtr("pnpm")
+	}
 
 	// deactivate makefile because commands are facilitated by package.json scripts
 	if !config.NoMakefile {

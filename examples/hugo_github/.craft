@@ -10,3 +10,4 @@ license: mit
 maintainers:
   - name: kilianpaquier
 no_chart: true
+platform: github
