@@ -110,7 +110,6 @@ jobs:
         with:
           artifact_name: github-pages
           preview: ${{ inputs.dry_run }}
-          token: ${{ github.GITHUB_TOKEN }}
 
   release:
     name: Release
