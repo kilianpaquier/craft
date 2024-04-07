@@ -42,10 +42,14 @@ func TestGenerateOASv2(t *testing.T) {
 			Build()).
 		SetProjectName("craft")
 
-	t.Run("success_no_api_yml", func(t *testing.T) {
+	t.Run("success_no_oas2_yml", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "no_api_yml")
+		assertdir := filepath.Join(assertdir, "no_oas2_yml")
+
+		// srcBytes, err := os.ReadFile(filepath.Join(assertdir, models.Gomod))
+		// require.NoError(t, err)
+		// require.NoError(t, os.WriteFile(filepath.Join(destdir, models.Gomod), srcBytes, filesystem.RwRR))
 
 		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
@@ -64,10 +68,10 @@ func TestGenerateOASv2(t *testing.T) {
 		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_with_api_yml", func(t *testing.T) {
+	t.Run("success_with_oas2_yml", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_api_yml")
+		assertdir := filepath.Join(assertdir, "with_oas2_yml")
 
 		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)

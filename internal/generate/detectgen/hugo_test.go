@@ -46,8 +46,9 @@ func TestDetectHugo(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		_, err := os.Create(filepath.Join(destdir, "hugo.toml"))
+		hugo, err := os.Create(filepath.Join(destdir, "hugo.toml"))
 		require.NoError(t, err)
+		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
 		input := tests.NewGenerateConfigBuilder().
 			SetOptions(*tests.NewGenerateOptionsBuilder().
@@ -78,8 +79,9 @@ func TestDetectHugo(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		_, err := os.Create(filepath.Join(destdir, "theme.toml"))
+		theme, err := os.Create(filepath.Join(destdir, "theme.toml"))
 		require.NoError(t, err)
+		t.Cleanup(func() { assert.NoError(t, theme.Close()) })
 
 		input := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().
@@ -116,10 +118,14 @@ func TestDetectHugo(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		_, err := os.Create(filepath.Join(destdir, "hugo.toml"))
+		hugo, err := os.Create(filepath.Join(destdir, "hugo.toml"))
 		require.NoError(t, err)
-		_, err = os.Create(filepath.Join(destdir, "theme.toml"))
+		theme, err := os.Create(filepath.Join(destdir, "theme.toml"))
 		require.NoError(t, err)
+		t.Cleanup(func() {
+			assert.NoError(t, hugo.Close())
+			assert.NoError(t, theme.Close())
+		})
 
 		input := tests.NewGenerateConfigBuilder().
 			SetCraftConfig(*tests.NewCraftConfigBuilder().

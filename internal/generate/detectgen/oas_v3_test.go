@@ -75,7 +75,7 @@ func TestDetectOAS(t *testing.T) {
 		assert.Len(t, generates, 0)
 		assert.Equal(t, expected, input)
 		logs := testlogs.ToString(hook.AllEntries())
-		assert.Contains(t, logs, fmt.Sprintf("invalid openapi version provided '%s', not doing api generation. Please fix your %s configuration file", *input.API.OpenAPIVersion, models.CraftFile))
+		assert.Contains(t, logs, fmt.Sprintf("invalid openapi version provided '%s', not doing api generation, please fix your %s configuration file", *input.API.OpenAPIVersion, models.CraftFile))
 	})
 
 	t.Run("detected_default_oas2", func(t *testing.T) {
@@ -190,10 +190,10 @@ func TestGenerateOASv3(t *testing.T) {
 			Build()).
 		SetProjectName("craft")
 
-	t.Run("success_no_api_yml", func(t *testing.T) {
+	t.Run("success_no_oas3_yml", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "no_api_yml")
+		assertdir := filepath.Join(assertdir, "no_oas3_yml")
 
 		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
@@ -212,10 +212,10 @@ func TestGenerateOASv3(t *testing.T) {
 		testfs.AssertEqualDir(t, assertdir, destdir)
 	})
 
-	t.Run("success_with_api_yml", func(t *testing.T) {
+	t.Run("success_with_oas3_yml", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_api_yml")
+		assertdir := filepath.Join(assertdir, "with_oas3_yml")
 
 		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
