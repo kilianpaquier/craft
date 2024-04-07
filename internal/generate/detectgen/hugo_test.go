@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate/detectgen"
+	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 	"github.com/kilianpaquier/craft/internal/testlogs"
 )
@@ -81,11 +82,17 @@ func TestDetectHugo(t *testing.T) {
 		require.NoError(t, err)
 
 		input := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(*tests.NewCIBuilder().Build()).
+				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(*tests.NewCIBuilder().Build()).
+				Build()).
 			SetLanguages(string(detectgen.NameHugo)).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
@@ -115,11 +122,21 @@ func TestDetectHugo(t *testing.T) {
 		require.NoError(t, err)
 
 		input := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(*tests.NewCIBuilder().
+					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot). // codecov and codeql will be removed
+					Build()).
+				Build()).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetCI(*tests.NewCIBuilder().
+					SetOptions(models.Dependabot). // just here to avoid a nil slice comparison with an empty slice ...
+					Build()).
+				Build()).
 			SetLanguages(string(detectgen.NameHugo)).
 			SetOptions(*tests.NewGenerateOptionsBuilder().
 				SetDestinationDir(destdir).

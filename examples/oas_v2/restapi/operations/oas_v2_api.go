@@ -19,12 +19,12 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/kilianpaquier/craft/examples/openapi_v2/restapi/operations/monitoring"
+	"github.com/kilianpaquier/craft/examples/oas_v2/restapi/operations/monitoring"
 )
 
-// NewOpenapiV2API creates a new OpenapiV2 instance
-func NewOpenapiV2API(spec *loads.Document) *OpenapiV2API {
-	return &OpenapiV2API{
+// NewOasV2API creates a new OasV2 instance
+func NewOasV2API(spec *loads.Document) *OasV2API {
+	return &OasV2API{
 		handlers:            make(map[string]map[string]http.Handler),
 		formats:             strfmt.Default,
 		defaultConsumes:     "application/json",
@@ -50,8 +50,8 @@ func NewOpenapiV2API(spec *loads.Document) *OpenapiV2API {
 	}
 }
 
-/*OpenapiV2API Golang's craft openapi v2 example */
-type OpenapiV2API struct {
+/*OasV2API Golang's craft openapi v2 example */
+type OasV2API struct {
 	spec            *loads.Document
 	context         *middleware.Context
 	handlers        map[string]map[string]http.Handler
@@ -106,52 +106,52 @@ type OpenapiV2API struct {
 }
 
 // UseRedoc for documentation at /docs
-func (o *OpenapiV2API) UseRedoc() {
+func (o *OasV2API) UseRedoc() {
 	o.useSwaggerUI = false
 }
 
 // UseSwaggerUI for documentation at /docs
-func (o *OpenapiV2API) UseSwaggerUI() {
+func (o *OasV2API) UseSwaggerUI() {
 	o.useSwaggerUI = true
 }
 
 // SetDefaultProduces sets the default produces media type
-func (o *OpenapiV2API) SetDefaultProduces(mediaType string) {
+func (o *OasV2API) SetDefaultProduces(mediaType string) {
 	o.defaultProduces = mediaType
 }
 
 // SetDefaultConsumes returns the default consumes media type
-func (o *OpenapiV2API) SetDefaultConsumes(mediaType string) {
+func (o *OasV2API) SetDefaultConsumes(mediaType string) {
 	o.defaultConsumes = mediaType
 }
 
 // SetSpec sets a spec that will be served for the clients.
-func (o *OpenapiV2API) SetSpec(spec *loads.Document) {
+func (o *OasV2API) SetSpec(spec *loads.Document) {
 	o.spec = spec
 }
 
 // DefaultProduces returns the default produces media type
-func (o *OpenapiV2API) DefaultProduces() string {
+func (o *OasV2API) DefaultProduces() string {
 	return o.defaultProduces
 }
 
 // DefaultConsumes returns the default consumes media type
-func (o *OpenapiV2API) DefaultConsumes() string {
+func (o *OasV2API) DefaultConsumes() string {
 	return o.defaultConsumes
 }
 
 // Formats returns the registered string formats
-func (o *OpenapiV2API) Formats() strfmt.Registry {
+func (o *OasV2API) Formats() strfmt.Registry {
 	return o.formats
 }
 
 // RegisterFormat registers a custom format validator
-func (o *OpenapiV2API) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
+func (o *OasV2API) RegisterFormat(name string, format strfmt.Format, validator strfmt.Validator) {
 	o.formats.Add(name, format, validator)
 }
 
-// Validate validates the registrations in the OpenapiV2API
-func (o *OpenapiV2API) Validate() error {
+// Validate validates the registrations in the OasV2API
+func (o *OasV2API) Validate() error {
 	var unregistered []string
 
 	if o.JSONConsumer == nil {
@@ -174,23 +174,23 @@ func (o *OpenapiV2API) Validate() error {
 }
 
 // ServeErrorFor gets a error handler for a given operation id
-func (o *OpenapiV2API) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
+func (o *OasV2API) ServeErrorFor(operationID string) func(http.ResponseWriter, *http.Request, error) {
 	return o.ServeError
 }
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
-func (o *OpenapiV2API) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
+func (o *OasV2API) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 	return nil
 }
 
 // Authorizer returns the registered authorizer
-func (o *OpenapiV2API) Authorizer() runtime.Authorizer {
+func (o *OasV2API) Authorizer() runtime.Authorizer {
 	return nil
 }
 
 // ConsumersFor gets the consumers for the specified media types.
 // MIME type parameters are ignored here.
-func (o *OpenapiV2API) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
+func (o *OasV2API) ConsumersFor(mediaTypes []string) map[string]runtime.Consumer {
 	result := make(map[string]runtime.Consumer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
@@ -207,7 +207,7 @@ func (o *OpenapiV2API) ConsumersFor(mediaTypes []string) map[string]runtime.Cons
 
 // ProducersFor gets the producers for the specified media types.
 // MIME type parameters are ignored here.
-func (o *OpenapiV2API) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
+func (o *OasV2API) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
@@ -223,7 +223,7 @@ func (o *OpenapiV2API) ProducersFor(mediaTypes []string) map[string]runtime.Prod
 }
 
 // HandlerFor gets a http.Handler for the provided operation method and path
-func (o *OpenapiV2API) HandlerFor(method, path string) (http.Handler, bool) {
+func (o *OasV2API) HandlerFor(method, path string) (http.Handler, bool) {
 	if o.handlers == nil {
 		return nil, false
 	}
@@ -238,8 +238,8 @@ func (o *OpenapiV2API) HandlerFor(method, path string) (http.Handler, bool) {
 	return h, ok
 }
 
-// Context returns the middleware context for the openapi v2 API
-func (o *OpenapiV2API) Context() *middleware.Context {
+// Context returns the middleware context for the oas v2 API
+func (o *OasV2API) Context() *middleware.Context {
 	if o.context == nil {
 		o.context = middleware.NewRoutableContext(o.spec, o, nil)
 	}
@@ -247,7 +247,7 @@ func (o *OpenapiV2API) Context() *middleware.Context {
 	return o.context
 }
 
-func (o *OpenapiV2API) initHandlerCache() {
+func (o *OasV2API) initHandlerCache() {
 	o.Context() // don't care about the result, just that the initialization happened
 	if o.handlers == nil {
 		o.handlers = make(map[string]map[string]http.Handler)
@@ -261,7 +261,7 @@ func (o *OpenapiV2API) initHandlerCache() {
 
 // Serve creates a http handler to serve the API over HTTP
 // can be used directly in http.ListenAndServe(":8000", api.Serve(nil))
-func (o *OpenapiV2API) Serve(builder middleware.Builder) http.Handler {
+func (o *OasV2API) Serve(builder middleware.Builder) http.Handler {
 	o.Init()
 
 	if o.Middleware != nil {
@@ -274,24 +274,24 @@ func (o *OpenapiV2API) Serve(builder middleware.Builder) http.Handler {
 }
 
 // Init allows you to just initialize the handler cache, you can then recompose the middleware as you see fit
-func (o *OpenapiV2API) Init() {
+func (o *OasV2API) Init() {
 	if len(o.handlers) == 0 {
 		o.initHandlerCache()
 	}
 }
 
 // RegisterConsumer allows you to add (or override) a consumer for a media type.
-func (o *OpenapiV2API) RegisterConsumer(mediaType string, consumer runtime.Consumer) {
+func (o *OasV2API) RegisterConsumer(mediaType string, consumer runtime.Consumer) {
 	o.customConsumers[mediaType] = consumer
 }
 
 // RegisterProducer allows you to add (or override) a producer for a media type.
-func (o *OpenapiV2API) RegisterProducer(mediaType string, producer runtime.Producer) {
+func (o *OasV2API) RegisterProducer(mediaType string, producer runtime.Producer) {
 	o.customProducers[mediaType] = producer
 }
 
 // AddMiddlewareFor adds a http middleware to existing handler
-func (o *OpenapiV2API) AddMiddlewareFor(method, path string, builder middleware.Builder) {
+func (o *OasV2API) AddMiddlewareFor(method, path string, builder middleware.Builder) {
 	um := strings.ToUpper(method)
 	if path == "/" {
 		path = ""

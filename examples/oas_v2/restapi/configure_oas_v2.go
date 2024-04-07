@@ -12,17 +12,17 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	log "github.com/sirupsen/logrus"
 
-	internal_api "github.com/kilianpaquier/craft/examples/openapi_v2/internal/api"
-	monitoring_api "github.com/kilianpaquier/craft/examples/openapi_v2/internal/api/monitoring"
-	"github.com/kilianpaquier/craft/examples/openapi_v2/restapi/operations"
-	"github.com/kilianpaquier/craft/examples/openapi_v2/restapi/operations/monitoring"
+	internal_api "github.com/kilianpaquier/craft/examples/oas_v2/internal/api"
+	monitoring_api "github.com/kilianpaquier/craft/examples/oas_v2/internal/api/monitoring"
+	"github.com/kilianpaquier/craft/examples/oas_v2/restapi/operations"
+	"github.com/kilianpaquier/craft/examples/oas_v2/restapi/operations/monitoring"
 )
 
-func configureFlags(api *operations.OpenapiV2API) {
+func configureFlags(api *operations.OasV2API) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
 }
 
-func configureAPI(api *operations.OpenapiV2API) http.Handler {
+func configureAPI(api *operations.OasV2API) http.Handler {
 	// configure the api here
 	api.ServeError = errors.ServeError
 

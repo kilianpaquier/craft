@@ -10,10 +10,10 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/kilianpaquier/craft/examples/openapi_v2/pkg/api/monitoring"
+	"github.com/kilianpaquier/craft/examples/oas_v2/pkg/api/monitoring"
 )
 
-// Default openapi v2 HTTP client.
+// Default oas v2 HTTP client.
 var Default = NewHTTPClient(nil)
 
 const (
@@ -28,14 +28,14 @@ const (
 // DefaultSchemes are the default schemes found in Meta (info) section of spec file
 var DefaultSchemes = []string{"http"}
 
-// NewHTTPClient creates a new openapi v2 HTTP client.
-func NewHTTPClient(formats strfmt.Registry) *OpenapiV2 {
+// NewHTTPClient creates a new oas v2 HTTP client.
+func NewHTTPClient(formats strfmt.Registry) *OasV2 {
 	return NewHTTPClientWithConfig(formats, nil)
 }
 
-// NewHTTPClientWithConfig creates a new openapi v2 HTTP client,
+// NewHTTPClientWithConfig creates a new oas v2 HTTP client,
 // using a customizable transport config.
-func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *OpenapiV2 {
+func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *OasV2 {
 	// ensure nullable parameters have default
 	if cfg == nil {
 		cfg = DefaultTransportConfig()
@@ -46,14 +46,14 @@ func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *Ope
 	return New(transport, formats)
 }
 
-// New creates a new openapi v2 client
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *OpenapiV2 {
+// New creates a new oas v2 client
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *OasV2 {
 	// ensure nullable parameters have default
 	if formats == nil {
 		formats = strfmt.Default
 	}
 
-	cli := new(OpenapiV2)
+	cli := new(OasV2)
 	cli.Transport = transport
 	cli.Monitoring = monitoring.New(transport, formats)
 	return cli
@@ -98,15 +98,15 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 	return cfg
 }
 
-// OpenapiV2 is a client for openapi v2
-type OpenapiV2 struct {
+// OasV2 is a client for oas v2
+type OasV2 struct {
 	Monitoring monitoring.ClientService
 
 	Transport runtime.ClientTransport
 }
 
 // SetTransport changes the transport on the client and all its subresources
-func (c *OpenapiV2) SetTransport(transport runtime.ClientTransport) {
+func (c *OasV2) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 	c.Monitoring.SetTransport(transport)
 }

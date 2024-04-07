@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	monitoring_api "github.com/kilianpaquier/craft/examples/openapi_v2/internal/api/monitoring"
-	"github.com/kilianpaquier/craft/examples/openapi_v2/restapi/operations/monitoring"
+	monitoring_api "github.com/kilianpaquier/craft/examples/oas_v2/internal/api/monitoring"
+	"github.com/kilianpaquier/craft/examples/oas_v2/restapi/operations/monitoring"
 )
 
 func TestUnsecuredPing(t *testing.T) {

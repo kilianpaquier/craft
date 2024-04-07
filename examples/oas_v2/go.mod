@@ -1,6 +1,8 @@
-module github.com/kilianpaquier/craft/examples/openapi_v2
+module github.com/kilianpaquier/craft/examples/oas_v2
 
-go 1.22.1
+go 1.22.0
+
+toolchain go1.22.2
 
 require (
 	github.com/caarlos0/env/v10 v10.0.0
@@ -13,7 +15,7 @@ require (
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.24.0
 )
 
 require (
@@ -38,6 +40,6 @@ require (
 	go.opentelemetry.io/otel/metric v1.24.0 // indirect
 	go.opentelemetry.io/otel/trace v1.24.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

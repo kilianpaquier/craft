@@ -21,7 +21,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "Golang's craft openapi v2 example",
-    "title": "openapi_v2",
+    "title": "oas_v2",
     "version": "0.1.0"
   },
   "basePath": "/api",
@@ -90,7 +90,7 @@ func init() {
   "swagger": "2.0",
   "info": {
     "description": "Golang's craft openapi v2 example",
-    "title": "openapi_v2",
+    "title": "oas_v2",
     "version": "0.1.0"
   },
   "basePath": "/api",

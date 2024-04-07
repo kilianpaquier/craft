@@ -29,12 +29,12 @@ test-cover: reports
 	@go test ./... -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out"
 
 .PHONY: buildall
-buildall: build-openapi_v2-api
+buildall: build-oas_v2-api
 
-.PHONY: openapi_v2-api
+.PHONY: oas_v2-api
 build-%:
 	@CGO_ENABLED=0 go build -o $* cmd/$*/main.go
 
-.PHONY: openapi_v2-api
+.PHONY: oas_v2-api
 local-%:
 	@go run cmd/$*/main.go

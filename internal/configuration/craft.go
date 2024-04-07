@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -32,17 +33,20 @@ func ReadCraft(srcdir string, out any) error {
 // WriteCraft writes the input craft into the input destdir in .craft file.
 func WriteCraft(destdir string, config models.CraftConfig) error {
 	craft := filepath.Join(destdir, models.CraftFile)
-	file, err := os.OpenFile(craft, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, filesystem.RwRR)
-	if err != nil {
-		return fmt.Errorf("failed to open or create '%s': %w", craft, err)
-	}
-	defer file.Close()
 
-	encoder := yaml.NewEncoder(file)
+	// create a buffer with craft notice
+	buffer := bytes.NewBuffer([]byte("# Craft configuration file (https://github.com/kilianpaquier/craft)\n---\n"))
+
+	// create yaml encoder and writes the full configuration in the buffer,
+	// following the craft notice
+	encoder := yaml.NewEncoder(buffer)
 	defer encoder.Close()
-
 	encoder.SetIndent(2)
 	if err := encoder.Encode(config); err != nil {
+		return fmt.Errorf("failed to write '%s': %w", craft, err)
+	}
+
+	if err := os.WriteFile(craft, buffer.Bytes(), filesystem.RwRR); err != nil {
 		return fmt.Errorf("failed to write '%s': %w", craft, err)
 	}
 	return nil

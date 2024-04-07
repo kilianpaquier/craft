@@ -225,4 +225,4 @@ When openapi_v2 generation is detected (`api` is present in `.craft` and a `go.m
 
 Additional files will be generated in `internal` to easily separate generated code from business code.
 
-Feel free to check [`openapi_v2`](./examples/openapi_v2/) to see what this generation specifically does.
+Feel free to check [`oas_v2`](./examples/oas_v2/) to see what this generation specifically does.

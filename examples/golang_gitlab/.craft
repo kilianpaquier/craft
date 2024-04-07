@@ -1,3 +1,5 @@
+# Craft configuration file (https://github.com/kilianpaquier/craft)
+---
 ci:
   name: gitlab
   options:
