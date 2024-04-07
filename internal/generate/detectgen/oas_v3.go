@@ -42,6 +42,8 @@ func detectOAS(ctx context.Context, config *models.GenerateConfig) []GenerateFun
 		config.Binaries++
 		return []GenerateFunc{generateOASv3}
 	}
+
+	log.Warnf("invalid openapi version provided '%s', not doing api generation. Please fix your %s configuration file", lo.FromPtr(config.API.OpenAPIVersion), models.CraftFile)
 	return nil
 }
 
