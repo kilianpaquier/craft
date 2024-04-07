@@ -3,10 +3,10 @@ ci:
   options:
     - sonar
     - renovate
-description: Nodejs' craft project example for gitlab
 docker:
   registry: ghcr.io
 license: mit
 maintainers:
   - name: kilianpaquier
 no_chart: true
+no_makefile: true

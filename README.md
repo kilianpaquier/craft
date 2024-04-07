@@ -19,9 +19,10 @@
   - [Generate](#generate)
 - [Craft file](#craft-file)
   - [VSCode association and schema](#vscode-association-and-schema)
-- [Plugins](#plugins)
+- [Generations](#generations)
   - [Generic](#generic)
   - [Golang](#golang)
+  - [Hugo](#hugo)
   - [Helm](#helm)
   - [License](#license)
   - [Nodejs](#nodejs)
@@ -154,7 +155,7 @@ no_chart: true | false
 no_goreleaser: true | false
 
 # whether to generate a Makefile with useful commands (optional)
-# this option is automatically disabled when working with nodejs plugin
+# this option is automatically disabled when working with nodejs generation
 no_makefile: true | false
 ```
 
@@ -176,46 +177,52 @@ When working on vscode, feel free to use craft's schema to help use setup your p
 }
 ```
 
-## Plugins
+## Generations
 
-Craft generation is based on plugins. Each plugin detects from `.craft` configuration and project's files if it needs to generate its part (or not).
+Craft generation is based on separated detections. Each detection checks from `.craft` configuration and project's files if it needs to generate its part (or not).
 
-Multiple plugins are implemented, and generates various files (please consult the [`examples`](./examples/) folder for more information):
+Multiple detections are implemented, and generates various files (please consult the [`examples`](./examples/) folder for more information):
 
 ### Generic
 
-When no primary plugins is detected (golang or nodejs), then this plugin is automatically used for generation. 
+When no primary generation is detected (golang, nodejs or hugo), then this generation is automatically used. 
 
 It doesn't generate much, just some CI files (in case CI option is provided) for versioning (semantic release), a README.md and makefiles (to easily generate again and clean the git repository).
 
-Feel free to check either [`generic_github`](./examples/generic_github/) or [`generic_gitlab`](./examples/generic_gitlab/) to see what this plugin specifically generates.
+Feel free to check either [`generic_github`](./examples/generic_github/) or [`generic_gitlab`](./examples/generic_gitlab/) to see what this generation specifically does.
 
 ### Golang
 
-When golang plugin is detected (a `go.mod` is present at root and is valid), it will generate the appropriate files around golang testing, makefiles, CI integration (in case CI option is given), etc.
+When golang generation is detected (a `go.mod` is present at root and is valid), it will generate the appropriate files around golang testing, makefiles, CI integration (in case CI option is given), etc.
 
-Feel free to check either [`golang_github`](./examples/golang_github/) or [`golang_gitlab`](./examples/golang_gitlab/) to see what this plugin specifically generates.
+Feel free to check either [`golang_github`](./examples/golang_github/) or [`golang_gitlab`](./examples/golang_gitlab/) to see what this generation specifically does.
+
+### Hugo
+
+When hugo generation is detected (a `go.mod` is present at root, is valid and either a `hugo.(toml|yaml|...)` or `theme.(toml|yaml|...)` are present), it will generate the appropriate files around hugo static web build, CI integration (in case CI option is given), etc.
+
+Feel free to check either [`hugo_github`](./examples/hugo_github/) or [`hugo_gitlab`](./examples/hugo_gitlab/) to see what this generation specifically does.
 
 ### Helm
 
-When helm plugin is detected (`no_chart` is either not provided or false), it will generate a specific helm chart capable of easily deploying cronjobs, jobs, workers or even chart dependencies.
+When helm generation is detected (`no_chart` is either not provided or false), it will generate a specific helm chart capable of easily deploying cronjobs, jobs, workers or even chart dependencies.
 
-Feel free to check [`helm`](./examples/helm/) to see what this plugin specifically generates.
+Feel free to check [`helm`](./examples/helm/) to see what this generation specifically does.
 
 ### License
 
-When license plugin is detected (`license` is provided in `.craft` root file and is valid), it will generate the appropriate license file.
+When license generation is detected (`license` is provided in `.craft` root file and is valid), it will generate the appropriate license file.
 
 ### Nodejs
 
-When nodejs plugin is detected (a `package.json` is present at root and is valid), it will the appropriate files around nodejs testing, integration, etc.
+When nodejs generation is detected (a `package.json` is present at root and is valid), it will the appropriate files around nodejs testing, integration, etc.
 
-Feel free to check either [`nodejs_github`](./examples/nodejs_github/) or [`nodejs_gitlab`](./examples/nodejs_gitlab/) to see what this plugin specifically generates.
+Feel free to check either [`nodejs_github`](./examples/nodejs_github/) or [`nodejs_gitlab`](./examples/nodejs_gitlab/) to see what this generation specifically does.
 
 ### OpenAPI v2
 
-When openapi_v2 plugin is detected (`api` is present in `.craft` and a `go.mod` is present at root and is valid), it will generate a `go-swagger` based API. 
+When openapi_v2 generation is detected (`api` is present in `.craft` and a `go.mod` is present at root and is valid), it will generate a `go-swagger` based API. 
 
 Additional files will be generated in `internal` to easily separate generated code from business code.
 
-Feel free to check [`openapi_v2`](./examples/openapi_v2/) to see what this plugin specifically generates.
+Feel free to check [`openapi_v2`](./examples/openapi_v2/) to see what this generation specifically does.

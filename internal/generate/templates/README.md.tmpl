@@ -2,12 +2,15 @@
 
 # << .ProjectName >> <!-- omit in toc -->
 
+<<- /* coverable is meant to be true only when there's at least on language that can be affected by coverage */>>
+<<- $coverable := or (has "golang" .Languages) (has "nodejs" .Languages) >>
+
 <p align="center">
 <<- $style := "for-the-badge" >>
 <<- $branch := "main" >>
 
 <<- if eq .Platform "github" >>
-<<- if gt (len .Languages) 0 >>
+<<- if $coverable >>
   <img alt="GitHub Actions" src="https://img.shields.io/github/actions/workflow/status/<< .ProjectPath >>/integration.yml?branch=<< $branch >>&style=<< $style >>">
 <<- end >>
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/<< .ProjectPath >>?include_prereleases&sort=semver&style=<< $style >>">
@@ -15,7 +18,7 @@
 <<- if .License >>
   <img alt="GitHub License" src="https://img.shields.io/github/license/<< .ProjectPath >>?style=<< $style >>">
 <<- end >>
-<<- if and .CI (has "codecov" .CI.Options) >>
+<<- if and $coverable .CI (has "codecov" .CI.Options) >>
   <img alt="Coverage" src="https://img.shields.io/codecov/c/<< .Platform >>/<< .ProjectPath >>/<< $branch >>?style=<< $style >>">
 <<- end >>
 <<- end >>
@@ -30,13 +33,15 @@
 <<- end >>
 <<- end >>
 
-<<- if and .CI (has "sonar" .CI.Options) >>
+<<- if and $coverable .CI (has "sonar" .CI.Options) >>
 <<- $url := toQuery "https://sonarcloud.io" >>
   <img alt="Coverage" src="https://img.shields.io/sonar/coverage/<< .ProjectPath | replace "/" "_" >>/<< $branch >>?server=<< $url >>&style=<< $style >>">
 <<- end >>
 
-<<- if has "golang" .Languages >>
+<<- if or (has "golang" .Languages) (has "hugo" .Languages) >>
   <img alt="Go Version" src="https://img.shields.io/<< .Platform >>/go-mod/go-version/<< print .ProjectPath >>/<< $branch >>?style=<< $style >>&label=<< toQuery "Go Version" >>">
+<<- end >>
+<<- if or (has "golang" .Languages) >>
   <img alt="Go Report Card" src="https://goreportcard.com/badge/<< print .ProjectHost "/" .ProjectPath >>?style=<< $style >>">
 <<- end >>
 </p>

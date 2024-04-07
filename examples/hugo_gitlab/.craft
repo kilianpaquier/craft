@@ -1,0 +1,10 @@
+ci:
+  name: gitlab
+  options:
+    - pages
+    - renovate
+    - sonar
+license: mit
+maintainers:
+  - name: kilianpaquier
+no_chart: true

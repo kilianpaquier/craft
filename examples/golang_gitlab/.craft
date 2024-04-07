@@ -1,5 +1,5 @@
 ci:
-  name: github
+  name: gitlab
   options:
     - sonar
     - renovate

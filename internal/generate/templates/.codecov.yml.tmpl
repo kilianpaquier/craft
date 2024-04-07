@@ -17,10 +17,10 @@ ignore:
 <<- if has "golang" .Languages >>
   - "cmd"
   - "examples"
-  - "**/cobra"
-  - "**/mocks"
-  - "**/tests"
-  - "**/testutils"
+  - "**/cobra/**"
+  - "**/mocks/**"
+  - "**/tests/**"
+  - "**/testutils/**"
 <<- end >>
 <<- if has "nodejs" .Languages >>
   - "dist"
