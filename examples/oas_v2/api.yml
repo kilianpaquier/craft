@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  title: openapi_v2
+  title: oas_v2
   description: Golang's craft openapi v2 example
   version: 0.1.0
 basePath: /api

@@ -1,4 +1,4 @@
-# helm values override configuration
+# craft helm overrides configuration file
 ---
 description: A description for Chart yaml file
 dependencies: []

@@ -9,8 +9,8 @@ import (
 	"github.com/go-openapi/loads"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/kilianpaquier/craft/examples/openapi_v2/restapi"
-	"github.com/kilianpaquier/craft/examples/openapi_v2/restapi/operations"
+	"github.com/kilianpaquier/craft/examples/oas_v2/restapi"
+	"github.com/kilianpaquier/craft/examples/oas_v2/restapi/operations"
 )
 
 type config struct {
@@ -32,7 +32,7 @@ func main() {
 		log.WithError(err).Fatal("failed to load embedded swagger")
 	}
 
-	api := operations.NewOpenapiV2API(swaggerSpec)
+	api := operations.NewOasV2API(swaggerSpec)
 	server := restapi.NewServer(api)
 
 	server.Host = c.Host

@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-openapi/runtime"
 
-	"github.com/kilianpaquier/craft/examples/openapi_v2/models"
+	"github.com/kilianpaquier/craft/examples/oas_v2/models"
 )
 
 // UnsecuredPingOKCode is the HTTP code returned for type UnsecuredPingOK

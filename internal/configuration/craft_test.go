@@ -72,12 +72,12 @@ func TestReadCraft(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		var config models.CraftConfig
-		err = configuration.ReadCraft(srcdir, &config)
+		var actual models.CraftConfig
+		err = configuration.ReadCraft(srcdir, &actual)
 
 		// Assert
 		assert.NoError(t, err)
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *expected, actual)
 	})
 }
 
@@ -92,7 +92,7 @@ func TestWriteCraft(t *testing.T) {
 		err := configuration.WriteCraft(srcdir, *tests.NewCraftConfigBuilder().Build())
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to open or create")
+		assert.ErrorContains(t, err, "failed to write")
 	})
 
 	t.Run("success", func(t *testing.T) {
@@ -111,9 +111,9 @@ func TestWriteCraft(t *testing.T) {
 		require.NoError(t, err)
 
 		// Assert
-		var config models.CraftConfig
-		err = configuration.ReadCraft(tmp, &config)
+		var actual models.CraftConfig
+		err = configuration.ReadCraft(tmp, &actual)
 		require.NoError(t, err)
-		assert.Equal(t, *expected, config)
+		assert.Equal(t, *expected, actual)
 	})
 }
