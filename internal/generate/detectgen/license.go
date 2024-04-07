@@ -26,14 +26,19 @@ func detectLicense(ctx context.Context, config *models.GenerateConfig) []Generat
 		return []GenerateFunc{removeLicense}
 	}
 	log := logrus.WithContext(ctx)
-	log.Infof("license detected, %s has license key", models.CraftFile)
 
 	client, err := gitlab.NewClient(os.Getenv("GITLAB_TOKEN"), gitlab.WithBaseURL(GitlabURL), gitlab.WithoutRetries())
 	if err != nil {
+		// should never happen since it's gitlab.ClientOptionFunc that are throwing errors
+		// and currently WithBaseURL with fixed URL
+		// and WithoutRetries won't throw errors
+		// but in any case err must be handled in case it evolves or other options are added
 		log.WithError(err).
-			Warn("failed to initialize gitlab client in license detection, skipping license retrieval")
+			Warn("failed to initialize gitlab client in license detection, skipping license generation")
 		return nil
 	}
+
+	log.Infof("license detected, %s has license key", models.CraftFile)
 	return []GenerateFunc{downloadLicense(client)}
 }
 

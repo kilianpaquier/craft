@@ -48,6 +48,36 @@ func TestDetectOAS(t *testing.T) {
 		assert.NotContains(t, logs, fmt.Sprintf("openapi v3 detected, %s has api key and openapi_version is valued with 'v3'", models.CraftFile))
 	})
 
+	t.Run("detected_openapi_invalid", func(t *testing.T) {
+		// Arrange
+		input := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v5").
+					Build()).
+				Build()).
+			Build()
+		expected := tests.NewGenerateConfigBuilder().
+			SetCraftConfig(*tests.NewCraftConfigBuilder().
+				SetAPI(*tests.NewAPIBuilder().
+					SetOpenAPIVersion("v5").
+					Build()).
+				Build()).
+			Build()
+
+		hook := test.NewGlobal()
+		t.Cleanup(func() { hook.Reset() })
+
+		// Act
+		generates := detectgen.DetectOAS(ctx, input)
+
+		// Assert
+		assert.Len(t, generates, 0)
+		assert.Equal(t, expected, input)
+		logs := testlogs.ToString(hook.AllEntries())
+		assert.Contains(t, logs, fmt.Sprintf("invalid openapi version provided '%s', not doing api generation. Please fix your %s configuration file", *input.API.OpenAPIVersion, models.CraftFile))
+	})
+
 	t.Run("detected_default_oas2", func(t *testing.T) {
 		// Arrange
 		input := tests.NewGenerateConfigBuilder().
