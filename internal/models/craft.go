@@ -1,6 +1,6 @@
 package models
 
-//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,API,Docker -d tests
+//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,API,Docker -d tests -p set
 
 const (
 	// CraftFile is the craft configuration file name.

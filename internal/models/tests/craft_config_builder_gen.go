@@ -6,8 +6,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// CraftConfigBuilder is an alias of CraftConfig to build CraftConfig with builder-pattern.
-type CraftConfigBuilder models.CraftConfig
+// CraftConfigBuilder represents CraftConfig's builder.
+type CraftConfigBuilder struct {
+	build models.CraftConfig
+}
 
 // NewCraftConfigBuilder creates a new CraftConfigBuilder.
 func NewCraftConfigBuilder() *CraftConfigBuilder {
@@ -16,78 +18,77 @@ func NewCraftConfigBuilder() *CraftConfigBuilder {
 
 // Copy reassigns the builder struct (behind pointer) to a new pointer and returns it.
 func (b *CraftConfigBuilder) Copy() *CraftConfigBuilder {
-	c := *b
-	return &c
+	return &CraftConfigBuilder{b.build}
 }
 
 // Build returns built CraftConfig.
 func (b *CraftConfigBuilder) Build() *models.CraftConfig {
-	c := (models.CraftConfig)(*b)
-	return &c
+	result := b.build
+	return &result
 }
 
 // SetAPI sets CraftConfig's API.
 func (b *CraftConfigBuilder) SetAPI(api models.API) *CraftConfigBuilder {
-	b.API = &api
+	b.build.API = &api
 	return b
 }
 
 // SetCI sets CraftConfig's CI.
 func (b *CraftConfigBuilder) SetCI(ci models.CI) *CraftConfigBuilder {
-	b.CI = &ci
+	b.build.CI = &ci
 	return b
 }
 
 // SetDescription sets CraftConfig's Description.
 func (b *CraftConfigBuilder) SetDescription(description string) *CraftConfigBuilder {
-	b.Description = &description
+	b.build.Description = &description
 	return b
 }
 
 // SetDocker sets CraftConfig's Docker.
 func (b *CraftConfigBuilder) SetDocker(docker models.Docker) *CraftConfigBuilder {
-	b.Docker = &docker
+	b.build.Docker = &docker
 	return b
 }
 
 // SetLicense sets CraftConfig's License.
 func (b *CraftConfigBuilder) SetLicense(license string) *CraftConfigBuilder {
-	b.License = &license
+	b.build.License = &license
 	return b
 }
 
 // SetMaintainers sets CraftConfig's Maintainers.
 func (b *CraftConfigBuilder) SetMaintainers(maintainers ...models.Maintainer) *CraftConfigBuilder {
-	b.Maintainers = append(b.Maintainers, maintainers...)
+	b.build.Maintainers = append(b.build.Maintainers, maintainers...)
 	return b
 }
 
 // SetNoChart sets CraftConfig's NoChart.
 func (b *CraftConfigBuilder) SetNoChart(noChart bool) *CraftConfigBuilder {
-	b.NoChart = noChart
+	b.build.NoChart = noChart
 	return b
 }
 
 // SetNoGoreleaser sets CraftConfig's NoGoreleaser.
 func (b *CraftConfigBuilder) SetNoGoreleaser(noGoreleaser bool) *CraftConfigBuilder {
-	b.NoGoreleaser = noGoreleaser
+	b.build.NoGoreleaser = noGoreleaser
 	return b
 }
 
 // SetNoMakefile sets CraftConfig's NoMakefile.
 func (b *CraftConfigBuilder) SetNoMakefile(noMakefile bool) *CraftConfigBuilder {
-	b.NoMakefile = noMakefile
+	b.build.NoMakefile = noMakefile
 	return b
 }
 
 // SetPackageManager sets CraftConfig's PackageManager.
 func (b *CraftConfigBuilder) SetPackageManager(packageManager string) *CraftConfigBuilder {
-	b.PackageManager = &packageManager
+	b.build.PackageManager = &packageManager
 	return b
 }
 
 // SetPlatform sets CraftConfig's Platform.
 func (b *CraftConfigBuilder) SetPlatform(platform string) *CraftConfigBuilder {
-	b.Platform = platform
+	b.build.Platform = platform
 	return b
 }

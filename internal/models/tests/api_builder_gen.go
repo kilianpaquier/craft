@@ -6,8 +6,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// APIBuilder is an alias of API to build API with builder-pattern.
-type APIBuilder models.API
+// APIBuilder represents API's builder.
+type APIBuilder struct {
+	build models.API
+}
 
 // NewAPIBuilder creates a new APIBuilder.
 func NewAPIBuilder() *APIBuilder {
@@ -16,18 +18,17 @@ func NewAPIBuilder() *APIBuilder {
 
 // Copy reassigns the builder struct (behind pointer) to a new pointer and returns it.
 func (b *APIBuilder) Copy() *APIBuilder {
-	c := *b
-	return &c
+	return &APIBuilder{b.build}
 }
 
 // Build returns built API.
 func (b *APIBuilder) Build() *models.API {
-	c := (models.API)(*b)
-	return &c
+	result := b.build
+	return &result
 }
 
 // SetOpenAPIVersion sets API's OpenAPIVersion.
 func (b *APIBuilder) SetOpenAPIVersion(openAPIVersion string) *APIBuilder {
-	b.OpenAPIVersion = &openAPIVersion
+	b.build.OpenAPIVersion = &openAPIVersion
 	return b
 }

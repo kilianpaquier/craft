@@ -6,8 +6,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// DockerBuilder is an alias of Docker to build Docker with builder-pattern.
-type DockerBuilder models.Docker
+// DockerBuilder represents Docker's builder.
+type DockerBuilder struct {
+	build models.Docker
+}
 
 // NewDockerBuilder creates a new DockerBuilder.
 func NewDockerBuilder() *DockerBuilder {
@@ -16,24 +18,23 @@ func NewDockerBuilder() *DockerBuilder {
 
 // Copy reassigns the builder struct (behind pointer) to a new pointer and returns it.
 func (b *DockerBuilder) Copy() *DockerBuilder {
-	c := *b
-	return &c
+	return &DockerBuilder{b.build}
 }
 
 // Build returns built Docker.
 func (b *DockerBuilder) Build() *models.Docker {
-	c := (models.Docker)(*b)
-	return &c
+	result := b.build
+	return &result
 }
 
 // SetPort sets Docker's Port.
 func (b *DockerBuilder) SetPort(port uint16) *DockerBuilder {
-	b.Port = &port
+	b.build.Port = &port
 	return b
 }
 
 // SetRegistry sets Docker's Registry.
 func (b *DockerBuilder) SetRegistry(registry string) *DockerBuilder {
-	b.Registry = &registry
+	b.build.Registry = &registry
 	return b
 }

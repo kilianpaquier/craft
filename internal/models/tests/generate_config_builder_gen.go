@@ -6,8 +6,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// GenerateConfigBuilder is an alias of GenerateConfig to build GenerateConfig with builder-pattern.
-type GenerateConfigBuilder models.GenerateConfig
+// GenerateConfigBuilder represents GenerateConfig's builder.
+type GenerateConfigBuilder struct {
+	build models.GenerateConfig
+}
 
 // NewGenerateConfigBuilder creates a new GenerateConfigBuilder.
 func NewGenerateConfigBuilder() *GenerateConfigBuilder {
@@ -16,84 +18,83 @@ func NewGenerateConfigBuilder() *GenerateConfigBuilder {
 
 // Copy reassigns the builder struct (behind pointer) to a new pointer and returns it.
 func (b *GenerateConfigBuilder) Copy() *GenerateConfigBuilder {
-	c := *b
-	return &c
+	return &GenerateConfigBuilder{b.build}
 }
 
 // Build returns built GenerateConfig.
 func (b *GenerateConfigBuilder) Build() *models.GenerateConfig {
-	c := (models.GenerateConfig)(*b)
-	return &c
+	result := b.build
+	return &result
 }
 
 // SetBinaries sets GenerateConfig's Binaries.
 func (b *GenerateConfigBuilder) SetBinaries(binaries uint8) *GenerateConfigBuilder {
-	b.Binaries = binaries
+	b.build.Binaries = binaries
 	return b
 }
 
 // SetClis sets GenerateConfig's Clis.
 func (b *GenerateConfigBuilder) SetClis(clis map[string]struct{}) *GenerateConfigBuilder {
-	b.Clis = clis
+	b.build.Clis = clis
 	return b
 }
 
 // SetCraftConfig sets GenerateConfig's CraftConfig.
 func (b *GenerateConfigBuilder) SetCraftConfig(craftConfig models.CraftConfig) *GenerateConfigBuilder {
-	b.CraftConfig = craftConfig
+	b.build.CraftConfig = craftConfig
 	return b
 }
 
 // SetCrons sets GenerateConfig's Crons.
 func (b *GenerateConfigBuilder) SetCrons(crons map[string]struct{}) *GenerateConfigBuilder {
-	b.Crons = crons
+	b.build.Crons = crons
 	return b
 }
 
 // SetJobs sets GenerateConfig's Jobs.
 func (b *GenerateConfigBuilder) SetJobs(jobs map[string]struct{}) *GenerateConfigBuilder {
-	b.Jobs = jobs
+	b.build.Jobs = jobs
 	return b
 }
 
 // SetLanguages sets GenerateConfig's Languages.
 func (b *GenerateConfigBuilder) SetLanguages(languages ...string) *GenerateConfigBuilder {
-	b.Languages = append(b.Languages, languages...)
+	b.build.Languages = append(b.build.Languages, languages...)
 	return b
 }
 
 // SetLangVersion sets GenerateConfig's LangVersion.
 func (b *GenerateConfigBuilder) SetLangVersion(langVersion string) *GenerateConfigBuilder {
-	b.LangVersion = langVersion
+	b.build.LangVersion = langVersion
 	return b
 }
 
 // SetOptions sets GenerateConfig's Options.
 func (b *GenerateConfigBuilder) SetOptions(options models.GenerateOptions) *GenerateConfigBuilder {
-	b.Options = options
+	b.build.Options = options
 	return b
 }
 
 // SetProjectHost sets GenerateConfig's ProjectHost.
 func (b *GenerateConfigBuilder) SetProjectHost(projectHost string) *GenerateConfigBuilder {
-	b.ProjectHost = projectHost
+	b.build.ProjectHost = projectHost
 	return b
 }
 
 // SetProjectName sets GenerateConfig's ProjectName.
 func (b *GenerateConfigBuilder) SetProjectName(projectName string) *GenerateConfigBuilder {
-	b.ProjectName = projectName
+	b.build.ProjectName = projectName
 	return b
 }
 
 // SetProjectPath sets GenerateConfig's ProjectPath.
 func (b *GenerateConfigBuilder) SetProjectPath(projectPath string) *GenerateConfigBuilder {
-	b.ProjectPath = projectPath
+	b.build.ProjectPath = projectPath
 	return b
 }
 
 // SetWorkers sets GenerateConfig's Workers.
 func (b *GenerateConfigBuilder) SetWorkers(workers map[string]struct{}) *GenerateConfigBuilder {
-	b.Workers = workers
+	b.build.Workers = workers
 	return b
 }

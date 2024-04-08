@@ -6,8 +6,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// CIBuilder is an alias of CI to build CI with builder-pattern.
-type CIBuilder models.CI
+// CIBuilder represents CI's builder.
+type CIBuilder struct {
+	build models.CI
+}
 
 // NewCIBuilder creates a new CIBuilder.
 func NewCIBuilder() *CIBuilder {
@@ -16,24 +18,23 @@ func NewCIBuilder() *CIBuilder {
 
 // Copy reassigns the builder struct (behind pointer) to a new pointer and returns it.
 func (b *CIBuilder) Copy() *CIBuilder {
-	c := *b
-	return &c
+	return &CIBuilder{b.build}
 }
 
 // Build returns built CI.
 func (b *CIBuilder) Build() *models.CI {
-	c := (models.CI)(*b)
-	return &c
+	result := b.build
+	return &result
 }
 
 // SetName sets CI's Name.
 func (b *CIBuilder) SetName(name string) *CIBuilder {
-	b.Name = name
+	b.build.Name = name
 	return b
 }
 
 // SetOptions sets CI's Options.
 func (b *CIBuilder) SetOptions(options ...string) *CIBuilder {
-	b.Options = append(b.Options, options...)
+	b.build.Options = append(b.build.Options, options...)
 	return b
 }

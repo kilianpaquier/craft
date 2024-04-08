@@ -6,8 +6,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// GenerateOptionsBuilder is an alias of GenerateOptions to build GenerateOptions with builder-pattern.
-type GenerateOptionsBuilder models.GenerateOptions
+// GenerateOptionsBuilder represents GenerateOptions's builder.
+type GenerateOptionsBuilder struct {
+	build models.GenerateOptions
+}
 
 // NewGenerateOptionsBuilder creates a new GenerateOptionsBuilder.
 func NewGenerateOptionsBuilder() *GenerateOptionsBuilder {
@@ -16,48 +18,47 @@ func NewGenerateOptionsBuilder() *GenerateOptionsBuilder {
 
 // Copy reassigns the builder struct (behind pointer) to a new pointer and returns it.
 func (b *GenerateOptionsBuilder) Copy() *GenerateOptionsBuilder {
-	c := *b
-	return &c
+	return &GenerateOptionsBuilder{b.build}
 }
 
 // Build returns built GenerateOptions.
 func (b *GenerateOptionsBuilder) Build() *models.GenerateOptions {
-	c := (models.GenerateOptions)(*b)
-	return &c
+	result := b.build
+	return &result
 }
 
 // SetDestinationDir sets GenerateOptions's DestinationDir.
 func (b *GenerateOptionsBuilder) SetDestinationDir(destinationDir string) *GenerateOptionsBuilder {
-	b.DestinationDir = destinationDir
+	b.build.DestinationDir = destinationDir
 	return b
 }
 
 // SetEndDelim sets GenerateOptions's EndDelim.
 func (b *GenerateOptionsBuilder) SetEndDelim(endDelim string) *GenerateOptionsBuilder {
-	b.EndDelim = endDelim
+	b.build.EndDelim = endDelim
 	return b
 }
 
 // SetForce sets GenerateOptions's Force.
 func (b *GenerateOptionsBuilder) SetForce(force ...string) *GenerateOptionsBuilder {
-	b.Force = append(b.Force, force...)
+	b.build.Force = append(b.build.Force, force...)
 	return b
 }
 
 // SetForceAll sets GenerateOptions's ForceAll.
 func (b *GenerateOptionsBuilder) SetForceAll(forceAll bool) *GenerateOptionsBuilder {
-	b.ForceAll = forceAll
+	b.build.ForceAll = forceAll
 	return b
 }
 
 // SetStartDelim sets GenerateOptions's StartDelim.
 func (b *GenerateOptionsBuilder) SetStartDelim(startDelim string) *GenerateOptionsBuilder {
-	b.StartDelim = startDelim
+	b.build.StartDelim = startDelim
 	return b
 }
 
 // SetTemplatesDir sets GenerateOptions's TemplatesDir.
 func (b *GenerateOptionsBuilder) SetTemplatesDir(templatesDir string) *GenerateOptionsBuilder {
-	b.TemplatesDir = templatesDir
+	b.build.TemplatesDir = templatesDir
 	return b
 }

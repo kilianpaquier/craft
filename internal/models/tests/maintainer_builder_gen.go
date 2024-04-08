@@ -6,8 +6,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// MaintainerBuilder is an alias of Maintainer to build Maintainer with builder-pattern.
-type MaintainerBuilder models.Maintainer
+// MaintainerBuilder represents Maintainer's builder.
+type MaintainerBuilder struct {
+	build models.Maintainer
+}
 
 // NewMaintainerBuilder creates a new MaintainerBuilder.
 func NewMaintainerBuilder() *MaintainerBuilder {
@@ -16,30 +18,29 @@ func NewMaintainerBuilder() *MaintainerBuilder {
 
 // Copy reassigns the builder struct (behind pointer) to a new pointer and returns it.
 func (b *MaintainerBuilder) Copy() *MaintainerBuilder {
-	c := *b
-	return &c
+	return &MaintainerBuilder{b.build}
 }
 
 // Build returns built Maintainer.
 func (b *MaintainerBuilder) Build() *models.Maintainer {
-	c := (models.Maintainer)(*b)
-	return &c
+	result := b.build
+	return &result
 }
 
 // SetEmail sets Maintainer's Email.
 func (b *MaintainerBuilder) SetEmail(email string) *MaintainerBuilder {
-	b.Email = &email
+	b.build.Email = &email
 	return b
 }
 
 // SetName sets Maintainer's Name.
 func (b *MaintainerBuilder) SetName(name string) *MaintainerBuilder {
-	b.Name = name
+	b.build.Name = name
 	return b
 }
 
 // SetURL sets Maintainer's URL.
 func (b *MaintainerBuilder) SetURL(url string) *MaintainerBuilder {
-	b.URL = &url
+	b.build.URL = &url
 	return b
 }
