@@ -296,6 +296,10 @@ jobs:
 <<- $needs = append $needs "docker-build" >>
 <<- end >>
 
+<<- if has "hugo" .Languages >>
+<<- $needs = append $needs "hugo-build" >>
+<<- end >>
+
 <<- if $pages >>
 <<- $needs = append $needs "pages" >>
 <<- end >>
