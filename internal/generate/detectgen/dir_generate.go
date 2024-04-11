@@ -81,7 +81,16 @@ func (d *DirGenerate) Generate(ctx context.Context, srcdir, destdir string) erro
 	errs := lo.Map(entries, func(entry fs.DirEntry, _ int) error {
 		src := path.Join(srcdir, entry.Name())
 		if entry.IsDir() {
-			return d.handleDir(ctx, src, destdir, entry)
+			// apply generation at root if the folder name is the dir generate name
+			if entry.Name() == string(d.Name) {
+				return d.Generate(ctx, src, destdir)
+			}
+
+			// apply templates on subdirs not being those associated to another generation
+			if !slices.Contains(ReservedNames(), entry.Name()) {
+				dest := filepath.Join(destdir, entry.Name())
+				return d.Generate(ctx, src, dest)
+			}
 		}
 		return d.handleFile(ctx, src, destdir, entry)
 	})
@@ -134,22 +143,6 @@ func (d *DirGenerate) handleFile(ctx context.Context, src, destdir string, entry
 		return fmt.Errorf("failed to parse %s: %w", src, err)
 	}
 	return templating.Execute(tmpl, d.Data, dest)
-}
-
-// handleDir is a private function used in Generate function to handle
-// a specific dir entry during iterative loops over folders and subfolders.
-func (d *DirGenerate) handleDir(ctx context.Context, src, destdir string, entry fs.DirEntry) error {
-	// apply generation at root if the folder name is the dir generate name
-	if entry.Name() == string(d.Name) {
-		return d.Generate(ctx, src, destdir)
-	}
-
-	// apply templates on subdirs not being those associated to another generation
-	if !slices.Contains(ReservedNames(), entry.Name()) {
-		dest := filepath.Join(destdir, entry.Name())
-		return d.Generate(ctx, src, dest)
-	}
-	return nil
 }
 
 // IsGenerated returns truthy if input destination is a generated file.

@@ -49,11 +49,17 @@ const (
 	Sonar string = "sonar"
 )
 
+// AllOptions returns the slice with all availables CI options.
+func AllOptions() []string {
+	return []string{CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
+}
+
 // CraftConfig represents all options configurable in .craft file at root project.
 //
 // yaml tags are for .craft file and json tags for templating.
 type CraftConfig struct {
 	API            *API         `json:"api,omitempty"            yaml:"api,omitempty"                              validate:"omitempty,required"`
+	AutoRelease    bool         `json:"-"                        yaml:"auto_release,omitempty"`
 	CI             *CI          `json:"-"                        yaml:"ci,omitempty"                               validate:"omitempty,required"`
 	Description    *string      `json:"description,omitempty"    yaml:"description,omitempty"`
 	Docker         *Docker      `json:"docker,omitempty"         yaml:"docker,omitempty"                           validate:"omitempty,required"`

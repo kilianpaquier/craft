@@ -84,8 +84,7 @@ func (e *Runner) Run(ctx context.Context) (models.CraftConfig, error) {
 
 	// add generic generate function in case no languages were detected
 	if len(e.config.Languages) == 0 {
-		logrus.WithContext(ctx).Warn("no language detected, fallback to generic generation")
-		generates = append(generates, detectgen.GetGenerateFunc(detectgen.NameGeneric))
+		generates = append(generates, detectgen.GenericFunc(ctx, &e.config)...)
 	}
 
 	// initialize waitGroup for all executions and deletions

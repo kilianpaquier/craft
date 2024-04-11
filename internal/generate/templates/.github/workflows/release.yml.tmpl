@@ -8,6 +8,17 @@ name: Release
 run-name: Release
 
 on:
+<<- if .AutoRelease >>
+  push:
+    branches:
+      - alpha
+      - beta
+      - develop
+      - main
+      - next
+      - staging
+      - v[0-9]+
+<<- end >>
   workflow_dispatch:
     inputs:
       dry_run:

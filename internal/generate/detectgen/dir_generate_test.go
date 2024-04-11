@@ -138,7 +138,7 @@ func TestGenerateFunc_Generic(t *testing.T) {
 			SetCraftConfig(*craft.Copy().
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Github).
-					SetOptions(models.Dependabot).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetPlatform(models.Github).
 				Build()).
@@ -164,6 +164,7 @@ func TestGenerateFunc_Generic(t *testing.T) {
 			SetCraftConfig(*craft.Copy().
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Gitlab).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetPlatform(models.Gitlab).
 				Build()).
@@ -315,9 +316,10 @@ func TestGenerateFunc_Golang(t *testing.T) {
 			SetBinaries(4).
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
+				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Github).
-					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetLicense("mit").
 				SetNoGoreleaser(true).
@@ -347,9 +349,10 @@ func TestGenerateFunc_Golang(t *testing.T) {
 			SetBinaries(4).
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
+				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Gitlab).
-					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetLicense("mit").
 				SetNoGoreleaser(true).
@@ -403,7 +406,7 @@ func TestGenerateFunc_Hugo(t *testing.T) {
 			SetCraftConfig(*craft.Copy().
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Github).
-					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetLicense("mit").
 				SetPlatform(models.Github).
@@ -429,7 +432,7 @@ func TestGenerateFunc_Hugo(t *testing.T) {
 			SetCraftConfig(*craft.Copy().
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Gitlab).
-					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetLicense("mit").
 				SetPlatform(models.Gitlab).
@@ -582,9 +585,10 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
+				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Github).
-					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetLicense("mit").
 				SetPackageManager("npm").
@@ -610,9 +614,10 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
+				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
 					SetName(models.Gitlab).
-					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot, models.Pages, models.Renovate, models.Sonar).
+					SetOptions(models.AllOptions()...).
 					Build()).
 				SetLicense("mit").
 				SetPackageManager("yarn").

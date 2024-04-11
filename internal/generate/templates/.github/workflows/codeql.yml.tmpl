@@ -14,6 +14,16 @@
 name: CodeQL
 run-name: CodeQL
 
+<<- $languages := list >>
+
+<<- if has "nodejs" .Languages >>
+<<- $languages = append $languages "javascript-typescript" >>
+<<- end >>
+
+<<- if has "golang" .Languages >>
+<<- $languages = append $languages "go" >>
+<<- end >>
+
 on:
   push:
     branches:
@@ -28,12 +38,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+<<- if gt (len $languages) 0 >>
         language:
-<<- if has "nodejs" .Languages >>
-          - javascript-typescript
+<<- range $languages >>
+          - << . >>
 <<- end >>
-<<- if has "golang" .Languages >>
-          - go
+<<- else >>
+        language: []
 <<- end >>
     steps:
       - uses: actions/checkout@v4

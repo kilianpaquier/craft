@@ -13,6 +13,11 @@ coverage:
       default:
         threshold: 2.5%
 
+<<- /* coverable is meant to be true only when there's at least on language that can be affected by coverage */>>
+<<- $coverable := or (has "golang" .Languages) (has "nodejs" .Languages) >>
+
+<<- if $coverable >>
+
 ignore:
 <<- if has "golang" .Languages >>
   - "cmd"
@@ -27,4 +32,5 @@ ignore:
   - "node_modules"
   - "**/*.spec.ts"
   - "**/*.test.js"
+<<- end >>
 <<- end >>

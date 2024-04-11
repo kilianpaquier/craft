@@ -3,6 +3,11 @@
 ---
 include:
 
+  # Renovate template
+  - project: "to-be-continuous/renovate"
+    ref: "1"
+    file: "templates/gitlab-ci-renovate.yml"
+
   # semantic-release template
   - project: "to-be-continuous/semantic-release"
     ref: "3"
@@ -17,6 +22,7 @@ variables:
   SEMREL_HOOKS_DIR: scripts
   SEMREL_INFO_ON: protected
   SEMREL_INFO_NEXT_VERSION: v${SEMREL_INFO_NEXT_VERSION}
+  SEMREL_AUTO_RELEASE_ENABLED: "false"
 
 version:
   image: $SEMREL_IMAGE

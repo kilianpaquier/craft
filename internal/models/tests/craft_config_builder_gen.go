@@ -33,6 +33,12 @@ func (b *CraftConfigBuilder) SetAPI(api models.API) *CraftConfigBuilder {
 	return b
 }
 
+// SetAutoRelease sets CraftConfig's AutoRelease.
+func (b *CraftConfigBuilder) SetAutoRelease(autoRelease bool) *CraftConfigBuilder {
+	b.build.AutoRelease = autoRelease
+	return b
+}
+
 // SetCI sets CraftConfig's CI.
 func (b *CraftConfigBuilder) SetCI(ci models.CI) *CraftConfigBuilder {
 	b.build.CI = &ci
