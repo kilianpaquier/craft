@@ -3,9 +3,10 @@ package detectgen
 import (
 	"context"
 
-	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
+
+	"github.com/kilianpaquier/craft/internal/models"
 )
 
 // GenericFunc represents the detection for generic projects (those without any associated implemented language).

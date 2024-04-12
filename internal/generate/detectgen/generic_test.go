@@ -4,10 +4,11 @@ import (
 	"context"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/kilianpaquier/craft/internal/generate/detectgen"
 	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGenericFunc(t *testing.T) {

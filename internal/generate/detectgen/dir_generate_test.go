@@ -316,8 +316,8 @@ func TestGenerateFunc_Golang(t *testing.T) {
 			SetBinaries(4).
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
+					SetAutoRelease(true).
 					SetName(models.Github).
 					SetOptions(models.AllOptions()...).
 					Build()).
@@ -349,8 +349,8 @@ func TestGenerateFunc_Golang(t *testing.T) {
 			SetBinaries(4).
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
+					SetAutoRelease(true).
 					SetName(models.Gitlab).
 					SetOptions(models.AllOptions()...).
 					Build()).
@@ -585,8 +585,8 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
+					SetAutoRelease(true).
 					SetName(models.Github).
 					SetOptions(models.AllOptions()...).
 					Build()).
@@ -614,8 +614,8 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Copy().
-				SetAutoRelease(true).
 				SetCI(*tests.NewCIBuilder().
+					SetAutoRelease(true).
 					SetName(models.Gitlab).
 					SetOptions(models.AllOptions()...).
 					Build()).

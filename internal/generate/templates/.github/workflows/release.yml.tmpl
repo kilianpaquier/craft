@@ -8,7 +8,7 @@ name: Release
 run-name: Release
 
 on:
-<<- if .AutoRelease >>
+<<- if .CI.AutoRelease >>
   push:
     branches:
       - alpha

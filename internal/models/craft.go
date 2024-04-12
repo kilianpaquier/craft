@@ -59,7 +59,6 @@ func AllOptions() []string {
 // yaml tags are for .craft file and json tags for templating.
 type CraftConfig struct {
 	API            *API         `json:"api,omitempty"            yaml:"api,omitempty"                              validate:"omitempty,required"`
-	AutoRelease    bool         `json:"-"                        yaml:"auto_release,omitempty"`
 	CI             *CI          `json:"-"                        yaml:"ci,omitempty"                               validate:"omitempty,required"`
 	Description    *string      `json:"description,omitempty"    yaml:"description,omitempty"`
 	Docker         *Docker      `json:"docker,omitempty"         yaml:"docker,omitempty"                           validate:"omitempty,required"`
@@ -74,8 +73,9 @@ type CraftConfig struct {
 
 // CI is the struct for craft ci tuning.
 type CI struct {
-	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required,oneof=github gitlab"`
-	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot pages renovate sonar"`
+	AutoRelease bool     `json:"-" yaml:"auto_release,omitempty"`
+	Name        string   `json:"-" yaml:"name,omitempty"                          validate:"required,oneof=github gitlab"`
+	Options     []string `json:"-" yaml:"options,omitempty"      builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot pages renovate sonar"`
 }
 
 // API is the struct for craft api tuning.

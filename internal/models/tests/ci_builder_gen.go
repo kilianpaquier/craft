@@ -27,6 +27,12 @@ func (b *CIBuilder) Build() *models.CI {
 	return &result
 }
 
+// SetAutoRelease sets CI's AutoRelease.
+func (b *CIBuilder) SetAutoRelease(autoRelease bool) *CIBuilder {
+	b.build.AutoRelease = autoRelease
+	return b
+}
+
 // SetName sets CI's Name.
 func (b *CIBuilder) SetName(name string) *CIBuilder {
 	b.build.Name = name
