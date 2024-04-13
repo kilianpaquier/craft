@@ -2,7 +2,7 @@
 
 {{- $fullname := include (print .Chart.Name ".fullname") . -}}
 
-{{ range $name, $config := merge (dict "api" .Values.api) .Values.crons .Values.jobs .Values.workers }}
+{{ range $name, $config := merge .Values.crons .Values.jobs .Values.workers }}
 {{ with $config.configMap }}
 apiVersion: v1
 kind: ConfigMap

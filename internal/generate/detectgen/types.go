@@ -24,10 +24,6 @@ const (
 	NameLicense GenerateName = "license"
 	// NameNodejs is the reserved name for nodejs template folder.
 	NameNodejs GenerateName = "nodejs"
-	// NameOASv3 is the reserved name for openapi v3 template folder.
-	NameOASv3 GenerateName = "oas_v3"
-	// NameOASv2 is the reserved name for openapi v2 template folder.
-	NameOASv2 GenerateName = "oas_v2"
 )
 
 // ReservedNames returns the slice of string representing reserved folders name.
@@ -39,8 +35,6 @@ func ReservedNames() []string {
 		string(NameHugo),
 		string(NameLicense),
 		string(NameNodejs),
-		string(NameOASv3),
-		string(NameOASv2),
 	}
 }
 

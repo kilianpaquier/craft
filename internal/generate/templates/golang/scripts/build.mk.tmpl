@@ -34,13 +34,13 @@ test-cover: reports
 <<- if (gt .Binaries 0) >>
 
 .PHONY: buildall
-buildall:<< if .API >> build-<< .ProjectName >>-api<< end >><< range $name, $config := $binaries >> build-<< $name >><< end >>
+buildall:<< range $name, $config := $binaries >> build-<< $name >><< end >>
 
-.PHONY:<< if .API >> << .ProjectName >>-api<< end >><< range $name, $config := $binaries >> << $name >><< end >>
+.PHONY:<< range $name, $config := $binaries >> << $name >><< end >>
 build-%:
 	@CGO_ENABLED=0 go build -o $* cmd/$*/main.go
 
-.PHONY:<< if .API >> << .ProjectName >>-api<< end >><< range $name, $config := $binaries >> << $name >><< end >>
+.PHONY:<< range $name, $config := $binaries >> << $name >><< end >>
 local-%:
 	@go run cmd/$*/main.go
 

@@ -2,7 +2,6 @@ package detectgen_test
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -150,7 +149,7 @@ func TestDetectGolang(t *testing.T) {
 		generates := detectgen.DetectGolang(ctx, input)
 
 		// Assert
-		assert.Len(t, generates, 2)
+		assert.Len(t, generates, 1)
 		assert.Equal(t, expected, input)
 		logs := testlogs.ToString(hook.AllEntries())
 		assert.Contains(t, logs, models.Gocmd+" doesn't exist")
@@ -261,164 +260,7 @@ func TestDetectGolang(t *testing.T) {
 		generates := detectgen.DetectGolang(ctx, input)
 
 		// Assert
-		assert.Len(t, generates, 2)
+		assert.Len(t, generates, 1)
 		assert.Equal(t, expected, input)
-	})
-
-	t.Run("detected_openapi_v2_default", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-
-		gomod := filepath.Join(destdir, models.Gomod)
-		err := os.WriteFile(gomod, []byte(
-			`module github.com/kilianpaquier/craft
-			
-			go 1.22`,
-		), filesystem.RwRR)
-		require.NoError(t, err)
-
-		input := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().Build()).
-				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-		expected := tests.NewGenerateConfigBuilder().
-			SetBinaries(1).
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().
-					SetOpenAPIVersion("v2").
-					Build()).
-				SetPlatform(models.Github).
-				Build()).
-			SetLanguages(string(detectgen.NameGolang)).
-			SetLangVersion("1.22").
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			SetProjectHost("github.com").
-			SetProjectName("craft").
-			SetProjectPath("kilianpaquier/craft").
-			Build()
-
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
-		// Act
-		generates := detectgen.DetectGolang(ctx, input)
-
-		// Assert
-		assert.Len(t, generates, 2)
-		assert.Equal(t, expected, input)
-		logs := testlogs.ToString(hook.AllEntries())
-		assert.Contains(t, logs, fmt.Sprintf("openapi v2 detected, %s has api key", models.CraftFile))
-	})
-
-	t.Run("detected_openapi_v2", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-
-		gomod := filepath.Join(destdir, models.Gomod)
-		err := os.WriteFile(gomod, []byte(
-			`module github.com/kilianpaquier/craft
-			
-			go 1.22`,
-		), filesystem.RwRR)
-		require.NoError(t, err)
-
-		input := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().
-					SetOpenAPIVersion("v2").
-					Build()).
-				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-		expected := tests.NewGenerateConfigBuilder().
-			SetBinaries(1).
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().
-					SetOpenAPIVersion("v2").
-					Build()).
-				SetPlatform(models.Github).
-				Build()).
-			SetLanguages(string(detectgen.NameGolang)).
-			SetLangVersion("1.22").
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			SetProjectHost("github.com").
-			SetProjectName("craft").
-			SetProjectPath("kilianpaquier/craft").
-			Build()
-
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
-		// Act
-		generates := detectgen.DetectGolang(ctx, input)
-
-		// Assert
-		assert.Len(t, generates, 2)
-		assert.Equal(t, expected, input)
-		logs := testlogs.ToString(hook.AllEntries())
-		assert.Contains(t, logs, fmt.Sprintf("openapi v2 detected, %s has api key", models.CraftFile))
-	})
-
-	t.Run("detected_openapi_v3", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-
-		gomod := filepath.Join(destdir, models.Gomod)
-		err := os.WriteFile(gomod, []byte(
-			`module github.com/kilianpaquier/craft
-			
-			go 1.22`,
-		), filesystem.RwRR)
-		require.NoError(t, err)
-
-		input := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().
-					SetOpenAPIVersion("v3").
-					Build()).
-				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-		expected := tests.NewGenerateConfigBuilder().
-			SetBinaries(1).
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetAPI(*tests.NewAPIBuilder().
-					SetOpenAPIVersion("v3").
-					Build()).
-				SetPlatform(models.Github).
-				Build()).
-			SetLanguages(string(detectgen.NameGolang)).
-			SetLangVersion("1.22").
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				Build()).
-			SetProjectHost("github.com").
-			SetProjectName("craft").
-			SetProjectPath("kilianpaquier/craft").
-			Build()
-
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
-		// Act
-		generates := detectgen.DetectGolang(ctx, input)
-
-		// Assert
-		assert.Len(t, generates, 2)
-		assert.Equal(t, expected, input)
-		logs := testlogs.ToString(hook.AllEntries())
-		assert.Contains(t, logs, fmt.Sprintf("openapi v3 detected, %s has api key and openapi_version is valued with 'v3'", models.CraftFile))
 	})
 }

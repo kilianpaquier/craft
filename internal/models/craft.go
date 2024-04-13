@@ -1,6 +1,6 @@
 package models
 
-//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,API,Docker -d tests -p set
+//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,Docker -d tests -p set
 
 const (
 	// CraftFile is the craft configuration file name.
@@ -18,9 +18,6 @@ const (
 
 	// License represents the target filename for the generated project LICENSE.
 	License = "LICENSE"
-
-	// SwaggerFile represents the target filename for the generated project api.yml.
-	SwaggerFile = "api.yml"
 )
 
 const (
@@ -58,7 +55,6 @@ func AllOptions() []string {
 //
 // yaml tags are for .craft file and json tags for templating.
 type CraftConfig struct {
-	API            *API         `json:"api,omitempty"            yaml:"api,omitempty"                              validate:"omitempty,required"`
 	CI             *CI          `json:"-"                        yaml:"ci,omitempty"                               validate:"omitempty,required"`
 	Description    *string      `json:"description,omitempty"    yaml:"description,omitempty"`
 	Docker         *Docker      `json:"docker,omitempty"         yaml:"docker,omitempty"                           validate:"omitempty,required"`
@@ -76,11 +72,6 @@ type CI struct {
 	AutoRelease bool     `json:"-" yaml:"auto_release,omitempty"`
 	Name        string   `json:"-" yaml:"name,omitempty"                          validate:"required,oneof=github gitlab"`
 	Options     []string `json:"-" yaml:"options,omitempty"      builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot pages renovate sonar"`
-}
-
-// API is the struct for craft api tuning.
-type API struct {
-	OpenAPIVersion *string `json:"-" yaml:"openapi_version,omitempty" validate:"omitempty,oneof=v2 v3"`
 }
 
 // Docker is the struct for craft docker tuning.

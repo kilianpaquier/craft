@@ -2,7 +2,7 @@
 
 apiVersion: v2
 name: craft
-description: A description for Chart yaml file
+description: Custom description for Chart.yml file
 
 # A chart can be either an 'application' or a 'library' chart.
 #

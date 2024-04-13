@@ -62,7 +62,6 @@ func TestReadCraft(t *testing.T) {
 		// Arrange
 		srcdir := t.TempDir()
 		expected := tests.NewCraftConfigBuilder().
-			SetAPI(models.API{}).
 			SetMaintainers(*tests.NewMaintainerBuilder().
 				SetName("maintainer name").
 				Build()).
@@ -99,7 +98,6 @@ func TestWriteCraft(t *testing.T) {
 		// Arrange
 		tmp := t.TempDir()
 		expected := tests.NewCraftConfigBuilder().
-			SetAPI(models.API{}).
 			SetMaintainers(*tests.NewMaintainerBuilder().
 				SetName("maintainer name").
 				Build()).

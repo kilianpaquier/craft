@@ -26,7 +26,6 @@
   - [Helm](#helm)
   - [License](#license)
   - [Nodejs](#nodejs)
-  - [OpenAPI v2](#openapi-v2)
 
 ## How to use ?
 
@@ -83,7 +82,6 @@ Craft project generation is based on root's `.craft` file, it can contain the fo
 # project's description (optional)
 # used in various places like helm Chart.yml description
 # Dockerfile description label
-# api.yml description
 description: some useful description
 
 # project's maintainers (at least one must be provided)
@@ -91,7 +89,6 @@ description: some useful description
 # Dockerfile maintainer / authors label
 # sonar.properties organization and project key prefix
 # helm values.yml for images owner (e.g ghcr.io/maintainer/app_name)
-# api.yml main contact
 # all maintainers will be referenced in dependabot assignees and reviewers
 # helm Chart.yml maintainers
 maintainers:
@@ -101,8 +98,7 @@ maintainers:
 
 # project's license (optional)
 # providing it will download the appropriate license
-# used in various places like api.yml license
-# goreleaser executables license
+# used in various places like goreleaser executables license
 # github release workflow license addition to releases 
 license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0 | epl-2.0 | gpl-2.0 | gpl-3.0 | lgpl-2.1 | mit | mpl-2.0 | unlicense
 
@@ -131,14 +127,6 @@ platform: bitbucket | gitea | github | gitlab
 # specific property to override package manager used for generation on nodejs projects.
 # by default, it's "pnpm" because it's faster than npm and more near (in terms of culture) npm than yarn would be.
 package_manager: pnpm | npm | yarn
-
-# project's api configuration
-# providing it will create an api layer with golang
-api:
-  # project's api openapi version
-  # not provided or provided as 'v2', the api layer will be generated with the help of go-swagger
-  # provided as 'v3', the api layer will not be generated (not yet implemented)
-  openapi_version: v2 | v3
 
 docker:
   # specific docker registry to push images on (optional, default is none - docker.io)
@@ -220,11 +208,3 @@ When license generation is detected (`license` is provided in `.craft` root file
 When nodejs generation is detected (a `package.json` is present at root and is valid), it will the appropriate files around nodejs testing, integration, etc.
 
 Feel free to check either [`nodejs_github`](./examples/nodejs_github/) or [`nodejs_gitlab`](./examples/nodejs_gitlab/) to see what this generation specifically does.
-
-### OpenAPI v2
-
-When openapi_v2 generation is detected (`api` is present in `.craft` and a `go.mod` is present at root and is valid), it will generate a `go-swagger` based API. 
-
-Additional files will be generated in `internal` to easily separate generated code from business code.
-
-Feel free to check [`oas_v2`](./examples/oas_v2/) to see what this generation specifically does.

@@ -4,17 +4,17 @@
 {{- $labels := include (print .Chart.Name ".labels") . -}}
 {{- $selectorLabels := include (print .Chart.Name ".selectorLabels") . -}}
 
-{{ with .Values.api }}
+{{ range $name, $config := .Values.workers }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $fullname }}
+  name: {{ print $fullname "-" $name }}
   labels:
     {{- $labels | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .env.BINARY_PORT }}
+    - port: {{ $config.env.BINARY_PORT | default 3000 }}
       targetPort: http
       protocol: TCP
       name: http

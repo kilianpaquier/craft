@@ -213,7 +213,6 @@ func TestGenerateFunc_Golang(t *testing.T) {
 		config := config.Copy().
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetAPI(*tests.NewAPIBuilder().Build()).
 				SetDocker(*tests.NewDockerBuilder().
 					SetPort(5000).
 					Build()).
@@ -242,32 +241,6 @@ func TestGenerateFunc_Golang(t *testing.T) {
 
 		config := config.Copy().
 			SetCraftConfig(*craft.Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
-				Build()).
-			Build()
-
-		// Act
-		err := golang(ctx, *config, filesystem.OS())
-
-		// Assert
-		assert.NoError(t, err)
-		testfs.AssertEqualDir(t, assertdir, destdir)
-	})
-
-	t.Run("success_only_api_docker", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "success_only_api_docker")
-
-		config := config.Copy().
-			SetBinaries(1).
-			SetCraftConfig(*craft.Copy().
-				SetAPI(*tests.NewAPIBuilder().Build()).
-				SetDocker(*tests.NewDockerBuilder().Build()).
-				SetNoGoreleaser(true).
-				SetNoMakefile(true).
-				Build()).
 			SetOptions(*opts.Copy().
 				SetDestinationDir(destdir).
 				Build()).

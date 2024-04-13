@@ -1,9 +1,0 @@
-# Craft configuration file (https://github.com/kilianpaquier/craft)
----
-api:
-  openapi_version: v2
-description: Golang's craft openapi v2 example
-maintainers:
-  - name: kilianpaquier
-no_chart: true
-platform: github

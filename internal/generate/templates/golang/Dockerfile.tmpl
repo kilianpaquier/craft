@@ -17,11 +17,6 @@ COPY . .
 # hadolint ignore=DL3059
 RUN go mod download
 
-<<- if .API >>
-# hadolint ignore=DL3059
-RUN CGO_ENABLED=0 go build -o << .ProjectName >>-api cmd/<< .ProjectName >>-api/main.go
-<<- end >>
-
 <<- range $name, $config := $binaries >>
 # hadolint ignore=DL3059
 RUN CGO_ENABLED=0 go build -o << $name >> cmd/<< $name >>/main.go
@@ -49,9 +44,6 @@ LABEL org.opencontainers.image.documentation="<< print .ProjectHost "/" .Project
 WORKDIR /app
 
 COPY --from=build \
-<<- if .API >>
-    /app/<< .ProjectName >>-api \
-<<- end >>
 <<- range $name, $config := $binaries >>
     /app/<< $name >> \
 <<- end >>
@@ -60,19 +52,12 @@ COPY --from=build \
 <<- $entrypoint := "launcher.sh" >>
 
 <<- if eq .Binaries 1 >>
-<<- if .API >>
-
-<<- /* directly use api binary if it is the only binary */>>
-<<- $entrypoint = print .ProjectName "-api" >>
-
-<<- else >>
 
 <<- /* directly use the only binary */>>
 <<- range $name, $config := $binaries >>
 <<- $entrypoint = $name >>
 <<- end >>
 
-<<- end >>
 <<- end >>
 
 <<- /* copy launcher if the entrypoint is the launcher */>>

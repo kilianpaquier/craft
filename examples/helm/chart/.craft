@@ -1,6 +1,6 @@
 # craft helm overrides configuration file
 ---
-description: A description for Chart yaml file
+description: Custom description for Chart.yml file
 dependencies: []
 workers:
   external-worker:

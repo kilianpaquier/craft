@@ -153,7 +153,6 @@ func TestExecuteHelm(t *testing.T) {
 		config := config.Copy().
 			SetClis(map[string]struct{}{"cli-name": {}}).
 			SetCraftConfig(*craft.Copy().
-				SetAPI(*tests.NewAPIBuilder().Build()).
 				SetDocker(*tests.NewDockerBuilder().
 					SetPort(5000).
 					Build()).

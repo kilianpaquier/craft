@@ -3,7 +3,7 @@
 {{- $fullname := include (print .Chart.Name ".fullname") . -}}
 {{- $labels := include (print .Chart.Name ".labels") . -}}
 
-{{ range $name, $config := merge (dict "api" .Values.api) .Values.workers }}
+{{ range $name, $config := .Values.workers }}
 {{- if $config.autoscaling.enabled }}
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler

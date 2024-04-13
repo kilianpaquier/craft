@@ -20,7 +20,7 @@ import (
 
 // detectGolang handles the detection of golang at config provided destination directory.
 //
-// It returns the appropriate slice of GenerateFunc depending on golang's craft related options (openapi v2, openapi v3, hugo).
+// It returns the appropriate slice of GenerateFunc depending on golang's craft related options (hugo).
 // A valid golang project must have a valid go.mod file.
 //
 // The detection also handles parsing executables present in cmd folder.
@@ -72,8 +72,6 @@ func detectGolang(ctx context.Context, config *models.GenerateConfig) []Generate
 				config.Jobs[entry.Name()] = struct{}{}
 			case strings.HasPrefix(entry.Name(), "worker-"):
 				config.Workers[entry.Name()] = struct{}{}
-			case strings.HasSuffix(entry.Name(), "-api"):
-				continue // do nothing
 			default:
 				// by default, executables in cmd folder are CLI
 				config.Clis[entry.Name()] = struct{}{}
@@ -81,11 +79,8 @@ func detectGolang(ctx context.Context, config *models.GenerateConfig) []Generate
 			config.Binaries++
 		}
 	}
-	generates := []GenerateFunc{GetGenerateFunc(NameGolang)}
 
-	// detect openapi options
-	generates = append(generates, detectOAS(ctx, config)...)
-	return generates
+	return []GenerateFunc{GetGenerateFunc(NameGolang)}
 }
 
 // gomod represents the parsed struct for go.mod file

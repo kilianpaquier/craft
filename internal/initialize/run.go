@@ -5,10 +5,8 @@ import (
 	"context"
 	"io"
 	"os"
-	"slices"
 	"strconv"
 
-	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
 
 	"github.com/kilianpaquier/craft/internal/models"
@@ -25,9 +23,6 @@ func Run(ctx context.Context) (craft models.CraftConfig) {
 
 	// read main maintainer information
 	craft.Maintainers = append(craft.Maintainers, readMaintainer(ctx, scanner))
-
-	// read api configuration
-	craft.API = readAPI(ctx, scanner)
 
 	// Helm chart generation
 	craft.NoChart = !readChart(ctx, scanner)
@@ -55,41 +50,6 @@ func readMaintainer(ctx context.Context, scanner *bufio.Scanner) (maintainer mod
 	maintainer.URL = ask(ctx, scanner, "Who's the maintainer url (optional) ?")
 
 	return maintainer
-}
-
-// readAPI reads user inputs for API generation with version (Q&A method).
-func readAPI(ctx context.Context, scanner *bufio.Scanner) *models.API {
-	// API generation
-	for {
-		api := ask(ctx, scanner, "Would you like to generate a golang based API (optional, default is false) 0/1 ?")
-		if api == nil {
-			return nil // no api wanted
-		}
-
-		value, err := strconv.ParseBool(*api)
-		if err != nil {
-			logrus.WithError(err).Warn("invalid api value, must be a boolean")
-			continue
-		}
-		if !value {
-			return nil // no api is wanted
-		}
-		break
-	}
-
-	// API version
-	for {
-		version := ask(ctx, scanner, "Would you like to specify an OpenAPI version for your API (optional, default is 'v2') v2/v3 ?")
-		if version == nil {
-			return &models.API{OpenAPIVersion: lo.ToPtr("v2")} // response not provided, going with default openapi version
-		}
-
-		if !slices.Contains([]string{"", "v2", "v3"}, *version) {
-			logrus.Warn("openapi version must be either 'v2' or 'v3'")
-			continue
-		}
-		return &models.API{OpenAPIVersion: version} // api is wanted with valid version
-	}
 }
 
 // readChart reads from input scanner the answers related to chart generation.

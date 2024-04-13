@@ -5,7 +5,7 @@
 {{- $selectorLabels := include (print .Chart.Name ".selectorLabels") . -}}
 {{- $serviceAccountName := include (print .Chart.Name ".serviceAccountName") . -}}
 
-{{ range $name, $config := merge (dict "api" .Values.api) .Values.workers }}
+{{ range $name, $config := .Values.workers }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

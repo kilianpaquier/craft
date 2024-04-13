@@ -27,12 +27,6 @@ func (b *CraftConfigBuilder) Build() *models.CraftConfig {
 	return &result
 }
 
-// SetAPI sets CraftConfig's API.
-func (b *CraftConfigBuilder) SetAPI(api models.API) *CraftConfigBuilder {
-	b.build.API = &api
-	return b
-}
-
 // SetCI sets CraftConfig's CI.
 func (b *CraftConfigBuilder) SetCI(ci models.CI) *CraftConfigBuilder {
 	b.build.CI = &ci

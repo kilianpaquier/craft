@@ -67,22 +67,6 @@
                 "name"
             ]
         },
-        "api": {
-            "description": "API definition (to define and generate a golang API based with either openapi v2 or v3).",
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "openapi_version": {
-                    "description": "OpenAPI version to use for code generation.",
-                    "type": "string",
-                    "default": "v2",
-                    "enum": [
-                        "v2",
-                        "v3"
-                    ]
-                }
-            }
-        },
         "docker": {
             "description": "Docker definition.",
             "type": "object",
@@ -103,7 +87,7 @@
     },
     "properties": {
         "description": {
-            "description": "Description, only useful when working with docker option, openapi_v2, openapi_v3 and helm generations.",
+            "description": "Description, only useful when working with docker option and helm generations.",
             "type": "string"
         },
         "maintainers": {
@@ -150,11 +134,6 @@
                 "pnpm",
                 "yarn"
             ]
-        },
-        "api": {
-            "description": "API definition (to define and generate a golang API based with either openapi v2 or v3).",
-            "type": "object",
-            "$ref": "#/$defs/api"
         },
         "docker": {
             "description": "Docker definition.",
