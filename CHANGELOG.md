@@ -1,3 +1,31 @@
+## [1.0.0-beta.3](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2024-04-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **generate:** openapi generation was removed
+
+### Features
+
+* **github:** add hugo-build needs for release job ([b64f324](https://github.com/kilianpaquier/craft/commit/b64f3241ce376fbaca620fc0016ed280926fcb74))
+* **release:** add auto_release option to auto run release job - available for both gitlab and github ([1e3b2c8](https://github.com/kilianpaquier/craft/commit/1e3b2c8e51b7d1e1ab6b6365d7c6084f519833d0))
+
+
+### Bug Fixes
+
+* **auto_release:** move option to CI configuration part ([d27d379](https://github.com/kilianpaquier/craft/commit/d27d3792c38f435a6ad4acdcdb057b8937322097))
+* **releaserc:** changed `failComment` to default value ([513d939](https://github.com/kilianpaquier/craft/commit/513d939461e4d3d75973d14a8acd1aff7c651f8a))
+
+
+### Documentation
+
+* **auto_release:** add missing doc ([6dcfe6c](https://github.com/kilianpaquier/craft/commit/6dcfe6cb742742f668d7e2f851555ebb5374f675))
+
+
+### Code Refactoring
+
+* **generate:** remove openapi generation and rework helm generation to take this into account ([aff7b9c](https://github.com/kilianpaquier/craft/commit/aff7b9cff4aa645cba79bcc0f6a0ccc3fb075998))
+
 ## [1.0.0-beta.2](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2024-04-07)
 
 
