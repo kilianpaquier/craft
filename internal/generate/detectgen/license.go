@@ -59,17 +59,17 @@ func downloadLicense(client *gitlab.Client) GenerateFunc {
 		}
 		license, _, err := client.LicenseTemplates.GetLicenseTemplate(*config.License, options, gitlab.WithContext(ctx))
 		if err != nil {
-			return fmt.Errorf("failed to retrieve license from gitlab: %w", err)
+			return fmt.Errorf("license template retrieval: %w", err)
 		}
 
 		// remove file before rewritting it (in case rights changed)
 		if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return fmt.Errorf("failed to remove %s before rewritting it: %w", dest, err)
+			return fmt.Errorf("delete file: %w", err)
 		}
 
 		// write license template
 		if err := os.WriteFile(dest, []byte(license.Content), filesystem.RwRR); err != nil {
-			return fmt.Errorf("failed to write license: %w", err)
+			return fmt.Errorf("write file: %w", err)
 		}
 		return nil
 	}
@@ -79,7 +79,7 @@ func downloadLicense(client *gitlab.Client) GenerateFunc {
 func removeLicense(_ context.Context, config models.GenerateConfig, _ filesystem.FS) error {
 	dest := filepath.Join(config.Options.DestinationDir, models.License)
 	if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("failed to remove LICENSE file: %w", err)
+		return fmt.Errorf("delete file: %w", err)
 	}
 	return nil
 }

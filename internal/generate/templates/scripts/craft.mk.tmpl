@@ -6,7 +6,7 @@ generate:
 
 .PHONY: clean
 clean:
-<<- if has "golang" .Languages >>
+<<- if hasKey .Languages "golang" >>
 	@go clean
 <<- end >>
 	@git clean -Xf ./*

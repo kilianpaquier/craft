@@ -23,11 +23,11 @@ func ReadCraft(srcdir string, out any) error {
 		if errors.Is(err, fs.ErrNotExist) {
 			return fs.ErrNotExist
 		}
-		return fmt.Errorf("failed to read file: %w", err)
+		return fmt.Errorf("read file: %w", err)
 	}
 
 	if err := yaml.Unmarshal(content, out); err != nil {
-		return fmt.Errorf("failed to unmarshal file: %w", err)
+		return fmt.Errorf("unmarshal: %w", err)
 	}
 	return nil
 }
@@ -45,11 +45,11 @@ func WriteCraft(destdir string, config models.CraftConfig) error {
 	defer encoder.Close()
 	encoder.SetIndent(2)
 	if err := encoder.Encode(config); err != nil {
-		return fmt.Errorf("failed to write '%s': %w", craft, err)
+		return fmt.Errorf("encode file: %w", err)
 	}
 
 	if err := os.WriteFile(craft, buffer.Bytes(), filesystem.RwRR); err != nil {
-		return fmt.Errorf("failed to write '%s': %w", craft, err)
+		return fmt.Errorf("write file: %w", err)
 	}
 	return nil
 }

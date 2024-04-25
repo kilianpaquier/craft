@@ -49,6 +49,8 @@ func NewRunner(ctx context.Context, config models.CraftConfig, opts models.Gener
 		config: models.GenerateConfig{
 			CraftConfig: config,
 
+			Languages: map[string]any{},
+
 			ProjectHost: host,
 			ProjectName: path.Base(subpath),
 			ProjectPath: subpath,

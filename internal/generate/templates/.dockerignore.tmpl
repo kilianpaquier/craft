@@ -20,13 +20,13 @@ docs/
 reports/
 dist/
 
-<<- if has "nodejs" .Languages >>
+<<- if hasKey .Languages "nodejs" >>
 
 # vendor dependencies
 node_modules/
 <<- end >>
 
-<<- if has "golang" .Languages >>
+<<- if hasKey .Languages "golang" >>
 
 # binaries
 <<- range $name, $config := .Clis >>

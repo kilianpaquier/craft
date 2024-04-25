@@ -19,13 +19,13 @@ func TestGenericFunc(t *testing.T) {
 		destdir := t.TempDir()
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -42,23 +42,23 @@ func TestGenericFunc(t *testing.T) {
 		destdir := t.TempDir()
 
 		input := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(*tests.NewCIBuilder().
-					SetOptions(models.AllOptions()...).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				CI(*tests.NewCIBuilder().
+					Options(models.AllOptions()...).
 					Build()).
 				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(*tests.NewCIBuilder().
-					SetOptions(models.Dependabot, models.Renovate).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				CI(*tests.NewCIBuilder().
+					Options(models.Dependabot, models.Renovate).
 					Build()).
 				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 

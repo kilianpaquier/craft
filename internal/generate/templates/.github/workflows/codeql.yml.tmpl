@@ -16,11 +16,11 @@ run-name: CodeQL
 
 <<- $languages := list >>
 
-<<- if has "nodejs" .Languages >>
+<<- if hasKey .Languages "nodejs" >>
 <<- $languages = append $languages "javascript-typescript" >>
 <<- end >>
 
-<<- if has "golang" .Languages >>
+<<- if hasKey .Languages "golang" >>
 <<- $languages = append $languages "go" >>
 <<- end >>
 

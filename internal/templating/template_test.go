@@ -1,7 +1,6 @@
 package templating_test
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -31,7 +30,7 @@ func TestExecute(t *testing.T) {
 		err = templating.Execute(nil, nil, dest)
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to create destination directory")
+		assert.ErrorContains(t, err, "create directory")
 	})
 
 	t.Run("error_execute", func(t *testing.T) {
@@ -48,7 +47,7 @@ func TestExecute(t *testing.T) {
 		err := templating.Execute(tmpl, nil, dest)
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to template")
+		assert.ErrorContains(t, err, "template execution")
 		assert.ErrorContains(t, err, `"template.txt" is an incomplete or empty template`)
 	})
 
@@ -81,7 +80,7 @@ func TestExecute(t *testing.T) {
 		err = templating.Execute(tmpl, data, filepath.Dir(dest))
 
 		// Assert
-		assert.ErrorContains(t, err, fmt.Sprintf("failed to remove %s before rewritting it", filepath.Dir(dest)))
+		assert.ErrorContains(t, err, "delete file")
 	})
 
 	t.Run("success_dest_exists", func(t *testing.T) {

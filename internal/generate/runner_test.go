@@ -35,10 +35,10 @@ func TestNewExecutor(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		// Arrange
 		opts := tests.NewGenerateOptionsBuilder().
-			SetDestinationDir(".").
-			SetEndDelim(">>").
-			SetStartDelim("<<").
-			SetTemplatesDir(".").
+			DestinationDir(".").
+			EndDelim(">>").
+			StartDelim("<<").
+			TemplatesDir(".").
 			Build()
 		craft := tests.NewCraftConfigBuilder().Build()
 
@@ -56,12 +56,12 @@ func TestExecute(t *testing.T) {
 	assertdir := filepath.Join("testdata", "executor")
 
 	opts := tests.NewGenerateOptionsBuilder().
-		SetEndDelim(">>").
-		SetForceAll(true).
-		SetStartDelim("<<")
+		EndDelim(">>").
+		ForceAll(true).
+		StartDelim("<<")
 	input := tests.NewCraftConfigBuilder().
-		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+		Maintainers(*tests.NewMaintainerBuilder().
+			Name("maintainer name").
 			Build())
 
 	t.Run("success_generic", func(t *testing.T) {
@@ -70,9 +70,9 @@ func TestExecute(t *testing.T) {
 		require.NoError(t, os.Mkdir(destdir, filesystem.RwxRxRxRx))
 		assertdir := filepath.Join(assertdir, string(detectgen.NameGeneric))
 
-		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := input.Copy().SetNoChart(true).Build()
-		expected := input.Copy().SetNoChart(true).Build()
+		opts := opts.Copy().DestinationDir(destdir).Build()
+		craft := input.Copy().NoChart(true).Build()
+		expected := input.Copy().NoChart(true).Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)
 		require.NoError(t, err)
@@ -95,11 +95,11 @@ func TestExecute(t *testing.T) {
 		err := filesystem.CopyFile(filepath.Join(assertdir, models.Gomod), filepath.Join(destdir, models.Gomod))
 		require.NoError(t, err)
 
-		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := input.Copy().SetNoChart(true).Build()
+		opts := opts.Copy().DestinationDir(destdir).Build()
+		craft := input.Copy().NoChart(true).Build()
 		expected := input.Copy().
-			SetNoChart(true).
-			SetPlatform(models.Github).
+			NoChart(true).
+			Platform(models.Github).
 			Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)
@@ -125,11 +125,11 @@ func TestExecute(t *testing.T) {
 		err = filesystem.CopyFile(filepath.Join(assertdir, "hugo.toml"), filepath.Join(destdir, "hugo.toml"))
 		require.NoError(t, err)
 
-		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := input.Copy().SetNoChart(true).Build()
+		opts := opts.Copy().DestinationDir(destdir).Build()
+		craft := input.Copy().NoChart(true).Build()
 		expected := input.Copy().
-			SetNoChart(true).
-			SetPlatform(models.Github).
+			NoChart(true).
+			Platform(models.Github).
 			Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)
@@ -153,12 +153,12 @@ func TestExecute(t *testing.T) {
 		err := filesystem.CopyFile(filepath.Join(assertdir, models.PackageJSON), filepath.Join(destdir, models.PackageJSON))
 		require.NoError(t, err)
 
-		opts := opts.Copy().SetDestinationDir(destdir).Build()
-		craft := input.Copy().SetNoChart(true).Build()
+		opts := opts.Copy().DestinationDir(destdir).Build()
+		craft := input.Copy().NoChart(true).Build()
 		expected := input.Copy().
-			SetNoChart(true).
-			SetNoMakefile(true).
-			SetPackageManager("pnpm").
+			NoChart(true).
+			NoMakefile(true).
+			PackageManager("pnpm").
 			Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)

@@ -39,7 +39,7 @@ func detectHugo(ctx context.Context, config *models.GenerateConfig) []GenerateFu
 			}
 		}
 
-		config.Languages = append(config.Languages, string(NameHugo))
+		config.Languages[string(NameHugo)] = nil
 		return []GenerateFunc{GetGenerateFunc(NameHugo)}
 	}
 	return nil

@@ -27,62 +27,62 @@ func (b *CraftConfigBuilder) Build() *models.CraftConfig {
 	return &result
 }
 
-// SetCI sets CraftConfig's CI.
-func (b *CraftConfigBuilder) SetCI(ci models.CI) *CraftConfigBuilder {
+// CI sets CraftConfig's CI.
+func (b *CraftConfigBuilder) CI(ci models.CI) *CraftConfigBuilder {
 	b.build.CI = &ci
 	return b
 }
 
-// SetDescription sets CraftConfig's Description.
-func (b *CraftConfigBuilder) SetDescription(description string) *CraftConfigBuilder {
+// Description sets CraftConfig's Description.
+func (b *CraftConfigBuilder) Description(description string) *CraftConfigBuilder {
 	b.build.Description = &description
 	return b
 }
 
-// SetDocker sets CraftConfig's Docker.
-func (b *CraftConfigBuilder) SetDocker(docker models.Docker) *CraftConfigBuilder {
+// Docker sets CraftConfig's Docker.
+func (b *CraftConfigBuilder) Docker(docker models.Docker) *CraftConfigBuilder {
 	b.build.Docker = &docker
 	return b
 }
 
-// SetLicense sets CraftConfig's License.
-func (b *CraftConfigBuilder) SetLicense(license string) *CraftConfigBuilder {
+// License sets CraftConfig's License.
+func (b *CraftConfigBuilder) License(license string) *CraftConfigBuilder {
 	b.build.License = &license
 	return b
 }
 
-// SetMaintainers sets CraftConfig's Maintainers.
-func (b *CraftConfigBuilder) SetMaintainers(maintainers ...models.Maintainer) *CraftConfigBuilder {
+// Maintainers sets CraftConfig's Maintainers.
+func (b *CraftConfigBuilder) Maintainers(maintainers ...models.Maintainer) *CraftConfigBuilder {
 	b.build.Maintainers = append(b.build.Maintainers, maintainers...)
 	return b
 }
 
-// SetNoChart sets CraftConfig's NoChart.
-func (b *CraftConfigBuilder) SetNoChart(noChart bool) *CraftConfigBuilder {
+// NoChart sets CraftConfig's NoChart.
+func (b *CraftConfigBuilder) NoChart(noChart bool) *CraftConfigBuilder {
 	b.build.NoChart = noChart
 	return b
 }
 
-// SetNoGoreleaser sets CraftConfig's NoGoreleaser.
-func (b *CraftConfigBuilder) SetNoGoreleaser(noGoreleaser bool) *CraftConfigBuilder {
+// NoGoreleaser sets CraftConfig's NoGoreleaser.
+func (b *CraftConfigBuilder) NoGoreleaser(noGoreleaser bool) *CraftConfigBuilder {
 	b.build.NoGoreleaser = noGoreleaser
 	return b
 }
 
-// SetNoMakefile sets CraftConfig's NoMakefile.
-func (b *CraftConfigBuilder) SetNoMakefile(noMakefile bool) *CraftConfigBuilder {
+// NoMakefile sets CraftConfig's NoMakefile.
+func (b *CraftConfigBuilder) NoMakefile(noMakefile bool) *CraftConfigBuilder {
 	b.build.NoMakefile = noMakefile
 	return b
 }
 
-// SetPackageManager sets CraftConfig's PackageManager.
-func (b *CraftConfigBuilder) SetPackageManager(packageManager string) *CraftConfigBuilder {
+// PackageManager sets CraftConfig's PackageManager.
+func (b *CraftConfigBuilder) PackageManager(packageManager string) *CraftConfigBuilder {
 	b.build.PackageManager = &packageManager
 	return b
 }
 
-// SetPlatform sets CraftConfig's Platform.
-func (b *CraftConfigBuilder) SetPlatform(platform string) *CraftConfigBuilder {
+// Platform sets CraftConfig's Platform.
+func (b *CraftConfigBuilder) Platform(platform string) *CraftConfigBuilder {
 	b.build.Platform = platform
 	return b
 }

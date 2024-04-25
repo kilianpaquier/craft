@@ -18,6 +18,17 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
+//go:generate go-builder-generator generate -f golang.go -s Gomod -d builders
+
+// Gomod represents the parsed struct for go.mod file
+type Gomod struct {
+	LangVersion string
+	Platform    string
+	ProjectHost string
+	ProjectName string
+	ProjectPath string
+}
+
 // detectGolang handles the detection of golang at config provided destination directory.
 //
 // It returns the appropriate slice of GenerateFunc depending on golang's craft related options (hugo).
@@ -39,7 +50,6 @@ func detectGolang(ctx context.Context, config *models.GenerateConfig) []Generate
 		return nil
 	}
 
-	config.LangVersion = statements.LangVersion
 	config.Platform = statements.Platform
 	config.ProjectHost = statements.ProjectHost
 	config.ProjectName = statements.ProjectName
@@ -51,7 +61,7 @@ func detectGolang(ctx context.Context, config *models.GenerateConfig) []Generate
 	}
 
 	log.Infof("golang detected, a %s is present and valid", models.Gomod)
-	config.Languages = append(config.Languages, string(NameGolang))
+	config.Languages[string(NameGolang)] = statements
 
 	entries, err := os.ReadDir(gocmd)
 	if err != nil {
@@ -83,31 +93,22 @@ func detectGolang(ctx context.Context, config *models.GenerateConfig) []Generate
 	return []GenerateFunc{GetGenerateFunc(NameGolang)}
 }
 
-// gomod represents the parsed struct for go.mod file
-type gomod struct {
-	LangVersion string
-	Platform    string
-	ProjectHost string
-	ProjectName string
-	ProjectPath string
-}
-
 // readGomod reads the go.mod file at modpath input and returns its gomod representation.
-func readGomod(modpath string) (*gomod, error) {
+func readGomod(modpath string) (*Gomod, error) {
 	// read go.mod at modpath
 	bytes, err := os.ReadFile(modpath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read go.mod: %w", err)
+		return nil, fmt.Errorf("read file: %w", err)
 	}
 
 	// parse go.mod into it's modfile representation
 	file, err := modfile.Parse(modpath, bytes, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse go.mod: %w", err)
+		return nil, fmt.Errorf("parse go.mod: %w", err)
 	}
 
 	var errs []error
-	gomod := &gomod{}
+	gomod := &Gomod{}
 
 	// parse module statement
 	if file.Module == nil || file.Module.Mod.Path == "" {

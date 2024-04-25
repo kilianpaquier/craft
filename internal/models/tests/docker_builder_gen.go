@@ -27,14 +27,14 @@ func (b *DockerBuilder) Build() *models.Docker {
 	return &result
 }
 
-// SetPort sets Docker's Port.
-func (b *DockerBuilder) SetPort(port uint16) *DockerBuilder {
+// Port sets Docker's Port.
+func (b *DockerBuilder) Port(port uint16) *DockerBuilder {
 	b.build.Port = &port
 	return b
 }
 
-// SetRegistry sets Docker's Registry.
-func (b *DockerBuilder) SetRegistry(registry string) *DockerBuilder {
+// Registry sets Docker's Registry.
+func (b *DockerBuilder) Registry(registry string) *DockerBuilder {
 	b.build.Registry = &registry
 	return b
 }

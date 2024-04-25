@@ -24,13 +24,13 @@ func TestDetectHugo(t *testing.T) {
 		destdir := t.TempDir()
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -51,14 +51,15 @@ func TestDetectHugo(t *testing.T) {
 		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetLanguages(string(detectgen.NameHugo)).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{string(detectgen.NameHugo): nil}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -84,20 +85,21 @@ func TestDetectHugo(t *testing.T) {
 		t.Cleanup(func() { assert.NoError(t, theme.Close()) })
 
 		input := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(*tests.NewCIBuilder().Build()).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				CI(*tests.NewCIBuilder().Build()).
 				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(*tests.NewCIBuilder().Build()).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				CI(*tests.NewCIBuilder().Build()).
 				Build()).
-			SetLanguages(string(detectgen.NameHugo)).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{string(detectgen.NameHugo): nil}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -128,24 +130,25 @@ func TestDetectHugo(t *testing.T) {
 		})
 
 		input := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(*tests.NewCIBuilder().
-					SetOptions(models.CodeCov, models.CodeQL, models.Dependabot). // codecov and codeql will be removed
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				CI(*tests.NewCIBuilder().
+					Options(models.CodeCov, models.CodeQL, models.Dependabot). // codecov and codeql will be removed
 					Build()).
 				Build()).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetCI(*tests.NewCIBuilder().
-					SetOptions(models.Dependabot). // just here to avoid a nil slice comparison with an empty slice ...
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				CI(*tests.NewCIBuilder().
+					Options(models.Dependabot). // just here to avoid a nil slice comparison with an empty slice ...
 					Build()).
 				Build()).
-			SetLanguages(string(detectgen.NameHugo)).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{string(detectgen.NameHugo): nil}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 

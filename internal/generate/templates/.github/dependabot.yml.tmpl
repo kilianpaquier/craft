@@ -8,15 +8,15 @@
 <<- $docker := and .Docker (gt .Binaries 0) >>
 <<- $packages := list "github-actions" >>
 
-<<- if has "golang" .Languages >>
+<<- if hasKey .Languages "golang" >>
 <<- $packages = append $packages "gomod" >>
 <<- end >>
 
-<<- if has "nodejs" .Languages >>
+<<- if hasKey .Languages "nodejs" >>
 <<- $packages = append $packages "npm" >>
 <<- end >>
 
-<<- if has "python" .Languages >>
+<<- if hasKey .Languages "python" >>
 <<- $packages = append $packages "pip" >>
 <<- end >>
 

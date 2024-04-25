@@ -27,38 +27,38 @@ func (b *GenerateOptionsBuilder) Build() *models.GenerateOptions {
 	return &result
 }
 
-// SetDestinationDir sets GenerateOptions's DestinationDir.
-func (b *GenerateOptionsBuilder) SetDestinationDir(destinationDir string) *GenerateOptionsBuilder {
+// DestinationDir sets GenerateOptions's DestinationDir.
+func (b *GenerateOptionsBuilder) DestinationDir(destinationDir string) *GenerateOptionsBuilder {
 	b.build.DestinationDir = destinationDir
 	return b
 }
 
-// SetEndDelim sets GenerateOptions's EndDelim.
-func (b *GenerateOptionsBuilder) SetEndDelim(endDelim string) *GenerateOptionsBuilder {
+// EndDelim sets GenerateOptions's EndDelim.
+func (b *GenerateOptionsBuilder) EndDelim(endDelim string) *GenerateOptionsBuilder {
 	b.build.EndDelim = endDelim
 	return b
 }
 
-// SetForce sets GenerateOptions's Force.
-func (b *GenerateOptionsBuilder) SetForce(force ...string) *GenerateOptionsBuilder {
+// Force sets GenerateOptions's Force.
+func (b *GenerateOptionsBuilder) Force(force ...string) *GenerateOptionsBuilder {
 	b.build.Force = append(b.build.Force, force...)
 	return b
 }
 
-// SetForceAll sets GenerateOptions's ForceAll.
-func (b *GenerateOptionsBuilder) SetForceAll(forceAll bool) *GenerateOptionsBuilder {
+// ForceAll sets GenerateOptions's ForceAll.
+func (b *GenerateOptionsBuilder) ForceAll(forceAll bool) *GenerateOptionsBuilder {
 	b.build.ForceAll = forceAll
 	return b
 }
 
-// SetStartDelim sets GenerateOptions's StartDelim.
-func (b *GenerateOptionsBuilder) SetStartDelim(startDelim string) *GenerateOptionsBuilder {
+// StartDelim sets GenerateOptions's StartDelim.
+func (b *GenerateOptionsBuilder) StartDelim(startDelim string) *GenerateOptionsBuilder {
 	b.build.StartDelim = startDelim
 	return b
 }
 
-// SetTemplatesDir sets GenerateOptions's TemplatesDir.
-func (b *GenerateOptionsBuilder) SetTemplatesDir(templatesDir string) *GenerateOptionsBuilder {
+// TemplatesDir sets GenerateOptions's TemplatesDir.
+func (b *GenerateOptionsBuilder) TemplatesDir(templatesDir string) *GenerateOptionsBuilder {
 	b.build.TemplatesDir = templatesDir
 	return b
 }

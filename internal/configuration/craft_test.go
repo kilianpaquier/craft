@@ -40,7 +40,7 @@ func TestReadCraft(t *testing.T) {
 		err := configuration.ReadCraft(filepath.Dir(file), &config)
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to read file")
+		assert.ErrorContains(t, err, "read file")
 	})
 
 	t.Run("error_unmarshal", func(t *testing.T) {
@@ -54,7 +54,7 @@ func TestReadCraft(t *testing.T) {
 		err = configuration.ReadCraft(srcdir, &config)
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to unmarshal file")
+		assert.ErrorContains(t, err, "unmarshal")
 		assert.ErrorContains(t, err, "did not find expected node content")
 	})
 
@@ -62,10 +62,10 @@ func TestReadCraft(t *testing.T) {
 		// Arrange
 		srcdir := t.TempDir()
 		expected := tests.NewCraftConfigBuilder().
-			SetMaintainers(*tests.NewMaintainerBuilder().
-				SetName("maintainer name").
+			Maintainers(*tests.NewMaintainerBuilder().
+				Name("maintainer name").
 				Build()).
-			SetNoChart(true).
+			NoChart(true).
 			Build()
 		err := configuration.WriteCraft(srcdir, *expected)
 		require.NoError(t, err)
@@ -91,17 +91,17 @@ func TestWriteCraft(t *testing.T) {
 		err := configuration.WriteCraft(srcdir, *tests.NewCraftConfigBuilder().Build())
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to write")
+		assert.ErrorContains(t, err, "write file")
 	})
 
 	t.Run("success", func(t *testing.T) {
 		// Arrange
 		tmp := t.TempDir()
 		expected := tests.NewCraftConfigBuilder().
-			SetMaintainers(*tests.NewMaintainerBuilder().
-				SetName("maintainer name").
+			Maintainers(*tests.NewMaintainerBuilder().
+				Name("maintainer name").
 				Build()).
-			SetNoChart(true).
+			NoChart(true).
 			Build()
 
 		// Act

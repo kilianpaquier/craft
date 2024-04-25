@@ -27,20 +27,20 @@ func (b *MaintainerBuilder) Build() *models.Maintainer {
 	return &result
 }
 
-// SetEmail sets Maintainer's Email.
-func (b *MaintainerBuilder) SetEmail(email string) *MaintainerBuilder {
+// Email sets Maintainer's Email.
+func (b *MaintainerBuilder) Email(email string) *MaintainerBuilder {
 	b.build.Email = &email
 	return b
 }
 
-// SetName sets Maintainer's Name.
-func (b *MaintainerBuilder) SetName(name string) *MaintainerBuilder {
+// Name sets Maintainer's Name.
+func (b *MaintainerBuilder) Name(name string) *MaintainerBuilder {
 	b.build.Name = name
 	return b
 }
 
-// SetURL sets Maintainer's URL.
-func (b *MaintainerBuilder) SetURL(url string) *MaintainerBuilder {
+// URL sets Maintainer's URL.
+func (b *MaintainerBuilder) URL(url string) *MaintainerBuilder {
 	b.build.URL = &url
 	return b
 }

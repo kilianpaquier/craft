@@ -21,11 +21,11 @@ func TestRun(t *testing.T) {
 	t.Run("success_minimal_inputs", func(t *testing.T) {
 		// Arrange
 		maintainer := models_tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+			Name("maintainer name").
 			Build()
 		craft := models_tests.NewCraftConfigBuilder().
-			SetNoChart(true). // tests builder will set false to SetChart because it's not provided
-			SetMaintainers(*maintainer).
+			NoChart(true). // tests builder will set false to Chart because it's not provided
+			Maintainers(*maintainer).
 			Build()
 
 		inputs, err := init_tests.NewInputBuilder().
@@ -44,11 +44,11 @@ func TestRun(t *testing.T) {
 	t.Run("success_no_chart", func(t *testing.T) {
 		// Arrange
 		maintainer := models_tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+			Name("maintainer name").
 			Build()
 		craft := models_tests.NewCraftConfigBuilder().
-			SetMaintainers(*maintainer).
-			SetNoChart(true).
+			Maintainers(*maintainer).
+			NoChart(true).
 			Build()
 
 		inputs, err := init_tests.NewInputBuilder().
@@ -68,13 +68,13 @@ func TestRun(t *testing.T) {
 	t.Run("success_all_inputs", func(t *testing.T) {
 		// Arrange
 		maintainer := models_tests.NewMaintainerBuilder().
-			SetEmail("input not validated in this function").
-			SetName("maintainer name").
-			SetURL("input not validated in this function").
+			Email("input not validated in this function").
+			Name("maintainer name").
+			URL("input not validated in this function").
 			Build()
 		craft := models_tests.NewCraftConfigBuilder().
-			SetMaintainers(*maintainer).
-			SetNoChart(false).
+			Maintainers(*maintainer).
+			NoChart(false).
 			Build()
 
 		inputs, err := init_tests.NewInputBuilder().
@@ -94,11 +94,11 @@ func TestRun(t *testing.T) {
 	t.Run("success_retryable_inputs", func(t *testing.T) {
 		// Arrange
 		maintainer := models_tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+			Name("maintainer name").
 			Build()
 		craft := models_tests.NewCraftConfigBuilder().
-			SetNoChart(false).
-			SetMaintainers(*maintainer).
+			NoChart(false).
+			Maintainers(*maintainer).
 			Build()
 
 		inputs := []string{

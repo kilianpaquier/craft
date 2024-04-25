@@ -75,7 +75,7 @@ func (d *DirGenerate) Generate(ctx context.Context, srcdir, destdir string) erro
 	// read source directory
 	entries, err := d.FS.ReadDir(srcdir)
 	if err != nil {
-		return fmt.Errorf("failed to read templates directory: %w", err)
+		return fmt.Errorf("read directory: %w", err)
 	}
 
 	errs := lo.Map(entries, func(entry fs.DirEntry, _ int) error {
@@ -140,7 +140,7 @@ func (d *DirGenerate) handleFile(ctx context.Context, src, destdir string, entry
 		Delims(d.Config.Options.StartDelim, d.Config.Options.EndDelim).
 		ParseFS(d.FS, src)
 	if err != nil {
-		return fmt.Errorf("failed to parse %s: %w", src, err)
+		return fmt.Errorf("parse template file: %w", err)
 	}
 	return templating.Execute(tmpl, d.Data, dest)
 }

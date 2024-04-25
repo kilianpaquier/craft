@@ -26,8 +26,8 @@ func TestDetectHelm(t *testing.T) {
 	t.Run("no_chart_config_present", func(t *testing.T) {
 		// Arrange
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetNoChart(true).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				NoChart(true).
 				Build()).
 			Build()
 
@@ -46,7 +46,7 @@ func TestDetectHelm(t *testing.T) {
 	t.Run("no_chart_config_absent", func(t *testing.T) {
 		// Arrange
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().Build()).
+			CraftConfig(*tests.NewCraftConfigBuilder().Build()).
 			Build()
 
 		hook := test.NewGlobal()
@@ -67,20 +67,20 @@ func TestExecuteHelm(t *testing.T) {
 	assertdir := filepath.Join("..", "testdata", string(detectgen.NameHelm))
 
 	opts := tests.NewGenerateOptionsBuilder().
-		SetEndDelim(">>").
-		SetStartDelim("<<").
-		SetTemplatesDir(path.Join("..", "templates"))
+		EndDelim(">>").
+		StartDelim("<<").
+		TemplatesDir(path.Join("..", "templates"))
 
 	craft := tests.NewCraftConfigBuilder().
-		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+		Maintainers(*tests.NewMaintainerBuilder().
+			Name("maintainer name").
 			Build()).
-		SetPlatform("github")
+		Platform("github")
 
 	config := tests.NewGenerateConfigBuilder().
-		SetProjectHost("example.com").
-		SetProjectName("craft").
-		SetProjectPath("kilianpaquier/craft")
+		ProjectHost("example.com").
+		ProjectName("craft").
+		ProjectPath("kilianpaquier/craft")
 
 	t.Run("error_invalid_overrides", func(t *testing.T) {
 		// Arrange
@@ -89,8 +89,8 @@ func TestExecuteHelm(t *testing.T) {
 		require.NoError(t, os.MkdirAll(overrides, filesystem.RwxRxRxRx))
 
 		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -98,7 +98,7 @@ func TestExecuteHelm(t *testing.T) {
 		err := detectgen.GenerateHelm(ctx, *config, filesystem.OS())
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to read custom chart overrides")
+		assert.ErrorContains(t, err, "read helm chart overrides")
 	})
 
 	t.Run("success_empty_values", func(t *testing.T) {
@@ -107,10 +107,10 @@ func TestExecuteHelm(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "empty_values")
 
 		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Build()).
+			CraftConfig(*craft.Build()).
 			Build()
 
 		// Act
@@ -131,10 +131,10 @@ func TestExecuteHelm(t *testing.T) {
 		require.NoError(t, err)
 
 		config := config.Copy().
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
-			SetCraftConfig(*craft.Build()).
+			CraftConfig(*craft.Build()).
 			Build()
 
 		// Act
@@ -151,18 +151,18 @@ func TestExecuteHelm(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "with_resources")
 
 		config := config.Copy().
-			SetClis(map[string]struct{}{"cli-name": {}}).
-			SetCraftConfig(*craft.Copy().
-				SetDocker(*tests.NewDockerBuilder().
-					SetPort(5000).
+			Clis(map[string]struct{}{"cli-name": {}}).
+			CraftConfig(*craft.Copy().
+				Docker(*tests.NewDockerBuilder().
+					Port(5000).
 					Build()).
 				Build()).
-			SetCrons(map[string]struct{}{"cron-name": {}}).
-			SetJobs(map[string]struct{}{"job-name": {}}).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Crons(map[string]struct{}{"cron-name": {}}).
+			Jobs(map[string]struct{}{"job-name": {}}).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			Workers(map[string]struct{}{"worker-name": {}}).
 			Build()
 
 		// Act
@@ -181,8 +181,8 @@ func TestRemoveHelm(t *testing.T) {
 	dest := filepath.Join(destdir, "chart")
 
 	config := tests.NewGenerateConfigBuilder().
-		SetOptions(*tests.NewGenerateOptionsBuilder().
-			SetDestinationDir(destdir).
+		Options(*tests.NewGenerateOptionsBuilder().
+			DestinationDir(destdir).
 			Build()).
 		Build()
 

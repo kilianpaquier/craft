@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate/detectgen"
+	"github.com/kilianpaquier/craft/internal/generate/detectgen/builders"
 	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 	"github.com/kilianpaquier/craft/internal/testlogs"
@@ -27,13 +28,13 @@ func TestDetectGolang(t *testing.T) {
 		destdir := t.TempDir()
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -54,13 +55,13 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, err)
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -74,7 +75,7 @@ func TestDetectGolang(t *testing.T) {
 		assert.Len(t, generates, 0)
 		assert.Equal(t, expected, input)
 		logs := testlogs.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "failed to parse go.mod:")
+		assert.Contains(t, logs, "parse go.mod:")
 	})
 
 	t.Run("missing_gomod_statements", func(t *testing.T) {
@@ -86,13 +87,13 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, gomod.Close())
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -124,22 +125,30 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, err)
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetPlatform(models.Github).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				Platform(models.Github).
 				Build()).
-			SetLanguages(string(detectgen.NameGolang)).
-			SetLangVersion("1.22").
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{
+				string(detectgen.NameGolang): builders.NewGomodBuilder().
+					LangVersion("1.22").
+					Platform("github").
+					ProjectHost("github.com").
+					ProjectName("craft").
+					ProjectPath("kilianpaquier/craft").
+					Build(),
+			}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
-			SetProjectHost("github.com").
-			SetProjectName("craft").
-			SetProjectPath("kilianpaquier/craft").
+			ProjectHost("github.com").
+			ProjectName("craft").
+			ProjectPath("kilianpaquier/craft").
 			Build()
 
 		hook := test.NewGlobal()
@@ -172,22 +181,22 @@ func TestDetectGolang(t *testing.T) {
 		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetPlatform(models.Github).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				Platform(models.Github).
 				Build()).
-			SetLanguages(string(detectgen.NameHugo)).
-			SetLangVersion("1.22").
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{string(detectgen.NameHugo): nil}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
-			SetProjectHost("github.com").
-			SetProjectName("craft").
-			SetProjectPath("kilianpaquier/craft").
+			ProjectHost("github.com").
+			ProjectName("craft").
+			ProjectPath("kilianpaquier/craft").
 			Build()
 
 		hook := test.NewGlobal()
@@ -229,31 +238,39 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		input := tests.NewGenerateConfigBuilder().
-			SetClis(map[string]struct{}{}).
-			SetCrons(map[string]struct{}{}).
-			SetJobs(map[string]struct{}{}).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Clis(map[string]struct{}{}).
+			Crons(map[string]struct{}{}).
+			Jobs(map[string]struct{}{}).
+			Languages(map[string]any{}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{}).
+			Workers(map[string]struct{}{}).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetBinaries(4).
-			SetClis(map[string]struct{}{"cli-name": {}}).
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetPlatform(models.Github).
+			Binaries(4).
+			Clis(map[string]struct{}{"cli-name": {}}).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				Platform(models.Github).
 				Build()).
-			SetCrons(map[string]struct{}{"cron-name": {}}).
-			SetJobs(map[string]struct{}{"job-name": {}}).
-			SetLanguages(string(detectgen.NameGolang)).
-			SetLangVersion("1.22.2").
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Crons(map[string]struct{}{"cron-name": {}}).
+			Jobs(map[string]struct{}{"job-name": {}}).
+			Languages(map[string]any{
+				string(detectgen.NameGolang): builders.NewGomodBuilder().
+					LangVersion("1.22.2").
+					Platform("github").
+					ProjectHost("github.com").
+					ProjectName("craft").
+					ProjectPath("kilianpaquier/craft").
+					Build(),
+			}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
-			SetProjectHost("github.com").
-			SetProjectName("craft").
-			SetProjectPath("kilianpaquier/craft").
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			ProjectHost("github.com").
+			ProjectName("craft").
+			ProjectPath("kilianpaquier/craft").
+			Workers(map[string]struct{}{"worker-name": {}}).
 			Build()
 
 		// Act

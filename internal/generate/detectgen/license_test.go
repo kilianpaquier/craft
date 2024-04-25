@@ -43,8 +43,8 @@ func TestDetectLicense(t *testing.T) {
 	t.Run("license_detected", func(t *testing.T) {
 		// Arrange
 		config := tests.NewGenerateConfigBuilder().
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetLicense("mit").
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				License("mit").
 				Build()).
 			Build()
 
@@ -76,13 +76,13 @@ func TestDownloadLicense(t *testing.T) {
 	license := detectgen.DownloadLicense(client)
 
 	config := tests.NewGenerateConfigBuilder().
-		SetCraftConfig(*tests.NewCraftConfigBuilder().
-			SetLicense("mit").
-			SetMaintainers(*tests.NewMaintainerBuilder().
-				SetName("name").
+		CraftConfig(*tests.NewCraftConfigBuilder().
+			License("mit").
+			Maintainers(*tests.NewMaintainerBuilder().
+				Name("name").
 				Build()).
 			Build()).
-		SetProjectName("craft")
+		ProjectName("craft")
 
 	url := detectgen.GitlabURL + "/templates/licenses/mit"
 
@@ -94,8 +94,8 @@ func TestDownloadLicense(t *testing.T) {
 
 		destdir := t.TempDir()
 		config := config.Copy().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -103,7 +103,7 @@ func TestDownloadLicense(t *testing.T) {
 		err := license(ctx, *config, filesystem.OS())
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to retrieve license from gitlab")
+		assert.ErrorContains(t, err, "license template retrieval")
 	})
 
 	t.Run("error_write_license", func(t *testing.T) {
@@ -118,9 +118,9 @@ func TestDownloadLicense(t *testing.T) {
 		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), filesystem.RwxRxRxRx))
 
 		config := config.Copy().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetForce(models.License).
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				Force(models.License).
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -128,7 +128,7 @@ func TestDownloadLicense(t *testing.T) {
 		err := license(ctx, *config, filesystem.OS())
 
 		// Assert
-		assert.ErrorContains(t, err, fmt.Sprintf("failed to remove %s before rewritting it", dest))
+		assert.ErrorContains(t, err, "delete file")
 	})
 
 	t.Run("success_no_specific_config", func(t *testing.T) {
@@ -141,8 +141,8 @@ func TestDownloadLicense(t *testing.T) {
 		destdir := t.TempDir()
 		dest := filepath.Join(destdir, models.License)
 		config := config.Copy().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -162,8 +162,8 @@ func TestDownloadLicense(t *testing.T) {
 		destdir := t.TempDir()
 		dest := filepath.Join(destdir, models.License)
 		config := config.Copy().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -184,9 +184,9 @@ func TestDownloadLicense(t *testing.T) {
 		destdir := t.TempDir()
 		dest := filepath.Join(destdir, models.License)
 		config := config.Copy().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
-				SetForce(models.License).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
+				Force(models.License).
 				Build()).
 			Build()
 
@@ -215,10 +215,10 @@ func TestDownloadLicense(t *testing.T) {
 		destdir := t.TempDir()
 		dest := filepath.Join(destdir, models.License)
 		opts := *tests.NewGenerateOptionsBuilder().
-			SetDestinationDir(destdir).
-			SetForceAll(true)
+			DestinationDir(destdir).
+			ForceAll(true)
 		config := config.Copy().
-			SetOptions(*opts.Build()).
+			Options(*opts.Build()).
 			Build()
 
 		file, err := os.Create(dest)
@@ -249,8 +249,8 @@ func TestRemoveLicense(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 		config := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -261,15 +261,15 @@ func TestRemoveLicense(t *testing.T) {
 		err := detectgen.RemoveLicense(ctx, *config, nil)
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to remove LICENSE file")
+		assert.ErrorContains(t, err, "delete file")
 	})
 
 	t.Run("success_no_file", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 		config := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -287,8 +287,8 @@ func TestRemoveLicense(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 		config := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 

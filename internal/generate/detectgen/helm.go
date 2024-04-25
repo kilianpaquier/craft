@@ -45,12 +45,12 @@ func generateHelm(ctx context.Context, config models.GenerateConfig, fsys filesy
 	// read overrides values
 	var overrides map[string]any
 	if err := configuration.ReadCraft(destdir, &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("failed to read custom chart overrides: %w", err)
+		return fmt.Errorf("read helm chart overrides: %w", err)
 	}
 
 	// merge overrides into chart with overwrite
 	if err := mergo.Merge(&chart, overrides, mergo.WithOverride); err != nil {
-		return fmt.Errorf("failed to merge default chart configuration and overrides: %w", err)
+		return fmt.Errorf("merge helm chart overrides with craft configuration: %w", err)
 	}
 
 	generate, err := NewDirGenerateBuilder().
@@ -69,7 +69,7 @@ func generateHelm(ctx context.Context, config models.GenerateConfig, fsys filesy
 func removeHelm(_ context.Context, config models.GenerateConfig, _ filesystem.FS) error {
 	chartDir := filepath.Join(config.Options.DestinationDir, "chart")
 	if err := os.RemoveAll(chartDir); err != nil {
-		return fmt.Errorf("failed to delete %s: %w", chartDir, err)
+		return fmt.Errorf("delete directory: %w", err)
 	}
 	return nil
 }

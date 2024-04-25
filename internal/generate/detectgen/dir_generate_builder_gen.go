@@ -29,7 +29,7 @@ func (b *DirGenerateBuilder) Copy() *DirGenerateBuilder {
 func (b *DirGenerateBuilder) Build() (*DirGenerate, error) {
 	result := b.build
 	if err := result.Validate(); err != nil {
-		return nil, fmt.Errorf("failed to validate 'DirGenerate' struct: %w", err)
+		return nil, fmt.Errorf("validation of 'DirGenerate''s struct: %w", err)
 	}
 	return &result, nil
 }

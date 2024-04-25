@@ -3,13 +3,13 @@
 include ./scripts/*.mk
 
 .PHONY: examples
-examples:
-	@(cd examples/generic_github && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/generic_gitlab && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/golang_github && go mod tidy && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/golang_gitlab && go mod tidy && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/hugo_github && go mod tidy && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/hugo_gitlab && go mod tidy && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/helm && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/nodejs_github && go run ../../cmd/craft/main.go generate --force-all)
-	@(cd examples/nodejs_gitlab && go run ../../cmd/craft/main.go generate --force-all)
+examples: buildall
+	@(cd examples/generic_github && ../../craft generate --force-all)
+	@(cd examples/generic_gitlab && ../../craft generate --force-all)
+	@(cd examples/golang_github && go mod tidy && ../../craft generate --force-all)
+	@(cd examples/golang_gitlab && go mod tidy && ../../craft generate --force-all)
+	@(cd examples/hugo_github && go mod tidy && ../../craft generate --force-all)
+	@(cd examples/hugo_gitlab && go mod tidy && ../../craft generate --force-all)
+	@(cd examples/helm && ../../craft generate --force-all)
+	@(cd examples/nodejs_github && ../../craft generate --force-all)
+	@(cd examples/nodejs_gitlab && ../../craft generate --force-all)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -15,8 +16,10 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-// packageJSON represents the node package json descriptor.
-type packageJSON struct {
+//go:generate go-builder-generator generate -f nodejs.go -s PackageJSON -d builders
+
+// PackageJSON represents the node package json descriptor.
+type PackageJSON struct {
 	Author         *string `json:"author,omitempty"`
 	Description    *string `json:"description,omitempty"`
 	License        *string `json:"license,omitempty"`
@@ -34,30 +37,23 @@ type packageJSON struct {
 func detectNodejs(ctx context.Context, config *models.GenerateConfig) []GenerateFunc {
 	log := logrus.WithContext(ctx)
 
-	packagejson := filepath.Join(config.Options.DestinationDir, models.PackageJSON)
-	bytes, err := os.ReadFile(packagejson)
+	jsonpath := filepath.Join(config.Options.DestinationDir, models.PackageJSON)
+	pkg, err := readPackageJSON(jsonpath)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
-			log.WithError(err).Info("failed to read package.json")
+			log.WithError(err).Warnf("failed to parse %s file", jsonpath)
 		}
-		return nil
-	}
-
-	var descriptor packageJSON
-	if err := json.Unmarshal(bytes, &descriptor); err != nil {
-		log.WithError(err).Info("failed to unmarshal package.json")
-		return nil
-	}
-
-	if err := validator.New().Struct(descriptor); err != nil {
-		log.WithError(err).Error("invalid package.json file, proceeding without nodejs generation")
 		return nil
 	}
 
 	log.Infof("nodejs detected, a %s is present and valid", models.PackageJSON)
 
-	config.Languages = append(config.Languages, string(NameNodejs))
-	config.ProjectName = descriptor.Name
+	config.Languages[string(NameNodejs)] = pkg
+	config.ProjectName = pkg.Name
+	// automatically add one binary because there's no such things
+	if pkg.Main != nil {
+		config.Binaries++
+	}
 
 	// automatically set default package manager if none was given
 	if config.PackageManager == nil {
@@ -70,9 +66,23 @@ func detectNodejs(ctx context.Context, config *models.GenerateConfig) []Generate
 		config.NoMakefile = true
 	}
 
-	// automatically add one binary because there's no such things
-	if descriptor.Main != nil {
-		config.Binaries++
-	}
 	return []GenerateFunc{GetGenerateFunc(NameNodejs)}
+}
+
+// readPackageJSON reads the package.json provided at input jsonpath. It returns any error encountered.
+func readPackageJSON(jsonpath string) (*PackageJSON, error) {
+	bytes, err := os.ReadFile(jsonpath)
+	if err != nil {
+		return nil, fmt.Errorf("read file: %w", err)
+	}
+
+	var pkg *PackageJSON
+	if err := json.Unmarshal(bytes, &pkg); err != nil {
+		return nil, fmt.Errorf("unmarshal: %w", err)
+	}
+
+	if err := validator.New().Struct(pkg); err != nil {
+		return nil, fmt.Errorf("validation: %w", err)
+	}
+	return pkg, nil
 }

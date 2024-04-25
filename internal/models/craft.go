@@ -1,6 +1,6 @@
 package models
 
-//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,Docker -d tests -p set
+//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,Docker -d tests
 
 const (
 	// CraftFile is the craft configuration file name.
@@ -102,8 +102,7 @@ type GenerateConfig struct {
 	Clis        map[string]struct{} `json:"-"                     yaml:"-"`
 	Crons       map[string]struct{} `json:"crons,omitempty"       yaml:"-"`
 	Jobs        map[string]struct{} `json:"jobs,omitempty"        yaml:"-"`
-	Languages   []string            `json:"-"                     yaml:"-" builder:"append"`
-	LangVersion string              `json:"-"                     yaml:"-"`
+	Languages   map[string]any      `json:"-"                     yaml:"-" builder:"append"`
 	ProjectHost string              `json:"projectHost"           yaml:"-"`
 	ProjectName string              `json:"projectName,omitempty" yaml:"-"`
 	ProjectPath string              `json:"projectPath"           yaml:"-"`

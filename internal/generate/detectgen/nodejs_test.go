@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate/detectgen"
+	"github.com/kilianpaquier/craft/internal/generate/detectgen/builders"
 	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 	"github.com/kilianpaquier/craft/internal/testlogs"
@@ -25,8 +26,8 @@ func TestDetectNodejs(t *testing.T) {
 		destdir := t.TempDir()
 
 		config := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -47,8 +48,8 @@ func TestDetectNodejs(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		config := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -61,7 +62,7 @@ func TestDetectNodejs(t *testing.T) {
 		// Assert
 		assert.Len(t, generates, 0)
 		logs := testlogs.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "failed to unmarshal package.json")
+		assert.Contains(t, logs, "unmarshal")
 	})
 
 	t.Run("nodejs_detected", func(t *testing.T) {
@@ -73,21 +74,27 @@ func TestDetectNodejs(t *testing.T) {
 		require.NoError(t, err)
 
 		input := tests.NewGenerateConfigBuilder().
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 		expected := tests.NewGenerateConfigBuilder().
-			SetBinaries(1).
-			SetCraftConfig(*tests.NewCraftConfigBuilder().
-				SetNoMakefile(true).
-				SetPackageManager("pnpm").
+			Binaries(1).
+			CraftConfig(*tests.NewCraftConfigBuilder().
+				NoMakefile(true).
+				PackageManager("pnpm").
 				Build()).
-			SetLanguages(string(detectgen.NameNodejs)).
-			SetOptions(*tests.NewGenerateOptionsBuilder().
-				SetDestinationDir(destdir).
+			Languages(map[string]any{
+				string(detectgen.NameNodejs): builders.NewPackageJSONBuilder().
+					Main("index.js").
+					Name("craft").
+					Build(),
+			}).
+			Options(*tests.NewGenerateOptionsBuilder().
+				DestinationDir(destdir).
 				Build()).
-			SetProjectName("craft").
+			ProjectName("craft").
 			Build()
 
 		// Act

@@ -16,12 +16,12 @@ import (
 func Execute(tmpl *template.Template, data any, dest string) error {
 	// create destination directory only if one file would be generated
 	if err := os.MkdirAll(filepath.Dir(dest), filesystem.RwxRxRxRx); err != nil && !os.IsExist(err) {
-		return fmt.Errorf("failed to create destination directory: %w", err)
+		return fmt.Errorf("create directory: %w", err)
 	}
 
 	var result strings.Builder
 	if err := tmpl.Execute(&result, data); err != nil {
-		return fmt.Errorf("failed to template %s: %w", dest, err)
+		return fmt.Errorf("template execution: %w", err)
 	}
 
 	return WriteFile(dest, []byte(result.String()))
@@ -32,12 +32,12 @@ func Execute(tmpl *template.Template, data any, dest string) error {
 func WriteFile(dest string, content []byte) error {
 	// remove file before rewritting it (in case rights changed)
 	if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("failed to remove %s before rewritting it: %w", dest, err)
+		return fmt.Errorf("delete file: %w", err)
 	}
 
 	// write new file content
 	if err := os.WriteFile(dest, content, GetRights(dest)); err != nil {
-		return fmt.Errorf("failed to write %s: %w", dest, err)
+		return fmt.Errorf("write file: %w", err)
 	}
 
 	return nil

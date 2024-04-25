@@ -114,20 +114,20 @@ func TestGenerateFunc_Generic(t *testing.T) {
 	assertdir := filepath.Join("..", "testdata", string(detectgen.NameGeneric))
 
 	opts := tests.NewGenerateOptionsBuilder().
-		SetEndDelim(">>").
-		SetForceAll(true).
-		SetStartDelim("<<").
-		SetTemplatesDir(path.Join("..", "templates"))
+		EndDelim(">>").
+		ForceAll(true).
+		StartDelim("<<").
+		TemplatesDir(path.Join("..", "templates"))
 
 	craft := tests.NewCraftConfigBuilder().
-		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+		Maintainers(*tests.NewMaintainerBuilder().
+			Name("maintainer name").
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
-		SetProjectHost("example.com").
-		SetProjectName("craft").
-		SetProjectPath("kilianpaquier/craft")
+		ProjectHost("example.com").
+		ProjectName("craft").
+		ProjectPath("kilianpaquier/craft")
 
 	t.Run("success_github", func(t *testing.T) {
 		// Arrange
@@ -135,15 +135,15 @@ func TestGenerateFunc_Generic(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_github")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Github).
-					SetOptions(models.AllOptions()...).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Github).
+					Options(models.AllOptions()...).
 					Build()).
-				SetPlatform(models.Github).
+				Platform(models.Github).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -161,15 +161,15 @@ func TestGenerateFunc_Generic(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_gitlab")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Gitlab).
-					SetOptions(models.AllOptions()...).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Gitlab).
+					Options(models.AllOptions()...).
 					Build()).
-				SetPlatform(models.Gitlab).
+				Platform(models.Gitlab).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -188,22 +188,21 @@ func TestGenerateFunc_Golang(t *testing.T) {
 	assertdir := filepath.Join("..", "testdata", string(detectgen.NameGolang))
 
 	opts := tests.NewGenerateOptionsBuilder().
-		SetEndDelim(">>").
-		SetForceAll(true).
-		SetStartDelim("<<").
-		SetTemplatesDir(path.Join("..", "templates"))
+		EndDelim(">>").
+		ForceAll(true).
+		StartDelim("<<").
+		TemplatesDir(path.Join("..", "templates"))
 
 	craft := tests.NewCraftConfigBuilder().
-		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+		Maintainers(*tests.NewMaintainerBuilder().
+			Name("maintainer name").
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
-		SetLanguages(string(detectgen.NameGolang)).
-		SetLangVersion("1.22").
-		SetProjectHost("example.com").
-		SetProjectName("craft").
-		SetProjectPath("kilianpaquier/craft")
+		Languages(map[string]any{string(detectgen.NameGolang): detectgen.Gomod{LangVersion: "1.22"}}).
+		ProjectHost("example.com").
+		ProjectName("craft").
+		ProjectPath("kilianpaquier/craft")
 
 	t.Run("success_binaries", func(t *testing.T) {
 		// Arrange
@@ -211,19 +210,19 @@ func TestGenerateFunc_Golang(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_binaries")
 
 		config := config.Copy().
-			SetClis(map[string]struct{}{"cli-name": {}}).
-			SetCraftConfig(*craft.Copy().
-				SetDocker(*tests.NewDockerBuilder().
-					SetPort(5000).
+			Clis(map[string]struct{}{"cli-name": {}}).
+			CraftConfig(*craft.Copy().
+				Docker(*tests.NewDockerBuilder().
+					Port(5000).
 					Build()).
-				SetLicense("mit").
+				License("mit").
 				Build()).
-			SetCrons(map[string]struct{}{"cron-name": {}}).
-			SetJobs(map[string]struct{}{"job-name": {}}).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Crons(map[string]struct{}{"cron-name": {}}).
+			Jobs(map[string]struct{}{"job-name": {}}).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}}).
+			Workers(map[string]struct{}{"worker-name": {}}).
 			Build()
 
 		// Act
@@ -240,9 +239,9 @@ func TestGenerateFunc_Golang(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_no_binaries")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			CraftConfig(*craft.Build()).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -260,16 +259,16 @@ func TestGenerateFunc_Golang(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_one_binary_docker")
 
 		config := config.Copy().
-			SetBinaries(1).
-			SetCraftConfig(*craft.Copy().
-				SetDocker(*tests.NewDockerBuilder().Build()).
-				SetNoGoreleaser(true).
-				SetNoMakefile(true).
+			Binaries(1).
+			CraftConfig(*craft.Copy().
+				Docker(*tests.NewDockerBuilder().Build()).
+				NoGoreleaser(true).
+				NoMakefile(true).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
-			SetClis(map[string]struct{}{"cli-name": {}}).
+			Clis(map[string]struct{}{"cli-name": {}}).
 			Build()
 
 		// Act
@@ -286,24 +285,24 @@ func TestGenerateFunc_Golang(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_options_binaries_github")
 
 		config = config.Copy().
-			SetBinaries(4).
-			SetClis(map[string]struct{}{"cli-name": {}}).
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetAutoRelease(true).
-					SetName(models.Github).
-					SetOptions(models.AllOptions()...).
+			Binaries(4).
+			Clis(map[string]struct{}{"cli-name": {}}).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					AutoRelease(true).
+					Name(models.Github).
+					Options(models.AllOptions()...).
 					Build()).
-				SetLicense("mit").
-				SetNoGoreleaser(true).
-				SetPlatform(models.Github).
+				License("mit").
+				NoGoreleaser(true).
+				Platform(models.Github).
 				Build()).
-			SetCrons(map[string]struct{}{"cron-name": {}}).
-			SetJobs(map[string]struct{}{"job-name": {}}).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Crons(map[string]struct{}{"cron-name": {}}).
+			Jobs(map[string]struct{}{"job-name": {}}).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}})
+			Workers(map[string]struct{}{"worker-name": {}})
 
 		// Act
 		err := golang(ctx, *config.Build(), filesystem.OS())
@@ -319,24 +318,24 @@ func TestGenerateFunc_Golang(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_options_binaries_gitlab")
 
 		config = config.Copy().
-			SetBinaries(4).
-			SetClis(map[string]struct{}{"cli-name": {}}).
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetAutoRelease(true).
-					SetName(models.Gitlab).
-					SetOptions(models.AllOptions()...).
+			Binaries(4).
+			Clis(map[string]struct{}{"cli-name": {}}).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					AutoRelease(true).
+					Name(models.Gitlab).
+					Options(models.AllOptions()...).
 					Build()).
-				SetLicense("mit").
-				SetNoGoreleaser(true).
-				SetPlatform(models.Gitlab).
+				License("mit").
+				NoGoreleaser(true).
+				Platform(models.Gitlab).
 				Build()).
-			SetCrons(map[string]struct{}{"cron-name": {}}).
-			SetJobs(map[string]struct{}{"job-name": {}}).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Crons(map[string]struct{}{"cron-name": {}}).
+			Jobs(map[string]struct{}{"job-name": {}}).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
-			SetWorkers(map[string]struct{}{"worker-name": {}})
+			Workers(map[string]struct{}{"worker-name": {}})
 
 		// Act
 		err := golang(ctx, *config.Build(), filesystem.OS())
@@ -353,22 +352,21 @@ func TestGenerateFunc_Hugo(t *testing.T) {
 	assertdir := filepath.Join("..", "testdata", string(detectgen.NameHugo))
 
 	opts := tests.NewGenerateOptionsBuilder().
-		SetEndDelim(">>").
-		SetForceAll(true).
-		SetStartDelim("<<").
-		SetTemplatesDir(path.Join("..", "templates"))
+		EndDelim(">>").
+		ForceAll(true).
+		StartDelim("<<").
+		TemplatesDir(path.Join("..", "templates"))
 
 	craft := tests.NewCraftConfigBuilder().
-		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+		Maintainers(*tests.NewMaintainerBuilder().
+			Name("maintainer name").
 			Build())
 
 	config := tests.NewGenerateConfigBuilder().
-		SetLanguages(string(detectgen.NameHugo)).
-		SetLangVersion("1.22").
-		SetProjectHost("example.com").
-		SetProjectName("craft").
-		SetProjectPath("kilianpaquier/craft")
+		Languages(map[string]any{string(detectgen.NameHugo): detectgen.Gomod{LangVersion: "1.22"}}).
+		ProjectHost("example.com").
+		ProjectName("craft").
+		ProjectPath("kilianpaquier/craft")
 
 	t.Run("success_github", func(t *testing.T) {
 		// Arrange
@@ -376,16 +374,16 @@ func TestGenerateFunc_Hugo(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_github")
 
 		config = config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Github).
-					SetOptions(models.AllOptions()...).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Github).
+					Options(models.AllOptions()...).
 					Build()).
-				SetLicense("mit").
-				SetPlatform(models.Github).
+				License("mit").
+				Platform(models.Github).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build())
 
 		// Act
@@ -402,16 +400,16 @@ func TestGenerateFunc_Hugo(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_gitlab")
 
 		config = config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Gitlab).
-					SetOptions(models.AllOptions()...).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Gitlab).
+					Options(models.AllOptions()...).
 					Build()).
-				SetLicense("mit").
-				SetPlatform(models.Gitlab).
+				License("mit").
+				Platform(models.Gitlab).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build())
 
 		// Act
@@ -429,23 +427,23 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 	assertdir := filepath.Join("..", "testdata", string(detectgen.NameNodejs))
 
 	opts := tests.NewGenerateOptionsBuilder().
-		SetEndDelim(">>").
-		SetForceAll(true).
-		SetStartDelim("<<").
-		SetTemplatesDir(path.Join("..", "templates"))
+		EndDelim(">>").
+		ForceAll(true).
+		StartDelim("<<").
+		TemplatesDir(path.Join("..", "templates"))
 
 	craft := tests.NewCraftConfigBuilder().
-		SetMaintainers(*tests.NewMaintainerBuilder().
-			SetName("maintainer name").
+		Maintainers(*tests.NewMaintainerBuilder().
+			Name("maintainer name").
 			Build()).
-		SetNoMakefile(true)
+		NoMakefile(true)
 
 	config := tests.NewGenerateConfigBuilder().
-		SetBinaries(1).
-		SetLanguages(string(detectgen.NameNodejs)).
-		SetProjectHost("example.com").
-		SetProjectName("craft").
-		SetProjectPath("kilianpaquier/craft")
+		Binaries(1).
+		Languages(map[string]any{string(detectgen.NameNodejs): nil}).
+		ProjectHost("example.com").
+		ProjectName("craft").
+		ProjectPath("kilianpaquier/craft")
 
 	t.Run("success_github", func(t *testing.T) {
 		// Arrange
@@ -453,14 +451,14 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_github")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Github).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Github).
 					Build()).
-				SetPlatform(models.Github).
+				Platform(models.Github).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -478,15 +476,15 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_docker_github")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Github).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Github).
 					Build()).
-				SetDocker(*tests.NewDockerBuilder().Build()).
-				SetPlatform(models.Github).
+				Docker(*tests.NewDockerBuilder().Build()).
+				Platform(models.Github).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -504,16 +502,16 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_gitlab")
 
 		config := config.Copy().
-			SetBinaries(1).
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Gitlab).
+			Binaries(1).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Gitlab).
 					Build()).
-				SetNoMakefile(true).
-				SetPlatform(models.Gitlab).
+				NoMakefile(true).
+				Platform(models.Gitlab).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -531,15 +529,15 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_docker_gitlab")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetName(models.Gitlab).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					Name(models.Gitlab).
 					Build()).
-				SetDocker(*tests.NewDockerBuilder().Build()).
-				SetPlatform(models.Gitlab).
+				Docker(*tests.NewDockerBuilder().Build()).
+				Platform(models.Gitlab).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -557,18 +555,18 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_options_github")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetAutoRelease(true).
-					SetName(models.Github).
-					SetOptions(models.AllOptions()...).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					AutoRelease(true).
+					Name(models.Github).
+					Options(models.AllOptions()...).
 					Build()).
-				SetLicense("mit").
-				SetPackageManager("npm").
-				SetPlatform(models.Github).
+				License("mit").
+				PackageManager("npm").
+				Platform(models.Github).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
@@ -586,18 +584,18 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		assertdir := filepath.Join(assertdir, "success_options_gitlab")
 
 		config := config.Copy().
-			SetCraftConfig(*craft.Copy().
-				SetCI(*tests.NewCIBuilder().
-					SetAutoRelease(true).
-					SetName(models.Gitlab).
-					SetOptions(models.AllOptions()...).
+			CraftConfig(*craft.Copy().
+				CI(*tests.NewCIBuilder().
+					AutoRelease(true).
+					Name(models.Gitlab).
+					Options(models.AllOptions()...).
 					Build()).
-				SetLicense("mit").
-				SetPackageManager("yarn").
-				SetPlatform(models.Gitlab).
+				License("mit").
+				PackageManager("yarn").
+				Platform(models.Gitlab).
 				Build()).
-			SetOptions(*opts.Copy().
-				SetDestinationDir(destdir).
+			Options(*opts.Copy().
+				DestinationDir(destdir).
 				Build()).
 			Build()
 
