@@ -77,6 +77,12 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+<<- if hasKey .Languages "nodejs" >>
+<<- $specifics := get .Languages "nodejs" >>
+<<- if not $specifics.Private >>
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+<<- end >>
+<<- end >>
       - run: echo $VERSION
         env:
           VERSION: v${{ steps.semantic_release.outputs.new_release_version }}
@@ -392,3 +398,9 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+<<- if hasKey .Languages "nodejs" >>
+<<- $specifics := get .Languages "nodejs" >>
+<<- if not $specifics.Private >>
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+<<- end >>
+<<- end >>
