@@ -53,6 +53,12 @@ plugins:
       failComment: false
       failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
+  - - "@kilianpaquier/semantic-release-backmerge"
+    - platform: gitlab
+      targets:
+        - { from: main, to: develop }
+        - { from: main, to: staging }
+        - { from: staging, to: develop }
   - - "@semantic-release/exec"
     - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
 branches:

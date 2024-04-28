@@ -46,6 +46,7 @@ jobs:
             @semantic-release/github
             @semantic-release/release-notes-generator
             conventional-changelog-conventionalcommits
+            @kilianpaquier/semantic-release-backmerge
           ci: false
           dry_run: true
           tag_format: v${version}
@@ -99,6 +100,7 @@ jobs:
             @semantic-release/github
             @semantic-release/release-notes-generator
             conventional-changelog-conventionalcommits
+            @kilianpaquier/semantic-release-backmerge
           dry_run: ${{ inputs.dry_run }}
           tag_format: v${version}
           branches: |

@@ -6,3 +6,4 @@
 @semantic-release/release-notes-generator
 conventional-changelog-conventionalcommits
 semantic-release-license
+@kilianpaquier/semantic-release-backmerge
