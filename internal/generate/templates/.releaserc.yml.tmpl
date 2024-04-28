@@ -66,6 +66,15 @@ plugins:
       failComment: false
       failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
+<<- /* semantic-release-backmerge doesn't handle gitea or bitbucket yet */>>
+<<- if has "backmerge" .CI.Options >>
+  - - "@kilianpaquier/semantic-release-backmerge"
+    - platform: << .Platform >>
+      targets:
+        - { from: main, to: develop }
+        - { from: main, to: staging }
+        - { from: staging, to: develop }
+<<- end >>
 <<- end >>
 <<- if eq .CI.Name "gitlab" >>
   - - "@semantic-release/exec"

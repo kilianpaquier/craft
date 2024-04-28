@@ -34,6 +34,8 @@ const (
 const (
 	// AutoRelease is the auto_release option for CI tuning.
 	AutoRelease string = "auto_release"
+	// Backmerge is the backmerge option for CI tuning.
+	Backmerge string = "backmerge"
 	// CodeCov is the codecov option for CI tuning.
 	CodeCov string = "codecov"
 	// CodeQL is the codeql option for CI tuning.
@@ -50,7 +52,7 @@ const (
 
 // AllOptions returns the slice with all availables CI options.
 func AllOptions() []string {
-	return []string{AutoRelease, CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
+	return []string{AutoRelease, Backmerge, CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
 }
 
 // CraftConfig represents all options configurable in .craft file at root project.

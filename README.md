@@ -110,6 +110,7 @@ ci:
   # ci options, providing one or multiple options with tune the ci generation (optional)
   options:
     - auto_release
+    - backmerge
     - codecov
     - codeql
     - dependabot

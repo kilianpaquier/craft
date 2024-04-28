@@ -49,6 +49,7 @@
                         "type": "string",
                         "enum": [
                             "auto_release",
+                            "backmerge",
                             "codecov",
                             "codeql",
                             "dependabot",
