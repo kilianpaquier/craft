@@ -63,8 +63,8 @@ jobs:
           cache: pnpm
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm install --frozen-lockfile
       - run: mkdir -p reports/
+      - run: pnpm install --frozen-lockfile
       - run: pnpm run lint -o reports/node-lint.xslint.json -f json
       - uses: actions/upload-artifact@v4
         with:
@@ -95,8 +95,8 @@ jobs:
           cache: pnpm
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm install --frozen-lockfile
       - run: mkdir -p reports/
+      - run: pnpm install --frozen-lockfile
       - run: pnpm run test
       - uses: codecov/codecov-action@v4
         if: ${{ ! startsWith(github.head_ref, 'dependabot') }} # ignore codecov on dependabot branches

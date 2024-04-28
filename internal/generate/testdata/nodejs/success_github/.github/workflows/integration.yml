@@ -39,15 +39,12 @@ jobs:
     needs: run-workflow
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          cache: pnpm
+          cache: yarn
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm audit
+      - run: yarn audit
 
   node-lint:
     name: Node Lint
@@ -55,17 +52,14 @@ jobs:
     needs: run-workflow
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          cache: pnpm
+          cache: yarn
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm install --frozen-lockfile
       - run: mkdir -p reports/
-      - run: pnpm run lint -o reports/node-lint.xslint.json -f json
+      - run: yarn install --frozen-lockfile
+      - run: yarn run lint -o reports/node-lint.xslint.json -f json
 
   node-test:
     name: Node Test
@@ -82,17 +76,14 @@ jobs:
       OS: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          cache: pnpm
+          cache: yarn
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm install --frozen-lockfile
       - run: mkdir -p reports/
-      - run: pnpm run test
+      - run: yarn install --frozen-lockfile
+      - run: yarn run test
 
   workflow-result:
     name: Workflow Result

@@ -124,10 +124,6 @@ ci:
 # when not overridden, the platform is matched based on "git config --get remote.origin.url" on the returned host (github.com, gitlab.com, ...)
 platform: bitbucket | gitea | github | gitlab
 
-# specific property to override package manager used for generation on nodejs projects.
-# by default, it's "pnpm" because it's faster than npm and more near (in terms of culture) npm than yarn would be.
-package_manager: pnpm | npm | yarn
-
 docker:
   # specific docker registry to push images on (optional, default is none - docker.io)
   # used in various places like helm values.yml images registry

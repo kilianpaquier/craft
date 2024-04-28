@@ -75,12 +75,6 @@ func (b *CraftConfigBuilder) NoMakefile(noMakefile bool) *CraftConfigBuilder {
 	return b
 }
 
-// PackageManager sets CraftConfig's PackageManager.
-func (b *CraftConfigBuilder) PackageManager(packageManager string) *CraftConfigBuilder {
-	b.build.PackageManager = &packageManager
-	return b
-}
-
 // Platform sets CraftConfig's Platform.
 func (b *CraftConfigBuilder) Platform(platform string) *CraftConfigBuilder {
 	b.build.Platform = platform

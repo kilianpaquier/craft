@@ -86,23 +86,36 @@ jobs:
           VERSION: ${{ steps.semantic_release.outputs.new_release_version }}
 
 <<- if hasKey .Languages "nodejs" >>
+<<- $specifics := get .Languages "nodejs" >>
 
-  npm-build:
-    name: Npm Build
+  node-build:
+    name: Node Build
     runs-on: ubuntu-latest
     needs: version
     steps:
       - uses: actions/checkout@v4
+<<- if eq $specifics.PackageManagerName "pnpm" >>
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: << $specifics.PackageManagerVersion | default "8" >>
+<<- end >>
+<<- if eq $specifics.PackageManagerName "bun" >>
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: << $specifics.PackageManagerVersion | default "latest" >>
+<<- else >>
       - uses: actions/setup-node@v4
         with:
-          cache: pnpm
+          cache: << $specifics.PackageManagerName >>
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
+<<- end >>
+<<- if eq $specifics.PackageManagerName "npm" >>
+      - run: << $specifics.PackageManagerName >> ci
+<<- else >>
+      - run: << $specifics.PackageManagerName >> install --frozen-lockfile
+<<- end >>
+      - run: << $specifics.PackageManagerName >> run build
 <<- if has "pages" .CI.Options >>
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -262,7 +275,7 @@ jobs:
 <<- $needs := list >>
 
 <<- if hasKey .Languages "nodejs" >>
-<<- $needs = append $needs "npm-build" >>
+<<- $needs = append $needs "node-build" >>
 <<- end >>
 
 <<- if hasKey .Languages "hugo" >>
@@ -300,7 +313,7 @@ jobs:
 <<- end >>
 
 <<- if hasKey .Languages "nodejs" >>
-<<- $needs = append $needs "npm-build" >>
+<<- $needs = append $needs "node-build" >>
 <<- end >>
 
 <<- if $docker >>

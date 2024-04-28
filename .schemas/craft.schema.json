@@ -125,16 +125,6 @@
             "description": "Platform for README.md badges (automatically parsed with git origin URL by default).",
             "type": "string"
         },
-        "package_manager": {
-            "description": "Package manager for nodejs projects (by default it will be pnpm). Useful for github actions integration.",
-            "type": "string",
-            "default": "pnpm",
-            "enum": [
-                "npm",
-                "pnpm",
-                "yarn"
-            ]
-        },
         "docker": {
             "description": "Docker definition.",
             "type": "object",

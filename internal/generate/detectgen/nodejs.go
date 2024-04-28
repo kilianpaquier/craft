@@ -8,9 +8,10 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
 
 	"github.com/kilianpaquier/craft/internal/models"
@@ -20,14 +21,33 @@ import (
 
 // PackageJSON represents the node package json descriptor.
 type PackageJSON struct {
-	Author         *string `json:"author,omitempty"`
-	Description    *string `json:"description,omitempty"`
-	License        *string `json:"license,omitempty"`
-	Main           *string `json:"main,omitempty"`
-	Name           string  `json:"name,omitempty"           validate:"required"`
-	PackageManager *string `json:"packageManager,omitempty"`
-	Private        bool    `json:"private,omitempty"`
-	Version        string  `json:"version,omitempty"`
+	Author                    *string `json:"author,omitempty"`
+	Description               *string `json:"description,omitempty"`
+	License                   *string `json:"license,omitempty"`
+	Main                      *string `json:"main,omitempty"`
+	Name                      string  `json:"name,omitempty"           validate:"required"`
+	PackageManagerWithVersion string  `json:"packageManager,omitempty"`
+	Private                   bool    `json:"private,omitempty"`
+	Version                   string  `json:"version,omitempty"`
+
+	PackageManagerName    string `json:"-"`
+	PackageManagerVersion string `json:"-"`
+}
+
+// Validate validates the given PackageJSON struct.
+func (p *PackageJSON) Validate() error {
+	var errs []error
+
+	packageManager := regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\d+(-.+)?$`)
+	if p.PackageManagerWithVersion != "" && !packageManager.MatchString(p.PackageManagerWithVersion) {
+		// json schema takes care of saying which regexp must be validated
+		errs = append(errs, errors.New("package.json packageManager isn't valid"))
+	}
+
+	if err := validator.New().Struct(p); err != nil {
+		errs = append(errs, fmt.Errorf("struct validation: %w", err))
+	}
+	return errors.Join(errs...)
 }
 
 // detectNodejs handles nodejs detection at configuration provided destination directory.
@@ -48,16 +68,23 @@ func detectNodejs(ctx context.Context, config *models.GenerateConfig) []Generate
 
 	log.Infof("nodejs detected, a %s is present and valid", models.PackageJSON)
 
+	// affect package manager and it's version separately for template generation
+	if pkg.PackageManagerWithVersion == "" {
+		pkg.PackageManagerWithVersion = "pnpm"
+	}
+	name, version, _ := strings.Cut(pkg.PackageManagerWithVersion, "@")
+	if name != "" {
+		pkg.PackageManagerName = name
+	}
+	if version != "" {
+		pkg.PackageManagerVersion = version
+	}
+
 	config.Languages[string(NameNodejs)] = pkg
 	config.ProjectName = pkg.Name
 	// automatically add one binary because there's no such things
 	if pkg.Main != nil {
 		config.Binaries++
-	}
-
-	// automatically set default package manager if none was given
-	if config.PackageManager == nil {
-		config.PackageManager = lo.ToPtr("pnpm")
 	}
 
 	// deactivate makefile because commands are facilitated by package.json scripts
@@ -80,9 +107,5 @@ func readPackageJSON(jsonpath string) (*PackageJSON, error) {
 	if err := json.Unmarshal(bytes, &pkg); err != nil {
 		return nil, fmt.Errorf("unmarshal: %w", err)
 	}
-
-	if err := validator.New().Struct(pkg); err != nil {
-		return nil, fmt.Errorf("validation: %w", err)
-	}
-	return pkg, nil
+	return pkg, pkg.Validate()
 }
