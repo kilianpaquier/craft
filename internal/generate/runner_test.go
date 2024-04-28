@@ -158,7 +158,6 @@ func TestExecute(t *testing.T) {
 		expected := input.Copy().
 			NoChart(true).
 			NoMakefile(true).
-			PackageManager("pnpm").
 			Build()
 
 		executor, err := generate.NewRunner(ctx, *craft, *opts)

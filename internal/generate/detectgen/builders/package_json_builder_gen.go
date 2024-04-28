@@ -57,9 +57,21 @@ func (b *PackageJSONBuilder) Name(name string) *PackageJSONBuilder {
 	return b
 }
 
-// PackageManager sets PackageJSON's PackageManager.
-func (b *PackageJSONBuilder) PackageManager(packageManager string) *PackageJSONBuilder {
-	b.build.PackageManager = &packageManager
+// PackageManagerName sets PackageJSON's PackageManagerName.
+func (b *PackageJSONBuilder) PackageManagerName(packageManagerName string) *PackageJSONBuilder {
+	b.build.PackageManagerName = packageManagerName
+	return b
+}
+
+// PackageManagerVersion sets PackageJSON's PackageManagerVersion.
+func (b *PackageJSONBuilder) PackageManagerVersion(packageManagerVersion string) *PackageJSONBuilder {
+	b.build.PackageManagerVersion = packageManagerVersion
+	return b
+}
+
+// PackageManagerWithVersion sets PackageJSON's PackageManagerWithVersion.
+func (b *PackageJSONBuilder) PackageManagerWithVersion(packageManagerWithVersion string) *PackageJSONBuilder {
+	b.build.PackageManagerWithVersion = packageManagerWithVersion
 	return b
 }
 

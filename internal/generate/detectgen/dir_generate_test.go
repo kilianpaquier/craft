@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate/detectgen"
+	"github.com/kilianpaquier/craft/internal/generate/detectgen/builders"
 	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 )
@@ -457,6 +458,13 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 					Build()).
 				Platform(models.Github).
 				Build()).
+			Languages(map[string]any{
+				string(detectgen.NameNodejs): builders.NewPackageJSONBuilder().
+					PackageManagerWithVersion("yarn@2.4.3").
+					PackageManagerName("yarn").
+					PackageManagerVersion("2.4.3").
+					Build(),
+			}).
 			Options(*opts.Copy().
 				DestinationDir(destdir).
 				Build()).
@@ -483,6 +491,14 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 				Docker(*tests.NewDockerBuilder().Build()).
 				Platform(models.Github).
 				Build()).
+			Languages(map[string]any{
+				string(detectgen.NameNodejs): builders.NewPackageJSONBuilder().
+					PackageManagerName("pnpm").
+					PackageManagerVersion("8.0.0").
+					PackageManagerWithVersion("pnpm@8.0.0").
+					Private(true).
+					Build(),
+			}).
 			Options(*opts.Copy().
 				DestinationDir(destdir).
 				Build()).
@@ -510,6 +526,13 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 				NoMakefile(true).
 				Platform(models.Gitlab).
 				Build()).
+			Languages(map[string]any{
+				string(detectgen.NameNodejs): builders.NewPackageJSONBuilder().
+					PackageManagerWithVersion("yarn@2.4.3").
+					PackageManagerName("yarn").
+					PackageManagerVersion("2.4.3").
+					Build(),
+			}).
 			Options(*opts.Copy().
 				DestinationDir(destdir).
 				Build()).
@@ -536,6 +559,14 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 				Docker(*tests.NewDockerBuilder().Build()).
 				Platform(models.Gitlab).
 				Build()).
+			Languages(map[string]any{
+				string(detectgen.NameNodejs): builders.NewPackageJSONBuilder().
+					PackageManagerName("pnpm").
+					PackageManagerVersion("8.0.0").
+					PackageManagerWithVersion("pnpm@8.0.0").
+					Private(true).
+					Build(),
+			}).
 			Options(*opts.Copy().
 				DestinationDir(destdir).
 				Build()).
@@ -562,9 +593,15 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 					Options(models.AllOptions()...).
 					Build()).
 				License("mit").
-				PackageManager("npm").
 				Platform(models.Github).
 				Build()).
+			Languages(map[string]any{
+				string(detectgen.NameNodejs): builders.NewPackageJSONBuilder().
+					PackageManagerWithVersion("bun@1.1.6").
+					PackageManagerName("bun").
+					PackageManagerVersion("1.1.6").
+					Build(),
+			}).
 			Options(*opts.Copy().
 				DestinationDir(destdir).
 				Build()).
@@ -591,9 +628,15 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 					Options(models.AllOptions()...).
 					Build()).
 				License("mit").
-				PackageManager("yarn").
 				Platform(models.Gitlab).
 				Build()).
+			Languages(map[string]any{
+				string(detectgen.NameNodejs): builders.NewPackageJSONBuilder().
+					PackageManagerWithVersion("bun@1.1.6").
+					PackageManagerName("bun").
+					PackageManagerVersion("1.1.6").
+					Build(),
+			}).
 			Options(*opts.Copy().
 				DestinationDir(destdir).
 				Build()).
