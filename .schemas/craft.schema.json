@@ -42,17 +42,13 @@
                         "gitlab"
                     ]
                 },
-                "auto_release": {
-                    "description": "Whether to automatically run release workflow.",
-                    "type": "boolean",
-                    "default": false
-                },
                 "options": {
                     "description": "CI Options.",
                     "type": "array",
                     "items": {
                         "type": "string",
                         "enum": [
+                            "auto_release",
                             "codecov",
                             "codeql",
                             "dependabot",

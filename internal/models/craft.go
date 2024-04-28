@@ -32,6 +32,8 @@ const (
 )
 
 const (
+	// AutoRelease is the auto_release option for CI tuning.
+	AutoRelease string = "auto_release"
 	// CodeCov is the codecov option for CI tuning.
 	CodeCov string = "codecov"
 	// CodeQL is the codeql option for CI tuning.
@@ -48,7 +50,7 @@ const (
 
 // AllOptions returns the slice with all availables CI options.
 func AllOptions() []string {
-	return []string{CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
+	return []string{AutoRelease, CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
 }
 
 // CraftConfig represents all options configurable in .craft file at root project.
@@ -68,9 +70,8 @@ type CraftConfig struct {
 
 // CI is the struct for craft ci tuning.
 type CI struct {
-	AutoRelease bool     `json:"-" yaml:"auto_release,omitempty"`
-	Name        string   `json:"-" yaml:"name,omitempty"                          validate:"required,oneof=github gitlab"`
-	Options     []string `json:"-" yaml:"options,omitempty"      builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot pages renovate sonar"`
+	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required,oneof=github gitlab"`
+	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=auto_release backmerge codecov codeql dependabot pages renovate sonar"`
 }
 
 // Docker is the struct for craft docker tuning.

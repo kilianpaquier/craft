@@ -24,7 +24,7 @@ variables:
   SEMREL_HOOKS_DIR: scripts
   SEMREL_INFO_ON: protected
   SEMREL_INFO_NEXT_VERSION: v${SEMREL_INFO_NEXT_VERSION}
-  SEMREL_AUTO_RELEASE_ENABLED: "<< .CI.AutoRelease >>"
+  SEMREL_AUTO_RELEASE_ENABLED: "<< has "auto_release" .CI.Options >>"
 
 version:
   image: $SEMREL_IMAGE
