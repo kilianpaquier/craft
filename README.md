@@ -107,10 +107,9 @@ license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0
 ci:
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
-  # whether to automatically run the release workflow
-  auto_release: true | false
   # ci options, providing one or multiple options with tune the ci generation (optional)
   options:
+    - auto_release
     - codecov
     - codeql
     - dependabot

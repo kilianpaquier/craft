@@ -290,7 +290,6 @@ func TestGenerateFunc_Golang(t *testing.T) {
 			Clis(map[string]struct{}{"cli-name": {}}).
 			CraftConfig(*craft.Copy().
 				CI(*tests.NewCIBuilder().
-					AutoRelease(true).
 					Name(models.Github).
 					Options(models.AllOptions()...).
 					Build()).
@@ -323,7 +322,6 @@ func TestGenerateFunc_Golang(t *testing.T) {
 			Clis(map[string]struct{}{"cli-name": {}}).
 			CraftConfig(*craft.Copy().
 				CI(*tests.NewCIBuilder().
-					AutoRelease(true).
 					Name(models.Gitlab).
 					Options(models.AllOptions()...).
 					Build()).
@@ -588,7 +586,6 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		config := config.Copy().
 			CraftConfig(*craft.Copy().
 				CI(*tests.NewCIBuilder().
-					AutoRelease(true).
 					Name(models.Github).
 					Options(models.AllOptions()...).
 					Build()).
@@ -623,7 +620,6 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 		config := config.Copy().
 			CraftConfig(*craft.Copy().
 				CI(*tests.NewCIBuilder().
-					AutoRelease(true).
 					Name(models.Gitlab).
 					Options(models.AllOptions()...).
 					Build()).
