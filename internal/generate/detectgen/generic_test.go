@@ -54,7 +54,7 @@ func TestGenericFunc(t *testing.T) {
 		expected := tests.NewGenerateConfigBuilder().
 			CraftConfig(*tests.NewCraftConfigBuilder().
 				CI(*tests.NewCIBuilder().
-					Options(models.Dependabot, models.Renovate).
+					Options(models.AutoRelease, models.Backmerge, models.Dependabot, models.Renovate).
 					Build()).
 				Build()).
 			Options(*tests.NewGenerateOptionsBuilder().

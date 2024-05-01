@@ -2,6 +2,7 @@ package detectgen
 
 import (
 	"context"
+	"slices"
 
 	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
@@ -18,7 +19,12 @@ func GenericFunc(ctx context.Context, config *models.GenerateConfig) []GenerateF
 	if config.CI != nil {
 		// only keep generic applicable options
 		options := lo.Filter(config.CI.Options, func(option string, _ int) bool {
-			return option == models.Dependabot || option == models.Renovate
+			return slices.Contains([]string{
+				models.AutoRelease,
+				models.Backmerge,
+				models.Dependabot,
+				models.Renovate,
+			}, option)
 		})
 		config.CI.Options = options
 	}
