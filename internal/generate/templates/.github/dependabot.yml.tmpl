@@ -5,61 +5,83 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
-<<- $docker := and .Docker (gt .Binaries 0) >>
-<<- $packages := list "github-actions" >>
-
-<<- if hasKey .Languages "golang" >>
-<<- $packages = append $packages "gomod" >>
-<<- end >>
-
-<<- if hasKey .Languages "nodejs" >>
-<<- $packages = append $packages "npm" >>
-<<- end >>
-
-<<- if hasKey .Languages "python" >>
-<<- $packages = append $packages "pip" >>
-<<- end >>
-
-<<- if $docker >>
-<<- $packages = append $packages "docker" >>
-<<- end >>
-
 version: 2
 updates:
-<<- range $packages >>
 
-  - package-ecosystem: << . >>
+  - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
-      day: wednesday
-      time: "12:00"
-      timezone: Etc/UTC
     groups:
-      all:
+      major/minor/patch:
+        update-types:
+          - major
+          - minor
+          - patch
+    commit-message:
+      include: scope
+      prefix: ci
+<<- range $.Maintainers >>
+    reviewers:
+      - << .Name >>
+<<- end >>
+
+<<- $docker := and .Docker (gt .Binaries 0) >>
+<<- if $docker >>
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      minor/patch:
         update-types:
           - minor
           - patch
     commit-message:
       include: scope
-      prefix: chore
-    pull-request-branch-name:
-      separator: /
-    rebase-strategy: auto
-    target-branch: main
-
-<<- with $.Maintainers >>
-<<- range . >>
-    assignees:
-      - << .Name >>
-<<- end >>
-<<- end >>
-
-<<- with $.Maintainers >>
-<<- range . >>
+      prefix: ci
+<<- range $.Maintainers >>
     reviewers:
       - << .Name >>
 <<- end >>
 <<- end >>
 
+<<- if hasKey .Languages "golang" >>
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      minor/patch:
+        update-types:
+          - minor
+          - patch
+    commit-message:
+      include: scope
+      prefix: ci
+<<- range $.Maintainers >>
+    reviewers:
+      - << .Name >>
+<<- end >>
+<<- end >>
+
+<<- if hasKey .Languages "nodejs" >>
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      minor:
+        update-types:
+          - minor
+      patch:
+        update-types:
+          - patch
+    commit-message:
+      include: scope
+      prefix: ci
+<<- range $.Maintainers >>
+    reviewers:
+      - << .Name >>
+<<- end >>
 <<- end >>

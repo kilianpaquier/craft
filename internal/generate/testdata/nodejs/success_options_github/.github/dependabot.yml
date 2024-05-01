@@ -12,46 +12,30 @@ updates:
     directory: /
     schedule:
       interval: weekly
-      day: wednesday
-      time: "12:00"
-      timezone: Etc/UTC
     groups:
-      all:
+      major/minor/patch:
         update-types:
+          - major
           - minor
           - patch
     commit-message:
       include: scope
-      prefix: chore
-    pull-request-branch-name:
-      separator: /
-    rebase-strategy: auto
-    target-branch: main
-    assignees:
-      - maintainer name
+      prefix: ci
     reviewers:
       - maintainer name
-
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
-      day: wednesday
-      time: "12:00"
-      timezone: Etc/UTC
     groups:
-      all:
+      minor:
         update-types:
           - minor
+      patch:
+        update-types:
           - patch
     commit-message:
       include: scope
-      prefix: chore
-    pull-request-branch-name:
-      separator: /
-    rebase-strategy: auto
-    target-branch: main
-    assignees:
-      - maintainer name
+      prefix: ci
     reviewers:
       - maintainer name
