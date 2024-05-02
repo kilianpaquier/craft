@@ -21,14 +21,18 @@ import (
 
 // PackageJSON represents the node package json descriptor.
 type PackageJSON struct {
-	Author                    *string `json:"author,omitempty"`
-	Description               *string `json:"description,omitempty"`
-	License                   *string `json:"license,omitempty"`
-	Main                      *string `json:"main,omitempty"`
-	Name                      string  `json:"name,omitempty"           validate:"required"`
-	PackageManagerWithVersion string  `json:"packageManager,omitempty"`
-	Private                   bool    `json:"private,omitempty"`
-	Version                   string  `json:"version,omitempty"`
+	Author                    *string           `json:"author,omitempty"`
+	Description               *string           `json:"description,omitempty"`
+	Files                     []string          `json:"files,omitempty"`
+	Keywords                  []string          `json:"keywords,omitempty"`
+	License                   *string           `json:"license,omitempty"`
+	Main                      *string           `json:"main,omitempty"`
+	Module                    string            `json:"module,omitempty"`
+	Name                      string            `json:"name,omitempty"           validate:"required"`
+	PackageManagerWithVersion string            `json:"packageManager,omitempty"`
+	Private                   bool              `json:"private,omitempty"`
+	Scripts                   map[string]string `json:"scripts,omitempty"`
+	Version                   string            `json:"version,omitempty"`
 
 	PackageManagerName    string `json:"-"`
 	PackageManagerVersion string `json:"-"`
