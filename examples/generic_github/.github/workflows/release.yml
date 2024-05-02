@@ -83,6 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semantic-release

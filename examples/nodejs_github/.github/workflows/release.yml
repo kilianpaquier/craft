@@ -90,6 +90,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+          retention-days: 1
 
   docker-build:
     name: Docker Build
@@ -187,7 +192,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semantic-release
         uses: cycjimmy/semantic-release-action@v4
