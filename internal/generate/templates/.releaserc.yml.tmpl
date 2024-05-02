@@ -57,7 +57,6 @@ plugins:
         - package.json
 <<- end >>
       message: "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-<<- if .CI >>
   - - "@semantic-release/<< .CI.Name >>"
     - assets:
         - { path: CHANGELOG.md, label: CHANGELOG.md }
@@ -68,14 +67,14 @@ plugins:
       failComment: false
       failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
-<<- /* semantic-release-backmerge doesn't handle gitea or bitbucket yet */>>
 <<- if has "backmerge" .CI.Options >>
   - - "@kilianpaquier/semantic-release-backmerge"
-    - platform: << .Platform >>
-      targets:
+    - targets:
         - { from: main, to: develop }
         - { from: main, to: staging }
         - { from: staging, to: develop }
+<<- if not (eq .CI.Name .Platform) >>
+      platform: << .Platform >>
 <<- end >>
 <<- end >>
 <<- if eq .CI.Name "gitlab" >>

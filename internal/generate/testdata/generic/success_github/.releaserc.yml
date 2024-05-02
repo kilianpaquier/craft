@@ -54,8 +54,7 @@ plugins:
       failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
   - - "@kilianpaquier/semantic-release-backmerge"
-    - platform: github
-      targets:
+    - targets:
         - { from: main, to: develop }
         - { from: main, to: staging }
         - { from: staging, to: develop }
