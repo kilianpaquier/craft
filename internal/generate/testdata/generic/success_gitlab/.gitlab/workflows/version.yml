@@ -57,3 +57,7 @@ version:
       dotenv: "${SEMREL_CONFIG_DIR}/semrel.out.env"
   rules:
     - if: $CI_COMMIT_REF_PROTECTED != 'true'
+
+semantic-release:
+  variables:
+    GIT_DEPTH: "0"

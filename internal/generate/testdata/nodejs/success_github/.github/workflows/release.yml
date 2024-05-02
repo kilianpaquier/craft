@@ -86,6 +86,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: yarn install --frozen-lockfile
       - run: yarn run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+          retention-days: 1
 
   release:
     name: Release
@@ -102,7 +107,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semantic-release
         uses: cycjimmy/semantic-release-action@v4
