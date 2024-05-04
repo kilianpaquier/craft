@@ -60,6 +60,9 @@ version:
   rules:
     - if: $CI_COMMIT_REF_PROTECTED != 'true'
 
+<<- if has "backmerge" .CI.Options >>
+
 semantic-release:
   variables:
     GIT_DEPTH: "0"
+<<- end >>

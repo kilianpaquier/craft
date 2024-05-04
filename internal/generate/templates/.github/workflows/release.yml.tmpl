@@ -376,7 +376,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+<<- if has "backmerge" .CI.Options >>
           fetch-depth: 0
+<<- end >>
           persist-credentials: false
 <<- if or $gobuild $nodebuild >>
       - uses: actions/download-artifact@v4
