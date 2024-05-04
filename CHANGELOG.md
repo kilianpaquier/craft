@@ -1,3 +1,26 @@
+## [1.0.0-beta.5](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2024-05-04)
+
+
+### Bug Fixes
+
+* **backmerge:** only set fetch-depth: 0 for gitlab and github cicd when option is provided ([a44ef0e](https://github.com/kilianpaquier/craft/commit/a44ef0e41cc0a78e289e70d3483b306a99b3a4c3))
+* **gitlab:** bad regexp on version job ([0530a6d](https://github.com/kilianpaquier/craft/commit/0530a6db9c97152f65679acd3b814f3d6fdf2a09))
+
+
+### Documentation
+
+* **ci:** add information about dot not being espaced in github branches regexp ([35517ed](https://github.com/kilianpaquier/craft/commit/35517ed97575c5a26c807af1cbc2a4b0be0f86df))
+
+
+### Chores
+
+* **gitlab:** update prod_ref and integ_ref in main .gitlab-ci.yml ([1a58a2b](https://github.com/kilianpaquier/craft/commit/1a58a2b98bf3b1b88f988fefd753e1c245018204))
+
+
+### Code Refactoring
+
+* **github:** rework release workflow in github actions following latest modifications ([557a6d4](https://github.com/kilianpaquier/craft/commit/557a6d4de299b3531dff9e33abcf6abb7f0b3308))
+
 ## [1.0.0-beta.4](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2024-05-04)
 
 
