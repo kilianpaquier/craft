@@ -43,7 +43,7 @@ jobs:
             @semantic-release/git
             @semantic-release/github
             @semantic-release/release-notes-generator
-            conventional-changelog-conventionalcommits
+            conventional-changelog-conventionalcommits@7
           dry_run: true
           tag_format: v${version}
           branches: |
@@ -96,7 +96,7 @@ jobs:
             @semantic-release/git
             @semantic-release/github
             @semantic-release/release-notes-generator
-            conventional-changelog-conventionalcommits
+            conventional-changelog-conventionalcommits@7
           dry_run: ${{ inputs.dry_run }}
           tag_format: v${version}
           branches: |
