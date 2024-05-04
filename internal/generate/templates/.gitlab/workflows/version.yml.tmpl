@@ -35,7 +35,7 @@ version:
     - SHA=$(echo "${CI_COMMIT_REF_NAME}" | sha256sum | cut -c -8)
     - >
       if [ "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" != "" ]; then
-        if echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep "^v[0-9]+(.[0-9]+)?$"; then
+        if echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep -Eq "^v[0-9]+(\.[0-9]+)?$"; then
           SEARCH="$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
         fi
       fi
