@@ -1,3 +1,39 @@
+## [1.0.0-beta.4](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2024-05-04)
+
+
+### Features
+
+* **ci:** add backmerge option using @kilianpaquier/semantic-release-backmerge (alpha plugin) ([0e4fea1](https://github.com/kilianpaquier/craft/commit/0e4fea1494119a25637541e0a4015f600041d70b))
+* **ci:** handle minor maintenance branch ([4a50859](https://github.com/kilianpaquier/craft/commit/4a5085930b6159e552b38e5d5846b040a08477d8))
+* **nodejs:** add NPM_TOKEN when package.json is not private for semantic releasing ([7717b43](https://github.com/kilianpaquier/craft/commit/7717b433bea2bd11109a24b6d9fff5a37271c4c7))
+* **nodejs:** add reports folder exclusion ([40ede9a](https://github.com/kilianpaquier/craft/commit/40ede9a726014c50e7bf014713e5abc0a3ba0a9b))
+* **nodejs:** handle properly package managers ([97349f9](https://github.com/kilianpaquier/craft/commit/97349f9906af881e1ad08e68a4d0127fa97c405a))
+
+
+### Bug Fixes
+
+* **generic:** enable auto release and backmerge features for empty languages projects (like readme only, etc.) ([49ed7ba](https://github.com/kilianpaquier/craft/commit/49ed7ba0282ee7f9c525de917658bad2050852ea))
+* **github:** release action not having the right conditions nor the right rights for version job ([fb0d770](https://github.com/kilianpaquier/craft/commit/fb0d770969d823be52aa1ccebe59ede5cae6f18c))
+* **gitlab:** bad semrel plugin in plugins file ([c657725](https://github.com/kilianpaquier/craft/commit/c657725f935b48728ef8298212dcbb2775992fc2))
+* **nodejs:** add built dist to semantic-release job and git depth for backmerge ([cc0fee6](https://github.com/kilianpaquier/craft/commit/cc0fee6f0fb9d175d5cbf241f45dd947c47e02b8))
+* **semantic-release:** add conventionalcommits preset for commit-analyzer and fix version to 7 ([5138247](https://github.com/kilianpaquier/craft/commit/51382471cf2cf60ccc0ba3a71d4e07f0349f0fb2))
+
+
+### Chores
+
+* **backmerge:** allow backmerge for all platforms in releaserc ([1ddf381](https://github.com/kilianpaquier/craft/commit/1ddf381c6672dd19663a02203c49b1bedbbc8d5a))
+* **deps:** bump golangci-lint action to v5 in templates ([8ead59d](https://github.com/kilianpaquier/craft/commit/8ead59d5700beaef0a8a254a3d58803c3a47ebce))
+* **deps:** upgrade dependencies ([b2c74bf](https://github.com/kilianpaquier/craft/commit/b2c74bf6350b354a1d5c1fdb9baca6e08cc51872))
+* **deps:** upgrade generated github semantic-release ci to v23 ([d6d592e](https://github.com/kilianpaquier/craft/commit/d6d592eedb6b304fd7a3cadc316ca3cefb06132f))
+* **nodejs:** add fields to parsed package.json ([1d73537](https://github.com/kilianpaquier/craft/commit/1d73537586bd45a3709def3fecb9dc1e9cc80c76))
+* **releaserc:** disable issue opening on release error ([1552b50](https://github.com/kilianpaquier/craft/commit/1552b50355e4065a60e567ff125e9cc6ce1d1385))
+
+
+### Code Refactoring
+
+* **auto_release:** move option into ci.options ([072fe6c](https://github.com/kilianpaquier/craft/commit/072fe6c36cf0e07abb443db3487fc9d58f37e5c5))
+* **dependabot:** remove default keys and use ci prefix for github actions updates ([5d8b469](https://github.com/kilianpaquier/craft/commit/5d8b469fe1541ca82a1f52da73333e1a75e960f2))
+
 ## [1.0.0-beta.3](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2024-04-13)
 
 
