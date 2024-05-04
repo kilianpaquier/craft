@@ -16,6 +16,5 @@ include:
 # SONAR_PASSWORD: SonarQube password (depends on your authentication method)
 
 variables:
-  PROD_REF: main
-  REVIEW_REF: staging
-  INTEG_REF: develop
+  PROD_REF: /^(master|main|v[0-9]+(\.[0-9]+)?)$/
+  INTEG_REF: /^(staging|develop)$/
