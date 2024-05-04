@@ -4,5 +4,5 @@
 @semantic-release/git
 @semantic-release/gitlab
 @semantic-release/release-notes-generator
-conventional-changelog-conventionalcommits
+conventional-changelog-conventionalcommits@7
 @kilianpaquier/semantic-release-backmerge
