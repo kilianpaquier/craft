@@ -36,6 +36,6 @@ updates:
           - patch
     commit-message:
       include: scope
-      prefix: ci
+      prefix: chore
     reviewers:
       - maintainer name
