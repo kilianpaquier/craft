@@ -1,3 +1,11 @@
+## [1.0.0-beta.6](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2024-05-06)
+
+
+### Bug Fixes
+
+* **ci:** ensure for both gitlab and github that a version is computed and fix associated regexp ([0839a1d](https://github.com/kilianpaquier/craft/commit/0839a1db1fd7a9f9d20cde88121773f0260c2bdc))
+* **dependabot:** bad commit prefix for code dependencies ([f328ecd](https://github.com/kilianpaquier/craft/commit/f328ecd4afca2c7cac90fefc7de0d8beede703e8))
+
 ## [1.0.0-beta.5](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2024-05-04)
 
 
