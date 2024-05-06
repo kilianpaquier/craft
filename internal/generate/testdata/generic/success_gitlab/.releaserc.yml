@@ -70,17 +70,16 @@ plugins:
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
   - - "@kilianpaquier/semantic-release-backmerge"
     - targets:
-        - { from: main, to: develop }
-        - { from: main, to: staging }
-        - { from: staging, to: develop }
-  - - "@semantic-release/exec"
-    - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
+        - { from: "^(master|main)$", to: "staging" }
+        - { from: "^(master|main)$", to: "^(dev|develop|development)$" }
+        - { from: staging, to: "^(dev|develop|development)$" }
+  - "@semantic-release/exec"
 branches:
   - (master|main)
-  - v+([0-9])?(.+([0-9]))
+  - v+([0-9])?(.{+([0-9]),x}).x
   - { name: next, prerelease: true }
   - { name: beta, prerelease: true }
   - { name: alpha, prerelease: true }
   - { name: staging, prerelease: beta }
-  - { name: develop, prerelease: alpha }
+  - { name: "(dev|develop|development)", prerelease: alpha }
 tagFormat: v${version}

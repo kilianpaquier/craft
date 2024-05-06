@@ -73,7 +73,7 @@ plugins:
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
   - - "@kilianpaquier/semantic-release-backmerge"
     - targets:
-        - { from: main, to: develop }
-        - { from: main, to: staging }
-        - { from: staging, to: develop }
+        - { from: "^(master|main)$", to: "staging" }
+        - { from: "^(master|main)$", to: "^(dev|develop|development)$" }
+        - { from: staging, to: "^(dev|develop|development)$" }
   - "@semantic-release/exec"
