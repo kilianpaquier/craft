@@ -69,14 +69,13 @@ plugins:
       failComment: false
       failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
-  - - "@semantic-release/exec"
-    - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
+  - "@semantic-release/exec"
 branches:
   - (master|main)
-  - v+([0-9])?(.+([0-9]))
+  - v+([0-9])?(.{+([0-9]),x}).x
   - { name: next, prerelease: true }
   - { name: beta, prerelease: true }
   - { name: alpha, prerelease: true }
   - { name: staging, prerelease: beta }
-  - { name: develop, prerelease: alpha }
+  - { name: "(dev|develop|development)", prerelease: alpha }
 tagFormat: v${version}

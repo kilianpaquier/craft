@@ -85,27 +85,22 @@ plugins:
 <<- if has "backmerge" .CI.Options >>
   - - "@kilianpaquier/semantic-release-backmerge"
     - targets:
-        - { from: main, to: develop }
-        - { from: main, to: staging }
-        - { from: staging, to: develop }
+        - { from: "^(master|main)$", to: "staging" }
+        - { from: "^(master|main)$", to: "^(dev|develop|development)$" }
+        - { from: staging, to: "^(dev|develop|development)$" }
 <<- if not (eq .CI.Name .Platform) >>
       platform: << .Platform >>
 <<- end >>
 <<- end >>
-<<- if eq .CI.Name "gitlab" >>
-  - - "@semantic-release/exec"
-    - verifyReleaseCmd: echo 'VERSION=v${nextRelease.version}' > version.env
-<<- else >>
   - "@semantic-release/exec"
-<<- end >>
 <<- if eq .CI.Name "gitlab" >>
 branches:
   - (master|main)
-  - v+([0-9])?(.+([0-9]))
+  - v+([0-9])?(.{+([0-9]),x}).x
   - { name: next, prerelease: true }
   - { name: beta, prerelease: true }
   - { name: alpha, prerelease: true }
   - { name: staging, prerelease: beta }
-  - { name: develop, prerelease: alpha }
+  - { name: "(dev|develop|development)", prerelease: alpha }
 tagFormat: v${version}
 <<- end >>

@@ -11,5 +11,6 @@ include:
 # SEMREL_GPG_SIGNKEY: Path to the GPG signkey exported with `gpg --armor --export-secret-key`.
 
 variables:
-  PROD_REF: /^(master|main|v[0-9]+(\.[0-9]+)?)$/
-  INTEG_REF: /^(staging|develop)$/
+  PROD_REF: /^(master|main|v[0-9]+(\.([0-9]+|x))?\.x)$/
+  SEMREL_REF: /^(next|alpha|beta|staging|dev|develop|development)$/
+  INTEG_REF: /^(staging|dev|develop|development)$/
