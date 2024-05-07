@@ -14,6 +14,10 @@ func Github(config models.GenerateConfig) Handler {
 		dir := path.Join(".github", "workflows")
 		github := config.CI != nil && config.CI.Name == models.Github
 
+		if filename == "release.yml" {
+			return true, github && !config.CI.Release.Disable
+		}
+
 		if filename == ".codecov.yml" {
 			return true, github && slices.Contains(config.CI.Options, models.CodeCov)
 		}

@@ -39,6 +39,12 @@ func (b *ReleaseBuilder) Backmerge(backmerge bool) *ReleaseBuilder {
 	return b
 }
 
+// Disable sets Release's Disable.
+func (b *ReleaseBuilder) Disable(disable bool) *ReleaseBuilder {
+	b.build.Disable = disable
+	return b
+}
+
 // Mode sets Release's Mode.
 func (b *ReleaseBuilder) Mode(mode string) *ReleaseBuilder {
 	b.build.Mode = mode
