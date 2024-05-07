@@ -10,7 +10,7 @@
 <<- $branch := "main" >>
 
 <<- if eq .Platform "github" >>
-<<- if $coverable >>
+<<- if and .CI $coverable >>
   <img alt="GitHub Actions" src="https://img.shields.io/github/actions/workflow/status/<< .ProjectPath >>/integration.yml?branch=<< $branch >>&style=<< $style >>">
 <<- end >>
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/<< .ProjectPath >>?include_prereleases&sort=semver&style=<< $style >>">
@@ -25,7 +25,9 @@
 
 <<- if eq .Platform "gitlab" >>
 <<- $url := toQuery (print "https://" .ProjectHost) >>
+<<- if .CI >>
   <img alt="Gitlab Pipeline" src="https://img.shields.io/gitlab/pipeline-status/<< toQuery .ProjectPath >>?gitlab_url=<< $url >>&branch=<< $branch >>&style=<< $style >>">
+<<- end >>
   <img alt="GitLab Release" src="https://img.shields.io/gitlab/v/release/<< toQuery .ProjectPath >>?gitlab_url=<< $url >>&include_prereleases&sort=semver&style=<< $style >>">
   <img alt="GitLab Issues" src="https://img.shields.io/gitlab/issues/open/<< toQuery .ProjectPath >>?gitlab_url=<< $url >>&style=<< $style >>">
 <<- if .License >>
