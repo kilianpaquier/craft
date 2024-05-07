@@ -12,5 +12,5 @@ include:
 
 variables:
   PROD_REF: /^(master|main|v[0-9]+(\.([0-9]+|x))?\.x)$/
-  SEMREL_REF: /^(next|alpha|beta|staging|dev|develop|development)$/
+  SEMREL_REF: /^(master|main|v[0-9]+(\.([0-9]+|x))?\.x|next|alpha|beta|staging|dev|develop|development)$/
   INTEG_REF: /^(staging|dev|develop|development)$/
