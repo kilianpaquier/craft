@@ -1,3 +1,27 @@
+## [1.0.0-beta.7](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2024-05-07)
+
+
+### Features
+
+* **config:** add release mode for github and migration backmerge / auto_release option in new ci release section ([5d0bc67](https://github.com/kilianpaquier/craft/commit/5d0bc679df78c3afbccba695f1ecfb3ccb810930))
+* **config:** add release option to disable release at all ([4f4051e](https://github.com/kilianpaquier/craft/commit/4f4051e7af888c9b01ad8fcef64be54881117f78))
+
+
+### Bug Fixes
+
+* **readme:** only add CI badges when CI is provided ([561791a](https://github.com/kilianpaquier/craft/commit/561791a90973e9a7b87ff60d63691ae5357f0fe4))
+
+
+### Documentation
+
+* **readme:** add linux installation section for no go developers ([8a9ae0f](https://github.com/kilianpaquier/craft/commit/8a9ae0f03171cdd42ea3ff2c5584dd381031224c))
+
+
+### Chores
+
+* **github:** upgrade pnpm action to v4 and remove version from actions in case it's specified in package.json ([e6ae1af](https://github.com/kilianpaquier/craft/commit/e6ae1af2cd1a9671b5680145592ce6a9f0373ec6))
+* **gitlab:** update semrel_ref to include all semantic-release to release ([072a546](https://github.com/kilianpaquier/craft/commit/072a5462f1e85a8f74c699157cfe7818dc9b1f7f))
+
 ## [1.0.0-beta.6](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2024-05-06)
 
 
