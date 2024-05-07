@@ -131,9 +131,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 <<- if eq $specifics.PackageManagerName "pnpm" >>
-      - uses: pnpm/action-setup@v3
+      - uses: pnpm/action-setup@v4
+<<- if not $specifics.PackageManagerVersion >>
         with:
-          version: << $specifics.PackageManagerVersion | default "8" >>
+          version: 8
+<<- end >>
 <<- end >>
 <<- if eq $specifics.PackageManagerName "bun" >>
       - uses: oven-sh/setup-bun@v1
