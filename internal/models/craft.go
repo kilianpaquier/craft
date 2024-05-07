@@ -86,7 +86,8 @@ type CI struct {
 type Release struct {
 	Auto      bool   `json:"-" yaml:"auto"`
 	Backmerge bool   `json:"-" yaml:"backmerge"`
-	Mode      string `json:"-" yaml:"mode,omitempty" validate:"omitempty,oneof=github-apps personal-token github-token"`
+	Disable   bool   `json:"-" yaml:"enable,omitempty"`
+	Mode      string `json:"-" yaml:"mode,omitempty"   validate:"omitempty,oneof=github-apps personal-token github-token"`
 }
 
 // Docker is the struct for craft docker tuning.

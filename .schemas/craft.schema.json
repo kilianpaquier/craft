@@ -56,6 +56,11 @@
                             "type": "boolean",
                             "default": "false"
                         },
+                        "disable": {
+                            "description": "Whether the release should be disabled.",
+                            "type": "boolean",
+                            "default": "false"
+                        },
                         "mode": {
                             "description": "Release tokenization mode for github only (how should the release token be retrieved).",
                             "type": "string",

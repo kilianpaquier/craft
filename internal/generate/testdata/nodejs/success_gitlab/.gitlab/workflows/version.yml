@@ -17,6 +17,7 @@ variables:
   SEMREL_HOOKS_DIR: scripts
   SEMREL_INFO_ON: all
   SEMREL_INFO_NEXT_VERSION: v${SEMREL_INFO_NEXT_VERSION}
+  SEMREL_RELEASE_DISABLED: "true"
   SEMREL_AUTO_RELEASE_ENABLED: "false"
 
 semantic-release-info:

@@ -134,6 +134,8 @@ ci:
     auto: false
     # whether backmerging should be configured for main, staging and develop branches
     backmerge: false
+    # whether the release should be disabled
+    disable: false
     # release tokenization mode for github only (how should the release token be retrieved)
     # will stay empty when using gitlab CICD
     mode: github-apps | personal-token | github-token

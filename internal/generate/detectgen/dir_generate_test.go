@@ -481,7 +481,7 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Github).
 					Release(*tests.NewReleaseBuilder().
-						Mode(models.PersonalToken).
+						Disable(true).
 						Build()).
 					Build()).
 				Platform(models.Github).
@@ -553,6 +553,9 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 			CraftConfig(*craft.Copy().
 				CI(*tests.NewCIBuilder().
 					Name(models.Gitlab).
+					Release(*tests.NewReleaseBuilder().
+						Disable(true).
+						Build()).
 					Build()).
 				NoMakefile(true).
 				Platform(models.Gitlab).
