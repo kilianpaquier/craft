@@ -42,14 +42,38 @@
                         "gitlab"
                     ]
                 },
+                "release": {
+                    "description": "Release specific configuration.",
+                    "type": "object",
+                    "properties": {
+                        "auto": {
+                            "description": "Whether the release should run automatically.",
+                            "type": "boolean",
+                            "default": "false"
+                        },
+                        "backmerge": {
+                            "description": "Whether backmerging should be configured for main, staging and develop branches.",
+                            "type": "boolean",
+                            "default": "false"
+                        },
+                        "mode": {
+                            "description": "Release tokenization mode for github only (how should the release token be retrieved).",
+                            "type": "string",
+                            "default": "github-token",
+                            "enum": [
+                                "github-apps",
+                                "personal-token",
+                                "github-token"
+                            ]
+                        }
+                    }
+                },
                 "options": {
                     "description": "CI Options.",
                     "type": "array",
                     "items": {
                         "type": "string",
                         "enum": [
-                            "auto_release",
-                            "backmerge",
                             "codecov",
                             "codeql",
                             "dependabot",

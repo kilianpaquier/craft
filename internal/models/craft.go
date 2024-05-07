@@ -1,6 +1,6 @@
 package models
 
-//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,Docker -d tests
+//go:generate go-builder-generator generate -f craft.go -s CraftConfig,Maintainer,GenerateConfig,GenerateOptions,CI,Docker,Release -d tests
 
 const (
 	// CraftFile is the craft configuration file name.
@@ -32,10 +32,6 @@ const (
 )
 
 const (
-	// AutoRelease is the auto_release option for CI tuning.
-	AutoRelease string = "auto_release"
-	// Backmerge is the backmerge option for CI tuning.
-	Backmerge string = "backmerge"
 	// CodeCov is the codecov option for CI tuning.
 	CodeCov string = "codecov"
 	// CodeQL is the codeql option for CI tuning.
@@ -50,9 +46,18 @@ const (
 	Sonar string = "sonar"
 )
 
+const (
+	// GithubApps is the value for github release mode with a github app.
+	GithubApps string = "github-apps"
+	// GithubToken is the value for github release mode with a github token.
+	GithubToken string = "github-token"
+	// PersonalToken is the value for github release mode with a personal token (PAT).
+	PersonalToken string = "personal-token"
+)
+
 // AllOptions returns the slice with all availables CI options.
 func AllOptions() []string {
-	return []string{AutoRelease, Backmerge, CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
+	return []string{CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
 }
 
 // CraftConfig represents all options configurable in .craft file at root project.
@@ -70,10 +75,18 @@ type CraftConfig struct {
 	Platform     string       `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
 }
 
-// CI is the struct for craft ci tuning.
+// CI is the struct for craft continuous integration tuning.
 type CI struct {
 	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required,oneof=github gitlab"`
-	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=auto_release backmerge codecov codeql dependabot pages renovate sonar"`
+	Release Release  `json:"-" yaml:"release,omitempty"                  validate:"required"`
+	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot pages renovate sonar"`
+}
+
+// Release is the struct for craft continuous integration release specifics configuration.
+type Release struct {
+	Auto      bool   `json:"-" yaml:"auto"`
+	Backmerge bool   `json:"-" yaml:"backmerge"`
+	Mode      string `json:"-" yaml:"mode,omitempty" validate:"omitempty,oneof=github-apps personal-token github-token"`
 }
 
 // Docker is the struct for craft docker tuning.

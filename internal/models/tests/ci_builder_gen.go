@@ -38,3 +38,9 @@ func (b *CIBuilder) Options(options ...string) *CIBuilder {
 	b.build.Options = append(b.build.Options, options...)
 	return b
 }
+
+// Release sets CI's Release.
+func (b *CIBuilder) Release(release models.Release) *CIBuilder {
+	b.build.Release = release
+	return b
+}

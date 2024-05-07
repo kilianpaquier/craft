@@ -10,7 +10,7 @@ name: Release
 run-name: Release
 
 on:
-<<- if has "auto_release" .CI.Options >>
+<<- if .CI.Release.Auto >>
   push:
     branches:
       - main
@@ -46,7 +46,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-<<- if has "backmerge" .CI.Options >>
+<<- if .CI.Release.Backmerge >>
         with:
           fetch-depth: 0
 <<- end >>
@@ -70,7 +70,7 @@ jobs:
 <<- if .License >>
             semantic-release-license
 <<- end >>
-<<- if has "backmerge" .CI.Options >>
+<<- if .CI.Release.Backmerge >>
             @kilianpaquier/semantic-release-backmerge
 <<- end >>
           dry_run: true
@@ -381,13 +381,33 @@ jobs:
       - << . >>
 <<- end >>
 <<- end >>
+<<- if eq .CI.Release.Mode "github-token" >>
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+<<- end >>
     steps:
-      - uses: actions/checkout@v4
+<<- if eq .CI.Release.Mode "github-apps" >>
+      - uses: actions/create-github-app-token@v1
+        id: app-token
         with:
-<<- if has "backmerge" .CI.Options >>
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+<<- end >>
+      - uses: actions/checkout@v4
+<<- if or (.CI.Release.Backmerge) (not (eq .CI.Release.Mode "github-token")) >>
+        with:
+<<- if .CI.Release.Backmerge >>
           fetch-depth: 0
 <<- end >>
+<<- if eq .CI.Release.Mode "github-apps" >>
+          token: ${{ steps.app-token.outputs.token }}
+<<- end >>
+<<- if not (eq .CI.Release.Mode "github-token") >>
           persist-credentials: false
+<<- end >>
+<<- end >>
 <<- if or $gobuild $nodebuild >>
       - uses: actions/download-artifact@v4
         with:
@@ -413,7 +433,7 @@ jobs:
 <<- if .License >>
             semantic-release-license
 <<- end >>
-<<- if has "backmerge" .CI.Options >>
+<<- if .CI.Release.Backmerge >>
             @kilianpaquier/semantic-release-backmerge
 <<- end >>
           dry_run: ${{ inputs.dry_run }}
@@ -429,7 +449,13 @@ jobs:
               { "name": "(dev|develop|development)", "prerelease": "alpha" }
             ]
         env:
+<<- if eq .CI.Release.Mode "github-apps" >>
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+<<- else if eq .CI.Release.Mode "personal-token" >>
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+<<- else >>
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+<<- end >>
 <<- if $nodebuild >>
 <<- $specifics := get .Languages "nodejs" >>
 <<- if not $specifics.Private >>

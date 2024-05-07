@@ -130,13 +130,15 @@ ci:
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
   release:
+    # whether the release should run automatically
     auto: false
+    # whether backmerging should be configured for main, staging and develop branches
     backmerge: false
+    # release tokenization mode for github only (how should the release token be retrieved)
+    # will stay empty when using gitlab CICD
     mode: github-apps | personal-token | github-token
   # ci options, providing one or multiple options with tune the ci generation (optional)
   options:
-    - auto_release
-    - backmerge
     - codecov
     - codeql
     - dependabot

@@ -17,7 +17,7 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-//go:generate go-builder-generator generate -f nodejs.go -s PackageJSON -d builders
+//go:generate go-builder-generator generate -f nodejs.go -s PackageJSON -d tests
 
 // PackageJSON represents the node package json descriptor.
 type PackageJSON struct {

@@ -24,7 +24,7 @@ variables:
   SEMREL_HOOKS_DIR: scripts
   SEMREL_INFO_ON: all
   SEMREL_INFO_NEXT_VERSION: v${SEMREL_INFO_NEXT_VERSION}
-  SEMREL_AUTO_RELEASE_ENABLED: "<< has "auto_release" .CI.Options >>"
+  SEMREL_AUTO_RELEASE_ENABLED: "<< .CI.Release.Auto >>"
 
 semantic-release-info:
   after_script:
@@ -56,7 +56,7 @@ semantic-release-info:
     - echo "SEMREL_INFO_NEXT_VERSION=${SEMREL_INFO_NEXT_VERSION#v}-build.${SHA}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
     - cat "${SEMREL_CONFIG_DIR}/semrel.out.env"
 
-<<- if has "backmerge" .CI.Options >>
+<<- if .CI.Release.Backmerge >>
 
 semantic-release:
   variables:
