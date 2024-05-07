@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate/detectgen"
-	"github.com/kilianpaquier/craft/internal/generate/detectgen/builders"
+	builders "github.com/kilianpaquier/craft/internal/generate/detectgen/tests"
 	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 	"github.com/kilianpaquier/craft/internal/testlogs"

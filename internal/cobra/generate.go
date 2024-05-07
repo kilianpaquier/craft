@@ -32,36 +32,37 @@ var (
 			// init destdir for file copying and templating
 			generateOpts.DestinationDir, _ = os.Getwd()
 
-			// read craft configuration
-			var craft models.CraftConfig
-			if err := configuration.ReadCraft(generateOpts.DestinationDir, &craft); err != nil {
+			// read config configuration
+			var config models.CraftConfig
+			if err := configuration.ReadCraft(generateOpts.DestinationDir, &config); err != nil {
 				if !errors.Is(err, fs.ErrNotExist) {
 					log.WithError(err).Fatal("failed to read craft configuration, file exists but is not readable")
 				}
 
 				// init repository if craft configuration wasn't found
-				craft = initialize.Run(ctx)
+				config = initialize.Run(ctx)
 			}
+			config = configuration.EnsureDefaults(config)
 
 			// validate craft struct
-			if err := validator.New().Struct(craft); err != nil {
+			if err := validator.New().Struct(config); err != nil {
 				log.WithError(err).Fatal("failed to validate craft configuration")
 			}
 
 			// create craft runner
-			runner, err := generate.NewRunner(ctx, craft, generateOpts)
+			runner, err := generate.NewRunner(ctx, config, generateOpts)
 			if err != nil {
 				log.WithError(err).Fatal("failed to create craft executor")
 			}
 
 			// generate all files
 			log.Infof("start craft generation in %s", generateOpts.DestinationDir)
-			if craft, err := runner.Run(ctx); err == nil {
-				if err := configuration.WriteCraft(generateOpts.DestinationDir, craft); err != nil {
-					log.WithError(err).Warn("failed to write config file")
-				}
-			} else {
+			config, err = runner.Run(ctx)
+			if err != nil {
 				log.WithError(err).Fatal("failed to execute craft generation")
+			}
+			if err := configuration.WriteCraft(generateOpts.DestinationDir, config); err != nil {
+				log.WithError(err).Warn("failed to write config file")
 			}
 		},
 	}

@@ -136,10 +136,12 @@ jobs:
     needs:
       - hugo-build
       - pages
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semantic-release
         uses: cycjimmy/semantic-release-action@v4
@@ -167,4 +169,4 @@ jobs:
               { "name": "(dev|develop|development)", "prerelease": "alpha" }
             ]
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

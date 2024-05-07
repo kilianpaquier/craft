@@ -2,6 +2,10 @@
 ---
 ci:
   name: github
+  release:
+    auto: false
+    backmerge: false
+    mode: github-token
   options:
     - dependabot
 maintainers:

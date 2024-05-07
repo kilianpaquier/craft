@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/generate/detectgen"
-	"github.com/kilianpaquier/craft/internal/generate/detectgen/builders"
+	builders "github.com/kilianpaquier/craft/internal/generate/detectgen/tests"
 	"github.com/kilianpaquier/craft/internal/models"
 	"github.com/kilianpaquier/craft/internal/models/tests"
 )
@@ -140,6 +140,11 @@ func TestGenerateFunc_Generic(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Github).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Mode(models.GithubToken).
+						Build()).
 					Build()).
 				Platform(models.Github).
 				Build()).
@@ -166,6 +171,10 @@ func TestGenerateFunc_Generic(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Gitlab).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Build()).
 					Build()).
 				Platform(models.Gitlab).
 				Build()).
@@ -292,6 +301,11 @@ func TestGenerateFunc_Golang(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Github).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Mode(models.PersonalToken).
+						Build()).
 					Build()).
 				License("mit").
 				NoGoreleaser(true).
@@ -324,6 +338,10 @@ func TestGenerateFunc_Golang(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Gitlab).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Build()).
 					Build()).
 				License("mit").
 				NoGoreleaser(true).
@@ -377,6 +395,11 @@ func TestGenerateFunc_Hugo(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Github).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Mode(models.GithubToken).
+						Build()).
 					Build()).
 				License("mit").
 				Platform(models.Github).
@@ -403,6 +426,10 @@ func TestGenerateFunc_Hugo(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Gitlab).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Build()).
 					Build()).
 				License("mit").
 				Platform(models.Gitlab).
@@ -453,6 +480,9 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 			CraftConfig(*craft.Copy().
 				CI(*tests.NewCIBuilder().
 					Name(models.Github).
+					Release(*tests.NewReleaseBuilder().
+						Mode(models.PersonalToken).
+						Build()).
 					Build()).
 				Platform(models.Github).
 				Build()).
@@ -485,6 +515,9 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 			CraftConfig(*craft.Copy().
 				CI(*tests.NewCIBuilder().
 					Name(models.Github).
+					Release(*tests.NewReleaseBuilder().
+						Mode(models.PersonalToken).
+						Build()).
 					Build()).
 				Docker(*tests.NewDockerBuilder().Build()).
 				Platform(models.Github).
@@ -588,6 +621,11 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Github).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Mode(models.GithubApps).
+						Build()).
 					Build()).
 				License("mit").
 				Platform(models.Github).
@@ -622,6 +660,10 @@ func TestGenerateFunc_Nodejs(t *testing.T) {
 				CI(*tests.NewCIBuilder().
 					Name(models.Gitlab).
 					Options(models.AllOptions()...).
+					Release(*tests.NewReleaseBuilder().
+						Auto(true).
+						Backmerge(true).
+						Build()).
 					Build()).
 				License("mit").
 				Platform(models.Gitlab).

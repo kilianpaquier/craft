@@ -115,3 +115,56 @@ func TestWriteCraft(t *testing.T) {
 		assert.Equal(t, *expected, actual)
 	})
 }
+
+func TestEnsureDefaults(t *testing.T) {
+	t.Run("success_migrate_options", func(t *testing.T) {
+		// Arrange
+		input := tests.NewCraftConfigBuilder().
+			CI(*tests.NewCIBuilder().
+				Name(models.Gitlab).
+				Options("auto_release", "backmerge").
+				Build()).
+			Build()
+
+		// Act
+		actual := configuration.EnsureDefaults(*input)
+
+		// Assert
+		assert.Empty(t, actual.CI.Options)
+		assert.True(t, actual.CI.Release.Auto)
+		assert.True(t, actual.CI.Release.Backmerge)
+	})
+
+	t.Run("success_sets_github_ci_defaults", func(t *testing.T) {
+		// Arrange
+		input := tests.NewCraftConfigBuilder().
+			CI(*tests.NewCIBuilder().
+				Name(models.Github).
+				Build()).
+			Build()
+
+		// Act
+		actual := configuration.EnsureDefaults(*input)
+
+		// Assert
+		assert.Equal(t, models.GithubToken, actual.CI.Release.Mode)
+	})
+
+	t.Run("success_sets_gitlab_ci_defaults", func(t *testing.T) {
+		// Arrange
+		input := tests.NewCraftConfigBuilder().
+			CI(*tests.NewCIBuilder().
+				Name(models.Gitlab).
+				Release(*tests.NewReleaseBuilder().
+					Mode(models.GithubToken).
+					Build()).
+				Build()).
+			Build()
+
+		// Act
+		actual := configuration.EnsureDefaults(*input)
+
+		// Assert
+		assert.Empty(t, actual.CI.Release.Mode)
+	})
+}

@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 
 	filesystem "github.com/kilianpaquier/filesystem/pkg"
 	"gopkg.in/yaml.v3"
@@ -52,4 +53,32 @@ func WriteCraft(destdir string, config models.CraftConfig) error {
 		return fmt.Errorf("write file: %w", err)
 	}
 	return nil
+}
+
+// EnsureDefaults acts to ensure default properties are always sets and also migrates old properties into new fields.
+func EnsureDefaults(config models.CraftConfig) models.CraftConfig {
+	if config.CI != nil {
+		// sets default release mode for github actions
+		if config.CI.Name == models.Github && config.CI.Release.Mode == "" {
+			config.CI.Release.Mode = models.GithubToken
+		}
+
+		// keep release mode empty when working with gitlab CICD
+		if config.CI.Name == models.Gitlab && config.CI.Release.Mode != "" {
+			config.CI.Release.Mode = ""
+		}
+
+		// migrate old auto_release option
+		if slices.Contains(config.CI.Options, "auto_release") {
+			config.CI.Release.Auto = true
+			config.CI.Options = slices.DeleteFunc(config.CI.Options, func(option string) bool { return option == "auto_release" })
+		}
+
+		// migrate old backmerge optin
+		if slices.Contains(config.CI.Options, "backmerge") {
+			config.CI.Release.Backmerge = true
+			config.CI.Options = slices.DeleteFunc(config.CI.Options, func(option string) bool { return option == "backmerge" })
+		}
+	}
+	return config
 }

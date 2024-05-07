@@ -11,6 +11,6 @@ conventional-changelog-conventionalcommits@7
 <<- if .License >>
 semantic-release-license
 <<- end >>
-<<- if has "backmerge" .CI.Options >>
+<<- if .CI.Release.Backmerge >>
 @kilianpaquier/semantic-release-backmerge
 <<- end >>

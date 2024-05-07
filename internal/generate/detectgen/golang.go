@@ -18,7 +18,7 @@ import (
 	"github.com/kilianpaquier/craft/internal/models"
 )
 
-//go:generate go-builder-generator generate -f golang.go -s Gomod -d builders
+//go:generate go-builder-generator generate -f golang.go -s Gomod -d tests
 
 // Gomod represents the parsed struct for go.mod file
 type Gomod struct {

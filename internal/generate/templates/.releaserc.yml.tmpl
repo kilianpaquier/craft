@@ -82,7 +82,7 @@ plugins:
       failComment: false
       failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
-<<- if has "backmerge" .CI.Options >>
+<<- if .CI.Release.Backmerge >>
   - - "@kilianpaquier/semantic-release-backmerge"
     - targets:
         - { from: "^(master|main)$", to: "staging" }

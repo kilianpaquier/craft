@@ -192,10 +192,12 @@ jobs:
     needs:
       - node-build
       - docker-build
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
           name: build
@@ -228,5 +230,5 @@ jobs:
               { "name": "(dev|develop|development)", "prerelease": "alpha" }
             ]
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
