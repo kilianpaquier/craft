@@ -15,6 +15,8 @@
 ---
 
 - [How to use ?](#how-to-use-)
+  - [Go](#go)
+  - [Linux](#linux)
 - [Commands](#commands)
   - [Generate](#generate)
 - [Craft file](#craft-file)
@@ -29,8 +31,28 @@
 
 ## How to use ?
 
+### Go
+
 ```sh
 go install github.com/kilianpaquier/craft/cmd/craft@latest
+```
+
+### Linux
+
+**With dpkg:**
+
+```sh
+version=$(curl -fsSL "https://api.github.com/repos/kilianpaquier/craft/releases/latest" | jq -r '.tag_name')
+curl -fsSL "https://github.com/kilianpaquier/craft/releases/download/${version}/craft_linux_amd64.deb" -o /tmp/craft.deb
+sudo dpkg -i craft.deb && rm /tmp/craft.deb
+```
+
+**With the tar archive:**
+
+```sh
+version=$(curl -fsSL "https://api.github.com/repos/kilianpaquier/craft/releases/latest" | jq -r '.tag_name')
+curl -fsSL "https://github.com/kilianpaquier/craft/releases/download/${version}/craft_linux_amd64.tar.gz" | (cd "${HOME}/.local/craft" && tar -xz)
+chmod +x "${HOME}/.local/craft/craft" && ln -sf "${HOME}/.local/craft/craft" "${HOME}/.local/bin/craft"
 ```
 
 ## Commands
@@ -107,6 +129,10 @@ license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0
 ci:
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
+  release:
+    auto: false
+    backmerge: false
+    mode: github-apps | personal-token | github-token
   # ci options, providing one or multiple options with tune the ci generation (optional)
   options:
     - auto_release
