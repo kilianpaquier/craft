@@ -73,10 +73,9 @@ jobs:
           SEMREL_INFO_LAST_VERSION=$(git tag --list | sort -V | grep -E "${SEARCH}" | tail -n1)
 
           SEMREL_INFO_NEXT_VERSION=${SEMREL_INFO_LAST_VERSION-1.0.0}
-          SEMREL_INFO_NEXT_VERSION=${SEMREL_INFO_NEXT_VERSION#v}
           SEMREL_INFO_NEXT_VERSION=${SEMREL_INFO_NEXT_VERSION%-*}
 
-          echo "version=v${SEMREL_INFO_NEXT_VERSION}-build.${SHA}" >> $GITHUB_OUTPUT
+          echo "version=v${SEMREL_INFO_NEXT_VERSION#v}-build.${SHA}" >> $GITHUB_OUTPUT
         env:
           SEMREL_INFO_LAST_VERSION: ${{ steps.semantic_release.outputs.last_release_version }}
           SEMREL_INFO_NEXT_VERSION: ${{ steps.semantic_release.outputs.new_release_version }}
