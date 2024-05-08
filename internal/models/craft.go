@@ -86,7 +86,7 @@ type CI struct {
 type Release struct {
 	Auto      bool   `json:"-" yaml:"auto"`
 	Backmerge bool   `json:"-" yaml:"backmerge"`
-	Disable   bool   `json:"-" yaml:"enable,omitempty"`
+	Disable   bool   `json:"-" yaml:"disable,omitempty"`
 	Mode      string `json:"-" yaml:"mode,omitempty"   validate:"omitempty,oneof=github-apps personal-token github-token"`
 }
 
