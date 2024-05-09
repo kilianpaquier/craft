@@ -2,14 +2,14 @@
 ---
 ci:
   name: github
-  release:
-    auto: false
-    backmerge: false
-    mode: github-token
   options:
     - dependabot
     - pages
     - sonar
+  release:
+    auto: false
+    backmerge: false
+    mode: github-token
 license: mit
 maintainers:
   - name: kilianpaquier

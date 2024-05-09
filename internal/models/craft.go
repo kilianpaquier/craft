@@ -78,8 +78,8 @@ type CraftConfig struct {
 // CI is the struct for craft continuous integration tuning.
 type CI struct {
 	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required,oneof=github gitlab"`
-	Release Release  `json:"-" yaml:"release,omitempty"                  validate:"required"`
 	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot pages renovate sonar"`
+	Release Release  `json:"-" yaml:"release,omitempty"                  validate:"required"`
 }
 
 // Release is the struct for craft continuous integration release specifics configuration.
@@ -87,7 +87,7 @@ type Release struct {
 	Auto      bool   `json:"-" yaml:"auto"`
 	Backmerge bool   `json:"-" yaml:"backmerge"`
 	Disable   bool   `json:"-" yaml:"disable,omitempty"`
-	Mode      string `json:"-" yaml:"mode,omitempty"   validate:"omitempty,oneof=github-apps personal-token github-token"`
+	Mode      string `json:"-" yaml:"mode,omitempty"    validate:"omitempty,oneof=github-apps personal-token github-token"`
 }
 
 // Docker is the struct for craft docker tuning.

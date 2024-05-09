@@ -2,12 +2,12 @@
 ---
 ci:
   name: github
+  options:
+    - dependabot
   release:
     auto: false
     backmerge: false
     mode: github-token
-  options:
-    - dependabot
 maintainers:
   - name: kilianpaquier
 no_chart: true
