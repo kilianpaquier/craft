@@ -14,6 +14,6 @@ include: .gitlab/workflows/version.yml
 # SONAR_PASSWORD: SonarQube password (depends on your authentication method)
 
 variables:
-  PROD_REF: /^(master|main|v[0-9]+(\.([0-9]+|x))?\.x)$/
-  SEMREL_REF: /^(master|main|v[0-9]+(\.([0-9]+|x))?\.x|next|alpha|beta|staging|dev|develop|development)$/
+  PROD_REF: /^(master|main)$/
+  SEMREL_BRANCHES_REF: /^(master|main|v[0-9]+(\.([0-9]+|x))?\.x|next|alpha|beta|staging|dev|develop|development)$/
   INTEG_REF: /^(staging|dev|develop|development)$/
