@@ -129,17 +129,18 @@ license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0
 ci:
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
+  # release specific options
   release:
     # whether the release should run automatically
-    auto: false
+    auto: true | false
     # whether backmerging should be configured for main, staging and develop branches
-    backmerge: false
+    backmerge: true | false
     # whether the release should be disabled
-    disable: false
+    disable: true | false
     # release tokenization mode for github only (how should the release token be retrieved)
     # will stay empty when using gitlab CICD
     mode: github-apps | personal-token | github-token
-  # ci options, providing one or multiple options with tune the ci generation (optional)
+  # ci global options, providing one or multiple options with tune the ci generation (optional)
   options:
     - codecov
     - codeql
