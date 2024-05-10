@@ -1,3 +1,22 @@
+## [1.0.0-beta.8](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2024-05-10)
+
+
+### Bug Fixes
+
+* **config:** bad json tag for newly added disable key in release ([e795500](https://github.com/kilianpaquier/craft/commit/e795500bee5ac94d6a97ecbbbe7c5596a632a5ae))
+
+
+### Chores
+
+* **ci:** update golangci-lint action to v6 ([0c45037](https://github.com/kilianpaquier/craft/commit/0c45037d6ef5d20d457ccde5b5e49efa4d502b33))
+* **deps:** upgrade toolchain to go1.22.3 ([116315f](https://github.com/kilianpaquier/craft/commit/116315f0036f51002d28ba74afccf2493c1fa2c4))
+* **gitlab:** update semrel_ref variable name and prof_ref value since semrel_ref is the variable used for semantic-release ([9bb2f61](https://github.com/kilianpaquier/craft/commit/9bb2f61f302289cf0d1ba941553af8b6b1773dd0))
+
+
+### Code Refactoring
+
+* **gitlab:** rework version.yml in CICD ([977d1ce](https://github.com/kilianpaquier/craft/commit/977d1ce8b45de29c12a31b4fa844b3bbbec714dd))
+
 ## [1.0.0-beta.7](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2024-05-07)
 
 
