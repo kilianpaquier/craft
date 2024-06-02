@@ -80,7 +80,8 @@ jobs:
 <<- if eq $specifics.PackageManagerName "bun" >>
       - uses: oven-sh/setup-bun@v1
         with:
-          bun-version: << $specifics.PackageManagerVersion | default "latest" >>
+          <<- $version := semver $specifics.PackageManagerVersion >>
+          bun-version: << print $version.Major ".x" | default "latest" >>
 <<- else >>
       - uses: actions/setup-node@v4
         with:
@@ -128,7 +129,8 @@ jobs:
 <<- if eq $specifics.PackageManagerName "bun" >>
       - uses: oven-sh/setup-bun@v1
         with:
-          bun-version: << $specifics.PackageManagerVersion | default "latest" >>
+          <<- $version := semver $specifics.PackageManagerVersion >>
+          bun-version: << print $version.Major ".x" | default "latest" >>
 <<- else >>
       - uses: actions/setup-node@v4
         with:
