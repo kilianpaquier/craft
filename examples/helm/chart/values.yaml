@@ -14,19 +14,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts: []
-    # - chart-example.local
-  tls: []
-    # - secretName: chart-example-tls
-    #   hosts:
-    #     - chart-example.local
-
 #############################################
 #               all cronjobs                #
 #############################################
@@ -60,7 +47,7 @@ workers:
       #   secretRef:
       #     name: ""
 
-    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#probe-v1-core
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#probe-v1-core
     livenessProbe: false
       # httpGet:
       #   httpHeaders:
@@ -112,7 +99,7 @@ workers:
       # data:
       #   name: value
     
-    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#volume-v1-core
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#volume-v1-core
     volumes: []
       # - name: ""
       #   configMap:
@@ -135,7 +122,7 @@ workers:
     
     podAnnotations: {}
     
-    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#podsecuritycontext-v1-core
     podSecurityContext: {}
       # fsGroup: 2
       # fsGroupChangePolicy: Always | OnRootMismatch
@@ -143,7 +130,7 @@ workers:
       # runAsNonRoot: true
       # runAsUser: 1001
     
-    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#securitycontext-v1-core
     securityContext: {}
       # allowPrivilegeEscalation: false
       # capabilities:
@@ -157,7 +144,7 @@ workers:
     
     nodeSelector: {}
     
-    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#toleration-v1-core
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#toleration-v1-core
     tolerations: []
       # - effect: NoSchedule | PreferNoSchedule | NoExecute
       #   key: ""
@@ -165,7 +152,7 @@ workers:
       #   tolerationSeconds: 600
       #   value: ""
     
-    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#affinity-v1-core
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#affinity-v1-core
     affinity: {}
 
 
