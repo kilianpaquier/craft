@@ -1,0 +1,140 @@
+{
+    "$id": "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/chart.schema.json",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Craft's chart",
+    "description": "Craft's chart configuration file",
+    "type": "object",
+    "additionalProperties": false,
+    "$defs": {
+        "dependency": {
+            "type": "object",
+            "required": [ "name", "version", "repository" ],
+            "properties": {
+                "name": {
+                    "$ref": "https://json.schemastore.org/chart.json#/properties/dependencies/items/properties/name"
+                },
+                "version": {
+                    "$ref": "https://json.schemastore.org/chart.json#/properties/dependencies/items/properties/version"
+                },
+                "repository": {
+                    "$ref": "https://json.schemastore.org/chart.json#/properties/dependencies/items/properties/repository"
+                }
+            },
+            "additionalProperties": true
+        },
+        "serviceAccount": {
+            "type": "object",
+            "properties": {
+                "create": {
+                    "description": "Specifies whether a service account should be created.",
+                    "type": "boolean"
+                },
+                "annotations": {
+                    "description": "Annotations to add to the service account.",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "name": {
+                    "description": "The name of the service account to use.",
+                    "type": "string"
+                }
+            }
+        },
+        "image": {
+            "description": "",
+            "type": "object",
+            "properties": {
+                "registry": {
+                    "description": "",
+                    "type": "string"
+                },
+                "repository": {
+                    "description": "",
+                    "type": "string"
+                },
+                "pullPolicy": {
+                    "description": "",
+                    "type": "string",
+                    "enum": [ "Always", "IfNotPresent" ]
+                },
+                "tag": {
+                    "description": "",
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "resource": {
+            "description": "Chart values for craft's resource based helm charts.",
+            "type": "object",
+            "properties": {
+                "paused": {
+                    "description": "",
+                    "type": "boolean"
+                },
+                "replicaCount": {
+                    "description": "",
+                    "type": "integer"
+                },
+                "image": {
+                    "description": "",
+                    "type": "object",
+                    "$ref": "#/$defs/image"
+                },
+                "env": {
+                    "description": "",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "description": {
+            "$ref": "https://json.schemastore.org/chart.json#/properties/description"
+        },
+        "dependencies": {
+            "description": "Chart dependencies overrides definition.",
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/dependency"
+            }
+        },
+        "maintainers": {
+            "$ref": "https://json.schemastore.org/chart.json#/properties/maintainers"
+        },
+        "imagePullSecrets": {
+            "$ref": "https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0/_definitions.json#/definitions/io.k8s.api.core.v1.PodSpec/properties/imagePullSecrets"
+        },
+        "serviceAccount": {
+            "$ref": "#/$defs/serviceAccount"
+        },
+        "crons": {
+            "description": "Cronjobs overrides definition.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "$ref": "#/$defs/resource"
+            }
+        },
+        "jobs": {
+            "description": "Jobs overrides definition.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "$ref": "#/$defs/resource"
+            }
+        },
+        "workers": {
+            "description": "Workers overrides definition.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "$ref": "#/$defs/resource"
+            }
+        }
+    }
+}
