@@ -6,7 +6,7 @@ toolchain go1.22.3
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/go-playground/validator/v10 v10.20.0
+	github.com/go-playground/validator/v10 v10.21.0
 	github.com/imdario/mergo v0.3.16
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/kilianpaquier/filesystem v0.0.0-20240501141027-630d9b37a18d
