@@ -272,7 +272,7 @@ jobs:
 <<- end >>
           username: ${{ github.repository_owner }}
           password: ${{ secrets.REGISTRY_TOKEN }}
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           context: .
           labels: ${{ steps.meta.outputs.labels }}
