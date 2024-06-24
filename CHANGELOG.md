@@ -1,3 +1,24 @@
+## [1.0.0-beta.9](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2024-06-24)
+
+
+### Documentation
+
+* **deps:** upgrade kubernetes in values.yml ([d6999a3](https://github.com/kilianpaquier/craft/commit/d6999a3be04a58d0eaf73dbfd4e833d0de6fdf76))
+* **readme:** update some description around ci release options ([d017c47](https://github.com/kilianpaquier/craft/commit/d017c4791ce108864eb506a254ea6eb7d1e1962f))
+
+
+### Chores
+
+* **dependabot:** setup bot to run every day to avoid batches every week ([eba239f](https://github.com/kilianpaquier/craft/commit/eba239f3b5da11fda97ed76c83b9183790d006d5))
+* **deps:** bump docker build push action to v6 ([d17ffa4](https://github.com/kilianpaquier/craft/commit/d17ffa40e28d20aa01d0e8d9dbaea7240067499e))
+* **deps:** bump github.com/go-playground/validator/v10 ([76c309b](https://github.com/kilianpaquier/craft/commit/76c309b717f6282ee9f369f5fe081ce0651c05e1))
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([d8a900f](https://github.com/kilianpaquier/craft/commit/d8a900f94280bd694421b9f229881100d23060ea))
+* **deps:** bump setup-bun github actions to v2 ([bf7666b](https://github.com/kilianpaquier/craft/commit/bf7666b28eaed271078295ad4d28ed7969466a5d))
+* **deps:** only use major version for bun setup in ci ([5235da8](https://github.com/kilianpaquier/craft/commit/5235da82fc3f300423deaea0e37062d3764f09de))
+* **deps:** upgrade goreleaser action to v6 and associated schema usage ([8cf2d52](https://github.com/kilianpaquier/craft/commit/8cf2d527e42715be04c05c65f43daa7d80f37f2b))
+* **deps:** upgrade multiple dependencies ([8331b0f](https://github.com/kilianpaquier/craft/commit/8331b0f851acfbd286925cac47f8f0333056c40d))
+* **deps:** upgrade pnpm version to 9 in ci templates ([355f0b8](https://github.com/kilianpaquier/craft/commit/355f0b83659af1a54370ca559420e51fc6fdf70c))
+
 ## [1.0.0-beta.8](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2024-05-10)
 
 
