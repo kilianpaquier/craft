@@ -139,8 +139,7 @@ jobs:
 <<- if eq $specifics.PackageManagerName "bun" >>
       - uses: oven-sh/setup-bun@v2
         with:
-          <<- $version := semver $specifics.PackageManagerVersion >>
-          bun-version: << print $version.Major ".x" | default "latest" >>
+          bun-version-file: package.json
 <<- else >>
       - uses: actions/setup-node@v4
         with:
