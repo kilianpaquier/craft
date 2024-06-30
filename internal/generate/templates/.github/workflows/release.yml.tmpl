@@ -382,11 +382,16 @@ jobs:
       - << . >>
 <<- end >>
 <<- end >>
-<<- if eq .CI.Release.Mode "github-token" >>
+<<- if or $nodebuild (eq .CI.Release.Mode "github-token") >>
     permissions:
+<<- if eq .CI.Release.Mode "github-token" >>
       contents: write
       issues: write
       pull-requests: write
+<<- end >>
+<<- if $nodebuild >>
+      id-token: write
+<<- end >>
 <<- end >>
     steps:
 <<- if eq .CI.Release.Mode "github-apps" >>

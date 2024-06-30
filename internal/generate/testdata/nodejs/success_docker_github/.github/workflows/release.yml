@@ -186,6 +186,8 @@ jobs:
     needs:
       - node-build
       - docker-build
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
