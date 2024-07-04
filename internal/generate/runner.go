@@ -104,18 +104,3 @@ func (e *Runner) Run(ctx context.Context) (models.CraftConfig, error) {
 
 	return e.config.CraftConfig, errors.Join(lo.ChannelToSlice(errs)...)
 }
-
-// SplitSlice splits an input slice into two output slices depending on the iteratee function.
-//
-// If the function returns true, then the element is placed in the first output slice.
-// If not, the element is placed in the second output slice.
-func SplitSlice[S []E, E any](s S, iteratee func(item E, index int) bool) (s1 S, s2 S) {
-	for i, e := range s {
-		if iteratee(e, i) {
-			s1 = append(s1, e)
-		} else {
-			s2 = append(s2, e)
-		}
-	}
-	return
-}

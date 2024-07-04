@@ -172,20 +172,3 @@ func TestExecute(t *testing.T) {
 		assert.Equal(t, *expected, output)
 	})
 }
-
-func TestSplitSlice(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		// Arrange
-		base := []string{"a", "b", "c", "d", "e", "f", "g"}
-
-		// Act
-		right, left := generate.SplitSlice(base, func(_ string, index int) bool {
-			return index%2 == 0
-		})
-
-		// Assert
-		assert.Equal(t, right, []string{"a", "c", "e", "g"})
-		assert.Equal(t, left, []string{"b", "d", "f"})
-		assert.ElementsMatch(t, base, append(right, left...))
-	})
-}
