@@ -1,7 +1,8 @@
 package cobra
 
 import (
-	"github.com/sirupsen/logrus"
+	"fmt"
+
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +15,7 @@ var (
 		Short:  "Shows current craft version",
 		PreRun: SetLogLevel,
 		Run: func(_ *cobra.Command, _ []string) {
-			logrus.Info(version)
+			fmt.Print(version)
 		},
 	}
 )
