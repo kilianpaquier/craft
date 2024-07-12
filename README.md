@@ -28,6 +28,7 @@
   - [Helm](#helm)
   - [License](#license)
   - [Nodejs](#nodejs)
+- [Craft as an SDK](#craft-as-an-sdk)
 
 ## How to use ?
 
@@ -238,3 +239,7 @@ When license generation is detected (`license` is provided in `.craft` root file
 When nodejs generation is detected (a `package.json` is present at root and is valid), it will the appropriate files around nodejs testing, integration, etc.
 
 Feel free to check either [`nodejs_github`](./examples/nodejs_github/) or [`nodejs_gitlab`](./examples/nodejs_gitlab/) to see what this generation specifically does.
+
+## Craft as an SDK
+
+Craft can also be used as an SDK, for that you may check the official documentation on [pkg.go.dev](https://pkg.go.dev/github.com/kilianpaquier/craft).

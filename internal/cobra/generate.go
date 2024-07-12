@@ -2,68 +2,62 @@ package cobra
 
 import (
 	"errors"
-	"io/fs"
+	"fmt"
 	"os"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/kilianpaquier/craft/internal/configuration"
-	"github.com/kilianpaquier/craft/internal/generate"
-	"github.com/kilianpaquier/craft/internal/initialize"
-	"github.com/kilianpaquier/craft/internal/models"
+	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/initialize"
 )
 
 var (
-	generateOpts = models.GenerateOptions{
-		EndDelim:   ">>",
-		StartDelim: "<<",
-	}
+	force    []string
+	forceAll bool
 
 	generateCmd = &cobra.Command{
 		Use:    "generate",
 		Short:  "Generate the project layout",
 		PreRun: SetLogLevel,
-		Run: func(cmd *cobra.Command, _ []string) {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			ctx := cmd.Context()
 			log := logrus.WithContext(ctx)
+			destdir, _ := os.Getwd()
 
-			// init destdir for file copying and templating
-			generateOpts.DestinationDir, _ = os.Getwd()
-
-			// read config configuration
-			var config models.CraftConfig
-			if err := configuration.ReadCraft(generateOpts.DestinationDir, &config); err != nil {
-				if !errors.Is(err, fs.ErrNotExist) {
-					log.WithError(err).Fatal("failed to read craft configuration, file exists but is not readable")
-				}
-
-				// init repository if craft configuration wasn't found
-				config = initialize.Run(ctx)
+			config, err := initialize.Run(ctx, destdir, initialize.WithLogger(log))
+			if err != nil && !errors.Is(err, initialize.ErrAlreadyInitialized) {
+				return fmt.Errorf("initialize project: %w", err)
 			}
-			config = configuration.EnsureDefaults(config)
+			config = config.EnsureDefaults()
 
 			// validate craft struct
 			if err := validator.New().Struct(config); err != nil {
-				log.WithError(err).Fatal("failed to validate craft configuration")
+				return fmt.Errorf("craft config validation: %w", err)
 			}
 
-			// create craft runner
-			runner, err := generate.NewRunner(ctx, config, generateOpts)
+			// run generation
+			config, err = generate.Run(ctx, config,
+				generate.WithDelimiters("<<", ">>"),
+				generate.WithDestination(destdir),
+				generate.WithDetects(generate.Detects()...),
+				generate.WithMetaHandlers(generate.MetaHandlers()...),
+				generate.WithForce(force...),
+				generate.WithForceAll(forceAll),
+				generate.WithLogger(log),
+				generate.WithTemplates("templates", generate.FS()),
+			)
 			if err != nil {
-				log.WithError(err).Fatal("failed to create craft executor")
+				return fmt.Errorf("run generation: %w", err)
 			}
 
-			// generate all files
-			log.Infof("start craft generation in %s", generateOpts.DestinationDir)
-			config, err = runner.Run(ctx)
-			if err != nil {
-				log.WithError(err).Fatal("failed to execute craft generation")
+			// save craft configuration
+			if err := craft.Write(destdir, config); err != nil {
+				return fmt.Errorf("write craft: %w", err)
 			}
-			if err := configuration.WriteCraft(generateOpts.DestinationDir, config); err != nil {
-				log.WithError(err).Warn("failed to write config file")
-			}
+			return nil
 		},
 	}
 )
@@ -71,9 +65,9 @@ var (
 func init() {
 	rootCmd.AddCommand(generateCmd)
 	generateCmd.Flags().StringSliceVarP(
-		&generateOpts.Force, "force", "f", []string{},
+		&force, "force", "f", []string{},
 		"force regenerating a list of templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)")
 	generateCmd.Flags().BoolVar(
-		&generateOpts.ForceAll, "force-all", false,
+		&forceAll, "force-all", false,
 		"force regenerating all templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)")
 }

@@ -2,41 +2,37 @@ package cobra
 
 import (
 	"errors"
-	"io/fs"
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/kilianpaquier/craft/internal/configuration"
-	"github.com/kilianpaquier/craft/internal/initialize"
-	"github.com/kilianpaquier/craft/internal/models"
+	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/initialize"
 )
 
 var initCmd = &cobra.Command{
 	Use:    "init",
 	Short:  "Initialize the project layout",
 	PreRun: SetLogLevel,
-	Run: func(cmd *cobra.Command, _ []string) {
+	RunE: func(cmd *cobra.Command, _ []string) error {
 		ctx := cmd.Context()
 		log := logrus.WithContext(ctx)
 		destdir, _ := os.Getwd()
 
-		// read craft configuration
-		var craft models.CraftConfig
-		if err := configuration.ReadCraft(destdir, &craft); err != nil {
-			if !errors.Is(err, fs.ErrNotExist) {
-				log.WithError(err).Fatal("failed to read craft configuration, file exists but is not readable")
+		config, err := initialize.Run(ctx, destdir, initialize.WithLogger(log))
+		if err != nil {
+			if !errors.Is(err, initialize.ErrAlreadyInitialized) {
+				return fmt.Errorf("initialize project: %w", err)
 			}
-
-			// init repository if craft configuration wasn't found
-			craft := initialize.Run(ctx)
-			if err := configuration.WriteCraft(destdir, craft); err != nil {
-				log.WithError(err).Fatal("failed to write config file")
-			}
-		} else {
-			log.Infof("project already initialized, %s file exists", models.CraftFile)
+			return nil
 		}
+
+		if err := craft.Write(destdir, config); err != nil {
+			return fmt.Errorf("write craft: %w", err)
+		}
+		return nil
 	},
 }
 
