@@ -32,7 +32,7 @@ type Configuration struct {
 // CI is the struct for craft continuous integration tuning.
 type CI struct {
 	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required,oneof=github gitlab"`
-	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot pages renovate sonar"`
+	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot netlify pages renovate sonar"`
 	Release Release  `json:"-" yaml:"release,omitempty"                  validate:"required"`
 }
 
@@ -109,7 +109,7 @@ func (c Configuration) EnsureDefaults() Configuration {
 		}
 
 		// keep release mode empty when working with gitlab CICD
-		if c.CI.Name == Gitlab && c.CI.Release.Mode != "" {
+		if c.CI.Name == Gitlab {
 			c.CI.Release.Mode = ""
 		}
 

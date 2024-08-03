@@ -82,6 +82,7 @@
                             "codecov",
                             "codeql",
                             "dependabot",
+                            "netlify",
                             "pages",
                             "renovate",
                             "sonar"

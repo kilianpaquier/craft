@@ -36,6 +36,8 @@ const (
 	CodeQL string = "codeql"
 	// Dependabot is the dependabot option for CI tuning.
 	Dependabot string = "dependabot"
+	// Netlify is the option to deploy on netlify.
+	Netlify string = "netlify"
 	// Pages is the pages option for CI tuning.
 	Pages string = "pages"
 	// Renovate is the renovate option for CI tuning.
@@ -55,5 +57,5 @@ const (
 
 // CIOptions returns the slice with all availables CI options.
 func CIOptions() []string {
-	return []string{CodeCov, CodeQL, Dependabot, Pages, Renovate, Sonar}
+	return []string{CodeCov, CodeQL, Dependabot, Netlify, Pages, Renovate, Sonar}
 }
