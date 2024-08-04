@@ -166,6 +166,7 @@ jobs:
         enable-commit-status: false
         github-deployment-environment: netlify
         github-token: ${{ secrets.GITHUB_TOKEN }}
+        netlify-config-path: netlify.toml
         production-branch: ${{ github.event.repository.default_branch }}
         publish-dir: dist
       env:
