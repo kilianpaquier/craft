@@ -131,3 +131,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+<<- if and .CI (has "netlify" .CI.Options) >>
+
+# Local Netlify folder
+.netlify
+<<- end >>

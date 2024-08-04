@@ -14,3 +14,9 @@ hugo.linux
 
 # Temporary lock file while building
 /.hugo_build.lock
+
+<<- if and .CI (has "netlify" .CI.Options) >>
+
+# Local Netlify folder
+.netlify
+<<- end >>
