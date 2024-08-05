@@ -1,3 +1,32 @@
+## [1.0.0-beta.10](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2024-08-05)
+
+
+### Features
+
+* **github:** use package.json packageManager version for bun projects ([28be5cd](https://github.com/kilianpaquier/craft/commit/28be5cd8058dd711e2efce8f34f0f6d07471e535))
+* **makefile:** add install.mk for golang and hugo with various installation scripts ([48f9038](https://github.com/kilianpaquier/craft/commit/48f9038c9a36c2f02187c4dd301d984138c3d7b7))
+* **netlify:** add github action job and as such option with github actions ([9f3c250](https://github.com/kilianpaquier/craft/commit/9f3c2500b94161ea3d123f4c7b7e58f0e8d6b3b3))
+* **sdk:** move and refactor craft to be used also as a SDK - [#45](https://github.com/kilianpaquier/craft/issues/45) ([78b0e4e](https://github.com/kilianpaquier/craft/commit/78b0e4e98f56d15cbf8aa8ba7c61f4e7ee3372ab))
+
+
+### Bug Fixes
+
+* **go:** rename revive option imports-blocklist ([11f3f44](https://github.com/kilianpaquier/craft/commit/11f3f441a790627573685328da5fb9bf0cee5583))
+* **netlify:** add dev folder in gitignore for nodejs and hugo ([1a98fd1](https://github.com/kilianpaquier/craft/commit/1a98fd1e330a9b63a258430a59dcb59d365649ff))
+* **netlify:** add netlify.toml file in github actions job ([06c7567](https://github.com/kilianpaquier/craft/commit/06c7567972e881a4dc93dc89c09fff365710dd9f))
+* **npm:** add id-token to release for provenance signature ([33ea480](https://github.com/kilianpaquier/craft/commit/33ea480bb3af34bb9c7563f0767a764c07cfe924))
+
+
+### Chores
+
+* **deps:** bump github.com/samber/lo in the minor-patch group ([f4e0991](https://github.com/kilianpaquier/craft/commit/f4e0991f8f7974057da323b38f36cd2db803a2b6))
+* **deps:** bump github.com/samber/lo in the minor-patch group ([f7466b4](https://github.com/kilianpaquier/craft/commit/f7466b4ac0d36d02cd02f5dab5f2d6d233be2275))
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([1c372be](https://github.com/kilianpaquier/craft/commit/1c372be6396dbc846ac3f753e959e84b5f1e52b0))
+* **deps:** bump golang.org/x/mod in the minor-patch group ([b950e15](https://github.com/kilianpaquier/craft/commit/b950e1559297fb241192da2589ae5e113054d519))
+* **deps:** upgrade various dependencies ([9917992](https://github.com/kilianpaquier/craft/commit/9917992221119dff45a5e3dceab3806b6d35ea61))
+* **generate:** remove SplitSlice unused function ([23d1925](https://github.com/kilianpaquier/craft/commit/23d1925a69b694af2e864786f98d552f66eab967))
+* **schema:** add chart schema for craft chart file ([e54f313](https://github.com/kilianpaquier/craft/commit/e54f313c38ac88fede7d4a99b7414df56a2b64d8))
+
 ## [1.0.0-beta.9](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2024-06-24)
 
 
