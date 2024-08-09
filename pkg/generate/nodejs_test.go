@@ -71,37 +71,6 @@ func TestDetectNodejs(t *testing.T) {
 		assert.Contains(t, logs, "packageManager isn't valid")
 	})
 
-	t.Run("nodejs_detected", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-
-		packagejson := filepath.Join(destdir, craft.PackageJSON)
-		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js" }`), cfs.RwRR)
-		require.NoError(t, err)
-
-		input := generate.Metadata{Languages: map[string]any{}}
-		expected := generate.Metadata{
-			Binaries:      1,
-			Configuration: craft.Configuration{NoMakefile: true},
-			Languages: map[string]any{
-				"nodejs": generate.PackageJSON{
-					Main:               lo.ToPtr("index.js"),
-					Name:               "craft",
-					PackageManagerName: "pnpm",
-					PackageManager:     "pnpm",
-				},
-			},
-			ProjectName: "craft",
-		}
-
-		// Act
-		output, exec := generate.DetectNodejs(ctx, log, destdir, input)
-
-		// Assert
-		assert.Len(t, exec, 1)
-		assert.Equal(t, expected, output)
-	})
-
 	t.Run("nodejs_detected_with_options", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
@@ -116,11 +85,9 @@ func TestDetectNodejs(t *testing.T) {
 			Configuration: craft.Configuration{NoMakefile: true},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					Main:                  lo.ToPtr("index.js"),
-					Name:                  "craft",
-					PackageManager:        "bun@1.1.6",
-					PackageManagerName:    "bun",
-					PackageManagerVersion: "1.1.6",
+					Main:           lo.ToPtr("index.js"),
+					Name:           "craft",
+					PackageManager: "bun@1.1.6",
 				},
 			},
 			ProjectName: "craft",

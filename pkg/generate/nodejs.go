@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 
 	"github.com/go-playground/validator/v10"
 
@@ -29,13 +28,10 @@ type PackageJSON struct {
 	Main           *string           `json:"main,omitempty"`
 	Module         string            `json:"module,omitempty"`
 	Name           string            `json:"name,omitempty"           validate:"required"`
-	PackageManager string            `json:"packageManager,omitempty"`
+	PackageManager string            `json:"packageManager,omitempty" validate:"required"`
 	Private        bool              `json:"private,omitempty"`
 	Scripts        map[string]string `json:"scripts,omitempty"`
 	Version        string            `json:"version,omitempty"`
-
-	PackageManagerName    string `json:"-"`
-	PackageManagerVersion string `json:"-"`
 }
 
 // Validate validates the given PackageJSON struct.
@@ -66,18 +62,6 @@ func DetectNodejs(_ context.Context, log logger.Logger, destdir string, metadata
 	}
 
 	log.Infof("nodejs detected, a '%s' is present and valid", craft.PackageJSON)
-
-	// affect package manager and it's version separately for template generation
-	if pkg.PackageManager == "" {
-		pkg.PackageManager = "pnpm"
-	}
-	name, version, _ := strings.Cut(pkg.PackageManager, "@")
-	if name != "" {
-		pkg.PackageManagerName = name
-	}
-	if version != "" {
-		pkg.PackageManagerVersion = version
-	}
 
 	metadata.Languages["nodejs"] = pkg
 	metadata.ProjectName = pkg.Name

@@ -124,7 +124,9 @@ jobs:
           VERSION: ${{ steps.release.outputs.version }}
 
 <<- if $nodebuild >>
+
 <<- $specifics := get .Languages "nodejs" >>
+<<- $manager := cutAfter $specifics.PackageManager "@" >>
 
   node-build:
     name: Node Build
@@ -132,30 +134,26 @@ jobs:
     needs: version
     steps:
       - uses: actions/checkout@v4
-<<- if eq $specifics.PackageManagerName "pnpm" >>
+<<- if eq $manager "pnpm" >>
       - uses: pnpm/action-setup@v4
-<<- if not $specifics.PackageManagerVersion >>
-        with:
-          version: 9
 <<- end >>
-<<- end >>
-<<- if eq $specifics.PackageManagerName "bun" >>
+<<- if eq $manager "bun" >>
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 <<- else >>
       - uses: actions/setup-node@v4
         with:
-          cache: << $specifics.PackageManagerName >>
+          cache: << $manager >>
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
-<<- if eq $specifics.PackageManagerName "npm" >>
-      - run: << $specifics.PackageManagerName >> ci
+<<- if eq $manager "npm" >>
+      - run: << $manager >> ci
 <<- else >>
-      - run: << $specifics.PackageManagerName >> install --frozen-lockfile
+      - run: << $manager >> install --frozen-lockfile
 <<- end >>
-      - run: << $specifics.PackageManagerName >> run build
+      - run: << $manager >> run build
 <<- if has "pages" .CI.Options >>
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -444,9 +444,7 @@ func TestExec_Nodejs(t *testing.T) {
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					PackageManager:        "yarn@2.4.3",
-					PackageManagerName:    "yarn",
-					PackageManagerVersion: "2.4.3",
+					PackageManager: "yarn@2.4.3",
 				},
 			},
 		})
@@ -478,10 +476,8 @@ func TestExec_Nodejs(t *testing.T) {
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					PackageManager:        "pnpm@8.0.0",
-					PackageManagerName:    "pnpm",
-					PackageManagerVersion: "8.0.0",
-					Private:               true,
+					PackageManager: "pnpm@8.0.0",
+					Private:        true,
 				},
 			},
 		})
@@ -512,9 +508,7 @@ func TestExec_Nodejs(t *testing.T) {
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					PackageManager:        "yarn@2.4.3",
-					PackageManagerName:    "yarn",
-					PackageManagerVersion: "2.4.3",
+					PackageManager: "yarn@2.4.3",
 				},
 			},
 		})
@@ -543,10 +537,8 @@ func TestExec_Nodejs(t *testing.T) {
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					PackageManager:        "pnpm@8.0.0",
-					PackageManagerName:    "pnpm",
-					PackageManagerVersion: "8.0.0",
-					Private:               true,
+					PackageManager: "pnpm@8.0.0",
+					Private:        true,
 				},
 			},
 		})
@@ -578,9 +570,7 @@ func TestExec_Nodejs(t *testing.T) {
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					PackageManager:        "bun@1.1.6",
-					PackageManagerName:    "bun",
-					PackageManagerVersion: "1.1.6",
+					PackageManager: "bun@1.1.6",
 				},
 			},
 		})
@@ -612,9 +602,7 @@ func TestExec_Nodejs(t *testing.T) {
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					PackageManager:        "bun@1.1.6",
-					PackageManagerName:    "bun",
-					PackageManagerVersion: "1.1.6",
+					PackageManager: "bun@1.1.6",
 				},
 			},
 		})

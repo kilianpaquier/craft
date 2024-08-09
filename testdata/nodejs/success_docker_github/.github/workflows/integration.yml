@@ -89,8 +89,7 @@ jobs:
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run test
+      - run: pnpm install-test --frozen-lockfile
 
   docker-hadolint:
     name: Docker Hadolint

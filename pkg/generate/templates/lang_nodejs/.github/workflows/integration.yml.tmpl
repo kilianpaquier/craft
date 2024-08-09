@@ -2,6 +2,7 @@
 
 <<- $specifics := get .Languages "nodejs" >>
 <<- $docker := and .Docker (gt .Binaries 0) >>
+<<- $manager := cutAfter $specifics.PackageManager "@" >>
 
 name: Integration
 run-name: Integration
@@ -41,7 +42,7 @@ jobs:
         run: echo "Running workflow" && echo "skip=false" >> $GITHUB_OUTPUT
 
 <<- /* bun doesn't support audit yet: https://github.com/oven-sh/bun/issues/5359 */>>
-<<- if not (eq $specifics.PackageManagerName "bun") >>
+<<- if not (eq $manager "bun") >>
 
   node-audit:
     name: Node Audit
@@ -49,19 +50,15 @@ jobs:
     needs: run-workflow
     steps:
       - uses: actions/checkout@v4
-<<- if eq $specifics.PackageManagerName "pnpm" >>
+<<- if eq $manager "pnpm" >>
       - uses: pnpm/action-setup@v4
-<<- if not $specifics.PackageManagerVersion >>
-        with:
-          version: 9
-<<- end >>
 <<- end >>
       - uses: actions/setup-node@v4
         with:
-          cache: << $specifics.PackageManagerName >>
+          cache: << $manager >>
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
-      - run: << $specifics.PackageManagerName >> audit
+      - run: << $manager >> audit
 <<- end >>
 
   node-lint:
@@ -70,31 +67,27 @@ jobs:
     needs: run-workflow
     steps:
       - uses: actions/checkout@v4
-<<- if eq $specifics.PackageManagerName "pnpm" >>
+<<- if eq $manager "pnpm" >>
       - uses: pnpm/action-setup@v4
-<<- if not $specifics.PackageManagerVersion >>
-        with:
-          version: 9
 <<- end >>
-<<- end >>
-<<- if eq $specifics.PackageManagerName "bun" >>
+<<- if eq $manager "bun" >>
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 <<- else >>
       - uses: actions/setup-node@v4
         with:
-          cache: << $specifics.PackageManagerName >>
+          cache: << $manager >>
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
       - run: mkdir -p reports/
-<<- if eq $specifics.PackageManagerName "npm" >>
-      - run: << $specifics.PackageManagerName >> ci
+<<- if eq $manager "npm" >>
+      - run: << $manager >> ci
 <<- else >>
-      - run: << $specifics.PackageManagerName >> install --frozen-lockfile
+      - run: << $manager >> install --frozen-lockfile
 <<- end >>
-      - run: << $specifics.PackageManagerName >> run lint -o reports/node-lint.xslint.json -f json
+      - run: << $manager >> run lint -o reports/node-lint.xslint.json -f json
 <<- if has "sonar" .CI.Options >>
       - uses: actions/upload-artifact@v4
         with:
@@ -118,31 +111,33 @@ jobs:
       OS: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-<<- if eq $specifics.PackageManagerName "pnpm" >>
+<<- if eq $manager "pnpm" >>
       - uses: pnpm/action-setup@v4
-<<- if not $specifics.PackageManagerVersion >>
-        with:
-          version: 9
 <<- end >>
-<<- end >>
-<<- if eq $specifics.PackageManagerName "bun" >>
+<<- if eq $manager "bun" >>
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 <<- else >>
       - uses: actions/setup-node@v4
         with:
-          cache: << $specifics.PackageManagerName >>
+          cache: << $manager >>
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
       - run: mkdir -p reports/
-<<- if eq $specifics.PackageManagerName "npm" >>
-      - run: << $specifics.PackageManagerName >> ci
-<<- else >>
-      - run: << $specifics.PackageManagerName >> install --frozen-lockfile
+<<- if eq $manager "npm" >>
+      - run: << $manager >> ci
 <<- end >>
-      - run: << $specifics.PackageManagerName >> run test
+<<- if eq $manager "bun" >>
+      - run: << $manager >> install --frozen-lockfile
+      - run: << $manager >> test --rerun-each 10 --coverage --coverage-reporter=lcov --coverage-dir=reports
+<<- else if eq $manager "pnpm" >>
+      - run: << $manager >> install-test --frozen-lockfile
+<<- else >>
+      - run: << $manager >> install --frozen-lockfile
+      - run: << $manager >> run test
+<<- end >>
 <<- if has "codecov" .CI.Options >>
       - uses: codecov/codecov-action@v4
         if: ${{ ! startsWith(github.head_ref, 'dependabot') }} # ignore codecov on dependabot branches
@@ -240,7 +235,7 @@ jobs:
     needs:
       - run-workflow
 <<- /* bun doesn't support audit yet: https://github.com/oven-sh/bun/issues/5359 */>>
-<<- if not (eq $specifics.PackageManagerName "bun") >>
+<<- if not (eq $manager "bun") >>
       - node-audit
 <<- end >>
       - node-lint

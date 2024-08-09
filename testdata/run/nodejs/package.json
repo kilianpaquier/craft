@@ -1,5 +1,6 @@
 {
+    "description": "",
     "name": "craft",
-    "version": "1.0.0",
-    "description": ""
+    "packageManager": "bun@1.1.6",
+    "version": "1.0.0"
 }

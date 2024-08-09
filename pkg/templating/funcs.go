@@ -17,10 +17,18 @@ import (
 // It can be extended with MergeMaps.
 func FuncMap() template.FuncMap {
 	return template.FuncMap{
-		"map":     MergeMaps,
-		"toQuery": ToQuery,
-		"toYaml":  ToYAML,
+		"cutAfter": CutAfter,
+		"map":      MergeMaps,
+		"toQuery":  ToQuery,
+		"toYaml":   ToYAML,
 	}
+}
+
+// CutAfter cuts the input string at the first separator appearance
+// and returns the resulting string.
+func CutAfter(in, sep string) string {
+	out, _, _ := strings.Cut(in, sep)
+	return out
 }
 
 // MergeMaps mergs all src maps (an error is added to result map if those aren't maps) into dst map.

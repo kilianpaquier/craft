@@ -100,8 +100,7 @@ jobs:
           node-version: lts/*
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run test
+      - run: pnpm install-test --frozen-lockfile
       - uses: codecov/codecov-action@v4
         if: ${{ ! startsWith(github.head_ref, 'dependabot') }} # ignore codecov on dependabot branches
         with:
