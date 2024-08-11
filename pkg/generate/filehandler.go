@@ -55,6 +55,8 @@ func Github(metadata Metadata) FileHandler {
 		switch name {
 		case "release.yml":
 			return true, github && !metadata.CI.Release.Disable
+		case "release-drafter.yml":
+			return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.ReleaseDrafter
 		case ".codecov.yml":
 			return true, github && slices.Contains(metadata.CI.Options, craft.CodeCov) && len(metadata.Languages) > 0
 		case "codeql.yml":
@@ -101,7 +103,7 @@ func Makefile(metadata Metadata) FileHandler {
 // Releaserc returns the handler for releaserc option generation matching.
 func Releaserc(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
-		return name == ".releaserc.yml", metadata.CI != nil
+		return name == ".releaserc.yml", metadata.CI != nil && metadata.CI.Release.Action == craft.SemanticRelease
 	}
 }
 

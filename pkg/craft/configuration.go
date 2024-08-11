@@ -38,10 +38,11 @@ type CI struct {
 
 // Release is the struct for craft continuous integration release specifics configuration.
 type Release struct {
+	Action    string `json:"-" yaml:"action,omitempty"  validate:"omitempty,oneof=release-drafter semantic-release"`
 	Auto      bool   `json:"-" yaml:"auto"`
 	Backmerge bool   `json:"-" yaml:"backmerge"`
 	Disable   bool   `json:"-" yaml:"disable,omitempty"`
-	Mode      string `json:"-" yaml:"mode,omitempty"    validate:"omitempty,oneof=github-apps personal-token github-token"`
+	Mode      string `json:"-" yaml:"mode,omitempty"    validate:"omitempty,oneof=github-apps github-token personal-token"`
 }
 
 // Docker is the struct for craft docker tuning.
@@ -103,26 +104,47 @@ func Write(destdir string, config Configuration) error {
 // and migrates old properties into new fields.
 func (c Configuration) EnsureDefaults() Configuration {
 	if c.CI != nil {
-		// sets default release mode for github actions
-		if c.CI.Name == Github && c.CI.Release.Mode == "" {
-			c.CI.Release.Mode = GithubToken
-		}
-
-		// keep release mode empty when working with gitlab CICD
-		if c.CI.Name == Gitlab {
-			c.CI.Release.Mode = ""
+		// generic function to match an option included in a slice of options
+		del := func(options ...string) func(option string) bool {
+			return func(option string) bool {
+				return slices.Contains(options, option)
+			}
 		}
 
 		// migrate old auto_release option
 		if slices.Contains(c.CI.Options, "auto_release") {
 			c.CI.Release.Auto = true
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, func(option string) bool { return option == "auto_release" })
+			c.CI.Options = slices.DeleteFunc(c.CI.Options, del("auto_release"))
 		}
 
-		// migrate old backmerge optin
+		// migrate old backmerge option
 		if slices.Contains(c.CI.Options, "backmerge") {
 			c.CI.Release.Backmerge = true
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, func(option string) bool { return option == "backmerge" })
+			c.CI.Options = slices.DeleteFunc(c.CI.Options, del("backmerge"))
+		}
+
+		// set default release action in case it's not provided
+		if c.CI.Release.Action == "" {
+			c.CI.Release.Action = SemanticRelease
+		}
+
+		if c.CI.Name == Github {
+			// ses default release mode for github actions
+			if c.CI.Release.Mode == "" {
+				c.CI.Release.Mode = GithubToken
+			}
+
+			if c.CI.Release.Action == ReleaseDrafter {
+				// remove backmerge feature on release-drafter releasing since isn't not available
+				c.CI.Release.Backmerge = false
+				// set release mode to github-token since it's the only mode available with release-drafter
+				c.CI.Release.Mode = GithubToken
+			}
+		}
+
+		if c.CI.Name == Gitlab {
+			// keep release mode empty when working with gitlab CICD
+			c.CI.Release.Mode = ""
 		}
 	}
 	return c

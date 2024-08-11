@@ -5,6 +5,7 @@ ci:
   options:
     - dependabot
   release:
+    action: semantic-release
     auto: false
     backmerge: false
     mode: github-token

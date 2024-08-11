@@ -132,6 +132,9 @@ ci:
   name: github | gitlab
   # release specific options
   release:
+    # which action to use for github releasing 
+    # only available for github, semantic-release will be automatically set for gitlab
+    action: semantic-release | release-drafter
     # whether the release should run automatically
     auto: true | false
     # whether backmerging should be configured for main, staging and develop branches
@@ -140,7 +143,7 @@ ci:
     disable: true | false
     # release tokenization mode for github only (how should the release token be retrieved)
     # will stay empty when using gitlab CICD
-    mode: github-apps | personal-token | github-token
+    mode: github-apps | github-token | personal-token 
   # ci global options, providing one or multiple options with tune the ci generation (optional)
   options:
     - codecov
