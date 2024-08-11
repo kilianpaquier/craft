@@ -32,9 +32,10 @@ func TestDetectLicense(t *testing.T) {
 		t.Cleanup(func() { hook.Reset() })
 
 		// Act
-		_, exec := generate.DetectLicense(ctx, log, "", generate.Metadata{})
+		_, exec, err := generate.DetectLicense(ctx, log, "", generate.Metadata{})
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		logs := logger.ToString(hook.AllEntries())
 		assert.NotContains(t, logs, fmt.Sprintf("license detected, %s has license key", craft.File))
@@ -48,9 +49,10 @@ func TestDetectLicense(t *testing.T) {
 		t.Cleanup(func() { hook.Reset() })
 
 		// Act
-		_, exec := generate.DetectLicense(ctx, log, "", config)
+		_, exec, err := generate.DetectLicense(ctx, log, "", config)
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		logs := logger.ToString(hook.AllEntries())
 		assert.Contains(t, logs, fmt.Sprintf("license detected, %s has license key", craft.File))

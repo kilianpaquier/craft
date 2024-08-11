@@ -14,7 +14,7 @@ import (
 //
 // It returns the input metadata but modified with appropriate properties
 // alongside the slice of Exec to be executed to templatize the project.
-func DetectGeneric(_ context.Context, _ logger.Logger, _ string, metadata Metadata) (Metadata, []Exec) {
+func DetectGeneric(_ context.Context, _ logger.Logger, _ string, metadata Metadata) (Metadata, []Exec, error) {
 	if metadata.CI != nil {
 		// only keep generic applicable options
 		options := lo.Filter(metadata.CI.Options, func(option string, _ int) bool {
@@ -22,7 +22,7 @@ func DetectGeneric(_ context.Context, _ logger.Logger, _ string, metadata Metada
 		})
 		metadata.CI.Options = options
 	}
-	return metadata, []Exec{DefaultExec("lang_generic")}
+	return metadata, []Exec{DefaultExec("lang_generic")}, nil
 }
 
 var _ Detect = DetectGeneric // ensure interface is implemented

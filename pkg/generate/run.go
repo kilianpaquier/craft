@@ -93,17 +93,28 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	}
 
 	// detect all available languages and specificities in current project
-	var execs []Exec
+	execs := make([]Exec, 0, len(o.detects))
+	errs := make([]error, 0, len(o.detects))
 	for _, detect := range o.detects {
-		p, exec := detect(ctx, o.log, *o.destdir, props)
+		p, exec, err := detect(ctx, o.log, *o.destdir, props)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
 		props = p // override props with output props (updated)
 		execs = append(execs, exec...)
 	}
+
+	if len(errs) > 0 {
+		return props.Configuration, errors.Join(errs...)
+	}
+
 	// add generic exec in case no languages were detected
 	if len(props.Languages) == 0 {
 		o.log.Warn("no language detected, fallback to generic generation")
 
-		p, exec := DetectGeneric(ctx, o.log, *o.destdir, props)
+		p, exec, _ := DetectGeneric(ctx, o.log, *o.destdir, props)
 		props = p
 		execs = append(execs, exec...)
 	}
@@ -112,15 +123,15 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	var wg sync.WaitGroup
 	wg.Add(len(execs))
 	execOpts := o.toExecOptions(props)
-	errs := make(chan error, len(execs))
+	errsChan := make(chan error, len(execs))
 	for _, exec := range execs {
 		go func() {
 			defer wg.Done()
-			errs <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execOpts) // nolint:revive
+			errsChan <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execOpts) // nolint:revive
 		}()
 	}
 	wg.Wait()
-	close(errs)
+	close(errsChan)
 
-	return props.Configuration, errors.Join(lo.ChannelToSlice(errs)...)
+	return props.Configuration, errors.Join(lo.ChannelToSlice(errsChan)...)
 }

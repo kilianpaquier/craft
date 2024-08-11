@@ -23,9 +23,10 @@ func TestDetectGolang(t *testing.T) {
 
 	t.Run("no_gomod", func(t *testing.T) {
 		// Act
-		output, exec := generate.DetectGolang(ctx, log, "", generate.Metadata{})
+		output, exec, err := generate.DetectGolang(ctx, log, "", generate.Metadata{})
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 0)
 		assert.Zero(t, output)
 	})
@@ -38,17 +39,13 @@ func TestDetectGolang(t *testing.T) {
 		err := os.WriteFile(gomod, []byte("an invalid go.mod file"), cfs.RwRR)
 		require.NoError(t, err)
 
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
 		// Act
-		output, exec := generate.DetectGolang(ctx, log, destdir, generate.Metadata{})
+		output, exec, err := generate.DetectGolang(ctx, log, destdir, generate.Metadata{})
 
 		// Assert
+		assert.ErrorContains(t, err, "read go.mod")
 		assert.Len(t, exec, 0)
 		assert.Zero(t, output)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "parse go.mod:")
 	})
 
 	t.Run("missing_gomod_statements", func(t *testing.T) {
@@ -59,19 +56,15 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, gomod.Close())
 
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
 		// Act
-		output, exec := generate.DetectGolang(ctx, log, destdir, generate.Metadata{})
+		output, exec, err := generate.DetectGolang(ctx, log, destdir, generate.Metadata{})
 
 		// Assert
+		assert.ErrorContains(t, err, "read go.mod")
+		assert.ErrorContains(t, err, "invalid go.mod, module statement is missing")
+		assert.ErrorContains(t, err, "invalid go.mod, go statement is missing")
 		assert.Len(t, exec, 0)
 		assert.Zero(t, output)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "failed to parse go.mod statements")
-		assert.Contains(t, logs, "invalid go.mod, module statement is missing")
-		assert.Contains(t, logs, "invalid go.mod, go statement is missing")
 	})
 
 	t.Run("detected_no_gocmd", func(t *testing.T) {
@@ -104,9 +97,10 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		output, exec := generate.DetectGolang(ctx, log, destdir, input)
+		output, exec, err := generate.DetectGolang(ctx, log, destdir, input)
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})
@@ -146,9 +140,10 @@ func TestDetectGolang(t *testing.T) {
 		t.Cleanup(func() { hook.Reset() })
 
 		// Act
-		output, exec := generate.DetectGolang(ctx, log, destdir, input)
+		output, exec, err := generate.DetectGolang(ctx, log, destdir, input)
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 		logs := logger.ToString(hook.AllEntries())
@@ -209,9 +204,10 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		output, exec := generate.DetectGolang(ctx, log, destdir, input)
+		output, exec, err := generate.DetectGolang(ctx, log, destdir, input)
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})

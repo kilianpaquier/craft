@@ -17,9 +17,10 @@ func TestDetectGeneric(t *testing.T) {
 
 	t.Run("no_ci", func(t *testing.T) {
 		// Act
-		output, exec := generate.DetectGeneric(ctx, log, "", generate.Metadata{})
+		output, exec, err := generate.DetectGeneric(ctx, log, "", generate.Metadata{})
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Zero(t, output)
 	})
@@ -38,9 +39,10 @@ func TestDetectGeneric(t *testing.T) {
 		}
 
 		// Act
-		output, exec := generate.DetectGeneric(ctx, log, "", input)
+		output, exec, err := generate.DetectGeneric(ctx, log, "", input)
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})

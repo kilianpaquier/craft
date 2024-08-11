@@ -32,7 +32,7 @@ type Gomod struct {
 // DetectGolang handles the detection of golang at destdir.
 //
 // A valid golang project must have a valid go.mod file.
-func DetectGolang(ctx context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec) {
+func DetectGolang(ctx context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
 	gomod := filepath.Join(destdir, craft.Gomod)
 	gocmd := filepath.Join(destdir, craft.Gocmd)
 
@@ -40,9 +40,9 @@ func DetectGolang(ctx context.Context, log logger.Logger, destdir string, metada
 	statements, err := readGomod(gomod)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
-			log.Warnf("failed to parse %s statements: %s", craft.Gomod, err.Error())
+			return metadata, nil, fmt.Errorf("read go.mod: %w", err)
 		}
-		return metadata, nil
+		return metadata, nil, nil
 	}
 
 	metadata.Platform = statements.Platform
@@ -51,8 +51,8 @@ func DetectGolang(ctx context.Context, log logger.Logger, destdir string, metada
 	metadata.ProjectPath = statements.ProjectPath
 
 	// check hugo detection
-	if metadata, exec := detectHugo(ctx, log, destdir, metadata); len(exec) > 0 { // nolint:revive
-		return metadata, exec
+	if metadata, exec, _ := detectHugo(ctx, log, destdir, metadata); len(exec) > 0 { // nolint:revive
+		return metadata, exec, nil
 	}
 
 	log.Infof("golang detected, a %s is present and valid", craft.Gomod)
@@ -81,13 +81,13 @@ func DetectGolang(ctx context.Context, log logger.Logger, destdir string, metada
 		}
 	}
 
-	return metadata, []Exec{DefaultExec("lang_golang")}
+	return metadata, []Exec{DefaultExec("lang_golang")}, nil
 }
 
 var _ Detect = DetectGolang // ensure interface is implemented
 
 // detectHugo handles the detection of hugo at destdir.
-func detectHugo(_ context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec) {
+func detectHugo(_ context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
 	// detect hugo project
 	configs, _ := filepath.Glob(filepath.Join(destdir, "hugo.*"))
 
@@ -114,10 +114,12 @@ func detectHugo(_ context.Context, log logger.Logger, destdir string, metadata M
 		}
 
 		metadata.Languages["hugo"] = nil
-		return metadata, []Exec{DefaultExec("lang_hugo")}
+		return metadata, []Exec{DefaultExec("lang_hugo")}, nil
 	}
-	return metadata, nil
+	return metadata, nil, nil
 }
+
+var _ Detect = detectHugo // ensure interface is implemented
 
 // readGomod reads the go.mod file at modpath input and returns its gomod representation.
 func readGomod(modpath string) (Gomod, error) {

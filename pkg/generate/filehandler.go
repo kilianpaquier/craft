@@ -56,7 +56,7 @@ func Github(metadata Metadata) FileHandler {
 		case "release.yml":
 			return true, github && !metadata.CI.Release.Disable
 		case ".codecov.yml":
-			return true, github && slices.Contains(metadata.CI.Options, craft.CodeCov)
+			return true, github && slices.Contains(metadata.CI.Options, craft.CodeCov) && len(metadata.Languages) > 0
 		case "codeql.yml":
 			return true, github && slices.Contains(metadata.CI.Options, craft.CodeQL) && len(metadata.Languages) > 0
 		case "dependabot.yml":
@@ -108,6 +108,6 @@ func Releaserc(metadata Metadata) FileHandler {
 // Sonar returns the handler for sonar option generation matching.
 func Sonar(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
-		return name == "sonar.properties", metadata.CI != nil && slices.Contains(metadata.CI.Options, craft.Sonar)
+		return name == "sonar.properties", metadata.CI != nil && slices.Contains(metadata.CI.Options, craft.Sonar) && len(metadata.Languages) > 0
 	}
 }

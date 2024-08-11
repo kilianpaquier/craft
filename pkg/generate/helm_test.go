@@ -32,9 +32,10 @@ func TestDetectHelm(t *testing.T) {
 		t.Cleanup(func() { hook.Reset() })
 
 		// Act
-		_, exec := generate.DetectHelm(ctx, log, "", metadata)
+		_, exec, err := generate.DetectHelm(ctx, log, "", metadata)
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		logs := logger.ToString(hook.AllEntries())
 		assert.NotContains(t, logs, fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
@@ -46,9 +47,10 @@ func TestDetectHelm(t *testing.T) {
 		t.Cleanup(func() { hook.Reset() })
 
 		// Act
-		_, exec := generate.DetectHelm(ctx, log, "", generate.Metadata{})
+		_, exec, err := generate.DetectHelm(ctx, log, "", generate.Metadata{})
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		logs := logger.ToString(hook.AllEntries())
 		assert.Contains(t, logs, fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))

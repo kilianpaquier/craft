@@ -8,14 +8,12 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 	cfs "github.com/kilianpaquier/craft/pkg/fs"
 	"github.com/kilianpaquier/craft/pkg/generate"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 func TestDetectNodejs(t *testing.T) {
@@ -24,9 +22,10 @@ func TestDetectNodejs(t *testing.T) {
 
 	t.Run("no_packagejson", func(t *testing.T) {
 		// Act
-		_, exec := generate.DetectNodejs(ctx, log, "", generate.Metadata{})
+		_, exec, err := generate.DetectNodejs(ctx, log, "", generate.Metadata{})
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 0)
 	})
 
@@ -39,16 +38,12 @@ func TestDetectNodejs(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
 		// Act
-		_, exec := generate.DetectNodejs(ctx, log, destdir, generate.Metadata{})
+		_, exec, err := generate.DetectNodejs(ctx, log, destdir, generate.Metadata{})
 
 		// Assert
+		assert.ErrorContains(t, err, "read package.json")
 		assert.Len(t, exec, 0)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "unmarshal")
 	})
 
 	t.Run("error_validation_packagejson", func(t *testing.T) {
@@ -59,16 +54,12 @@ func TestDetectNodejs(t *testing.T) {
 		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "packageManager": "bun@1" }`), cfs.RwRR)
 		require.NoError(t, err)
 
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
 		// Act
-		_, exec := generate.DetectNodejs(ctx, log, destdir, generate.Metadata{})
+		_, exec, err := generate.DetectNodejs(ctx, log, destdir, generate.Metadata{})
 
 		// Assert
+		assert.ErrorContains(t, err, "read package.json")
 		assert.Len(t, exec, 0)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "packageManager isn't valid")
 	})
 
 	t.Run("nodejs_detected_with_options", func(t *testing.T) {
@@ -94,9 +85,10 @@ func TestDetectNodejs(t *testing.T) {
 		}
 
 		// Act
-		output, exec := generate.DetectNodejs(ctx, log, destdir, input)
+		output, exec, err := generate.DetectNodejs(ctx, log, destdir, input)
 
 		// Assert
+		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})
