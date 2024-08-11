@@ -5,6 +5,6 @@
 @semantic-release/gitlab
 @semantic-release/npm
 @semantic-release/release-notes-generator
-conventional-changelog-conventionalcommits@7
+conventional-changelog-conventionalcommits
 semantic-release-license
 @kilianpaquier/semantic-release-backmerge

@@ -4,5 +4,5 @@
 @semantic-release/git
 @semantic-release/gitlab
 @semantic-release/release-notes-generator
-conventional-changelog-conventionalcommits@7
+conventional-changelog-conventionalcommits
 semantic-release-license

@@ -55,7 +55,7 @@ jobs:
             @semantic-release/github
             @semantic-release/npm
             @semantic-release/release-notes-generator
-            conventional-changelog-conventionalcommits@7
+            conventional-changelog-conventionalcommits
             semantic-release-license
             @kilianpaquier/semantic-release-backmerge
           dry_run: true
@@ -212,7 +212,7 @@ jobs:
             @semantic-release/github
             @semantic-release/npm
             @semantic-release/release-notes-generator
-            conventional-changelog-conventionalcommits@7
+            conventional-changelog-conventionalcommits
             semantic-release-license
             @kilianpaquier/semantic-release-backmerge
           dry_run: ${{ inputs.dry_run }}

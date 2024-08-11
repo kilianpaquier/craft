@@ -1,12 +1,10 @@
 {
-    "name": "nodejs",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {},
     "author": "kilianpaquier",
+    "description": "",
     "license": "MIT",
-    "devDependencies": {
-        "npm-check-updates": "^16.14.18"
-    }
+    "main": "index.js",
+    "name": "nodejs",
+    "packageManager": "pnpm@9.0.0",
+    "scripts": {},
+    "version": "1.0.0"
 }

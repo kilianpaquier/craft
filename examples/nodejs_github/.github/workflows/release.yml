@@ -40,7 +40,7 @@ jobs:
             @semantic-release/github
             @semantic-release/npm
             @semantic-release/release-notes-generator
-            conventional-changelog-conventionalcommits@7
+            conventional-changelog-conventionalcommits
             semantic-release-license
           dry_run: true
           tag_format: v${version}
@@ -92,8 +92,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           cache: pnpm
@@ -219,7 +217,7 @@ jobs:
             @semantic-release/github
             @semantic-release/npm
             @semantic-release/release-notes-generator
-            conventional-changelog-conventionalcommits@7
+            conventional-changelog-conventionalcommits
             semantic-release-license
           dry_run: ${{ inputs.dry_run }}
           tag_format: v${version}
