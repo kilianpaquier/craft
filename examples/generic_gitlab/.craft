@@ -4,6 +4,10 @@ ci:
   name: gitlab
   options:
     - renovate
+  release:
+    action: semantic-release
+    auto: false
+    backmerge: false
 maintainers:
   - name: kilianpaquier
 no_chart: true

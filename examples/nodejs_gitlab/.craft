@@ -5,6 +5,10 @@ ci:
   options:
     - sonar
     - renovate
+  release:
+    action: semantic-release
+    auto: false
+    backmerge: false
 docker:
   registry: ghcr.io
 license: mit

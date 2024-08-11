@@ -141,6 +141,27 @@ func TestEnsureDefaults(t *testing.T) {
 		assert.Equal(t, craft.GithubToken, actual.CI.Release.Mode)
 	})
 
+	t.Run("success_sets_github_ci_release_drafter_defaults", func(t *testing.T) {
+		// Arrange
+		input := craft.Configuration{
+			CI: &craft.CI{
+				Name: craft.Github,
+				Release: craft.Release{
+					Action:    craft.ReleaseDrafter,
+					Mode:      craft.PersonalToken,
+					Backmerge: true,
+				},
+			},
+		}
+
+		// Act
+		actual := input.EnsureDefaults()
+
+		// Assert
+		assert.False(t, actual.CI.Release.Backmerge)
+		assert.Equal(t, craft.GithubToken, actual.CI.Release.Mode)
+	})
+
 	t.Run("success_sets_gitlab_ci_defaults", func(t *testing.T) {
 		// Arrange
 		input := craft.Configuration{

@@ -6,6 +6,10 @@ ci:
     - pages
     - renovate
     - sonar
+  release:
+    action: semantic-release
+    auto: false
+    backmerge: false
 license: mit
 maintainers:
   - name: kilianpaquier

@@ -55,6 +55,16 @@ const (
 	PersonalToken string = "personal-token"
 )
 
+const (
+	// ReleaseDrafter is the value for github release with release-drafter instead of semantic-release.
+	//
+	// With this action, in any case, the token used is the github-token mode.
+	ReleaseDrafter string = "release-drafter"
+
+	// SemanticRelease is the value for github / gitlab release with semantic-release.
+	SemanticRelease string = "semantic-release"
+)
+
 // CIOptions returns the slice with all availables CI options.
 func CIOptions() []string {
 	return []string{CodeCov, CodeQL, Dependabot, Netlify, Pages, Renovate, Sonar}

@@ -70,6 +70,15 @@
                                 "personal-token",
                                 "github-token"
                             ]
+                        },
+                        "action": {
+                            "description": "Action to be used for releasing. Only semantic-release can be provided when working with gitlab.",
+                            "type": "string",
+                            "default": "semantic-release",
+                            "enum": [
+                                "release-drafter",
+                                "semantic-release"
+                            ]
                         }
                     }
                 },
