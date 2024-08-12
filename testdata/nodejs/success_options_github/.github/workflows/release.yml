@@ -179,6 +179,7 @@ jobs:
     if: ${{ github.ref_protected && ! startsWith(github.event_name, 'pull_request') }}
     environment: release
     needs:
+      - version
       - node-build
       - pages
       - netlify

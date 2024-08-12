@@ -471,6 +471,7 @@ jobs:
 <<- end >>
 
 <<- $needs := list >>
+<<- $needs = append $needs "version" >>
 
 <<- if $gobuild >>
 <<- $needs = append $needs "go-build" >>
@@ -501,11 +502,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.ref_protected && ! startsWith(github.event_name, 'pull_request') }}
     environment: release
-<<- if gt (len $needs) 0 >>
     needs:
 <<- range $needs >>
       - << . >>
-<<- end >>
 <<- end >>
 
 <<- if eq .CI.Release.Action "release-drafter" >>
