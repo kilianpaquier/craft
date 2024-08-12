@@ -8,7 +8,7 @@ ci:
     - dependabot
     - sonar
   release:
-    action: semantic-release
+    action: release-drafter
     auto: false
     backmerge: false
     mode: github-token

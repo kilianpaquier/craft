@@ -692,10 +692,7 @@ func TestExec_Nodejs(t *testing.T) {
 				Platform:    craft.Github,
 			},
 			Languages: map[string]any{
-				"nodejs": generate.PackageJSON{
-					PackageManager: "pnpm@8.0.0",
-					Private:        true,
-				},
+				"nodejs": generate.PackageJSON{PackageManager: "pnpm@8.0.0"},
 			},
 		})
 
@@ -725,10 +722,7 @@ func TestExec_Nodejs(t *testing.T) {
 				Platform:    craft.Github,
 			},
 			Languages: map[string]any{
-				"nodejs": generate.PackageJSON{
-					PackageManager: "pnpm@8.0.0",
-					Private:        true,
-				},
+				"nodejs": generate.PackageJSON{PackageManager: "pnpm@8.0.0"},
 			},
 		})
 

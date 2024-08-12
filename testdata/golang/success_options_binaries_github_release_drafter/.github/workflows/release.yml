@@ -134,7 +134,7 @@ jobs:
           name: v$RESOLVED_VERSION
           prerelease-identifier: ${{ needs.version.outputs.identifier }}
           prerelease: ${{ needs.version.outputs.release != 'true' }}
-          publish: ${{ github.event_name == 'push' || ! inputs.dry_run }}
+          publish: ${{ ! inputs.dry_run }}
           tag: v$RESOLVED_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -144,7 +144,7 @@ jobs:
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:
-          draft: ${{ github.event_name != 'push' || inputs.dry_run }}
+          draft: ${{ inputs.dry_run }}
           files: |
             CHANGELOG.md
             checksums.txt

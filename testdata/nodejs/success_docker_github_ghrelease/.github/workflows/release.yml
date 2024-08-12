@@ -54,6 +54,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ ! startsWith(github.event_name, 'pull_request') }}
     needs: version
+    environment: release
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -61,7 +64,6 @@ jobs:
         with:
           cache: pnpm
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - uses: actions/upload-artifact@v4
@@ -69,6 +71,12 @@ jobs:
           name: build
           path: dist
           retention-days: 1
+      # https://github.com/marketplace/actions/npm-publish
+      - uses: JS-DevTools/npm-publish@v3
+        with:
+          dry-run: ${{ inputs.dry_run }}
+          tag: ${{ needs.version.outputs.version }}
+          token: ${{ secrets.NPM_TOKEN }}
 
   docker-build:
     name: Docker Build

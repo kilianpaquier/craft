@@ -45,7 +45,6 @@ jobs:
         with:
           cache: yarn
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: yarn audit
 
   node-lint:
@@ -58,7 +57,6 @@ jobs:
         with:
           cache: yarn
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
       - run: yarn install --frozen-lockfile
       - run: yarn run lint -o reports/node-lint.xslint.json -f json
@@ -82,7 +80,6 @@ jobs:
         with:
           cache: yarn
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
       - run: yarn install --frozen-lockfile
       - run: yarn run test

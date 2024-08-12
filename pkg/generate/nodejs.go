@@ -20,18 +20,24 @@ var _packageManagerRegexp = regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\
 
 // PackageJSON represents the node package json descriptor.
 type PackageJSON struct {
-	Author         *string           `json:"author,omitempty"`
-	Description    *string           `json:"description,omitempty"`
-	Files          []string          `json:"files,omitempty"`
-	Keywords       []string          `json:"keywords,omitempty"`
-	License        *string           `json:"license,omitempty"`
-	Main           *string           `json:"main,omitempty"`
-	Module         string            `json:"module,omitempty"`
-	Name           string            `json:"name,omitempty"           validate:"required"`
-	PackageManager string            `json:"packageManager,omitempty" validate:"required"`
-	Private        bool              `json:"private,omitempty"`
-	Scripts        map[string]string `json:"scripts,omitempty"`
-	Version        string            `json:"version,omitempty"`
+	Author         *string  `json:"author,omitempty"`
+	Description    *string  `json:"description,omitempty"`
+	Files          []string `json:"files,omitempty"`
+	Keywords       []string `json:"keywords,omitempty"`
+	License        *string  `json:"license,omitempty"`
+	Main           *string  `json:"main,omitempty"`
+	Module         string   `json:"module,omitempty"`
+	Name           string   `json:"name,omitempty"           validate:"required"`
+	PackageManager string   `json:"packageManager,omitempty" validate:"required"`
+	Private        bool     `json:"private,omitempty"`
+	PublishConfig  struct {
+		Access     string `json:"access,omitempty"`
+		Provenance bool   `json:"provenance,omitempty"`
+		Registry   string `json:"registry,omitempty"`
+		Tag        string `json:"tag,omitempty"`
+	} `json:"publishConfig,omitempty"`
+	Scripts map[string]string `json:"scripts,omitempty"`
+	Version string            `json:"version,omitempty"`
 }
 
 // Validate validates the given PackageJSON struct.
