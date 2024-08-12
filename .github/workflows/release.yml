@@ -55,7 +55,7 @@ jobs:
         uses: release-drafter/release-drafter@v6
         with:
           commitish: ${{ github.ref_name }}
-          config-name: release-drafter.yml
+          # config-name: release-drafter.yml
           latest: ${{ steps.release.outputs.release == 'true' }}
           name: v$RESOLVED_VERSION
           prerelease-identifier: ${{ steps.release.outputs.identifier }}
