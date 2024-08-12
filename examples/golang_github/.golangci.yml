@@ -185,7 +185,6 @@ linters-settings:
         arguments: [8]
       - name: modifies-parameter
       - name: modifies-value-receiver
-      - name: nested-structs
       - name: optimize-operands-order
       # - name: package-comments
       - name: range
