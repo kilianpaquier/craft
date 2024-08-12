@@ -1,3 +1,52 @@
+## [1.0.0-beta.11](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2024-08-12)
+
+
+### Features
+
+* **github:** add gh-release for CI release action ([2e5394d](https://github.com/kilianpaquier/craft/commit/2e5394d42a4f950462b13e82b1bf9e221c54db31))
+* implement release-drafter as release action - [#46](https://github.com/kilianpaquier/craft/issues/46) ([c64ed3c](https://github.com/kilianpaquier/craft/commit/c64ed3c6e005f781d8d3a3151b92a7b04c4224fc))
+* **nodejs:** implement npm publish in node-build when working with release-drafter or gh-release ([1674391](https://github.com/kilianpaquier/craft/commit/1674391f40612ce019e12635ec28bcd7f90bb46d))
+
+
+### Bug Fixes
+
+* allow detections to return error in case something unrecoverable is encountered ([1d00a91](https://github.com/kilianpaquier/craft/commit/1d00a919e829f8c9689233b67a74381074be9cce))
+* **drafter:** add missing artifacts download step ([16b3562](https://github.com/kilianpaquier/craft/commit/16b35621b28d52a600dc65d0e2829217ad21c5af))
+* **drafter:** bad glob for assets upload in release ([4a1ec05](https://github.com/kilianpaquier/craft/commit/4a1ec0588ef4092dd02515fcf9b6e28c797cf007))
+* **drafter:** remove contributors footer since github already does it when contributor is tagged in release ([a5f7ea9](https://github.com/kilianpaquier/craft/commit/a5f7ea9a2acb21467c36f1358f8a9f05e6c67771))
+* **drafter:** remove GE_HOST setup ([0c891e9](https://github.com/kilianpaquier/craft/commit/0c891e950167b0199a593c2f1da51c4007bca3b0))
+* **github:** add needs on version job for release job ([b3bae1b](https://github.com/kilianpaquier/craft/commit/b3bae1bdbf718d13e4b9b3774bfd09debbefdb40))
+* **github:** move permission in dependencies submission job to specific job ([582f64c](https://github.com/kilianpaquier/craft/commit/582f64c983709ab7401b91af332fac9b3cbcb107))
+* **github:** print released version in release process ([9eb3056](https://github.com/kilianpaquier/craft/commit/9eb3056c31f679d3783ee3f3926d2c4042a62111))
+* **github:** various fixes on release file actions (additional git checkouts, new breaking section in release note) ([5629dc0](https://github.com/kilianpaquier/craft/commit/5629dc077a5a92e31f450d4d0e12afa3c7300531))
+* **golangci-lint:** lighten cyclop alert and harden cognit alert ([456a785](https://github.com/kilianpaquier/craft/commit/456a785c3acf81a69ddfa5f1fa09d22504cc952e))
+* print destination filename instead of template one in logs ([17c4466](https://github.com/kilianpaquier/craft/commit/17c4466f340746c4d61a2137c4aca2b95deb1592))
+* print only filename instead of full path when not regenerating it ([f016ead](https://github.com/kilianpaquier/craft/commit/f016ead084dd59144df36f790e33415e83068092))
+
+
+### Reverts
+
+* **semrel:** put back specific version for conventionalcommits parser ([b5bbaf4](https://github.com/kilianpaquier/craft/commit/b5bbaf43fe554b9e64bff48f3712a9e5fc4ee206))
+
+
+### Documentation
+
+* **readme:** add missing netlify option ([24754a6](https://github.com/kilianpaquier/craft/commit/24754a6001f7db1a4942ca4646d4f67bf90b93d4))
+
+
+### Chores
+
+* **actions:** enforce docker environment in github actions for docker build and docker trivy ([ce1ab97](https://github.com/kilianpaquier/craft/commit/ce1ab979192ff8108a0c0ed3d13e537fb8d4d8b0))
+* **golangci:** remove nested-structs rule ([57efd62](https://github.com/kilianpaquier/craft/commit/57efd62222cc58cdd7f07d0515bca13d890119c4))
+* **makefile:** print installing or current version on install scripts ([e77dd8c](https://github.com/kilianpaquier/craft/commit/e77dd8c3a84c85a22f1559aebce0ed5fd66d47f1))
+* **semrel:** remove dist when not working with golang ([cb7426a](https://github.com/kilianpaquier/craft/commit/cb7426a1460386a3b9f1bdbb68b2821fa299bddb))
+* **semrel:** remove specific conventionalcommits version since semantic-release upgraded ([2202798](https://github.com/kilianpaquier/craft/commit/2202798f60140fd7f827daa5aa77e37aa354ea2e))
+
+
+### Code Refactoring
+
+* **nodejs:** make packageManager required in package.json file ([2d12dd2](https://github.com/kilianpaquier/craft/commit/2d12dd2c86c6fb8a31a84465752a44b67d1f022b))
+
 ## [1.0.0-beta.10](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2024-08-05)
 
 
