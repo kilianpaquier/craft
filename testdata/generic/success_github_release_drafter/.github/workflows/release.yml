@@ -90,6 +90,9 @@ jobs:
           tag: v$RESOLVED_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo $VERSION
+        env:
+          VERSION: ${{ steps.drafter.outputs.tag_name }}
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:

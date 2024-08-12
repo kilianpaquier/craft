@@ -531,6 +531,9 @@ jobs:
           tag: v$RESOLVED_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo $VERSION
+        env:
+          VERSION: ${{ steps.drafter.outputs.tag_name }}
 <<- if or $gobuild $nodejs >>
       - uses: actions/download-artifact@v4
         with:
@@ -596,7 +599,7 @@ jobs:
           path: dist
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
-      - id: semantic-release
+      - id: semantic_release
         uses: cycjimmy/semantic-release-action@v4
         with:
           semantic_version: 23
@@ -643,4 +646,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 <<- end >>
 <<- end >>
+      - run: echo $VERSION
+        env:
+          VERSION: ${{ steps.semantic_release.outputs.new_release_version }}
 <<- end >>

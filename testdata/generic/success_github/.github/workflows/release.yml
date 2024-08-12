@@ -110,7 +110,7 @@ jobs:
         with:
           fetch-depth: 0
       # https://github.com/marketplace/actions/action-for-semantic-release
-      - id: semantic-release
+      - id: semantic_release
         uses: cycjimmy/semantic-release-action@v4
         with:
           semantic_version: 23
@@ -137,3 +137,6 @@ jobs:
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo $VERSION
+        env:
+          VERSION: ${{ steps.semantic_release.outputs.new_release_version }}
