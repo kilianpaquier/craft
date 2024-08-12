@@ -76,6 +76,7 @@
                             "type": "string",
                             "default": "semantic-release",
                             "enum": [
+                                "gh-release",
                                 "release-drafter",
                                 "semantic-release"
                             ]

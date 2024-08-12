@@ -15,8 +15,10 @@ on:
       - next
       - beta
       - alpha
+<<- if eq .CI.Release.Action "semantic-release" >>
       - v[0-9]+.x
       - v[0-9]+.[0-9]+.x
+<<- end >>
 
 jobs:
 
