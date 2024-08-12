@@ -62,5 +62,3 @@ version-resolver:
   default: minor
 template: |
   $CHANGES
-footer: |
-  $CONTRIBUTORS
