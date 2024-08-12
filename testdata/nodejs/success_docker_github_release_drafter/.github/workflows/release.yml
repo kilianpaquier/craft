@@ -184,6 +184,10 @@ jobs:
       pull-requests: write # autolabeler
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
       # https://github.com/marketplace/actions/release-drafter
       - id: drafter
         uses: release-drafter/release-drafter@v6
@@ -201,10 +205,6 @@ jobs:
       - run: echo $VERSION
         env:
           VERSION: ${{ steps.drafter.outputs.tag_name }}
-      - uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: dist
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:

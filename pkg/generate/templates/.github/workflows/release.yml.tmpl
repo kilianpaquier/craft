@@ -515,6 +515,13 @@ jobs:
       pull-requests: write # autolabeler
     steps:
       - uses: actions/checkout@v4
+<<- /* retrieve dist for go binaries and nodejs dist folder (uploaded with semantic-release to npm registry) */>>
+<<- if or $gobuild $nodejs >>
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+<<- end >>
       # https://github.com/marketplace/actions/release-drafter
       - id: drafter
         uses: release-drafter/release-drafter@v6
@@ -536,12 +543,6 @@ jobs:
       - run: echo $VERSION
         env:
           VERSION: ${{ steps.drafter.outputs.tag_name }}
-<<- if or $gobuild $nodejs >>
-      - uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: dist
-<<- end >>
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:
@@ -553,7 +554,7 @@ jobs:
           files: |
             CHANGELOG.md
             checksums.txt
-<<- if not $nodejs >>
+<<- if $gobuild >>
             dist/*
 <<- end >>
           prerelease: ${{ needs.version.outputs.release != 'true' }}
@@ -594,6 +595,7 @@ jobs:
           persist-credentials: false
 <<- end >>
 <<- end >>
+<<- /* retrieve dist for go binaries and nodejs dist folder (uploaded with semantic-release to npm registry) */>>
 <<- if or $gobuild $nodejs >>
       - uses: actions/download-artifact@v4
         with:
