@@ -56,6 +56,11 @@ const (
 )
 
 const (
+	// GhRelease is the value for github release with gh-release, yet another github action to create github releases.
+	//
+	// With this action, in any case, the token used is the github-token mode.
+	GhRelease string = "gh-release"
+
 	// ReleaseDrafter is the value for github release with release-drafter instead of semantic-release.
 	//
 	// With this action, in any case, the token used is the github-token mode.

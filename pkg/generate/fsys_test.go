@@ -168,6 +168,31 @@ func TestExec_Generic(t *testing.T) {
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 	})
 
+	t.Run("success_github_ghrelease", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "success_github_ghrelease")
+
+		metadata, opts := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+				CI: &craft.CI{
+					Name:    craft.Github,
+					Options: craft.CIOptions(),
+					Release: craft.Release{Action: craft.GhRelease},
+				},
+				Platform: craft.Github,
+			},
+		})
+
+		// Act
+		err := exec(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
+	})
+
 	t.Run("success_gitlab", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
@@ -355,6 +380,42 @@ func TestExec_Golang(t *testing.T) {
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 	})
 
+	t.Run("success_options_binaries_github_ghrelease", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "success_options_binaries_github_ghrelease")
+
+		metadata, opts := setup(generate.Metadata{
+			Binaries: 4,
+			Clis:     map[string]struct{}{"cli-name": {}},
+			Configuration: craft.Configuration{
+				CI: &craft.CI{
+					Name:    craft.Github,
+					Options: craft.CIOptions(),
+					Release: craft.Release{
+						Action:    craft.GhRelease,
+						Auto:      true,
+						Backmerge: true,
+						Mode:      craft.PersonalToken,
+					},
+				},
+				License:     lo.ToPtr("mit"),
+				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+				Platform:    craft.Github,
+			},
+			Crons:   map[string]struct{}{"cron-name": {}},
+			Jobs:    map[string]struct{}{"job-name": {}},
+			Workers: map[string]struct{}{"worker-name": {}},
+		})
+
+		// Act
+		err := golang(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
+	})
+
 	t.Run("success_options_binaries_gitlab", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
@@ -450,6 +511,37 @@ func TestExec_Hugo(t *testing.T) {
 					Options: craft.CIOptions(),
 					Release: craft.Release{
 						Action:    craft.ReleaseDrafter,
+						Auto:      true,
+						Backmerge: true,
+						Mode:      craft.GithubToken,
+					},
+				},
+				License:     lo.ToPtr("mit"),
+				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+				Platform:    craft.Github,
+			},
+		})
+
+		// Act
+		err := hugo(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
+	})
+
+	t.Run("success_github_ghrelease", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "success_github_ghrelease")
+
+		metadata, opts := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				CI: &craft.CI{
+					Name:    craft.Github,
+					Options: craft.CIOptions(),
+					Release: craft.Release{
+						Action:    craft.GhRelease,
 						Auto:      true,
 						Backmerge: true,
 						Mode:      craft.GithubToken,
@@ -593,6 +685,39 @@ func TestExec_Nodejs(t *testing.T) {
 				CI: &craft.CI{
 					Name:    craft.Github,
 					Release: craft.Release{Action: craft.ReleaseDrafter, Mode: craft.PersonalToken},
+				},
+				Docker:      &craft.Docker{},
+				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+				NoMakefile:  true,
+				Platform:    craft.Github,
+			},
+			Languages: map[string]any{
+				"nodejs": generate.PackageJSON{
+					PackageManager: "pnpm@8.0.0",
+					Private:        true,
+				},
+			},
+		})
+
+		// Act
+		err := nodejs(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+
+		// Assert
+		assert.NoError(t, err)
+		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
+	})
+
+	t.Run("success_docker_github_ghrelease", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+		assertdir := filepath.Join(assertdir, "success_docker_github_ghrelease")
+
+		metadata, opts := setup(generate.Metadata{
+			Binaries: 1,
+			Configuration: craft.Configuration{
+				CI: &craft.CI{
+					Name:    craft.Github,
+					Release: craft.Release{Action: craft.GhRelease, Mode: craft.PersonalToken},
 				},
 				Docker:      &craft.Docker{},
 				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},

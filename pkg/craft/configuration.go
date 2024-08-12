@@ -38,7 +38,7 @@ type CI struct {
 
 // Release is the struct for craft continuous integration release specifics configuration.
 type Release struct {
-	Action    string `json:"-" yaml:"action,omitempty"  validate:"omitempty,oneof=release-drafter semantic-release"`
+	Action    string `json:"-" yaml:"action,omitempty"  validate:"omitempty,oneof=gh-release release-drafter semantic-release"`
 	Auto      bool   `json:"-" yaml:"auto"`
 	Backmerge bool   `json:"-" yaml:"backmerge"`
 	Disable   bool   `json:"-" yaml:"disable,omitempty"`
@@ -134,10 +134,10 @@ func (c Configuration) EnsureDefaults() Configuration {
 				c.CI.Release.Mode = GithubToken
 			}
 
-			if c.CI.Release.Action == ReleaseDrafter {
-				// remove backmerge feature on release-drafter releasing since isn't not available
+			if c.CI.Release.Action == ReleaseDrafter || c.CI.Release.Action == GhRelease {
+				// remove backmerge feature on gh-release or release-drafter releasing since isn't not available
 				c.CI.Release.Backmerge = false
-				// set release mode to github-token since it's the only mode available with release-drafter
+				// set release mode to github-token since it's the only mode available with gh-release or release-drafter
 				c.CI.Release.Mode = GithubToken
 			}
 		}

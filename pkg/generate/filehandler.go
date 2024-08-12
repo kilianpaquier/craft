@@ -53,7 +53,10 @@ func Github(metadata Metadata) FileHandler {
 
 		switch name {
 		case "release.yml":
-			return true, github && !metadata.CI.Release.Disable
+			if strings.Contains(src, path.Join(".github", name)) { // gh-release changelog file
+				return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.GhRelease
+			}
+			return true, github && !metadata.CI.Release.Disable // release action file
 		case "release-drafter.yml":
 			return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.ReleaseDrafter
 		case ".codecov.yml":
