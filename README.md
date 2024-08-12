@@ -138,6 +138,7 @@ ci:
     # whether the release should run automatically
     auto: true | false
     # whether backmerging should be configured for main, staging and develop branches
+    # this feature is only available with semantic-release (no matter the CI)
     backmerge: true | false
     # whether the release should be disabled
     disable: true | false
@@ -149,6 +150,7 @@ ci:
     - codecov
     - codeql
     - dependabot
+    - netlify
     - pages
     - renovate
     - sonar
