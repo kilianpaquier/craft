@@ -186,6 +186,6 @@ jobs:
           files: |
             CHANGELOG.md
             checksums.txt
-            dist
+            dist/*
           tag_name: ${{ steps.drafter.outputs.tag_name }}
           token: ${{ secrets.GITHUB_TOKEN }}

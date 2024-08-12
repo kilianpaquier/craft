@@ -552,7 +552,7 @@ jobs:
             CHANGELOG.md
             checksums.txt
 <<- if not $nodejs >>
-            dist
+            dist/*
 <<- end >>
           tag_name: ${{ steps.drafter.outputs.tag_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
