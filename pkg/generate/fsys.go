@@ -104,7 +104,7 @@ func handleDir(log logger.Logger, fsys cfs.FS, srcdir, destdir string, data any,
 			return nil
 		}
 		if errors.Is(err, errExist) {
-			log.Infof("not copying '%s' since it already exists", dest)
+			log.Infof("not copying '%s' since it already exists", filepath.Base(dest))
 			return nil
 		}
 		return err
