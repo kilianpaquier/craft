@@ -531,6 +531,12 @@ jobs:
           tag: v$RESOLVED_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+<<- if or $gobuild $nodejs >>
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+<<- end >>
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:
@@ -543,7 +549,7 @@ jobs:
           files: |
             CHANGELOG.md
             checksums.txt
-<<- if not (hasKey .Languages "nodejs") >>
+<<- if not $nodejs >>
             dist
 <<- end >>
           tag_name: ${{ steps.drafter.outputs.tag_name }}
