@@ -107,7 +107,7 @@ jobs:
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:
-          draft: ${{ github.event_name != 'push' || inputs.dry_run }}
+          draft: ${{ inputs.dry_run }}
           files: |
             CHANGELOG.md
             checksums.txt

@@ -21,8 +21,6 @@ on:
       - next
       - beta
       - alpha
-      - v[0-9]+.x
-      - v[0-9]+.[0-9]+.x
   workflow_dispatch:
 
 jobs:
@@ -48,7 +46,6 @@ jobs:
         with:
           cache: pnpm
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: pnpm audit
 
   node-lint:
@@ -62,7 +59,6 @@ jobs:
         with:
           cache: pnpm
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint -o reports/node-lint.xslint.json -f json
@@ -92,7 +88,6 @@ jobs:
         with:
           cache: pnpm
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
       - run: pnpm install-test --frozen-lockfile
       - uses: codecov/codecov-action@v4

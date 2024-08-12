@@ -96,7 +96,7 @@ plugins:
         - { from: "^(master|main)$", to: "staging" }
         - { from: "^(master|main)$", to: "^(dev|develop|development)$" }
         - { from: staging, to: "^(dev|develop|development)$" }
-<<- if not (eq .CI.Name .Platform) >>
+<<- if ne .CI.Name .Platform >>
       platform: << .Platform >>
 <<- end >>
 <<- end >>

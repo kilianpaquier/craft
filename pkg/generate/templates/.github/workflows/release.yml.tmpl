@@ -231,6 +231,11 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ ! startsWith(github.event_name, 'pull_request') }}
     needs: version
+<<- if and (ne .CI.Release.Action "semantic-release") (not $specifics.Private) >>
+    environment: release
+    permissions:
+      id-token: write
+<<- end >>
     steps:
       - uses: actions/checkout@v4
 <<- if eq $manager "pnpm" >>
@@ -245,7 +250,6 @@ jobs:
         with:
           cache: << $manager >>
           node-version: lts/*
-          token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
 <<- if eq $manager "npm" >>
       - run: << $manager >> ci
@@ -265,6 +269,14 @@ jobs:
           name: build
           path: dist
           retention-days: 1
+<<- if and (ne .CI.Release.Action "semantic-release") (not $specifics.Private) >>
+      # https://github.com/marketplace/actions/npm-publish
+      - uses: JS-DevTools/npm-publish@v3
+        with:
+          dry-run: ${{ inputs.dry_run }}
+          tag: ${{ needs.version.outputs.version }}
+          token: ${{ secrets.NPM_TOKEN }}
+<<- end >>
 <<- end >>
 
 <<- if $gobuild >>
@@ -567,11 +579,7 @@ jobs:
           name: v$RESOLVED_VERSION
           prerelease-identifier: ${{ needs.version.outputs.identifier }}
           prerelease: ${{ needs.version.outputs.release != 'true' }}
-<<- if .CI.Release.Auto >>
-          publish: ${{ github.event_name == 'push' || ! inputs.dry_run }}
-<<- else >>
           publish: ${{ ! inputs.dry_run }}
-<<- end >>
           tag: v$RESOLVED_VERSION
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -581,11 +589,7 @@ jobs:
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:
-<<- if .CI.Release.Auto >>
-          draft: ${{ github.event_name != 'push' || inputs.dry_run }}
-<<- else >>
           draft: ${{ inputs.dry_run }}
-<<- end >>
           files: |
             CHANGELOG.md
             checksums.txt
@@ -612,11 +616,7 @@ jobs:
       # https://github.com/marketplace/actions/gh-release
       - uses: softprops/action-gh-release@v2
         with:
-<<- if .CI.Release.Auto >>
-          draft: ${{ github.event_name != 'push' || inputs.dry_run }}
-<<- else >>
           draft: ${{ inputs.dry_run }}
-<<- end >>
           files: |
             CHANGELOG.md
             checksums.txt
@@ -650,7 +650,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 <<- end >>
       - uses: actions/checkout@v4
-<<- if or (.CI.Release.Backmerge) (not (eq .CI.Release.Mode "github-token")) >>
+<<- if or (.CI.Release.Backmerge) (ne .CI.Release.Mode "github-token") >>
         with:
 <<- if .CI.Release.Backmerge >>
           fetch-depth: 0
@@ -658,7 +658,7 @@ jobs:
 <<- if eq .CI.Release.Mode "github-apps" >>
           token: ${{ steps.app-token.outputs.token }}
 <<- end >>
-<<- if not (eq .CI.Release.Mode "github-token") >>
+<<- if ne .CI.Release.Mode "github-token" >>
           persist-credentials: false
 <<- end >>
 <<- end >>
