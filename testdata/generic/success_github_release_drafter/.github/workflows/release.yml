@@ -104,7 +104,6 @@ jobs:
           files: |
             CHANGELOG.md
             checksums.txt
-            dist/*
           prerelease: ${{ needs.version.outputs.release != 'true' }}
           tag_name: ${{ steps.drafter.outputs.tag_name }}
           token: ${{ secrets.GITHUB_TOKEN }}

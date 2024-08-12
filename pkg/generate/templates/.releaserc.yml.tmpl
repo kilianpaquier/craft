@@ -2,6 +2,12 @@
 
 # https://semantic-release.gitbook.io/semantic-release/usage/configuration
 
+<<- $nodejs := hasKey .Languages "nodejs" >>
+<<- $hugo := hasKey .Languages "hugo" >>
+<<- $golang := hasKey .Languages "golang" >>
+
+<<- $gobuild := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+
 plugins:
   - - "@semantic-release/commit-analyzer"
     - preset: conventionalcommits
@@ -61,7 +67,7 @@ plugins:
 <<- if .License >>
   - "semantic-release-license"
 <<- end >>
-<<- if hasKey .Languages "nodejs" >>
+<<- if $nodejs >>
   - "@semantic-release/npm"
 <<- end >>
   - - "@semantic-release/git"
@@ -70,7 +76,7 @@ plugins:
 <<- if .License >>
         - LICENSE
 <<- end >>
-<<- if hasKey .Languages "nodejs" >>
+<<- if $nodejs >>
         - package.json
 <<- end >>
       message: "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
@@ -78,7 +84,7 @@ plugins:
     - assets:
         - { path: CHANGELOG.md, label: CHANGELOG.md }
         - { path: checksums.txt }
-<<- if not (hasKey .Languages "nodejs") >>
+<<- if $gobuild >>
         - { path: dist }
 <<- end >>
       failComment: false
