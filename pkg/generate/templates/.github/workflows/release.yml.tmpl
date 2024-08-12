@@ -61,6 +61,7 @@ jobs:
       contents: write # create release
       pull-requests: write # autolabeler
     steps:
+      - uses: actions/checkout@v4
       - id: release
         run: |
           BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
@@ -416,6 +417,7 @@ jobs:
       pages: write
       id-token: write
     steps:
+      - uses: actions/checkout@v4
       - id: deployment
         uses: actions/deploy-pages@v4
         with:
@@ -512,6 +514,7 @@ jobs:
       contents: write # create release
       pull-requests: write # autolabeler
     steps:
+      - uses: actions/checkout@v4
       # https://github.com/marketplace/actions/release-drafter
       - id: drafter
         uses: release-drafter/release-drafter@v6
@@ -547,13 +550,13 @@ jobs:
 <<- else >>
           draft: ${{ inputs.dry_run }}
 <<- end >>
-          prerelease: ${{ needs.version.outputs.release != 'true' }}
           files: |
             CHANGELOG.md
             checksums.txt
 <<- if not $nodejs >>
             dist/*
 <<- end >>
+          prerelease: ${{ needs.version.outputs.release != 'true' }}
           tag_name: ${{ steps.drafter.outputs.tag_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>

@@ -143,6 +143,7 @@ jobs:
       pages: write
       id-token: write
     steps:
+      - uses: actions/checkout@v4
       - id: deployment
         uses: actions/deploy-pages@v4
         with:

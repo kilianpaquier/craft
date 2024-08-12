@@ -33,6 +33,9 @@ include-labels:
   - docs
   - enhancement
 categories:
+  - title: Breaking Changes
+    labels:
+      - breaking
   - title: Features
     labels:
       - enhancement

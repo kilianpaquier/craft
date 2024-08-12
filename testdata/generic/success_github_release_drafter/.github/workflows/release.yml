@@ -29,6 +29,7 @@ jobs:
       contents: write # create release
       pull-requests: write # autolabeler
     steps:
+      - uses: actions/checkout@v4
       - id: release
         run: |
           BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
@@ -78,6 +79,7 @@ jobs:
       contents: write # create release
       pull-requests: write # autolabeler
     steps:
+      - uses: actions/checkout@v4
       # https://github.com/marketplace/actions/release-drafter
       - id: drafter
         uses: release-drafter/release-drafter@v6
@@ -99,10 +101,10 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           draft: ${{ inputs.dry_run }}
-          prerelease: ${{ needs.version.outputs.release != 'true' }}
           files: |
             CHANGELOG.md
             checksums.txt
             dist/*
+          prerelease: ${{ needs.version.outputs.release != 'true' }}
           tag_name: ${{ steps.drafter.outputs.tag_name }}
           token: ${{ secrets.GITHUB_TOKEN }}

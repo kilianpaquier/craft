@@ -49,7 +49,6 @@ func Docker(metadata Metadata) FileHandler {
 // Github returns the handler for github option generation matching.
 func Github(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
-		dir := path.Join(".github", "workflows")
 		github := metadata.CI != nil && metadata.CI.Name == craft.Github
 
 		switch name {
@@ -65,6 +64,7 @@ func Github(metadata Metadata) FileHandler {
 			return true, github && slices.Contains(metadata.CI.Options, craft.Dependabot)
 		}
 
+		dir := path.Join(".github", "workflows")
 		return strings.Contains(src, dir), github
 	}
 }
