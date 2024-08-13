@@ -7,7 +7,7 @@ toolchain go1.22.5
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/go-playground/validator/v10 v10.22.0
-	github.com/go-viper/mapstructure/v2 v2.0.0
+	github.com/go-viper/mapstructure/v2 v2.1.0
 	github.com/imdario/mergo v0.3.16
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/samber/lo v1.46.0
