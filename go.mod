@@ -10,7 +10,7 @@ require (
 	github.com/go-viper/mapstructure/v2 v2.1.0
 	github.com/imdario/mergo v0.3.16
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/samber/lo v1.46.0
+	github.com/samber/lo v1.47.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
