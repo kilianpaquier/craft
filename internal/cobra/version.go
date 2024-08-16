@@ -1,22 +1,15 @@
 package cobra
 
-import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
 var (
 	// version is substituted with -ldflags
 	version = "v0.0.0"
 
 	versionCmd = &cobra.Command{
-		Use:    "version",
-		Short:  "Shows current craft version",
-		PreRun: SetLogLevel,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Print(version)
-		},
+		Use:   "version",
+		Short: "Show current craft version",
+		Run:   func(_ *cobra.Command, _ []string) { _log.Info(version) },
 	}
 )
 

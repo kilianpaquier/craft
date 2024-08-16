@@ -1,22 +1,22 @@
 package initialize_test
 
 import (
+	"bytes"
 	"context"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
-	testlogrus "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
 	"github.com/kilianpaquier/craft/pkg/initialize"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 func TestRun(t *testing.T) {
@@ -54,7 +54,7 @@ func TestRun(t *testing.T) {
 		// Arrange
 		expected := craft.Configuration{License: lo.ToPtr("mit")}
 
-		f := func(_ logger.Logger, config craft.Configuration, ask initialize.Ask) craft.Configuration {
+		f := func(_ clog.Logger, config craft.Configuration, ask initialize.Ask) craft.Configuration {
 			config.License = ask("Which license would you like to use ?")
 			return config
 		}
@@ -62,20 +62,19 @@ func TestRun(t *testing.T) {
 		inputs := []string{"mit"}
 		reader := strings.NewReader(strings.Join(inputs, "\n"))
 
-		hook := testlogrus.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
 
 		// Act
 		config, err := initialize.Run(ctx, "",
-			initialize.WithLogger(logrus.WithContext(ctx)),
+			initialize.WithLogger(clog.Std()),
 			initialize.WithReader(reader),
 			initialize.WithInputReaders(f))
 
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, expected, config)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "Which license would you like to use ?") // just verify that ask logs as it would be expected
+		assert.Contains(t, buf.String(), "Which license would you like to use ?") // just verify that ask logs as it would be expected
 	})
 
 	t.Run("success_minimal_inputs", func(t *testing.T) {
@@ -92,9 +91,7 @@ func TestRun(t *testing.T) {
 		reader := strings.NewReader(strings.Join(inputs, "\n"))
 
 		// Act
-		config, err := initialize.Run(ctx, destdir,
-			initialize.WithLogger(logrus.WithContext(ctx)),
-			initialize.WithReader(reader))
+		config, err := initialize.Run(ctx, destdir, initialize.WithReader(reader))
 
 		// Assert
 		assert.NoError(t, err)
@@ -117,9 +114,7 @@ func TestRun(t *testing.T) {
 		reader := strings.NewReader(strings.Join(inputs, "\n"))
 
 		// Act
-		config, err := initialize.Run(ctx, "",
-			initialize.WithLogger(logrus.WithContext(ctx)),
-			initialize.WithReader(reader))
+		config, err := initialize.Run(ctx, "", initialize.WithReader(reader))
 
 		// Assert
 		assert.NoError(t, err)
@@ -142,7 +137,6 @@ func TestRun(t *testing.T) {
 
 		// Act
 		config, err := initialize.Run(ctx, "",
-			initialize.WithLogger(logrus.WithContext(ctx)),
 			initialize.WithReader(reader))
 
 		// Assert
@@ -164,18 +158,17 @@ func TestRun(t *testing.T) {
 		}
 		reader := strings.NewReader(strings.Join(inputs, "\n"))
 
-		hook := testlogrus.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
 
 		// Act
 		config, err := initialize.Run(ctx, "",
-			initialize.WithLogger(logrus.WithContext(ctx)),
+			initialize.WithLogger(clog.Std()),
 			initialize.WithReader(reader))
 
 		// Assert
 		assert.NoError(t, err)
 		assert.Equal(t, expected, config)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "invalid chart answer 'invalid chart value', must be a boolean")
+		assert.Contains(t, buf.String(), "invalid chart answer 'invalid chart value', must be a boolean")
 	})
 }

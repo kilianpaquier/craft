@@ -13,10 +13,9 @@ Example:
 
 	func main() {
 		ctx := context.Background()
-		log := logrus.WithContext(ctx) // may also be any other logger from the moment the interface logger.Logger is implemented (see related package)
 		config := craft.Configuration{} // may be read and saved with craft package
 
-		config, err = generate.Run(ctx, config,
+		config, err := generate.Run(ctx, config,
 			generate.WithDelimiters("<<", ">>"),
 			generate.WithDestination(destdir),
 
@@ -30,7 +29,7 @@ Example:
 
 			generate.WithForce(force...),
 			generate.WithForceAll(forceAll),
-			generate.WithLogger(log),
+			generate.WithLogger(logger.Std()), // may also be any other logger from the moment the interface logger.Logger is implemented (see related package)
 
 			// override the templates, by default here FS is the embedded fs of craft which default templates
 			// another possibility is OS which takes an implementation reading the current filesystem

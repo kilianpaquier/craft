@@ -41,29 +41,27 @@ go install github.com/kilianpaquier/craft/cmd/craft@latest
 
 ### Linux
 
-**With dpkg:**
-
 ```sh
-version=$(curl -fsSL "https://api.github.com/repos/kilianpaquier/craft/releases/latest" | jq -r '.tag_name')
-curl -fsSL "https://github.com/kilianpaquier/craft/releases/download/${version}/craft_linux_amd64.deb" -o /tmp/craft.deb
-sudo dpkg -i craft.deb && rm /tmp/craft.deb
-```
+if which craft >/dev/null; then
+  craft upgrade
+  return $?
+fi
 
-**With the tar archive:**
+OS="linux" # change it depending on our case
+ARCH="amd64" # change it depending on our case
 
-```sh
-version=$(curl -fsSL "https://api.github.com/repos/kilianpaquier/craft/releases/latest" | jq -r '.tag_name')
-curl -fsSL "https://github.com/kilianpaquier/craft/releases/download/${version}/craft_linux_amd64.tar.gz" | (cd "${HOME}/.local/craft" && tar -xz)
-chmod +x "${HOME}/.local/craft/craft" && ln -sf "${HOME}/.local/craft/craft" "${HOME}/.local/bin/craft"
+echo "installing craft"
+new_version=$(curl -fsSL "https://api.github.com/repos/kilianpaquier/craft/releases/latest" | jq -r '.tag_name')
+url="https://github.com/kilianpaquier/craft/releases/download/${new_version}/craft_${OS}_${ARCH}.tar.gz"
+curl -fsSL "$url" -o "/tmp/craft_${OS}_${ARCH}.tar.gz"
+mkdir -p "/tmp/craft/${new_version}"
+tar -xzf "/tmp/craft_${OS}_${ARCH}.tar.gz" -C "/tmp/craft/${new_version}"
+cp "/tmp/craft/${new_version}/craft" "${HOME}/.local/bin/craft"
 ```
 
 ## Commands
 
 ```
-Craft stands here to generate a similar project layout for all your projects. 
-Multiple coding languages are supported and even helm chart can be generated. 
-For more information please consult each command specificities.
-
 Usage:
   craft [command]
 
@@ -71,11 +69,14 @@ Available Commands:
   completion  Generate the autocompletion script for the specified shell
   generate    Generate the project layout
   help        Help about any command
-  init        Initialize the project layout
-  version     Shows current craft version
+  init        Initialize a project layout
+  upgrade     Upgrade or install craft
+  version     Show current craft version
 
 Flags:
-  -h, --help               help for craft
+  -h, --help                help for craft
+      --log-format string   set logging format (either "text" or "json") (default "text")
+      --log-level string    set logging level (default "info")
 
 Use "craft [command] --help" for more information about a command.
 ```
@@ -92,6 +93,10 @@ Flags:
   -f, --force strings   force regenerating a list of templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
       --force-all       force regenerating all templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
   -h, --help            help for generate
+
+Global Flags:
+      --log-format string   set logging format (either "text" or "json") (default "text")
+      --log-level string    set logging level (default "info")
 ```
 
 ### Upgrade
@@ -103,11 +108,15 @@ Usage:
   craft upgrade [flags]
 
 Flags:
-      --dest string     destination directory where craft will be upgraded / installed
-  -h, --help            help for upgrade
-      --major string    which major version to upgrade / install (must be of the form 'v1', 'v2', etc.) - mutually exclusive with --minor option
-      --minor string    which minor version to upgrade / install (must be of the form 'v1.5', 'v2.4', etc.) - mutually exclusive with --major option
-      --prerelease      whether to install prereleases or not
+      --dest string    destination directory where craft will be upgraded / installed
+  -h, --help           help for upgrade
+      --major string   which major version to upgrade / install (must be of the form "v1", "v2", etc.) - mutually exclusive with --minor option
+      --minor string   which minor version to upgrade / install (must be of the form "v1.5", "v2.4", etc.) - mutually exclusive with --major option
+      --prereleases    whether prereleases are accepted for installation or not
+
+Global Flags:
+      --log-format string   set logging format (either "text" or "json") (default "text")
+      --log-level string    set logging level (default "info")
 ```
 
 ## Craft file

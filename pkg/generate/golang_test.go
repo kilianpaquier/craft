@@ -1,29 +1,28 @@
 package generate_test
 
 import (
+	"bytes"
 	"context"
+	"log"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
 	"github.com/kilianpaquier/craft/pkg/generate"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 func TestDetectGolang(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	t.Run("no_gomod", func(t *testing.T) {
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, log, "", generate.Metadata{})
+		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), "", generate.Metadata{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -40,7 +39,7 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, log, destdir, generate.Metadata{})
+		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, generate.Metadata{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read go.mod")
@@ -57,7 +56,7 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, gomod.Close())
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, log, destdir, generate.Metadata{})
+		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, generate.Metadata{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read go.mod")
@@ -97,7 +96,7 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, log, destdir, input)
+		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, input)
 
 		// Assert
 		assert.NoError(t, err)
@@ -136,18 +135,17 @@ func TestDetectGolang(t *testing.T) {
 			ProjectPath: "kilianpaquier/craft",
 		}
 
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, log, destdir, input)
+		output, exec, err := generate.DetectGolang(ctx, clog.Std(), destdir, input)
 
 		// Assert
 		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, "hugo detected, a hugo configuration file or hugo theme file is present")
+		assert.Contains(t, buf.String(), "hugo detected, a hugo configuration file or hugo theme file is present")
 	})
 
 	t.Run("detected_all_binaries", func(t *testing.T) {
@@ -204,7 +202,7 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, log, destdir, input)
+		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, input)
 
 		// Assert
 		assert.NoError(t, err)

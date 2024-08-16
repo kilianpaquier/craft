@@ -3,7 +3,7 @@ package generate // nolint:testpackage
 import (
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -57,7 +57,7 @@ func TestOption(t *testing.T) {
 
 	t.Run("success_logger", func(t *testing.T) {
 		// Arrange
-		log := logrus.StandardLogger()
+		log := clog.Noop()
 		f := WithLogger(log)
 
 		// Act

@@ -12,10 +12,10 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"golang.org/x/mod/modfile"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 var _versionRegexp = regexp.MustCompile("^v[0-9]+$")
@@ -32,7 +32,7 @@ type Gomod struct {
 // DetectGolang handles the detection of golang at destdir.
 //
 // A valid golang project must have a valid go.mod file.
-func DetectGolang(ctx context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectGolang(ctx context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
 	gomod := filepath.Join(destdir, craft.Gomod)
 	gocmd := filepath.Join(destdir, craft.Gocmd)
 
@@ -87,7 +87,7 @@ func DetectGolang(ctx context.Context, log logger.Logger, destdir string, metada
 var _ Detect = DetectGolang // ensure interface is implemented
 
 // detectHugo handles the detection of hugo at destdir.
-func detectHugo(_ context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
+func detectHugo(_ context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
 	// detect hugo project
 	configs, _ := filepath.Glob(filepath.Join(destdir, "hugo.*"))
 
@@ -95,18 +95,18 @@ func detectHugo(_ context.Context, log logger.Logger, destdir string, metadata M
 	themes, _ := filepath.Glob(filepath.Join(destdir, "theme.*"))
 
 	if len(configs) > 0 || len(themes) > 0 {
-		log.Info("hugo detected, a hugo configuration file or hugo theme file is present")
+		log.Infof("hugo detected, a hugo configuration file or hugo theme file is present")
 
 		if metadata.CI != nil {
 			if slices.Contains(metadata.CI.Options, craft.CodeQL) {
-				log.Warn("codeql option is not available with hugo generation, deactivating it")
+				log.Warnf("codeql option is not available with hugo generation, deactivating it")
 				metadata.CI.Options = slices.DeleteFunc(metadata.CI.Options, func(option string) bool {
 					return option == craft.CodeQL
 				})
 			}
 
 			if slices.Contains(metadata.CI.Options, craft.CodeCov) {
-				log.Warn("codecov option is not available with hugo generation, deactivating it")
+				log.Warnf("codecov option is not available with hugo generation, deactivating it")
 				metadata.CI.Options = slices.DeleteFunc(metadata.CI.Options, func(option string) bool {
 					return option == craft.CodeCov
 				})

@@ -7,10 +7,10 @@ import (
 	"text/template"
 
 	sprig "github.com/Masterminds/sprig/v3"
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
 	"github.com/kilianpaquier/craft/pkg/templating"
 )
 
@@ -51,7 +51,7 @@ func TestExecute(t *testing.T) {
 		assert.ErrorContains(t, err, `"template.txt" is an incomplete or empty template`)
 	})
 
-	t.Run("error_remove", func(t *testing.T) {
+	t.Run("error_write_dir", func(t *testing.T) {
 		// Arrange
 		tmp := t.TempDir()
 
@@ -60,13 +60,9 @@ func TestExecute(t *testing.T) {
 		err := os.WriteFile(src, []byte("{{ .name }}"), cfs.RwRR)
 		require.NoError(t, err)
 
-		dest := filepath.Join(tmp, "dir", "path", "file.txt")
+		// create a file in dest to ensure WriteFile fails since it's a directory
+		dest := filepath.Join(tmp, "dir")
 		require.NoError(t, os.MkdirAll(filepath.Dir(dest), cfs.RwxRxRxRx))
-
-		// create a file in dest to ensure os.Remove in Execute function fails
-		file, err := os.Create(dest)
-		require.NoError(t, err)
-		require.NoError(t, file.Close())
 
 		data := map[string]string{"name": "hey ! A name"}
 
@@ -80,7 +76,7 @@ func TestExecute(t *testing.T) {
 		err = templating.Execute(tmpl, data, filepath.Dir(dest))
 
 		// Assert
-		assert.ErrorContains(t, err, "delete file")
+		assert.ErrorContains(t, err, "write file")
 	})
 
 	t.Run("success_dest_exists", func(t *testing.T) {

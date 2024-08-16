@@ -1,74 +1,72 @@
 package generate_test
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/hashicorp/go-cleanhttp"
 	"github.com/jarcoal/httpmock"
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/xanzy/go-gitlab"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
 	"github.com/kilianpaquier/craft/pkg/generate"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 func TestDetectLicense(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	t.Run("no_license_detected", func(t *testing.T) {
 		// Arrange
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
 
 		// Act
-		_, exec, err := generate.DetectLicense(ctx, log, "", generate.Metadata{})
+		_, exec, err := generate.DetectLicense(ctx, clog.Std(), "", generate.Metadata{})
 
 		// Assert
 		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
-		logs := logger.ToString(hook.AllEntries())
-		assert.NotContains(t, logs, fmt.Sprintf("license detected, %s has license key", craft.File))
+		assert.NotContains(t, buf.String(), fmt.Sprintf("license detected, %s has license key", craft.File))
 	})
 
 	t.Run("license_detected", func(t *testing.T) {
 		// Arrange
 		config := generate.Metadata{Configuration: craft.Configuration{License: lo.ToPtr("mit")}}
 
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
 
 		// Act
-		_, exec, err := generate.DetectLicense(ctx, log, "", config)
+		_, exec, err := generate.DetectLicense(ctx, clog.Std(), "", config)
 
 		// Assert
 		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, fmt.Sprintf("license detected, %s has license key", craft.File))
+		assert.Contains(t, buf.String(), fmt.Sprintf("license detected, %s has license key", craft.File))
 	})
 }
 
 func TestDownloadLicense(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
-	// setup gitlab API call mock
-	httpmock.Activate()
+	// setup gitlab mocking
+	httpClient := cleanhttp.DefaultClient()
+	httpmock.ActivateNonDefault(httpClient)
 	t.Cleanup(httpmock.DeactivateAndReset)
 	client, err := gitlab.NewClient("",
 		gitlab.WithBaseURL(generate.GitlabURL),
-		gitlab.WithHTTPClient(&http.Client{Transport: httpmock.DefaultTransport}),
+		gitlab.WithHTTPClient(httpClient),
 		gitlab.WithoutRetries(),
 	)
 	require.NoError(t, err)
@@ -92,7 +90,7 @@ func TestDownloadLicense(t *testing.T) {
 		}
 
 		// Act
-		err := downloader(ctx, log, cfs.OS(), "", destdir, config, generate.ExecOpts{})
+		err := downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
 
 		// Assert
 		assert.ErrorContains(t, err, "license template retrieval")
@@ -118,7 +116,7 @@ func TestDownloadLicense(t *testing.T) {
 		opts := generate.ExecOpts{Force: []string{craft.License}}
 
 		// Act
-		err := downloader(ctx, log, cfs.OS(), "", destdir, config, opts)
+		err := downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
 
 		// Assert
 		assert.ErrorContains(t, err, "delete file")
@@ -142,7 +140,7 @@ func TestDownloadLicense(t *testing.T) {
 		}
 
 		// Act
-		err := downloader(ctx, log, cfs.OS(), "", destdir, config, generate.ExecOpts{})
+		err := downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -170,7 +168,7 @@ func TestDownloadLicense(t *testing.T) {
 		}
 
 		// Act
-		err = downloader(ctx, log, cfs.OS(), "", destdir, config, generate.ExecOpts{})
+		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -200,7 +198,7 @@ func TestDownloadLicense(t *testing.T) {
 		opts := generate.ExecOpts{Force: []string{craft.License}}
 
 		// Act
-		err = downloader(ctx, log, cfs.OS(), "", destdir, config, opts)
+		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
 
 		// Assert
 		assert.NoError(t, err)
@@ -233,7 +231,7 @@ func TestDownloadLicense(t *testing.T) {
 		opts := generate.ExecOpts{ForceAll: true}
 
 		// Act
-		err = downloader(ctx, log, cfs.OS(), "", destdir, config, opts)
+		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
 
 		// Assert
 		assert.NoError(t, err)
@@ -246,7 +244,6 @@ func TestDownloadLicense(t *testing.T) {
 
 func TestRemoveLicense(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	t.Run("error_remove_file", func(t *testing.T) {
 		// Arrange
@@ -256,7 +253,7 @@ func TestRemoveLicense(t *testing.T) {
 		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), cfs.RwxRxRxRx))
 
 		// Act
-		err := generate.RemoveLicense(ctx, log, cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
 		assert.ErrorContains(t, err, "delete file")
@@ -269,7 +266,7 @@ func TestRemoveLicense(t *testing.T) {
 		dest := filepath.Join(destdir, craft.License)
 
 		// Act
-		err := generate.RemoveLicense(ctx, log, cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -286,7 +283,7 @@ func TestRemoveLicense(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		// Act
-		err = generate.RemoveLicense(ctx, log, cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err = generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
 		assert.NoError(t, err)

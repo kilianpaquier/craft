@@ -11,9 +11,9 @@ import (
 	"regexp"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 var _packageManagerRegexp = regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\d+(-.+)?$`)
@@ -57,7 +57,7 @@ func (p *PackageJSON) Validate() error {
 
 // DetectNodejs handles nodejs detection at destdir.
 // It scans the project for a package.json and validates it.
-func DetectNodejs(_ context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectNodejs(_ context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
 	jsonpath := filepath.Join(destdir, craft.PackageJSON)
 	pkg, err := readPackageJSON(jsonpath)
 	if err != nil {
@@ -77,7 +77,7 @@ func DetectNodejs(_ context.Context, log logger.Logger, destdir string, metadata
 
 	// deactivate makefile because commands are facilitated by package.json scripts
 	if !metadata.NoMakefile {
-		log.Warn("makefile option not available with nodejs generation, deactivating it")
+		log.Warnf("makefile option not available with nodejs generation, deactivating it")
 		metadata.NoMakefile = true
 	}
 
