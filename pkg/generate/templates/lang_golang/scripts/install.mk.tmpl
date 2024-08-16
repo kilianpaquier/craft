@@ -23,6 +23,11 @@ endef
 install-go: ; @$(value install_go)
 .ONESHELL:
 
+<<- $binaries := dict >>
+<<- $_ := map $binaries .Clis .Crons .Jobs .Workers >>
+
+<<- if and .Docker (gt .Binaries 0) >>
+
 define install_docker
 if which docker >/dev/null; then
 	echo "docker already installed"
@@ -36,3 +41,4 @@ endef
 .PHONY: install-docker
 install-docker: ; @$(value install_docker)
 .ONESHELL:
+<<- end >>
