@@ -19,6 +19,7 @@
   - [Linux](#linux)
 - [Commands](#commands)
   - [Generate](#generate)
+  - [Upgrade](#upgrade)
 - [Craft file](#craft-file)
   - [VSCode association and schema](#vscode-association-and-schema)
 - [Generations](#generations)
@@ -75,7 +76,6 @@ Available Commands:
 
 Flags:
   -h, --help               help for craft
-  -l, --log-level string   set logging level
 
 Use "craft [command] --help" for more information about a command.
 ```
@@ -92,9 +92,22 @@ Flags:
   -f, --force strings   force regenerating a list of templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
       --force-all       force regenerating all templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
   -h, --help            help for generate
+```
 
-Global Flags:
-  -l, --log-level string   set logging level
+### Upgrade
+
+```
+Upgrade or install craft
+
+Usage:
+  craft upgrade [flags]
+
+Flags:
+      --dest string     destination directory where craft will be upgraded / installed
+  -h, --help            help for upgrade
+      --major string    which major version to upgrade / install (must be of the form 'v1', 'v2', etc.) - mutually exclusive with --minor option
+      --minor string    which minor version to upgrade / install (must be of the form 'v1.5', 'v2.4', etc.) - mutually exclusive with --major option
+      --prerelease      whether to install prereleases or not
 ```
 
 ## Craft file
