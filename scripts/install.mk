@@ -22,17 +22,3 @@ endef
 .PHONY: install-go
 install-go: ; @$(value install_go)
 .ONESHELL:
-
-define install_docker
-if which docker >/dev/null; then
-	echo "docker already installed"
-	exit 0
-fi
-
-echo "installing docker"
-curl -fsSL https://get.docker.com | bash
-dockerd-rootless-setuptool.sh install
-endef
-.PHONY: install-docker
-install-docker: ; @$(value install_docker)
-.ONESHELL:
