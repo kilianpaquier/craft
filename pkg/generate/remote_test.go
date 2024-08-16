@@ -18,7 +18,7 @@ func TestOriginURL(t *testing.T) {
 		originURL, err := generate.OriginURL(destdir)
 
 		// Assert
-		assert.ErrorContains(t, err, "failed to retrieve remote url")
+		assert.ErrorContains(t, err, "retrieve remote url")
 		assert.Empty(t, originURL)
 	})
 

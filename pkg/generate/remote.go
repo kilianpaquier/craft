@@ -18,7 +18,7 @@ func OriginURL(destdir string) (out []byte, err error) {
 
 	out, err = cmd.CombinedOutput()
 	if err != nil {
-		err = fmt.Errorf("failed to retrieve remote url: %w", err)
+		err = fmt.Errorf("retrieve remote url: %w", err)
 	}
 
 	// we want to return the real output alongside the error if there was one, that's why return properties are named

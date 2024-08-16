@@ -1,65 +1,60 @@
 package generate_test
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"testing"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	testfs "github.com/kilianpaquier/cli-sdk/pkg/cfs/tests"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
-	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
-	testfs "github.com/kilianpaquier/craft/pkg/fs/tests"
 	"github.com/kilianpaquier/craft/pkg/generate"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 func TestDetectHelm(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	t.Run("no_chart_config_present", func(t *testing.T) {
 		// Arrange
 		metadata := generate.Metadata{Configuration: craft.Configuration{NoChart: true}}
 
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
-
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
 		// Act
-		_, exec, err := generate.DetectHelm(ctx, log, "", metadata)
+		_, exec, err := generate.DetectHelm(ctx, clog.Std(), "", metadata)
 
 		// Assert
 		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
-		logs := logger.ToString(hook.AllEntries())
-		assert.NotContains(t, logs, fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
+		assert.NotContains(t, buf.String(), fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
 	})
 
 	t.Run("no_chart_config_absent", func(t *testing.T) {
 		// Arrange
-		hook := test.NewGlobal()
-		t.Cleanup(func() { hook.Reset() })
+		var buf bytes.Buffer
+		log.SetOutput(&buf)
 
 		// Act
-		_, exec, err := generate.DetectHelm(ctx, log, "", generate.Metadata{})
+		_, exec, err := generate.DetectHelm(ctx, clog.Std(), "", generate.Metadata{})
 
 		// Assert
 		assert.NoError(t, err)
 		assert.Len(t, exec, 1)
-		logs := logger.ToString(hook.AllEntries())
-		assert.Contains(t, logs, fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
+		assert.Contains(t, buf.String(), fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
 	})
 }
 
 func TestGenerateHelm(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	assertdir := filepath.Join("..", "..", "testdata", "helm")
 	srcdir := "templates"
@@ -92,7 +87,7 @@ func TestGenerateHelm(t *testing.T) {
 		})
 
 		// Act
-		err := generate.GenerateHelm(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
 
 		// Assert
 		assert.ErrorContains(t, err, "read helm chart overrides")
@@ -110,7 +105,7 @@ func TestGenerateHelm(t *testing.T) {
 		})
 
 		// Act
-		err := generate.GenerateHelm(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
 
 		// Assert
 		assert.NoError(t, err)
@@ -133,7 +128,7 @@ func TestGenerateHelm(t *testing.T) {
 		})
 
 		// Act
-		err = generate.GenerateHelm(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+		err = generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
 
 		// Assert
 		assert.NoError(t, err)
@@ -157,7 +152,7 @@ func TestGenerateHelm(t *testing.T) {
 		})
 
 		// Act
-		err := generate.GenerateHelm(ctx, log, cfs.OS(), srcdir, destdir, metadata, opts)
+		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
 
 		// Assert
 		assert.NoError(t, err)
@@ -167,7 +162,6 @@ func TestGenerateHelm(t *testing.T) {
 
 func TestRemoveHelm(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	t.Run("success_no_dir", func(t *testing.T) {
 		// Arrange
@@ -175,7 +169,7 @@ func TestRemoveHelm(t *testing.T) {
 		chart := filepath.Join(destdir, "chart")
 
 		// Act
-		err := generate.RemoveHelm(ctx, log, cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := generate.RemoveHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -189,7 +183,7 @@ func TestRemoveHelm(t *testing.T) {
 		require.NoError(t, os.Mkdir(chart, cfs.RwxRxRxRx))
 
 		// Act
-		err := generate.RemoveHelm(ctx, log, cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := generate.RemoveHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
 		assert.NoError(t, err)

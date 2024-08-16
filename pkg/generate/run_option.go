@@ -3,10 +3,9 @@ package generate
 import (
 	"os"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/samber/lo"
-
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 // ExecOpts represents all options given to Exec functions.
@@ -90,9 +89,7 @@ func WithForceAll(forceAll bool) RunOption {
 }
 
 // WithLogger defines the logger implementation for Run function.
-//
-// When not provided, the default one used is the one from std log library.
-func WithLogger(log logger.Logger) RunOption {
+func WithLogger(log clog.Logger) RunOption {
 	return func(o option) option {
 		o.log = log
 		return o
@@ -123,7 +120,7 @@ type option struct {
 	fs      cfs.FS
 	tmplDir string
 
-	log logger.Logger
+	log clog.Logger
 
 	endDelim   string
 	startDelim string
@@ -152,7 +149,7 @@ func newOpt(opts ...RunOption) option {
 		o.tmplDir = "templates"
 	}
 	if o.log == nil {
-		o.log = logger.Default()
+		o.log = clog.Noop()
 	}
 	if len(o.detects) == 0 {
 		o.detects = Detects()

@@ -60,9 +60,9 @@ func Github(metadata Metadata) FileHandler {
 		case "release-drafter.yml":
 			return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.ReleaseDrafter
 		case ".codecov.yml":
-			return true, github && slices.Contains(metadata.CI.Options, craft.CodeCov) && len(metadata.Languages) > 0
+			return true, len(metadata.Languages) > 0 && github && slices.Contains(metadata.CI.Options, craft.CodeCov)
 		case "codeql.yml":
-			return true, github && slices.Contains(metadata.CI.Options, craft.CodeQL) && len(metadata.Languages) > 0
+			return true, len(metadata.Languages) > 0 && github && slices.Contains(metadata.CI.Options, craft.CodeQL)
 		case "dependabot.yml":
 			return true, github && slices.Contains(metadata.CI.Options, craft.Dependabot)
 		}
@@ -106,13 +106,13 @@ func Makefile(metadata Metadata) FileHandler {
 // Releaserc returns the handler for releaserc option generation matching.
 func Releaserc(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
-		return name == ".releaserc.yml", metadata.CI != nil && metadata.CI.Release.Action == craft.SemanticRelease
+		return name == ".releaserc.yml", metadata.CI != nil && metadata.CI.Release.Action == craft.SemanticRelease && !metadata.CI.Release.Disable
 	}
 }
 
 // Sonar returns the handler for sonar option generation matching.
 func Sonar(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
-		return name == "sonar.properties", metadata.CI != nil && slices.Contains(metadata.CI.Options, craft.Sonar) && len(metadata.Languages) > 0
+		return name == "sonar.properties", len(metadata.Languages) > 0 && metadata.CI != nil && slices.Contains(metadata.CI.Options, craft.Sonar)
 	}
 }

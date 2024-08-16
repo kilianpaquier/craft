@@ -9,9 +9,8 @@ import (
 	"path/filepath"
 	"slices"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"gopkg.in/yaml.v3"
-
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
 )
 
 // Configuration represents all options configurable in .craft file at root project.

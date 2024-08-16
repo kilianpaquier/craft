@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -13,11 +13,10 @@ import (
 
 func TestDetectGeneric(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	t.Run("no_ci", func(t *testing.T) {
 		// Act
-		output, exec, err := generate.DetectGeneric(ctx, log, "", generate.Metadata{})
+		output, exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", generate.Metadata{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -39,7 +38,7 @@ func TestDetectGeneric(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectGeneric(ctx, log, "", input)
+		output, exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", input)
 
 		// Assert
 		assert.NoError(t, err)

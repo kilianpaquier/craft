@@ -6,23 +6,22 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/samber/lo"
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
 
 func TestDetectNodejs(t *testing.T) {
 	ctx := context.Background()
-	log := logrus.WithContext(ctx)
 
 	t.Run("no_packagejson", func(t *testing.T) {
 		// Act
-		_, exec, err := generate.DetectNodejs(ctx, log, "", generate.Metadata{})
+		_, exec, err := generate.DetectNodejs(ctx, clog.Noop(), "", generate.Metadata{})
 
 		// Assert
 		assert.NoError(t, err)
@@ -39,7 +38,7 @@ func TestDetectNodejs(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		// Act
-		_, exec, err := generate.DetectNodejs(ctx, log, destdir, generate.Metadata{})
+		_, exec, err := generate.DetectNodejs(ctx, clog.Noop(), destdir, generate.Metadata{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read package.json")
@@ -55,7 +54,7 @@ func TestDetectNodejs(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		_, exec, err := generate.DetectNodejs(ctx, log, destdir, generate.Metadata{})
+		_, exec, err := generate.DetectNodejs(ctx, clog.Noop(), destdir, generate.Metadata{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read package.json")
@@ -85,7 +84,7 @@ func TestDetectNodejs(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectNodejs(ctx, log, destdir, input)
+		output, exec, err := generate.DetectNodejs(ctx, clog.Noop(), destdir, input)
 
 		// Assert
 		assert.NoError(t, err)

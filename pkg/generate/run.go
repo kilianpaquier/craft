@@ -112,7 +112,7 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 
 	// add generic exec in case no languages were detected
 	if len(props.Languages) == 0 {
-		o.log.Warn("no language detected, fallback to generic generation")
+		o.log.Warnf("no language detected, fallback to generic generation")
 
 		p, exec, _ := DetectGeneric(ctx, o.log, *o.destdir, props)
 		props = p
@@ -125,9 +125,10 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	execOpts := o.toExecOptions(props)
 	errsChan := make(chan error, len(execs))
 	for _, exec := range execs {
+		exec := exec
 		go func() {
 			defer wg.Done()
-			errsChan <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execOpts) // nolint:revive
+			errsChan <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execOpts)
 		}()
 	}
 	wg.Wait()

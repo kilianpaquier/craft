@@ -10,8 +10,9 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
+
 	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 // ErrAlreadyInitialized is the error returned (wrapped) when Run function is called but the project is already initialized.
@@ -23,7 +24,7 @@ type RunOption func(option) option
 // WithLogger defines the logger implementation for Run function.
 //
 // When not provided, the default one used is the one from std log library.
-func WithLogger(log logger.Logger) RunOption {
+func WithLogger(log clog.Logger) RunOption {
 	return func(o option) option {
 		o.log = log
 		return o
@@ -50,7 +51,7 @@ type Warn func(string, ...any)
 
 // InputReader is the signature function for functions reading user inputs.
 // Inspiration can be found with ReadMaintainer and ReadChart functions.
-type InputReader func(log logger.Logger, config craft.Configuration, ask Ask) craft.Configuration
+type InputReader func(log clog.Logger, config craft.Configuration, ask Ask) craft.Configuration
 
 // WithInputReaders sets (it overrides the previously defined functions everytime it's called) the functions reading user inputs in Run function.
 func WithInputReaders(inputs ...InputReader) RunOption {
@@ -63,7 +64,7 @@ func WithInputReaders(inputs ...InputReader) RunOption {
 // option represents the struct with all available options in Run function.
 type option struct {
 	inputReaders []InputReader
-	log          logger.Logger
+	log          clog.Logger
 	reader       io.Reader
 }
 
@@ -80,7 +81,7 @@ func newOpt(opts ...RunOption) option {
 		o.inputReaders = []InputReader{ReadMaintainer, ReadChart} // order is important since they will be executed in the same order
 	}
 	if o.log == nil {
-		o.log = logger.Default()
+		o.log = clog.Std()
 	}
 	if o.reader == nil {
 		o.reader = os.Stdin
@@ -129,7 +130,7 @@ func Run(_ context.Context, destdir string, opts ...RunOption) (craft.Configurat
 }
 
 // ReadMaintainer creates a maintainer with Q&A method from the end user.
-func ReadMaintainer(_ logger.Logger, config craft.Configuration, ask Ask) craft.Configuration {
+func ReadMaintainer(_ clog.Logger, config craft.Configuration, ask Ask) craft.Configuration {
 	var maintainer craft.Maintainer
 
 	// main maintainer name
@@ -146,7 +147,7 @@ func ReadMaintainer(_ logger.Logger, config craft.Configuration, ask Ask) craft.
 }
 
 // ReadChart retrieves the chart generation choice from the end user.
-func ReadChart(log logger.Logger, config craft.Configuration, ask Ask) craft.Configuration {
+func ReadChart(log clog.Logger, config craft.Configuration, ask Ask) craft.Configuration {
 	// Helm chart generation
 	for {
 		chart := ask("Would you like to generate an Helm chart (optional, press Enter to skip, default is truthy) 0/1 ?")

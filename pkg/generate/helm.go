@@ -11,15 +11,15 @@ import (
 	"path/filepath"
 
 	"github.com/imdario/mergo"
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
-	"github.com/kilianpaquier/craft/pkg/logger"
 )
 
 // DetectHelm handles the detection of helm chart generation option in metadata
 // and returns the appropriate slice of Exec.
-func DetectHelm(_ context.Context, log logger.Logger, _ string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectHelm(_ context.Context, log clog.Logger, _ string, metadata Metadata) (Metadata, []Exec, error) {
 	if metadata.NoChart {
 		return metadata, []Exec{removeHelm}, nil
 	}
@@ -33,7 +33,7 @@ var _ Detect = DetectHelm // ensure interface is implemented
 //
 // To be able to use the maximum number of variables in templates (in input fsys inside helm folder),
 // a marshal is applied on input config and on {{destdir}}/chart/.craft.
-func generateHelm(_ context.Context, log logger.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error { // nolint:revive
+func generateHelm(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error { // nolint:revive
 	srcdir = path.Join(srcdir, "lang_helm")   // nolint:revive
 	destdir = filepath.Join(destdir, "chart") // nolint:revive
 
@@ -57,7 +57,7 @@ func generateHelm(_ context.Context, log logger.Logger, fsys cfs.FS, srcdir, des
 }
 
 // removeHelm deletes the chart folder inside destdir.
-func removeHelm(_ context.Context, _ logger.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { // nolint:revive
+func removeHelm(_ context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { // nolint:revive
 	if err := os.RemoveAll(filepath.Join(destdir, "chart")); err != nil {
 		return fmt.Errorf("delete directory: %w", err)
 	}

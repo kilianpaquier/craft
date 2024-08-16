@@ -6,12 +6,12 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	testfs "github.com/kilianpaquier/cli-sdk/pkg/cfs/tests"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
-	testfs "github.com/kilianpaquier/craft/pkg/fs/tests"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
 

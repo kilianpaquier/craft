@@ -4,8 +4,8 @@ import (
 	"context"
 	"embed"
 
-	cfs "github.com/kilianpaquier/craft/pkg/fs"
-	"github.com/kilianpaquier/craft/pkg/logger"
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 )
 
 //go:embed all:templates
@@ -22,10 +22,10 @@ func FS() cfs.FS {
 //
 // The input configuration can be altered in any way
 // and is as such returned after alteration for update (for the other detect functions that could be executed).
-type Detect func(ctx context.Context, log logger.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error)
+type Detect func(ctx context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error)
 
 // Exec is the signature function to implement to add a new language or framework templatization in craft.
-type Exec func(ctx context.Context, log logger.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error
+type Exec func(ctx context.Context, log clog.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error
 
 // Detects returns the slice of default detection functions when craft is not used as a SDK.
 func Detects() []Detect {
