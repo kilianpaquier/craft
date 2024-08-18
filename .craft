@@ -5,7 +5,7 @@ ci:
   options:
     - codecov
     - codeql
-    - dependabot
+    - renovate
   release:
     action: semantic-release
     auto: false
