@@ -58,7 +58,7 @@
     "stopUpdatingLabel": "pause",
 
     "commitMessageLowerCase": "auto",
-    "configMigration": false, // removes comments and sets indent to 2 and add a lot of newlines
+    "configMigration": false, // removes comments and sets indent to 2 and add a lot of newlines (https://github.com/renovatebot/renovate/issues/16359)
     "platformCommit": "auto",
 
     "goGetDirs": [ "./..." ],

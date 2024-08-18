@@ -27,9 +27,7 @@ jobs:
       - uses: actions/checkout@v4
         # with:
         #   token: ${{ steps.app-token.outputs.token }}
-      - id: repository_name
-        run: echo "repository_name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
-      - uses: renovatebot/github-action@v40.2.5
+      - uses: renovatebot/github-action@v40.2.6
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           # token: ${{ steps.app-token.outputs.token }}
@@ -37,4 +35,3 @@ jobs:
           RENOVATE_AUTODISCOVER: "true"
           RENOVATE_AUTODISCOVER_FILTER: ${{ github.repository }}
           RENOVATE_DRY_RUN: ${{ inputs.dry_run }}
-          RENOVATE_GIT_AUTHOR: Renovate Bot <renovate-${{ steps.repository_name.outputs.repository_name }}[bot]@users.noreply.github.com>
