@@ -50,42 +50,64 @@ func Docker(metadata Metadata) FileHandler {
 func Github(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
 		github := metadata.CI != nil && metadata.CI.Name == craft.Github
-
 		switch name {
-		case "release.yml":
-			if strings.Contains(src, path.Join(".github", name)) { // gh-release changelog file
-				return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.GhRelease
-			}
-			return true, github && !metadata.CI.Release.Disable // release action file
-		case "release-drafter.yml":
-			return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.ReleaseDrafter
 		case ".codecov.yml":
 			return true, len(metadata.Languages) > 0 && github && slices.Contains(metadata.CI.Options, craft.CodeCov)
-		case "codeql.yml":
-			return true, len(metadata.Languages) > 0 && github && slices.Contains(metadata.CI.Options, craft.CodeQL)
-		case "dependabot.yml":
-			return true, github && slices.Contains(metadata.CI.Options, craft.Dependabot)
 		}
 
-		dir := path.Join(".github", "workflows")
-		return strings.Contains(src, dir), github
+		// files related to dir .github
+		if strings.Contains(src, path.Join(".github", name)) {
+			switch name {
+			case "release.yml":
+				return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.GhRelease // gh-release changelog file
+			case "release-drafter.yml":
+				return true, github && !metadata.CI.Release.Disable && metadata.CI.Release.Action == craft.ReleaseDrafter
+			case "dependabot.yml":
+				return true, github && slices.Contains(metadata.CI.Options, craft.Dependabot)
+			case "renovate.json5":
+				return true, github && slices.Contains(metadata.CI.Options, craft.Renovate)
+			}
+			return true, github
+		}
+
+		// files related to dir .github/workflows
+		if strings.Contains(src, path.Join(".github", "workflows", name)) {
+			switch name {
+			case "release.yml":
+				return true, github && !metadata.CI.Release.Disable // release action file
+			case "codeql.yml":
+				return true, len(metadata.Languages) > 0 && github && slices.Contains(metadata.CI.Options, craft.CodeQL)
+			case "renovate.yml":
+				return true, github && slices.Contains(metadata.CI.Options, craft.Renovate)
+			}
+			return true, github
+		}
+		return false, false
 	}
 }
 
 // Gitlab returns the handler for gitlab option generation matching.
 func Gitlab(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
-		dir := path.Join(".gitlab", "workflows")
+		// root files related to gitlab
 		gitlab := metadata.CI != nil && metadata.CI.Name == craft.Gitlab
-
-		if name == "renovate.jsonc" {
-			return true, gitlab && slices.Contains(metadata.CI.Options, craft.Renovate)
-		}
-
-		if slices.Contains([]string{".gitlab-ci.yml", "semrel-plugins.txt"}, name) {
+		if name == ".gitlab-ci.yml" {
 			return true, gitlab
 		}
-		return strings.Contains(src, dir), gitlab
+
+		// files related to dir .gitlab
+		if strings.Contains(src, path.Join(".gitlab", name)) {
+			switch name {
+			case "renovate.json5":
+				return true, gitlab && slices.Contains(metadata.CI.Options, craft.Renovate)
+			case "semrel-plugins.txt":
+				// return true, gitlab
+			}
+			return true, gitlab
+		}
+
+		// files related to dir .gitlab/workflows
+		return strings.Contains(src, path.Join(".gitlab", "workflows", name)), gitlab
 	}
 }
 
