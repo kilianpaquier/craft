@@ -5,7 +5,7 @@ ci:
   options:
     - codecov
     - codeql
-    - dependabot
+    - renovate
     - sonar
   release:
     action: release-drafter

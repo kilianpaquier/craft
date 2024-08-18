@@ -35,8 +35,6 @@
 
     "baseBranches": [
       "$default",
-      "/^v[0-9]+.x/",
-      "/^v[0-9]+.[0-9]+.x/",
     ],
 
     "reviewers": [

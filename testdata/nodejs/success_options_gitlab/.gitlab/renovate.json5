@@ -34,15 +34,7 @@
     "separateMultipleMinor": false,
 
     "baseBranches": [
-      "main",
-      "master",
-      "staging",
-      "dev",
-      "develop",
-      "development",
-      "next",
-      "beta",
-      "alpha",
+      "$default",
     ],
 
     "reviewers": [

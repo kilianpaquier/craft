@@ -34,15 +34,7 @@
     "separateMultipleMinor": false,
 
     "baseBranches": [
-      "main",
-      "master",
-      "staging",
-      "dev",
-      "develop",
-      "development",
-      "next",
-      "beta",
-      "alpha",
+      "$default",
       "/^v[0-9]+.x/",
       "/^v[0-9]+.[0-9]+.x/",
     ],
