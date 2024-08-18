@@ -5,6 +5,7 @@
 <<- $categories := list "cd" "ci" "docker" "golang" "helm" "java" "js" "kubernetes" "python" "rust" >>
 
 {
+    "extends": [ ":gitSignOff" ],
     "enabled": true,
     "branchPrefix": "renovate/",
     "labels": [ "dependencies" ],

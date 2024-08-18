@@ -3,6 +3,7 @@
 // https://docs.renovatebot.com/configuration-options/
 
 {
+    "extends": [ ":gitSignOff" ],
     "enabled": true,
     "branchPrefix": "renovate/",
     "labels": [ "dependencies" ],
