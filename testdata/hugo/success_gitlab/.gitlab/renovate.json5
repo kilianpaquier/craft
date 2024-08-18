@@ -8,12 +8,12 @@
     "labels": [ "dependencies" ],
 
     "ignorePaths": [
-      "**/bower_components/**", 
-      "**/examples/**", 
+      "**/bower_components/**",
+      "**/examples/**",
       "**/fixtures/**",
-      "**/node_modules/**", 
-      "**/test/**", 
-      "**/testdata/**", 
+      "**/node_modules/**",
+      "**/test/**",
+      "**/testdata/**",
       "**/tests/**",
     ],
 
