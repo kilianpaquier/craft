@@ -7,8 +7,8 @@ import (
 	"strings"
 	"text/template"
 
+	"dario.cat/mergo"
 	"github.com/go-viper/mapstructure/v2"
-	"github.com/imdario/mergo"
 	"gopkg.in/yaml.v3"
 )
 

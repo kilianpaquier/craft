@@ -10,7 +10,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 

@@ -5,11 +5,11 @@ go 1.21
 toolchain go1.23.0
 
 require (
+	dario.cat/mergo v1.0.1
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/go-viper/mapstructure/v2 v2.1.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
-	github.com/imdario/mergo v0.3.16
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/kilianpaquier/cli-sdk v0.0.0-20240817193626-4b2ded52f151
 	github.com/samber/lo v1.47.0
@@ -39,6 +39,7 @@ require (
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
+	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
