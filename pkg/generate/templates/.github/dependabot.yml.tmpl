@@ -12,6 +12,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+      time: "12:00"
+      timezone: "Etc/UTC"
     groups:
       major/minor/patch:
         update-types:
@@ -21,8 +23,8 @@ updates:
     commit-message:
       include: scope
       prefix: ci
-<<- range $.Maintainers >>
     reviewers:
+<<- range $.Maintainers >>
       - << .Name >>
 <<- end >>
 
@@ -32,6 +34,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+      time: "12:00"
+      timezone: "Etc/UTC"
     groups:
       minor/patch:
         update-types:
@@ -40,9 +44,11 @@ updates:
     commit-message:
       include: scope
       prefix: chore
-<<- range $.Maintainers >>
+<<- with $.Maintainers >>
     reviewers:
+<<- range . >>
       - << .Name >>
+<<- end >>
 <<- end >>
 <<- end >>
 
@@ -51,6 +57,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+      time: "12:00"
+      timezone: "Etc/UTC"
     groups:
       minor/patch:
         update-types:
@@ -59,9 +67,11 @@ updates:
     commit-message:
       include: scope
       prefix: chore
-<<- range $.Maintainers >>
+<<- with $.Maintainers >>
     reviewers:
+<<- range . >>
       - << .Name >>
+<<- end >>
 <<- end >>
 <<- end >>
 
@@ -70,6 +80,8 @@ updates:
     directory: /
     schedule:
       interval: daily
+      time: "12:00"
+      timezone: "Etc/UTC"
     groups:
       minor:
         update-types:
@@ -80,8 +92,10 @@ updates:
     commit-message:
       include: scope
       prefix: chore
-<<- range $.Maintainers >>
+<<- with $.Maintainers >>
     reviewers:
+<<- range . >>
       - << .Name >>
+<<- end >>
 <<- end >>
 <<- end >>
