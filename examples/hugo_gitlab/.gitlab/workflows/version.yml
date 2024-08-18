@@ -18,7 +18,8 @@ variables:
   GIT_COMMITTER_EMAIL: ${GITLAB_USER_EMAIL}
 
   RENOVATE_AUTODISCOVER: "true"
-  RENOVATE_AUTODISCOVER_FILTER: kilianpaquier/craft/examples/hugo_gitlab
+  RENOVATE_AUTODISCOVER_FILTER: ${CI_PROJECT_PATH}
+  RENOVATE_GIT_AUTHOR: Renovate Bot <renovate-${CI_PROJECT_NAME}[bot]@users.noreply.github.com>
 
   SEMREL_TAG_FORMAT: v$${version}
   SEMREL_REQUIRED_PLUGINS_FILE: .gitlab/semrel-plugins.txt

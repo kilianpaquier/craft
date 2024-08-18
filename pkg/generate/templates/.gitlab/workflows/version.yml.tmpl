@@ -22,7 +22,8 @@ variables:
 <<- if has "renovate" .CI.Options >>
 
   RENOVATE_AUTODISCOVER: "true"
-  RENOVATE_AUTODISCOVER_FILTER: << .ProjectPath >>
+  RENOVATE_AUTODISCOVER_FILTER: ${CI_PROJECT_PATH}
+  RENOVATE_GIT_AUTHOR: Renovate Bot <renovate-${CI_PROJECT_NAME}[bot]@users.noreply.github.com>
 <<- end >>
 
   SEMREL_TAG_FORMAT: v$${version}

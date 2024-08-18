@@ -20,11 +20,13 @@ jobs:
     environment: renovate
     steps:
       - uses: actions/checkout@v4
+      - id: repository_name
+        run: echo "repository_name=${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}" >> $GITHUB_OUTPUT
       - uses: renovatebot/github-action@v40.2.5
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           RENOVATE_AUTODISCOVER: "true"
-          RENOVATE_AUTODISCOVER_FILTER: << .ProjectPath >>
+          RENOVATE_AUTODISCOVER_FILTER: ${{ github.repository }}
           RENOVATE_DRY_RUN: ${{ inputs.dry_run }}
-          RENOVATE_GIT_AUTHOR: Renovate Bot <renovate-<< .ProjectName >>[bot]@users.noreply.github.com>
+          RENOVATE_GIT_AUTHOR: Renovate Bot <renovate-${{ steps.repository_name.outputs.repository_name }}[bot]@users.noreply.github.com>
