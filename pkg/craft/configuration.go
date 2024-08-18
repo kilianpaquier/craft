@@ -56,7 +56,7 @@ type Docker struct {
 type Maintainer struct {
 	Email *string `json:"email,omitempty" yaml:"email,omitempty"`
 	URL   *string `json:"url,omitempty"   yaml:"url,omitempty"`
-	Name  string  `json:"name,omitempty"  yaml:"name,omitempty"`
+	Name  string  `json:"name,omitempty"  yaml:"name,omitempty"  validate:"required"`
 }
 
 // Read reads the .craft file in srcdir input into the out input.

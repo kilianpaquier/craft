@@ -47,11 +47,10 @@ func Docker(metadata Metadata) FileHandler {
 }
 
 // Github returns the handler for github option generation matching.
-func Github(metadata Metadata) FileHandler {
+func Github(metadata Metadata) FileHandler { // nolint:cyclop
 	return func(src, _, name string) (_ bool, _ bool) {
 		github := metadata.CI != nil && metadata.CI.Name == craft.Github
-		switch name {
-		case ".codecov.yml":
+		if name == ".codecov.yml" {
 			return true, len(metadata.Languages) > 0 && github && slices.Contains(metadata.CI.Options, craft.CodeCov)
 		}
 
