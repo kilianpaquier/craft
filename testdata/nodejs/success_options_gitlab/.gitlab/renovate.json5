@@ -55,7 +55,7 @@
     "stopUpdatingLabel": "pause",
 
     "commitMessageLowerCase": "auto",
-    "configMigration": true,
+    "configMigration": false, // removes comments and sets indent to 2 and add a lot of newlines
     "platformCommit": "auto",
 
     "goGetDirs": [ "./..." ],
