@@ -13,8 +13,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/Masterminds/sprig/v3"
-	"github.com/samber/lo"
+	"github.com/go-sprout/sprout/sprigin"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
@@ -71,44 +70,44 @@ func handleDir(log clog.Logger, fsys cfs.FS, srcdir, destdir string, data any, n
 		return fmt.Errorf("read directory: %w", err)
 	}
 
-	errs := lo.Map(entries, func(entry fs.DirEntry, _ int) error {
+	errs := make([]error, 0, len(entries))
+	for _, entry := range entries {
 		src := path.Join(srcdir, entry.Name())
 		dest := filepath.Join(destdir, entry.Name())
 
 		if entry.IsDir() {
 			// apply generation at root if the folder name is the dir generate name
 			if entry.Name() == name {
-				return handleDir(log, fsys, src, destdir, data, name, opts)
+				errs = append(errs, handleDir(log, fsys, src, destdir, data, name, opts))
+				continue
 			}
 
 			// apply templates on subdirs not being the reserved ones for languages
 			if !strings.HasPrefix(entry.Name(), "lang_") {
-				return handleDir(log, fsys, src, dest, data, name, opts)
+				errs = append(errs, handleDir(log, fsys, src, dest, data, name, opts))
+				continue
 			}
-
-			return nil
+			continue
 		}
 
 		// don't template files without .tmpl extension
 		if !strings.HasSuffix(src, craft.TmplExtension) {
-			return nil
+			continue
 		}
 		dest = strings.TrimSuffix(dest, craft.TmplExtension)
 
-		err := handleFile(fsys, src, dest, data, opts)
-		if err == nil {
-			return nil
+		if err := handleFile(fsys, src, dest, data, opts); err != nil {
+			if errors.Is(err, errDelete) {
+				log.Warnf("failed to delete '%s': %s", entry.Name(), err.Error())
+				continue
+			}
+			if errors.Is(err, errExist) {
+				log.Infof("not copying '%s' since it already exists", filepath.Base(dest))
+				continue
+			}
+			errs = append(errs, err)
 		}
-		if errors.Is(err, errDelete) {
-			log.Warnf("failed to delete '%s': %s", entry.Name(), err.Error())
-			return nil
-		}
-		if errors.Is(err, errExist) {
-			log.Infof("not copying '%s' since it already exists", filepath.Base(dest))
-			return nil
-		}
-		return err
-	})
+	}
 	return errors.Join(errs...)
 }
 
@@ -144,7 +143,7 @@ func handleFile(fsys cfs.FS, src, dest string, data any, opts ExecOpts) error {
 	}
 
 	tmpl, err := template.New(filepath.Base(src)).
-		Funcs(sprig.FuncMap()).
+		Funcs(sprigin.FuncMap()).
 		Funcs(templating.FuncMap()).
 		Delims(opts.StartDelim, opts.EndDelim).
 		ParseFS(fsys, src)

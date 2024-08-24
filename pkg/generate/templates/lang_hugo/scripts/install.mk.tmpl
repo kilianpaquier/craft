@@ -17,7 +17,7 @@ endef
 install-hugo: ; @$(value install_hugo)
 .ONESHELL:
 
-<<- if and .CI (has "netlify" .CI.Options) >>
+<<- if .IsStatic "netlify" >>
 
 define install_netlify
 if which netlify >/dev/null; then

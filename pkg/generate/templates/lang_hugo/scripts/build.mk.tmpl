@@ -9,7 +9,7 @@ serve:
 	@hugo server --disableFastRender
 
 .PHONY: production
-<<- if and .CI (has "netlify" .CI.Options) >>
+<<- if .IsStatic "netlify" >>
 production:
 	@netlify dev -c "make serve" \
 		--target-port 1313 --port 8888 

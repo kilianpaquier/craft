@@ -33,44 +33,49 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+                "auth": {
+                    "description": "Auth configurations for various features in CI.",
+                    "type": "object",
+                    "properties": {
+                        "maintenance": {
+                            "description": "Maintenance auth strategy for the specified bot in maintenance option.",
+                            "type": "string",
+                            "default": "personal-token",
+                            "enum": [
+                                "github-app",
+                                "github-token",
+                                "mend.io",
+                                "personal-token"
+                            ]
+                        },
+                        "release": {
+                            "description": "Release auth strategy for semantic-release.",
+                            "type": "string",
+                            "default": "github-token",
+                            "enum": [
+                                "github-app",
+                                "github-token",
+                                "personal-token"
+                            ]
+                        }
+                    }
+                },
                 "name": {
                     "description": "CI Name.",
                     "type": "string",
-                    "default": "github",
-                    "enum": [
-                        "github",
-                        "gitlab"
-                    ]
+                    "default": "github"
+                },
+                "options": {
+                    "description": "CI Options.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "release": {
                     "description": "Release specific configuration.",
                     "type": "object",
                     "properties": {
-                        "auto": {
-                            "description": "Whether the release should run automatically.",
-                            "type": "boolean",
-                            "default": "false"
-                        },
-                        "backmerge": {
-                            "description": "Whether backmerging should be configured for main, staging and develop branches.",
-                            "type": "boolean",
-                            "default": "false"
-                        },
-                        "disable": {
-                            "description": "Whether the release should be disabled.",
-                            "type": "boolean",
-                            "default": "false"
-                        },
-                        "mode": {
-                            "description": "Release tokenization mode for github only (how should the release token be retrieved).",
-                            "type": "string",
-                            "default": "github-token",
-                            "enum": [
-                                "github-apps",
-                                "personal-token",
-                                "github-token"
-                            ]
-                        },
                         "action": {
                             "description": "Action to be used for releasing. Only semantic-release can be provided when working with gitlab.",
                             "type": "string",
@@ -80,23 +85,36 @@
                                 "release-drafter",
                                 "semantic-release"
                             ]
+                        },
+                        "auto": {
+                            "description": "Whether the release should run automatically.",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "backmerge": {
+                            "description": "Whether backmerging should be configured for main, staging and develop branches.",
+                            "type": "boolean",
+                            "default": false
                         }
                     }
                 },
-                "options": {
-                    "description": "CI Options.",
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "enum": [
-                            "codecov",
-                            "codeql",
-                            "dependabot",
-                            "netlify",
-                            "pages",
-                            "renovate",
-                            "sonar"
-                        ]
+                "static": {
+                    "description": "Static deployment configuration (only available on github).",
+                    "type": "object", 
+                    "properties": {
+                        "name": {
+                            "description": "Static deployment name.",
+                            "type": "string",
+                            "enum": [
+                                "netlify",
+                                "pages"
+                            ]
+                        },
+                        "auto": {
+                            "description": "Whether to automatically deploy static builds or not on main branches.",
+                            "type": "boolean",
+                            "default": false
+                        }
                     }
                 }
             },
@@ -133,8 +151,16 @@
             "$ref": "#/$defs/maintainer",
             "minItems": 1
         },
+        "bot": {
+            "description": "Bot in charge of keeping dependencies up to date.",
+            "type": "string",
+            "enum": [
+                "dependabot",
+                "renovate"
+            ]
+        },
         "license": {
-            "description": "License.",
+            "description": "License name.",
             "type": "string",
             "default": "mit",
             "enum": [

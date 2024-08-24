@@ -3,10 +3,7 @@ package generate
 import (
 	"fmt"
 	"os/exec"
-	"slices"
 	"strings"
-
-	"github.com/samber/lo"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
@@ -47,12 +44,19 @@ func ParseRemote(rawRemote string) (host, path string) {
 
 // ParsePlatform returns the platform name associated to input host.
 func ParsePlatform(host string) (string, bool) {
-	return lo.FindKeyBy(map[string][]string{
+	matchers := map[string][]string{
 		craft.Bitbucket: {"bb", craft.Bitbucket, "stash"},
 		craft.Gitea:     {craft.Gitea},
 		craft.Github:    {craft.Github, "gh"},
 		craft.Gitlab:    {craft.Gitlab, "gl"},
-	}, func(_ string, searches []string) bool {
-		return slices.ContainsFunc(searches, func(search string) bool { return strings.Contains(host, search) })
-	})
+	}
+
+	for platform, candidates := range matchers {
+		for _, candidate := range candidates {
+			if strings.Contains(host, candidate) {
+				return platform, true
+			}
+		}
+	}
+	return "", false
 }

@@ -31,7 +31,7 @@ jobs:
         continue-on-error: true
         uses: cycjimmy/semantic-release-action@v4
         with:
-          semantic_version: 23
+          semantic_version: 24
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/commit-analyzer
@@ -131,7 +131,7 @@ jobs:
       - id: semantic_release
         uses: cycjimmy/semantic-release-action@v4
         with:
-          semantic_version: 23
+          semantic_version: 24
           extra_plugins: |
             @semantic-release/changelog
             @semantic-release/commit-analyzer

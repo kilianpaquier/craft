@@ -1,15 +1,14 @@
 # Craft configuration file (https://github.com/kilianpaquier/craft)
 ---
 ci:
+  auth:
+    maintenance: github-app
+    release: github-token
   name: github
-  options:
-    - dependabot
   release:
     action: semantic-release
-    auto: false
-    backmerge: false
-    mode: github-token
 maintainers:
   - name: kilianpaquier
+bot: renovate
 no_chart: true
 platform: github

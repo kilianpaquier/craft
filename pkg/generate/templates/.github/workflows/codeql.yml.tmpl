@@ -20,7 +20,7 @@ run-name: CodeQL
 <<- $languages = append $languages "javascript-typescript" >>
 <<- end >>
 
-<<- if hasKey .Languages "golang" >>
+<<- if or (hasKey .Languages "golang") (hasKey .Languages "hugo") >>
 <<- $languages = append $languages "go" >>
 <<- end >>
 
@@ -36,7 +36,7 @@ on:
       - next
       - beta
       - alpha
-<<- if eq .CI.Release.Action "semantic-release" >>
+<<- if or (not .CI.Release) (eq .CI.Release.Action "semantic-release") >>
       - v[0-9]+.x
       - v[0-9]+.[0-9]+.x
 <<- end >>
@@ -50,13 +50,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-<<- if gt (len $languages) 0 >>
         language:
 <<- range $languages >>
           - << . >>
-<<- end >>
-<<- else >>
-        language: []
 <<- end >>
     steps:
       - uses: actions/checkout@v4
@@ -66,4 +62,4 @@ jobs:
       - uses: github/codeql-action/autobuild@v3
       - uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{ matrix.language }}"
+          category: /language:${{ matrix.language }}

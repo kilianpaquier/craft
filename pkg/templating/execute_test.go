@@ -6,7 +6,6 @@ import (
 	"testing"
 	"text/template"
 
-	sprig "github.com/Masterminds/sprig/v3"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -39,9 +38,7 @@ func TestExecute(t *testing.T) {
 		dest := filepath.Join(tmp, "template-result.txt")
 
 		// not parsing any file with template to ensure tmpl.Execute fails
-		tmpl := template.New("template.txt").
-			Funcs(sprig.FuncMap()).
-			Funcs(templating.FuncMap())
+		tmpl := template.New("template.txt").Funcs(templating.FuncMap())
 
 		// Act
 		err := templating.Execute(tmpl, nil, dest)
@@ -67,7 +64,6 @@ func TestExecute(t *testing.T) {
 		data := map[string]string{"name": "hey ! A name"}
 
 		tmpl, err := template.New("template.txt").
-			Funcs(sprig.FuncMap()).
 			Funcs(templating.FuncMap()).
 			ParseFiles(src)
 		require.NoError(t, err)
@@ -97,7 +93,6 @@ func TestExecute(t *testing.T) {
 		data := map[string]string{"name": "hey ! A name"}
 
 		tmpl, err := template.New("template.txt").
-			Funcs(sprig.FuncMap()).
 			Funcs(templating.FuncMap()).
 			ParseFiles(src)
 		require.NoError(t, err)

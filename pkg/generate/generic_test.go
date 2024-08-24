@@ -32,9 +32,7 @@ func TestDetectGeneric(t *testing.T) {
 			}},
 		}
 		expected := generate.Metadata{
-			Configuration: craft.Configuration{CI: &craft.CI{
-				Options: []string{craft.Dependabot, craft.Renovate},
-			}},
+			Configuration: craft.Configuration{CI: &craft.CI{}},
 		}
 
 		// Act

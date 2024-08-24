@@ -9,9 +9,5 @@ serve:
 	@hugo server --disableFastRender
 
 .PHONY: production
-production:
-	@netlify dev -c "make serve" \
-		--target-port 1313 --port 8888 
-		--dir public 
-		--framework hugo 
-		--context production
+production: build
+	@python3 -m http.server --directory public

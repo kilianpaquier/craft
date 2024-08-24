@@ -5,7 +5,6 @@ import (
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
-	"github.com/samber/lo"
 )
 
 // ExecOpts represents all options given to Exec functions.
@@ -98,6 +97,9 @@ func WithLogger(log clog.Logger) RunOption {
 
 // WithTemplates is an option for Run function to specify the templates directory and filesystem.
 //
+// Please not that the input dir path separator must be the one used with path.Join
+// and not the one OS specific from filepath.Join.
+//
 // If not given, default filesystem is the embedded one FS.
 func WithTemplates(dir string, fs cfs.FS) RunOption {
 	return func(o option) option {
@@ -165,9 +167,13 @@ func newOpt(opts ...RunOption) option {
 func (o option) toExecOptions(metadata Metadata) ExecOpts {
 	return ExecOpts{
 		EndDelim: o.endDelim,
-		FileHandlers: lo.Map(o.handlers, func(handler MetaHandler, _ int) FileHandler {
-			return handler(metadata)
-		}),
+		FileHandlers: func() []FileHandler {
+			result := make([]FileHandler, 0, len(o.handlers))
+			for _, handler := range o.handlers {
+				result = append(result, handler(metadata))
+			}
+			return result
+		}(),
 		Force:      o.force,
 		ForceAll:   o.forceAll,
 		StartDelim: o.startDelim,

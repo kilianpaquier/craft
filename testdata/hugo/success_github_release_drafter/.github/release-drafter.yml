@@ -7,31 +7,13 @@ change-template: "* $TITLE (#$NUMBER) @$AUTHOR"
 sort-by: merged_at
 sort-direction: descending
 tag-prefix: v
-autolabeler:
-  - label: enhancement
-    title:
-      - /feat/i
-      - /refactor/i
-  - label: breaking
-    body:
-      - /BREAKING/i
-  - label: bug
-    title:
-      - /fix/i
-      - /perf/i
-      - /revert/i
-  - label: documentation
-    title:
-      - /docs/i
-  - label: chore
-    title:
-      - /chore/i
 include-labels:
   - breaking
   - bug
   - dependencies
   - docs
   - enhancement
+  - github_actions
 categories:
   - title: Breaking Changes
     labels:
@@ -62,6 +44,7 @@ version-resolver:
       - chore
       - dependencies
       - documentation
-  default: minor
+      - github_actions
+  default: patch
 template: |
   $CHANGES

@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
@@ -112,90 +113,223 @@ func TestWriteCraft(t *testing.T) {
 }
 
 func TestEnsureDefaults(t *testing.T) {
-	t.Run("success_migrate_options", func(t *testing.T) {
+	t.Run("success_github_dependabot_no_auth", func(t *testing.T) {
 		// Arrange
-		input := craft.Configuration{
-			CI: &craft.CI{
-				Name:    craft.Gitlab,
-				Options: []string{"auto_release", "backmerge"},
-			},
-		}
-
-		// Act
-		actual := input.EnsureDefaults()
-
-		// Assert
-		assert.Empty(t, actual.CI.Options)
-		assert.True(t, actual.CI.Release.Auto)
-		assert.True(t, actual.CI.Release.Backmerge)
-	})
-
-	t.Run("success_sets_github_ci_defaults", func(t *testing.T) {
-		// Arrange
-		input := craft.Configuration{CI: &craft.CI{Name: craft.Github}}
-
-		// Act
-		actual := input.EnsureDefaults()
-
-		// Assert
-		assert.Equal(t, craft.GithubToken, actual.CI.Release.Mode)
-	})
-
-	t.Run("success_sets_github_ci_release_drafter_defaults", func(t *testing.T) {
-		// Arrange
-		input := craft.Configuration{
+		config := craft.Configuration{
+			Bot: helpers.ToPtr(craft.Dependabot),
 			CI: &craft.CI{
 				Name: craft.Github,
-				Release: craft.Release{
-					Action:    craft.ReleaseDrafter,
-					Mode:      craft.PersonalToken,
-					Backmerge: true,
-				},
+				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GithubToken)},
 			},
 		}
 
 		// Act
-		actual := input.EnsureDefaults()
+		config.EnsureDefaults()
 
 		// Assert
-		assert.False(t, actual.CI.Release.Backmerge)
-		assert.Equal(t, craft.GithubToken, actual.CI.Release.Mode)
+		assert.Nil(t, config.CI.Auth.Maintenance)
+		require.NotNil(t, config.Bot)
+		assert.Equal(t, craft.Dependabot, *config.Bot)
 	})
 
-	t.Run("success_sets_github_ci_ghrelease_defaults", func(t *testing.T) {
+	t.Run("success_gitlab_force_renovate", func(t *testing.T) {
 		// Arrange
-		input := craft.Configuration{
+		config := craft.Configuration{
+			Bot: helpers.ToPtr(craft.Dependabot),
 			CI: &craft.CI{
-				Name: craft.Github,
-				Release: craft.Release{
-					Action:    craft.GhRelease,
-					Mode:      craft.PersonalToken,
-					Backmerge: true,
-				},
+				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GithubToken)},
 			},
+			Platform: craft.Gitlab,
 		}
 
 		// Act
-		actual := input.EnsureDefaults()
+		config.EnsureDefaults()
 
 		// Assert
-		assert.False(t, actual.CI.Release.Backmerge)
-		assert.Equal(t, craft.GithubToken, actual.CI.Release.Mode)
+		assert.Nil(t, config.CI.Auth.Maintenance)
+		require.NotNil(t, config.Bot)
+		assert.Equal(t, craft.Renovate, *config.Bot)
 	})
 
-	t.Run("success_sets_gitlab_ci_defaults", func(t *testing.T) {
+	t.Run("success_gitlab_no_labeler", func(t *testing.T) {
 		// Arrange
-		input := craft.Configuration{
+		config := craft.Configuration{
 			CI: &craft.CI{
 				Name:    craft.Gitlab,
-				Release: craft.Release{Mode: craft.GithubToken},
+				Options: []string{craft.Labeler},
 			},
 		}
 
 		// Act
-		actual := input.EnsureDefaults()
+		config.EnsureDefaults()
 
 		// Assert
-		assert.Empty(t, actual.CI.Release.Mode)
+		assert.Empty(t, config.CI.Options)
+	})
+
+	t.Run("success_gitlab_no_static", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:   craft.Gitlab,
+				Static: &craft.Static{Name: craft.Netlify},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		assert.Nil(t, config.CI.Static)
+	})
+
+	t.Run("success_no_release_means_no_release_auth", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Auth: craft.Auth{Release: helpers.ToPtr(craft.GithubApp)},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		assert.Nil(t, config.CI.Auth.Release)
+	})
+
+	t.Run("success_default_github_ghrelease", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Release: &craft.Release{Backmerge: true},
+			},
+		}
+		expected := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+				Options: []string{craft.Labeler},
+				Release: &craft.Release{Action: craft.GhRelease},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		assert.Equal(t, expected, config)
+	})
+
+	t.Run("success_github_release_drafter", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubApp)},
+				Release: &craft.Release{Action: craft.ReleaseDrafter, Backmerge: true},
+			},
+		}
+		expected := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubApp)},
+				Options: []string{craft.Labeler},
+				Release: &craft.Release{Action: craft.ReleaseDrafter},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		assert.Equal(t, expected, config)
+	})
+
+	t.Run("success_default_gitlab_semrel", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Gitlab,
+				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+				Release: &craft.Release{},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		assert.Nil(t, config.CI.Auth.Release)
+		assert.Equal(t, craft.SemanticRelease, config.CI.Release.Action)
+	})
+
+	t.Run("success_migrate_dependabot", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Options: []string{craft.Dependabot},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		require.NotNil(t, config.Bot)
+		assert.Equal(t, craft.Dependabot, *config.Bot)
+	})
+
+	t.Run("success_migrate_renovate", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Options: []string{craft.Renovate},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		require.NotNil(t, config.Bot)
+		assert.Equal(t, craft.Renovate, *config.Bot)
+	})
+
+	t.Run("success_migrate_netlify", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Options: []string{craft.Netlify},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		require.NotNil(t, config.CI.Static)
+		assert.Equal(t, craft.Netlify, config.CI.Static.Name)
+	})
+
+	t.Run("success_migrate_pages", func(t *testing.T) {
+		// Arrange
+		config := craft.Configuration{
+			CI: &craft.CI{
+				Name:    craft.Github,
+				Options: []string{craft.Pages},
+			},
+		}
+
+		// Act
+		config.EnsureDefaults()
+
+		// Assert
+		require.NotNil(t, config.CI.Static)
+		assert.Equal(t, craft.Pages, config.CI.Static.Name)
 	})
 }

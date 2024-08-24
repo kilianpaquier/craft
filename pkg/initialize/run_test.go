@@ -11,10 +11,10 @@ import (
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/initialize"
 )
@@ -52,7 +52,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("success_custom_input", func(t *testing.T) {
 		// Arrange
-		expected := craft.Configuration{License: lo.ToPtr("mit")}
+		expected := craft.Configuration{License: helpers.ToPtr("mit")}
 
 		f := func(_ clog.Logger, config craft.Configuration, ask initialize.Ask) craft.Configuration {
 			config.License = ask("Which license would you like to use ?")
@@ -124,7 +124,7 @@ func TestRun(t *testing.T) {
 	t.Run("success_all_inputs", func(t *testing.T) {
 		// Arrange
 		expected := craft.Configuration{Maintainers: []craft.Maintainer{
-			{Name: "name", Email: lo.ToPtr("email"), URL: lo.ToPtr("url")},
+			{Name: "name", Email: helpers.ToPtr("email"), URL: helpers.ToPtr("url")},
 		}}
 
 		inputs := []string{

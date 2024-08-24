@@ -14,11 +14,11 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/xanzy/go-gitlab"
 
+	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
@@ -42,7 +42,7 @@ func TestDetectLicense(t *testing.T) {
 
 	t.Run("license_detected", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{Configuration: craft.Configuration{License: lo.ToPtr("mit")}}
+		config := generate.Metadata{Configuration: craft.Configuration{License: helpers.ToPtr("mit")}}
 
 		var buf bytes.Buffer
 		log.SetOutput(&buf)
@@ -83,7 +83,7 @@ func TestDownloadLicense(t *testing.T) {
 		destdir := t.TempDir()
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
-				License:     lo.ToPtr("mit"),
+				License:     helpers.ToPtr("mit"),
 				Maintainers: []craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
@@ -108,7 +108,7 @@ func TestDownloadLicense(t *testing.T) {
 
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
-				License:     lo.ToPtr("mit"),
+				License:     helpers.ToPtr("mit"),
 				Maintainers: []craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
@@ -133,7 +133,7 @@ func TestDownloadLicense(t *testing.T) {
 
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
-				License:     lo.ToPtr("mit"),
+				License:     helpers.ToPtr("mit"),
 				Maintainers: []craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
@@ -161,7 +161,7 @@ func TestDownloadLicense(t *testing.T) {
 
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
-				License:     lo.ToPtr("mit"),
+				License:     helpers.ToPtr("mit"),
 				Maintainers: []craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
@@ -190,7 +190,7 @@ func TestDownloadLicense(t *testing.T) {
 
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
-				License:     lo.ToPtr("mit"),
+				License:     helpers.ToPtr("mit"),
 				Maintainers: []craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
@@ -223,7 +223,7 @@ func TestDownloadLicense(t *testing.T) {
 
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
-				License:     lo.ToPtr("mit"),
+				License:     helpers.ToPtr("mit"),
 				Maintainers: []craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",

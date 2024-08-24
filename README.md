@@ -148,10 +148,27 @@ maintainers:
 license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0 | epl-2.0 | gpl-2.0 | gpl-3.0 | lgpl-2.1 | mit | mpl-2.0 | unlicense
 
 # project's CI (optional)
-# providing it will create the appropriate ci files (.gitlab-ci.yml, .github/workflows/...)
+# providing it will create the appropriate ci files (.gitlab-ci.yml, .github/actions, .github/workflows)
 ci:
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
+
+  # static deployment configuration (only available on github)
+  static:
+    # static deployment name
+    auto: true | false
+    # static deployment automatisation (on main branches)
+    name: netlify | pages
+
+  # auth configurations for various features in CI
+  auth:
+    # maintenance auth strategy for the specified bot in maintenance option
+    maintenance: github-app | github-token | mend.io | personal-token
+
+    # release auth for github only (how should the release token be retrieved)
+    # will stay empty when using gitlab CICD
+    release: github-app | github-token | personal-token 
+
   # release specific options
   release:
     # which action to use for github releasing 
@@ -165,19 +182,13 @@ ci:
     # whether backmerging should be configured for main, staging and develop branches
     # this feature is only available with semantic-release (no matter the CI)
     backmerge: true | false
-    # whether the release should be disabled
+    # whether releasing should be disabled
     disable: true | false
-    # release tokenization mode for github only (how should the release token be retrieved)
-    # will stay empty when using gitlab CICD
-    mode: github-apps | github-token | personal-token 
   # ci global options, providing one or multiple options with tune the ci generation (optional)
   options:
     - codecov
     - codeql
-    - dependabot
-    - netlify
-    - pages
-    - renovate
+    - labeler
     - sonar
 
 # platform override in case of gitlab on premise, bitbucket on premise, etc.
@@ -195,6 +206,9 @@ docker:
   # used in various places like helm values.yml service port
   # Dockerfile exposed port
   port: 3000
+
+# bot in charge of keeping dependencies up to date
+bot: dependabot | renovate
 
 # whether to generate an helm chart or not (optional)
 no_chart: true | false

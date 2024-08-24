@@ -21,7 +21,7 @@ include: .gitlab/workflows/version.yml
 # CI_REGISTRY_PASSWORD: The user password / token with write access to << .Docker.Registry >> to push docker images
 <<- end >>
 
-<<- if has "renovate" .CI.Options >>
+<<- if .IsBot "renovate" >>
 # RENOVATE_TOKEN: A GitLab access token to allow Renovate crawl your projects. [See doc](https://docs.renovatebot.com/modules/platform/gitlab/#authentication)
 # GITHUB_COM_TOKEN: A GitHub access token to allow Renovate fetch changelogs. [See doc](https://docs.renovatebot.com/getting-started/running/#githubcom-token-for-changelogs)
 <<- end >>

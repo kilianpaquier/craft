@@ -3,6 +3,8 @@
 name: Renovate
 run-name: Renovate
 
+<<- $auth := fromPtr .CI.Auth.Maintenance >>
+
 on:
   workflow_dispatch:
     inputs:
@@ -14,15 +16,40 @@ on:
     - cron: "0 12 * * *"
 
 jobs:
+
   renovate:
     name: Renovate
     runs-on: ubuntu-latest
+<<- if eq $auth "personal-token" >>
     environment: renovate
+<<- end >>
+<<- if eq $auth "github-token" >>
+    permissions:
+      contents: write
+      pull-requests: write
+<<- end >>
     steps:
+<<- if eq $auth "github-app" >>
+      - id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.RENOVATE_APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+<<- end >>
       - uses: actions/checkout@v4
+<<- if eq $auth "github-app" >>
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+<<- end >>
       - uses: renovatebot/github-action@v40.2.6
         with:
+<<- if eq $auth "github-app" >>
+          token: ${{ steps.app_token.outputs.token }}
+<<- else if eq $auth "personal-token" >>
           token: ${{ secrets.RENOVATE_TOKEN }}
+<<- else >>
+          token: ${{ secrets.GITHUB_TOKEN }}
+<<- end >>
         env:
           RENOVATE_AUTODISCOVER: "true"
           RENOVATE_AUTODISCOVER_FILTER: ${{ github.repository }}

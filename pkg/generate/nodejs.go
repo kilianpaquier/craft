@@ -36,6 +36,9 @@ type PackageJSON struct {
 		Registry   string `json:"registry,omitempty"`
 		Tag        string `json:"tag,omitempty"`
 	} `json:"publishConfig,omitempty"`
+	Repository struct {
+		URL string `json:"url,omitempty" validate:"required"`
+	} `json:"repository,omitempty" validate:"required_if=Private false"`
 	Scripts map[string]string `json:"scripts,omitempty"`
 	Version string            `json:"version,omitempty"`
 }

@@ -6,5 +6,8 @@
     "name": "nodejs",
     "packageManager": "pnpm@9.0.0",
     "scripts": {},
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "repository": {
+        "url": "https://github.com/kilianpaquier/craft"
+    }
 }

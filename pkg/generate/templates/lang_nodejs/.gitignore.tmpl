@@ -132,7 +132,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-<<- if and .CI (has "netlify" .CI.Options) >>
+<<- if .IsStatic "netlify" >>
 
 # Local Netlify folder
 .netlify
