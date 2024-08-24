@@ -1,20 +1,19 @@
 # Craft configuration file (https://github.com/kilianpaquier/craft)
 ---
 ci:
-  maintenance:
-    updater: renovate
-    mode: personal-token
+  auth:
+    maintenance: personal-token
+    release: github-token
   name: github
   options:
     - codecov
     - codeql
+    - labeler
   release:
     action: semantic-release
-    auto: false
-    backmerge: false
-    mode: github-token
 license: mit
 maintainers:
   - name: kilianpaquier
+bot: renovate
 no_chart: true
 platform: github
