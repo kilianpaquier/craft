@@ -14,6 +14,7 @@ on:
     - cron: "0 12 * * *"
 
 jobs:
+
   renovate:
     name: Renovate
     runs-on: ubuntu-latest
