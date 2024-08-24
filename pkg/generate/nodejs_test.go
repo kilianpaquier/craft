@@ -8,10 +8,10 @@ import (
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
@@ -66,7 +66,7 @@ func TestDetectNodejs(t *testing.T) {
 		destdir := t.TempDir()
 
 		packagejson := filepath.Join(destdir, craft.PackageJSON)
-		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js", "packageManager": "bun@1.1.6" }`), cfs.RwRR)
+		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js", "packageManager": "bun@1.1.6", "repository": { "url": "here" } }`), cfs.RwRR)
 		require.NoError(t, err)
 
 		input := generate.Metadata{Languages: map[string]any{}}
@@ -75,9 +75,14 @@ func TestDetectNodejs(t *testing.T) {
 			Configuration: craft.Configuration{NoMakefile: true},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{
-					Main:           lo.ToPtr("index.js"),
+					Main:           helpers.ToPtr("index.js"),
 					Name:           "craft",
 					PackageManager: "bun@1.1.6",
+					Repository: struct {
+						URL string `json:"url,omitempty" validate:"required"`
+					}{
+						URL: "here",
+					},
 				},
 			},
 			ProjectName: "craft",

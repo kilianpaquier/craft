@@ -10,12 +10,9 @@ sonar.projectBaseDir=.
 sonar.projectKey=<< .ProjectPath | replace "/" "_" >>
 sonar.projectName=<< .ProjectName >>
 
-sonar.exclusions=node_modules/**,dist/**,**/*.spec.ts,**/*.test.js
-sonar.test.inclusions=**/*.spec.ts,**/*.test.js
-
-<<- if eq .CI.Name "gitlab" >>
+sonar.exclusions=node_modules/**,dist/**,**/*.spec.js,**/*.spec.ts,**/*.test.js,**/*.test.ts
+sonar.test.inclusions=**/*.spec.js,**/*.spec.ts,**/*.test.js,**/*.test.ts
 
 sonar.testExecutionReportPaths=reports/node-test.sonar.xml
-<<- end >>
 sonar.eslint.reportPaths=reports/node-lint.xslint.json
 sonar.javascript.lcov.reportPaths=reports/lcov.info

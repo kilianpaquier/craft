@@ -1,47 +1,31 @@
 package craft
 
-import (
-	"bytes"
-	"errors"
-	"fmt"
-	"io/fs"
-	"os"
-	"path/filepath"
-	"slices"
-
-	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"gopkg.in/yaml.v3"
-)
-
-// Configuration represents all options configurable in .craft file at root project.
-//
-// yaml tags are for .craft file and json tags for templating.
-type Configuration struct {
-	CI           *CI          `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
-	Description  *string      `json:"description,omitempty" yaml:"description,omitempty"`
-	Docker       *Docker      `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
-	License      *string      `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
-	Maintainers  []Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
-	NoChart      bool         `json:"-"                     yaml:"no_chart,omitempty"`
-	NoGoreleaser bool         `json:"-"                     yaml:"no_goreleaser,omitempty"`
-	NoMakefile   bool         `json:"-"                     yaml:"no_makefile,omitempty"`
-	Platform     string       `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
+// Auth contains all authentication methods related to CI configuration.
+type Auth struct {
+	Maintenance *string `json:"-" yaml:"maintenance,omitempty" validate:"omitempty,oneof=github-app github-token mend.io personal-token"`
+	Release     *string `json:"-" yaml:"release,omitempty"     validate:"omitempty,oneof=github-app github-token personal-token"`
 }
 
 // CI is the struct for craft continuous integration tuning.
 type CI struct {
-	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required,oneof=github gitlab"`
-	Options []string `json:"-" yaml:"options,omitempty" builder:"append" validate:"omitempty,dive,oneof=codecov codeql dependabot netlify pages renovate sonar"`
-	Release Release  `json:"-" yaml:"release,omitempty"                  validate:"required"`
+	Auth    Auth     `json:"-" yaml:"auth,omitempty"                     validate:"omitempty,required"`
+	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required"`
+	Options []string `json:"-" yaml:"options,omitempty" builder:"append"`
+	Release *Release `json:"-" yaml:"release"                            validate:"omitempty,required"`
+	Static  *Static  `json:"-" yaml:"static,omitempty"                   validate:"omitempty,required"`
+}
+
+// Static represents the configuration for static deployment.
+type Static struct {
+	Auto bool   `json:"auto,omitempty"`
+	Name string `json:"name,omitempty" validate:"required,oneof=netlify pages"`
 }
 
 // Release is the struct for craft continuous integration release specifics configuration.
 type Release struct {
-	Action    string `json:"-" yaml:"action,omitempty"  validate:"omitempty,oneof=gh-release release-drafter semantic-release"`
-	Auto      bool   `json:"-" yaml:"auto"`
-	Backmerge bool   `json:"-" yaml:"backmerge"`
-	Disable   bool   `json:"-" yaml:"disable,omitempty"`
-	Mode      string `json:"-" yaml:"mode,omitempty"    validate:"omitempty,oneof=github-apps github-token personal-token"`
+	Action    string `json:"-" yaml:"action"              validate:"required,oneof=gh-release release-drafter semantic-release"`
+	Auto      bool   `json:"-" yaml:"auto,omitempty"`
+	Backmerge bool   `json:"-" yaml:"backmerge,omitempty"`
 }
 
 // Docker is the struct for craft docker tuning.
@@ -59,92 +43,70 @@ type Maintainer struct {
 	Name  string  `json:"name,omitempty"  yaml:"name,omitempty"  validate:"required"`
 }
 
-// Read reads the .craft file in srcdir input into the out input.
-func Read(srcdir string, out any) error {
-	src := filepath.Join(srcdir, File)
-
-	content, err := os.ReadFile(src)
-	if err != nil {
-		if errors.Is(err, fs.ErrNotExist) {
-			return fs.ErrNotExist
-		}
-		return fmt.Errorf("read file: %w", err)
-	}
-
-	if err := yaml.Unmarshal(content, out); err != nil {
-		return fmt.Errorf("unmarshal: %w", err)
-	}
-	return nil
+// Configuration represents all options configurable in .craft file at root project.
+//
+// yaml tags are for .craft file and json tags for templating.
+type Configuration struct {
+	CI           *CI          `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
+	Description  *string      `json:"description,omitempty" yaml:"description,omitempty"`
+	Docker       *Docker      `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
+	License      *string      `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
+	Maintainers  []Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
+	Bot          *string      `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
+	NoChart      bool         `json:"-"                     yaml:"no_chart,omitempty"`
+	NoGoreleaser bool         `json:"-"                     yaml:"no_goreleaser,omitempty"`
+	NoMakefile   bool         `json:"-"                     yaml:"no_makefile,omitempty"`
+	Platform     string       `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
 }
 
-// Write writes the input craft into the input destdir in .craft file.
-func Write(destdir string, config Configuration) error {
-	dest := filepath.Join(destdir, File)
-
-	// create a buffer with craft notice
-	buffer := bytes.NewBuffer([]byte("# Craft configuration file (https://github.com/kilianpaquier/craft)\n---\n"))
-
-	// create yaml encoder and writes the full configuration in the buffer,
-	// following the craft notice
-	encoder := yaml.NewEncoder(buffer)
-	defer encoder.Close()
-	encoder.SetIndent(2)
-	if err := encoder.Encode(config); err != nil {
-		return fmt.Errorf("encode file: %w", err)
-	}
-
-	if err := os.WriteFile(dest, buffer.Bytes(), cfs.RwRR); err != nil {
-		return fmt.Errorf("write file: %w", err)
-	}
-	return nil
+// IsBot returns truthy in case the input bot is the one specified in configuration.
+//
+// It returns false if no maintenance bot is specified in configuration.
+func (c Configuration) IsBot(bot string) bool {
+	return c.Bot != nil && *c.Bot == bot
 }
 
-// EnsureDefaults acts to ensure default properties are always sets
-// and migrates old properties into new fields.
-func (c Configuration) EnsureDefaults() Configuration {
-	if c.CI != nil {
-		// generic function to match an option included in a slice of options
-		del := func(options ...string) func(option string) bool {
-			return func(option string) bool {
-				return slices.Contains(options, option)
-			}
-		}
+// IsCI returns truthy in case the input name is the one specified in configuration.
+//
+// It returns false if CI is disabled.
+func (c Configuration) IsCI(name string) bool {
+	return c.CI != nil && c.CI.Name == name
+}
 
-		// migrate old auto_release option
-		if slices.Contains(c.CI.Options, "auto_release") {
-			c.CI.Release.Auto = true
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, del("auto_release"))
-		}
+// HasDockerRegistry returns truthy in case the configuration has a docker registry configuration.
+func (c Configuration) HasDockerRegistry() bool {
+	return c.Docker != nil && c.Docker.Registry != nil
+}
 
-		// migrate old backmerge option
-		if slices.Contains(c.CI.Options, "backmerge") {
-			c.CI.Release.Backmerge = true
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, del("backmerge"))
-		}
+// IsMaintenanceAuth returns truthy in case the input auth value is the one specified in configuration maintenance auth.
+//
+// It returns false if neither CI or auth maintenance isn't specified in configuration.
+func (c Configuration) IsMaintenanceAuth(auth string) bool {
+	return c.CI != nil && c.CI.Auth.Maintenance != nil && *c.CI.Auth.Maintenance == auth
+}
 
-		// set default release action in case it's not provided
-		if c.CI.Release.Action == "" {
-			c.CI.Release.Action = SemanticRelease
-		}
+// IsReleaseAuth returns truthy in case the input auth value is the one specified in configuration release auth.
+//
+// It returns false if neither CI or auth release isn't specified in configuration.
+func (c Configuration) IsReleaseAuth(auth string) bool {
+	return c.CI != nil && c.CI.Auth.Release != nil && *c.CI.Auth.Release == auth
+}
 
-		if c.CI.Name == Github {
-			// ses default release mode for github actions
-			if c.CI.Release.Mode == "" {
-				c.CI.Release.Mode = GithubToken
-			}
+// HasRelease returns truthy in case the configuration has CI enabled and Release configuration.
+func (c Configuration) HasRelease() bool {
+	return c.CI != nil && c.CI.Release != nil
+}
 
-			if c.CI.Release.Action == ReleaseDrafter || c.CI.Release.Action == GhRelease {
-				// remove backmerge feature on gh-release or release-drafter releasing since isn't not available
-				c.CI.Release.Backmerge = false
-				// set release mode to github-token since it's the only mode available with gh-release or release-drafter
-				c.CI.Release.Mode = GithubToken
-			}
-		}
+// IsReleaseAction returns truthy in case the input action is the one specified by the configuration release action.
+//
+// It returns false if there's no CI or Release specified in configuration.
+func (c Configuration) IsReleaseAction(action string) bool {
+	return c.CI != nil && c.CI.Release != nil && c.CI.Release.Action == action
+}
 
-		if c.CI.Name == Gitlab {
-			// keep release mode empty when working with gitlab CICD
-			c.CI.Release.Mode = ""
-		}
-	}
-	return c
+// IsStatic returns truthy in case the input static value is the one specified in configuration as static name.
+//
+// It returns false in case there's no CI or no Static configuration.
+func (c Configuration) IsStatic(static string) bool {
+	return c.CI != nil && c.CI.Static != nil && c.CI.Static.Name == static
 }

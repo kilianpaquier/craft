@@ -1,11 +1,13 @@
 # Craft configuration file (https://github.com/kilianpaquier/craft)
 ---
 ci:
+  maintenance:
+    updater: renovate
+    mode: personal-token
   name: github
   options:
     - codecov
     - codeql
-    - renovate
   release:
     action: semantic-release
     auto: false

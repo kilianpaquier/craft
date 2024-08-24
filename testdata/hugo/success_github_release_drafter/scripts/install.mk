@@ -16,21 +16,3 @@ endef
 .PHONY: install-hugo
 install-hugo: ; @$(value install_hugo)
 .ONESHELL:
-
-define install_netlify
-if which netlify >/dev/null; then
-	echo "netlify already installed"
-	exit 0
-fi
-
-echo "installing netlify"
-for bin in "bun" "pnpm" "npm"; do
-	if which ${bin}; then
-		${bin} i -g netlify-cli
-		exit $?
-	fi
-done
-endef
-.PHONY: install-netlify
-install-netlify: ; @$(value install_netlify)
-.ONESHELL:

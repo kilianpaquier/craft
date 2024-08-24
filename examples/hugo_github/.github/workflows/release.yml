@@ -9,120 +9,48 @@ on:
       dry_run:
         description: Dry run
         type: boolean
-        default: false
+        default: true
 
 jobs:
 
   version:
     name: Version
     runs-on: ubuntu-latest
+    environment: release
     outputs:
-      branch_sha: ${{ steps.release.outputs.branch_sha }}
-      release: ${{ steps.release.outputs.release }}
-      version: ${{ steps.release.outputs.version }}
-    permissions:
-      contents: write # create release
+      release: ${{ steps.version.outputs.release }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      # https://github.com/marketplace/actions/gh-release
-      - id: gh-release
-        uses: softprops/action-gh-release@v2
+      - id: version
+        uses: ./.github/actions/version.yml
         with:
-          draft: true
-          generate_release_notes: true
-          prerelease: ${{ needs.version.outputs.release != 'true' }}
-          target_commitish: ${{ github.ref_name }}
+          dry_run: true # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
-      - id: release
-        run: |
-          BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
-          echo "branch_sha=${BRANCH_SHA}" >> $GITHUB_OUTPUT
-
-          if [ "${GITHUB_REF_NAME}" = "main" ] || [ "${GITHUB_REF_NAME}" = "master" ]; then
-            echo "release=true" >> $GITHUB_OUTPUT
-          fi
-
-          echo "version=${RELEASE_URL##*/}" >> $GITHUB_OUTPUT # remove everything before the last / in the URL (should more or less match the tag name ...)
-        env:
-          RELEASE_URL: ${{ steps.gh-release.outputs.url }}
-      - run: echo $VERSION
-        env:
-          VERSION: ${{ steps.release.outputs.version }}
-
-  hugo-build:
-    name: Hugo Build
-    runs-on: ubuntu-latest
-    if: ${{ ! startsWith(github.event_name, 'pull_request') }}
-    needs: version
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true # fetch Hugo themes (true OR recursive)
-          fetch-depth: 0 # fetch all history for .GitInfo and .Lastmod
-      - uses: actions/cache@v4
-        with:
-          path: /home/runner/.cache/hugo_cache
-          key: hugo-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            hugo-
-      # https://github.com/marketplace/actions/hugo-setup
-      - uses: peaceiris/actions-hugo@v3
-        with:
-          hugo-version: latest
-          extended: true
-      - run: hugo --gc --minify --destination dist
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          name: github-pages
-          path: dist
-          retention-days: 1
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: dist
-          retention-days: 1
 
   pages:
     name: Pages
-    runs-on: ubuntu-latest
-    if: ${{ github.ref_name == github.event.repository.default_branch && ! startsWith(github.event_name, 'pull_request') }}
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     needs:
-      - hugo-build
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - id: deployment
-        uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages
-          preview: ${{ inputs.dry_run }}
+      - version
+      - build
+    uses: ./.github/workflows/pages.yml
+    with:
+      dry_run: ${{ inputs.dry_run }}
 
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.ref_protected && ! startsWith(github.event_name, 'pull_request') }}
+    if: ${{ github.ref_protected }}
     environment: release
+    permissions:
+      contents: write
     needs:
       - version
-      - hugo-build
       - pages
-    permissions:
-      contents: write # create release
     steps:
       - uses: actions/checkout@v4
-      # https://github.com/marketplace/actions/gh-release
-      - uses: softprops/action-gh-release@v2
+      - uses: ./.github/actions/version.yml
         with:
-          draft: ${{ inputs.dry_run }}
-          files: |
-            CHANGELOG.md
-            checksums.txt
-          generate_release_notes: true
-          prerelease: ${{ needs.version.outputs.release != 'true' }}
-          target_commitish: ${{ github.ref_name }}
+          download_dist: true
+          dry_run: ${{ inputs.dry_run }}
           token: ${{ secrets.GITHUB_TOKEN }}

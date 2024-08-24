@@ -121,12 +121,12 @@ func TestDetectGolang(t *testing.T) {
 		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
 		input := generate.Metadata{
-			Configuration: craft.Configuration{CI: &craft.CI{Options: []string{craft.CodeCov, craft.CodeQL, craft.Dependabot}}},
+			Configuration: craft.Configuration{CI: &craft.CI{Options: []string{craft.CodeCov, craft.CodeQL, craft.Sonar}}},
 			Languages:     map[string]any{},
 		}
 		expected := generate.Metadata{
 			Configuration: craft.Configuration{
-				CI:       &craft.CI{Options: []string{craft.Dependabot}},
+				CI:       &craft.CI{Options: []string{craft.Sonar}},
 				Platform: craft.Github,
 			},
 			Languages:   map[string]any{"hugo": nil},

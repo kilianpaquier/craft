@@ -1,18 +1,21 @@
 # Craft configuration file (https://github.com/kilianpaquier/craft)
 ---
 ci:
+  auth:
+    maintenance: github-token
+    release: github-token
   name: github
   options:
-    - dependabot
-    - pages
     - sonar
+    - labeler
   release:
     action: gh-release
+  static:
     auto: false
-    backmerge: false
-    mode: github-token
+    name: pages
 license: mit
 maintainers:
   - name: kilianpaquier
+bot: renovate
 no_chart: true
 platform: github

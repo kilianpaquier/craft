@@ -10,6 +10,8 @@ import (
 	"dario.cat/mergo"
 	"github.com/go-viper/mapstructure/v2"
 	"gopkg.in/yaml.v3"
+
+	"github.com/kilianpaquier/craft/internal/helpers"
 )
 
 // FuncMap returns a minimal template.FuncMap.
@@ -18,6 +20,7 @@ import (
 func FuncMap() template.FuncMap {
 	return template.FuncMap{
 		"cutAfter": CutAfter,
+		"fromPtr":  helpers.FromPtr[string],
 		"map":      MergeMaps,
 		"toQuery":  ToQuery,
 		"toYaml":   ToYAML,

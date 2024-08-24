@@ -42,8 +42,8 @@ checksum:
 nfpms:
 <<- $maintainer := index .Maintainers 0 >>
   - maintainer: << $maintainer.Name >>
-<<- with .License >>
-    license: << . | upper >>
+<<- if .License >>
+    license: << .License | upper >>
 <<- end >>
     file_name_template: >-
       {{- .ProjectName }}_

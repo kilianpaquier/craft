@@ -6,55 +6,11 @@ import (
 	"path"
 	"sync"
 
-	"github.com/samber/lo"
-
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-// Metadata represents all properties available for enrichment during detection.
-//
-// Those additional properties will be enriched during generate execution and project parsing.
-// They will be used for files and helm chart templating (if applicable).
-type Metadata struct {
-	craft.Configuration
-
-	// Languages is a map of language name with its specificities.
-	//
-	// For instance for nodejs, with default DetectNodejs it would contain an element "nodejs" with PackageJSON struct.
-	// For instance for golang, with default DetectGolang it would contain an element "golang" with Gomod struct.
-	Languages map[string]any `json:"-"`
-
-	// ProjectHost represents the host where the project is hosted.
-	//
-	// As craft only handles git, it would be an host like github.com, gitlab.com, bitbucket.org, etc.
-	// Of course it can also be a private host like github.company.com. It will depend on the git origin URL or for golang the host of module name.
-	ProjectHost string `json:"projectHost"`
-
-	// ProjectName is the project name being generated.
-	// By default with Run function, it will be the base path of ParseRemote's subpath result following OriginURL result.
-	ProjectName string `json:"projectName,omitempty"`
-
-	// ProjectPath is the project path.
-	// By default with Run function, it will be the subpath in ParseRemote result.
-	ProjectPath string `json:"projectPath"`
-
-	// Binaries is the total number of binaries / executables parsed during craft execution.
-	// It's especially used for golang generation (with workers, cronjob, jobs, etc.)
-	// but also in nodejs generation in case a "main" property is present in package.json.
-	Binaries uint8 `json:"-"`
-
-	// Clis is a map of CLI names without value (empty struct). It can be populated by Detect functions.
-	Clis map[string]struct{} `json:"-"`
-
-	// Crons is a map of cronjob names without value (empty struct). It can be populated by Detect functions.
-	Crons map[string]struct{} `json:"crons,omitempty"`
-
-	// Jobs is a map of job names without value (empty struct). It can be populated by Detect functions.
-	Jobs map[string]struct{} `json:"jobs,omitempty"`
-
-	// Workers is a map of workers names without value (empty struct). It can be populated by Detect functions.
-	Workers map[string]struct{} `json:"workers,omitempty"`
-}
+// ErrMultipleLanguages is the error returned when multiple languages are matched during detection since craft doesn't handle this case yet.
+var ErrMultipleLanguages = errors.New("multiple languages detected, please open an issue since it's not confirmed to be working flawlessly yet")
 
 // Run is the main function for this package generate.
 //
@@ -94,20 +50,24 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 
 	// detect all available languages and specificities in current project
 	execs := make([]Exec, 0, len(o.detects))
-	errs := make([]error, 0, len(o.detects))
+	detecterrs := make([]error, 0, len(o.detects))
 	for _, detect := range o.detects {
 		p, exec, err := detect(ctx, o.log, *o.destdir, props)
 		if err != nil {
-			errs = append(errs, err)
+			detecterrs = append(detecterrs, err)
 			continue
 		}
 
 		props = p // override props with output props (updated)
 		execs = append(execs, exec...)
 	}
+	if len(detecterrs) > 0 {
+		return props.Configuration, errors.Join(detecterrs...)
+	}
 
-	if len(errs) > 0 {
-		return props.Configuration, errors.Join(errs...)
+	// avoid multiple languages detected since no tests are made around that
+	if len(props.Languages) > 1 {
+		return config, ErrMultipleLanguages
 	}
 
 	// add generic exec in case no languages were detected
@@ -122,17 +82,21 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	// initialize waitGroup for all executions and deletions
 	var wg sync.WaitGroup
 	wg.Add(len(execs))
-	execOpts := o.toExecOptions(props)
-	errsChan := make(chan error, len(execs))
+	execo := o.toExecOptions(props)
+	execerrs := make(chan error, len(execs))
 	for _, exec := range execs {
 		exec := exec
 		go func() {
 			defer wg.Done()
-			errsChan <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execOpts)
+			execerrs <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execo)
 		}()
 	}
 	wg.Wait()
-	close(errsChan)
+	close(execerrs)
 
-	return props.Configuration, errors.Join(lo.ChannelToSlice(errsChan)...)
+	errs := make([]error, 0, len(execerrs))
+	for err := range execerrs {
+		errs = append(errs, err)
+	}
+	return props.Configuration, errors.Join(errs...)
 }

@@ -83,8 +83,8 @@ plugins:
   - - "@semantic-release/<< .CI.Name >>"
     - assets:
         - { path: CHANGELOG.md, label: CHANGELOG.md }
-        - { path: checksums.txt }
 <<- if $gobuild >>
+        - { path: checksums.txt }
         - { path: dist }
 <<- end >>
       failComment: false

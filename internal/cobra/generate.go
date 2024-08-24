@@ -27,7 +27,7 @@ var (
 			if err != nil && !errors.Is(err, initialize.ErrAlreadyInitialized) {
 				fatal(ctx, err)
 			}
-			config = config.EnsureDefaults()
+			config.EnsureDefaults()
 
 			// validate craft struct
 			if err := validator.New().Struct(config); err != nil {

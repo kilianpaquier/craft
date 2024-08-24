@@ -10,12 +10,11 @@ import (
 	"testing"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	testfs "github.com/kilianpaquier/cli-sdk/pkg/cfs/tests"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
@@ -55,24 +54,17 @@ func TestDetectHelm(t *testing.T) {
 
 func TestGenerateHelm(t *testing.T) {
 	ctx := context.Background()
+	exec := generate.GenerateHelm
 
-	assertdir := filepath.Join("..", "..", "testdata", "helm")
-	srcdir := "templates"
-
-	setup := func(metadata generate.Metadata) (generate.Metadata, generate.ExecOpts) {
+	setup := func(metadata generate.Metadata) generate.Metadata {
+		metadata.Maintainers = []craft.Maintainer{{Name: "maintainer name"}}
 		metadata.ProjectHost = "example.com"
 		metadata.ProjectName = "craft"
 		metadata.ProjectPath = "kilianpaquier/craft"
-
-		return metadata, generate.ExecOpts{
-			FileHandlers: lo.Map(generate.MetaHandlers(), func(handler generate.MetaHandler, _ int) generate.FileHandler {
-				return handler(metadata)
-			}),
-			EndDelim:   ">>",
-			StartDelim: "<<",
-			ForceAll:   true,
-		}
+		return metadata
 	}
+
+	verify := test(ctx, exec, "helm")
 
 	t.Run("error_invalid_overrides", func(t *testing.T) {
 		// Arrange
@@ -80,14 +72,10 @@ func TestGenerateHelm(t *testing.T) {
 		overrides := filepath.Join(destdir, "chart", craft.File)
 		require.NoError(t, os.MkdirAll(overrides, cfs.RwxRxRxRx))
 
-		metadata, opts := setup(generate.Metadata{
-			Configuration: craft.Configuration{
-				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
-			},
-		})
+		metadata := setup(generate.Metadata{})
 
 		// Act
-		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
+		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, metadata, generate.ExecOpts{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read helm chart overrides")
@@ -95,68 +83,43 @@ func TestGenerateHelm(t *testing.T) {
 
 	t.Run("success_empty_values", func(t *testing.T) {
 		// Arrange
+		metadata := setup(generate.Metadata{})
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "empty_values")
 
-		metadata, opts := setup(generate.Metadata{
-			Configuration: craft.Configuration{
-				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
-			},
-		})
-
-		// Act
-		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
-
-		// Assert
-		assert.NoError(t, err)
-		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
+		// Act & Assert
+		verify(t, destdir, metadata)
 	})
 
-	t.Run("success_with_dependencies", func(t *testing.T) {
+	t.Run("success_dependencies", func(t *testing.T) {
 		// Arrange
+		assertdir := filepath.Join("..", "..", "testdata", "helm", "success_dependencies")
 		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_dependencies")
 
 		require.NoError(t, os.Mkdir(filepath.Join(destdir, "chart"), cfs.RwxRxRxRx))
 		err := cfs.CopyFile(filepath.Join(assertdir, "chart", ".craft"), filepath.Join(destdir, "chart", ".craft"))
 		require.NoError(t, err)
 
-		metadata, opts := setup(generate.Metadata{
-			Configuration: craft.Configuration{
-				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
-			},
-		})
+		metadata := setup(generate.Metadata{})
 
-		// Act
-		err = generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
-
-		// Assert
-		assert.NoError(t, err)
-		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
+		// Act & Assert
+		verify(t, destdir, metadata)
 	})
 
-	t.Run("success_with_resources", func(t *testing.T) {
+	t.Run("success_resources", func(t *testing.T) {
 		// Arrange
-		destdir := t.TempDir()
-		assertdir := filepath.Join(assertdir, "with_resources")
-
-		metadata, opts := setup(generate.Metadata{
+		metadata := setup(generate.Metadata{
 			Clis: map[string]struct{}{"cli-name": {}},
 			Configuration: craft.Configuration{
-				Docker:      &craft.Docker{Port: lo.ToPtr(uint16(5000))},
-				Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+				Docker: &craft.Docker{Port: helpers.ToPtr(uint16(5000))},
 			},
 			Crons:   map[string]struct{}{"cron-name": {}},
 			Jobs:    map[string]struct{}{"job-name": {}},
 			Workers: map[string]struct{}{"worker-name": {}},
 		})
+		destdir := t.TempDir()
 
-		// Act
-		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
-
-		// Assert
-		assert.NoError(t, err)
-		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
+		// Act & Assert
+		verify(t, destdir, metadata)
 	})
 }
 

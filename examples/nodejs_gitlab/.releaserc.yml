@@ -69,7 +69,6 @@ plugins:
   - - "@semantic-release/gitlab"
     - assets:
         - { path: CHANGELOG.md, label: CHANGELOG.md }
-        - { path: checksums.txt }
       failComment: false
       failTitle: false
       successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉

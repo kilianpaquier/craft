@@ -34,25 +34,38 @@ const (
 	CodeCov string = "codecov"
 	// CodeQL is the codeql option for CI tuning.
 	CodeQL string = "codeql"
-	// Dependabot is the dependabot option for CI tuning.
-	Dependabot string = "dependabot"
-	// Netlify is the option to deploy on netlify.
-	Netlify string = "netlify"
-	// Pages is the pages option for CI tuning.
-	Pages string = "pages"
-	// Renovate is the renovate option for CI tuning.
-	Renovate string = "renovate"
+	// Labeler is the auto labeling option for CI tuning.
+	Labeler string = "labeler"
 	// Sonar is the sonar option for CI tuning.
 	Sonar string = "sonar"
 )
 
 const (
-	// GithubApps is the value for github release mode with a github app.
-	GithubApps string = "github-apps"
+	// Netlify is the static name to deploy on netlify (only available on github actions).
+	Netlify string = "netlify"
+	// Pages is the static name for pages deployment.
+	Pages string = "pages"
+)
+
+const (
+	// Dependabot is the dependabot updater name for CI maintenance configuration.
+	Dependabot string = "dependabot"
+	// Renovate is the renovate updater name for CI maintenance configuration.
+	Renovate string = "renovate"
+)
+
+const (
+	// GithubApp is the value for github release mode with a github app.
+	GithubApp string = "github-app"
 	// GithubToken is the value for github release mode with a github token.
 	GithubToken string = "github-token"
 	// PersonalToken is the value for github release mode with a personal token (PAT).
 	PersonalToken string = "personal-token"
+)
+
+const (
+	// Mendio is the value for maintenance mode with renovate and mend.io (meaning no self-hosted renovate).
+	Mendio string = "mend.io"
 )
 
 const (
@@ -72,5 +85,5 @@ const (
 
 // CIOptions returns the slice with all availables CI options.
 func CIOptions() []string {
-	return []string{CodeCov, CodeQL, Dependabot, Netlify, Pages, Renovate, Sonar}
+	return []string{CodeCov, CodeQL, Sonar}
 }

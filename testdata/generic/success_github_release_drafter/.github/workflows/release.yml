@@ -9,101 +9,39 @@ on:
       dry_run:
         description: Dry run
         type: boolean
-        default: false
-  pull_request: # autolabeler on project pull requests (will only run version job)
-    types: [opened, reopened, synchronize]
-  pull_request_target: # autolabeler on fork pull requests (will only run version job)
-    types: [opened, reopened, synchronize]
+        default: true
 
 jobs:
 
   version:
     name: Version
     runs-on: ubuntu-latest
+    environment: release
     outputs:
-      branch_sha: ${{ steps.release.outputs.branch_sha }}
-      identifier: ${{ steps.release.outputs.identifier }}
-      release: ${{ steps.release.outputs.release }}
-      version: ${{ steps.drafter.outputs.tag_name }}
-    permissions:
-      contents: write # create release
-      pull-requests: write # autolabeler
+      release: ${{ steps.version.outputs.release }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-      - id: release
-        run: |
-          BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
-          echo "branch_sha=${BRANCH_SHA}" >> $GITHUB_OUTPUT
-
-          case "${GITHUB_REF_NAME}" in
-            main|master)
-              echo "release=true" >> $GITHUB_OUTPUT
-              echo "latest=true" >> $GITHUB_OUTPUT
-              ;;
-            beta|staging)
-              echo "identifier=beta" >> $GITHUB_OUTPUT
-              ;;
-            alpha|dev|develop|development)
-              echo "identifier=alpha" >> $GITHUB_OUTPUT
-              ;;
-            next)
-              echo "identifier=next" >> $GITHUB_OUTPUT
-              ;;
-          esac
-      # https://github.com/marketplace/actions/release-drafter
-      - id: drafter
-        uses: release-drafter/release-drafter@v6
+      - id: version
+        uses: ./.github/actions/version.yml
         with:
-          commitish: ${{ github.ref_name }}
-          config-name: release-drafter.yml
-          latest: ${{ steps.release.outputs.release == 'true' }}
-          name: v$RESOLVED_VERSION
-          prerelease-identifier: ${{ steps.release.outputs.identifier }}
-          prerelease: ${{ steps.release.outputs.release != 'true' }}
-          publish: false
-          tag: v$RESOLVED_VERSION
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo $VERSION
-        env:
-          VERSION: ${{ steps.drafter.outputs.tag_name }}
+          dry_run: true # compute only the version to build
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.ref_protected && ! startsWith(github.event_name, 'pull_request') }}
+    if: ${{ github.ref_protected }}
     environment: release
+    permissions:
+      contents: write
     needs:
       - version
-    permissions:
-      contents: write # create release
-      pull-requests: write # autolabeler
+      - build
     steps:
       - uses: actions/checkout@v4
-      # https://github.com/marketplace/actions/release-drafter
-      - id: drafter
-        uses: release-drafter/release-drafter@v6
+      - uses: ./.github/actions/version.yml
         with:
-          commitish: ${{ github.ref_name }}
-          config-name: release-drafter.yml
-          latest: ${{ needs.version.outputs.release == 'true' }}
-          name: v$RESOLVED_VERSION
-          prerelease-identifier: ${{ needs.version.outputs.identifier }}
-          prerelease: ${{ needs.version.outputs.release != 'true' }}
-          publish: ${{ ! inputs.dry_run }}
-          tag: v$RESOLVED_VERSION
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo $VERSION
-        env:
-          VERSION: ${{ steps.drafter.outputs.tag_name }}
-      # https://github.com/marketplace/actions/gh-release
-      - uses: softprops/action-gh-release@v2
-        with:
-          draft: ${{ inputs.dry_run }}
-          files: |
-            CHANGELOG.md
-            checksums.txt
-          prerelease: ${{ needs.version.outputs.release != 'true' }}
-          tag_name: ${{ steps.drafter.outputs.tag_name }}
+          download_dist: true
+          dry_run: ${{ inputs.dry_run }}
           token: ${{ secrets.GITHUB_TOKEN }}
