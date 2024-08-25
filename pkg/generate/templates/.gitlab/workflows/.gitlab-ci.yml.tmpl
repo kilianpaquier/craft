@@ -71,41 +71,46 @@ variables:
   CI_REGISTRY: << .Docker.Registry >>
 <<- end >>
 
+  DOCKER_HEALTHCHECK_DISABLED: "true" # https://docs.docker.com/reference/dockerfile/#healthcheck
   DOCKER_KANIKO_IMAGE: "gcr.io/kaniko-project/executor:debug"
-  DOCKER_SNAPSHOT_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
-  DOCKER_RELEASE_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
-  DOCKER_RELEASE_EXTRA_TAGS: "latest \\g<major>.\\g<minor> \\g<major"
   DOCKER_METADATA: |
     --label org.opencontainers.image.created=${CI_JOB_STARTED_AT}
     --label org.opencontainers.image.ref.name=${CI_COMMIT_REF_NAME}
-    --label org.opencontainers.image.version=${SEMREL_INFO_NEXT_VERSION}
     --label org.opencontainers.image.revision=${CI_COMMIT_SHA}
-  DOCKER_SEMREL_RELEASE_DISABLED: "true"
-  DOCKER_HEALTHCHECK_DISABLED: "true"
-  DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: "MEDIUM,HIGH,CRITICAL"
+    --label org.opencontainers.image.version=${SEMREL_INFO_NEXT_VERSION}
+  DOCKER_RELEASE_EXTRA_TAGS: "latest \\g<major>.\\g<minor> \\g<major"
+  DOCKER_RELEASE_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
+  DOCKER_SBOM_DISABLED: "true" # https://github.com/anchore/syft
+  DOCKER_SEMREL_RELEASE_DISABLED: "true" # handled by docker build and push jobs to avoid too much dependency on semantic-release
+  DOCKER_SNAPSHOT_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
   DOCKER_TRIVY_ARGS: "--ignore-unfixed --exit-code 1 --exit-on-eol 1"
-  DOCKER_SBOM_DISABLED: "true"
+  DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: "MEDIUM,HIGH,CRITICAL"
 <<- end >>
 
 <<- if $nodejs >>
 
-  NODE_IMAGE: "registry.hub.docker.com/library/node:lts-alpine"
+  NODE_AUDIT_DISABLED: "false"
   NODE_BUILD_ARGS: "run build --prod"
-  NODE_TEST_ARGS: "test -- --coverage"
-  NODE_LINT_ENABLED: "true"
+  NODE_IMAGE: "registry.hub.docker.com/library/node:lts-alpine"
   NODE_LINT_ARGS: "run lint"
-  NODE_OUTDATED_DISABLED: "true"
+  NODE_LINT_ENABLED: "true"
+  NODE_OUTDATED_ARGS: "--long"
+  NODE_OUTDATED_DISABLED: "false"
+  NODE_PUBLISH_ENABLED: "false"
   NODE_SBOM_DISABLED: "true"
+  NODE_SEMGREP_DISABLED: "false" # https://semgrep.dev/docs/
+  NODE_TEST_ARGS: "test -- --coverage"
 <<- end >>
 
 <<- if $golang >>
 
-  GO_IMAGE: "registry.hub.docker.com/library/golang:latest"
-  GO_TEST_IMAGE: "registry.hub.docker.com/library/golang:latest"
-  GO_TEST_FLAGS: "-coverpkg=./... -covermode=count"
-  GO_CI_LINT_IMAGE: "registry.hub.docker.com/golangci/golangci-lint:latest-alpine"
   GO_CI_LINT_ARGS: "--config .golangci.yml --timeout 240s --fast --sort-results"
+  GO_CI_LINT_IMAGE: "registry.hub.docker.com/golangci/golangci-lint:latest-alpine"
+  GO_IMAGE: "registry.hub.docker.com/library/golang:latest"
+  GO_OUTDATED_DISABLED: "false" # https://github.com/psampaz/go-mod-outdated
   GO_SBOM_DISABLED: "true"
+  GO_TEST_FLAGS: "-coverpkg=./... -covermode=count"
+  GO_TEST_IMAGE: "registry.hub.docker.com/library/golang:latest"
 <<- end >>
 
 <<- if has "sonar" .CI.Options >>
