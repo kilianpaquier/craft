@@ -28,7 +28,7 @@ jobs:
       - id: drafter
         uses: release-drafter/release-drafter@v6
         with:
-          commitish: ${{ github.ref_name }}
+          commitish: ${{ github.base_ref }}
           config-name: labeler.yml
           latest: false
           name: v$RESOLVED_VERSION
