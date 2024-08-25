@@ -72,10 +72,13 @@ autolabeler:
 <<- end >>
 <<- end >>
 
-  - labels: dependencies
+  - label: dependencies
     title:
       - /.*\(deps\).*/
     # files:
     #   - "**/go.mod"
     #   - "**/go.sum"
     #   - "**/package.json"
+
+template: |
+  $CHANGES
