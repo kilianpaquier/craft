@@ -124,50 +124,30 @@ Global Flags:
 Craft project generation is based on root's `.craft` file, it can contain the following configurations:
 
 ```yaml
-# project's description (optional)
-# used in various places like helm Chart.yml description
-# Dockerfile description label
-description: some useful description
-
-# project's maintainers (at least one must be provided)
-# the first maintainer will be referenced in various places like in goreleaser configuration
-# Dockerfile maintainer / authors label
-# sonar.properties organization and project key prefix
-# helm values.yml for images owner (e.g ghcr.io/maintainer/app_name)
-# all maintainers will be referenced in dependabot assignees and reviewers
-# helm Chart.yml maintainers
-maintainers:
-  - name: maintainer
-    email: maintainer@example.com
-    url: maintainer.example.com
-
-# project's license (optional)
-# providing it will download the appropriate license
-# used in various places like goreleaser executables license
-# github release workflow license addition to releases 
-license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0 | epl-2.0 | gpl-2.0 | gpl-3.0 | lgpl-2.1 | mit | mpl-2.0 | unlicense
+# bot in charge of keeping dependencies up to date
+bot: dependabot | renovate
 
 # project's CI (optional)
 # providing it will create the appropriate ci files (.gitlab-ci.yml, .github/actions, .github/workflows)
 ci:
-  # ci name - self-explaining what each value will generate - (required when ci section is given)
-  name: github | gitlab
-
-  # static deployment configuration (only available on github)
-  static:
-    # static deployment name
-    auto: true | false
-    # static deployment automatisation (on main branches)
-    name: netlify | pages
-
   # auth configurations for various features in CI
   auth:
-    # maintenance auth strategy for the specified bot in maintenance option
+    # maintenance auth strategy for the specified maintenance bot (just above)
     maintenance: github-app | github-token | mend.io | personal-token
 
     # release auth for github only (how should the release token be retrieved)
     # will stay empty when using gitlab CICD
     release: github-app | github-token | personal-token 
+
+  # ci name - self-explaining what each value will generate - (required when ci section is given)
+  name: github | gitlab
+
+  # ci global options, providing one or multiple options with tune the ci generation (optional)
+  options:
+    - codecov
+    - codeql
+    - labeler
+    - sonar
 
   # release specific options
   release:
@@ -184,18 +164,18 @@ ci:
     backmerge: true | false
     # whether releasing should be disabled
     disable: true | false
-  # ci global options, providing one or multiple options with tune the ci generation (optional)
-  options:
-    - codecov
-    - codeql
-    - labeler
-    - sonar
 
-# platform override in case of gitlab on premise, bitbucket on premise, etc.
-# by default, an on premise gitlab will be matched if the host contains "gitlab"
-# by default, an on premise bitbucket will be matched if the host contains "bitbucket" or "stash"
-# when not overridden, the platform is matched based on "git config --get remote.origin.url" on the returned host (github.com, gitlab.com, ...)
-platform: bitbucket | gitea | github | gitlab
+  # static deployment configuration (only available on github)
+  static:
+    # static deployment name
+    auto: true | false
+    # static deployment automatisation (on main branches)
+    name: netlify | pages
+
+# project's description (optional)
+# used in various places like helm Chart.yml description
+# Dockerfile description label
+description: some useful description
 
 docker:
   # specific docker registry to push images on (optional, default is none - docker.io)
@@ -207,8 +187,23 @@ docker:
   # Dockerfile exposed port
   port: 3000
 
-# bot in charge of keeping dependencies up to date
-bot: dependabot | renovate
+# project's license (optional)
+# providing it will download the appropriate license
+# used in various places like goreleaser executables license
+# github release workflow license addition to releases 
+license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0 | epl-2.0 | gpl-2.0 | gpl-3.0 | lgpl-2.1 | mit | mpl-2.0 | unlicense
+
+# project's maintainers (at least one must be provided)
+# the first maintainer will be referenced in various places like in goreleaser configuration
+# Dockerfile maintainer / authors label
+# sonar.properties organization and project key prefix
+# helm values.yml for images owner (e.g ghcr.io/maintainer/app_name)
+# all maintainers will be referenced in dependabot assignees and reviewers
+# helm Chart.yml maintainers
+maintainers:
+  - name: maintainer
+    email: maintainer@example.com
+    url: maintainer.example.com
 
 # whether to generate an helm chart or not (optional)
 no_chart: true | false
@@ -219,6 +214,12 @@ no_goreleaser: true | false
 # whether to generate a Makefile with useful commands (optional)
 # this option is automatically disabled when working with nodejs generation
 no_makefile: true | false
+
+# platform override in case of gitlab on premise, bitbucket on premise, etc.
+# by default, an on premise gitlab will be matched if the host contains "gitlab"
+# by default, an on premise bitbucket will be matched if the host contains "bitbucket" or "stash"
+# when not overridden, the platform is matched based on "git config --get remote.origin.url" on the returned host (github.com, gitlab.com, ...)
+platform: bitbucket | gitea | github | gitlab
 ```
 
 ### VSCode association and schema
