@@ -7,6 +7,8 @@ ci:
     - sonar
   release:
     action: semantic-release
+  static:
+    name: netlify
 docker:
   registry: ghcr.io
 license: mit

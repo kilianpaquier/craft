@@ -808,6 +808,40 @@ func TestExec_Hugo(t *testing.T) {
 		// Act & Assert
 		verify(t, destdir, metadata)
 	})
+
+	t.Run("success_gitlab_pages", func(t *testing.T) {
+		// Arrange
+		metadata := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				CI: &craft.CI{
+					Name:   craft.Gitlab,
+					Static: &craft.Static{Name: craft.Pages},
+				},
+				Platform: craft.Gitlab,
+			},
+		})
+		destdir := t.TempDir()
+
+		// Act & Assert
+		verify(t, destdir, metadata)
+	})
+
+	t.Run("success_gitlab_netlify", func(t *testing.T) {
+		// Arrange
+		metadata := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				CI: &craft.CI{
+					Name:   craft.Gitlab,
+					Static: &craft.Static{Name: craft.Netlify},
+				},
+				Platform: craft.Gitlab,
+			},
+		})
+		destdir := t.TempDir()
+
+		// Act & Assert
+		verify(t, destdir, metadata)
+	})
 }
 
 func TestExec_Nodejs(t *testing.T) {
@@ -1056,6 +1090,46 @@ func TestExec_Nodejs(t *testing.T) {
 				CI: &craft.CI{
 					Name:    craft.Gitlab,
 					Options: craft.CIOptions(),
+				},
+				Platform: craft.Gitlab,
+			},
+			Languages: map[string]any{
+				"nodejs": generate.PackageJSON{PackageManager: "bun@1.1.22"},
+			},
+		})
+		destdir := t.TempDir()
+
+		// Act & Assert
+		verify(t, destdir, metadata)
+	})
+
+	t.Run("success_gitlab_pages", func(t *testing.T) {
+		// Arrange
+		metadata := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				CI: &craft.CI{
+					Name:   craft.Gitlab,
+					Static: &craft.Static{Name: craft.Pages, Auto: true},
+				},
+				Platform: craft.Gitlab,
+			},
+			Languages: map[string]any{
+				"nodejs": generate.PackageJSON{PackageManager: "bun@1.1.22"},
+			},
+		})
+		destdir := t.TempDir()
+
+		// Act & Assert
+		verify(t, destdir, metadata)
+	})
+
+	t.Run("success_gitlab_netlify", func(t *testing.T) {
+		// Arrange
+		metadata := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				CI: &craft.CI{
+					Name:   craft.Gitlab,
+					Static: &craft.Static{Name: craft.Netlify, Auto: true},
 				},
 				Platform: craft.Gitlab,
 			},

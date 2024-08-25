@@ -40,17 +40,6 @@ func (c *Configuration) ensureDefaultCI() {
 	}
 
 	func() {
-		if c.CI.Static == nil {
-			return
-		}
-
-		// ensure defaults values are set for static deployments
-		if c.CI.Name == Gitlab {
-			c.CI.Static = nil // static deployment is not implemented on gitlab CICD
-		}
-	}()
-
-	func() {
 		if c.CI.Release == nil {
 			c.CI.Auth.Release = nil
 			return

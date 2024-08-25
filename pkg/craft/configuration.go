@@ -55,8 +55,8 @@ type Release struct {
 
 // Static represents the configuration for static deployment.
 type Static struct {
-	Auto bool   `json:"auto,omitempty"`
-	Name string `json:"name,omitempty" validate:"required,oneof=netlify pages"`
+	Auto bool   `json:"-" yaml:"auto,omitempty"`
+	Name string `json:"-" yaml:"name,omitempty" validate:"required,oneof=netlify pages"`
 }
 
 // IsBot returns truthy in case the input bot is the one specified in configuration.

@@ -165,11 +165,11 @@ ci:
     # whether releasing should be disabled
     disable: true | false
 
-  # static deployment configuration (only available on github)
+  # static deployment configuration
   static:
     # static deployment name
     auto: true | false
-    # static deployment automatisation (on main branches)
+    # static deployment automatisation (on main branches for github and on protected branches for gitlab)
     name: netlify | pages
 
 # project's description (optional)
