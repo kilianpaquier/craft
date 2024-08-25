@@ -167,22 +167,6 @@ func TestEnsureDefaults(t *testing.T) {
 		assert.Empty(t, config.CI.Options)
 	})
 
-	t.Run("success_gitlab_no_static", func(t *testing.T) {
-		// Arrange
-		config := craft.Configuration{
-			CI: &craft.CI{
-				Name:   craft.Gitlab,
-				Static: &craft.Static{Name: craft.Netlify},
-			},
-		}
-
-		// Act
-		config.EnsureDefaults()
-
-		// Assert
-		assert.Nil(t, config.CI.Static)
-	})
-
 	t.Run("success_no_release_means_no_release_auth", func(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{

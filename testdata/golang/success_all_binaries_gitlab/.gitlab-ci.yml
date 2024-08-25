@@ -1,14 +1,14 @@
 # This file is safe to edit. Once it exists it will not be overwritten.
 
 ---
-include:
-  - .gitlab/workflows/version.yml
-  - .gitlab/workflows/integration.yml
+include: .gitlab/workflows/.gitlab-ci.yml
 
 # secret variables
 # (define the variables below in your GitLab group/project variables)
+
 # GITLAB_TOKEN: A GitLab 'project access token' or 'personal access token' with `api`, `read_repository` and `write repository` scopes.
-# SEMREL_GPG_SIGNKEY: Path to the GPG signkey exported with `gpg --armor --export-secret-key`.
+# SEMREL_GPG_SIGNKEY: Path to the GPG signkey exported with `gpg --armor --export-secret-key` (optional).
+
 # CI_REGISTRY_USER: The user with write access to example.com to push docker images
 # CI_REGISTRY_PASSWORD: The user password / token with write access to example.com to push docker images
 

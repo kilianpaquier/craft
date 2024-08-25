@@ -98,19 +98,10 @@ func detectHugo(_ context.Context, log clog.Logger, destdir string, metadata Met
 		log.Infof("hugo detected, a hugo configuration file or hugo theme file is present")
 
 		if metadata.CI != nil {
-			if slices.Contains(metadata.CI.Options, craft.CodeQL) {
-				log.Warnf("codeql option is not available with hugo generation, deactivating it")
-				metadata.CI.Options = slices.DeleteFunc(metadata.CI.Options, func(option string) bool {
-					return option == craft.CodeQL
-				})
-			}
-
-			if slices.Contains(metadata.CI.Options, craft.CodeCov) {
-				log.Warnf("codecov option is not available with hugo generation, deactivating it")
-				metadata.CI.Options = slices.DeleteFunc(metadata.CI.Options, func(option string) bool {
-					return option == craft.CodeCov
-				})
-			}
+			log.Warnf("removing codecov, codeql and sonar option from CI since they're not available with hugo projects")
+			metadata.CI.Options = slices.DeleteFunc(metadata.CI.Options, func(option string) bool {
+				return slices.Contains([]string{craft.CodeCov, craft.CodeQL, craft.Sonar}, option)
+			})
 		}
 
 		metadata.Languages["hugo"] = nil

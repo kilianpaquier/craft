@@ -88,18 +88,16 @@
                         },
                         "auto": {
                             "description": "Whether the release should run automatically.",
-                            "type": "boolean",
-                            "default": false
+                            "type": "boolean"
                         },
                         "backmerge": {
                             "description": "Whether backmerging should be configured for main, staging and develop branches.",
-                            "type": "boolean",
-                            "default": false
+                            "type": "boolean"
                         }
                     }
                 },
                 "static": {
-                    "description": "Static deployment configuration (only available on github).",
+                    "description": "Static deployment configuration.",
                     "type": "object", 
                     "properties": {
                         "name": {
@@ -111,9 +109,8 @@
                             ]
                         },
                         "auto": {
-                            "description": "Whether to automatically deploy static builds or not on main branches.",
-                            "type": "boolean",
-                            "default": false
+                            "description": "Whether to automatically deploy static builds or not on main branches for github and on protected branches for gitlab.",
+                            "type": "boolean"
                         }
                     }
                 }

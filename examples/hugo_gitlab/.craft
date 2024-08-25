@@ -2,10 +2,10 @@
 ---
 ci:
   name: gitlab
-  options:
-    - sonar
   release:
     action: semantic-release
+  static:
+    name: pages
 license: mit
 maintainers:
   - name: kilianpaquier

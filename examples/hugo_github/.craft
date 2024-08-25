@@ -7,12 +7,10 @@ ci:
     release: github-token
   name: github
   options:
-    - sonar
     - labeler
   release:
     action: gh-release
   static:
-    auto: false
     name: pages
 license: mit
 maintainers:

@@ -127,9 +127,9 @@ func githubWorkflows(metadata Metadata) FileHandler { // nolint:cyclop
 		case "docker.yml":
 			return true, metadata.Docker != nil && metadata.Binaries > 0 && metadata.IsCI(craft.Github)
 		case "netlify.yml":
-			return true, metadata.IsStatic(craft.Netlify)
+			return true, metadata.IsCI(craft.Github) && metadata.IsStatic(craft.Netlify)
 		case "pages.yml":
-			return true, metadata.IsStatic(craft.Pages)
+			return true, metadata.IsCI(craft.Github) && metadata.IsStatic(craft.Pages)
 		case "release.yml":
 			return true, metadata.IsCI(craft.Github) && metadata.CI.Release != nil // nolint:revive
 		case "renovate.yml":

@@ -126,7 +126,7 @@ func TestDetectGolang(t *testing.T) {
 		}
 		expected := generate.Metadata{
 			Configuration: craft.Configuration{
-				CI:       &craft.CI{Options: []string{craft.Sonar}},
+				CI:       &craft.CI{Options: []string{}},
 				Platform: craft.Github,
 			},
 			Languages:   map[string]any{"hugo": nil},
