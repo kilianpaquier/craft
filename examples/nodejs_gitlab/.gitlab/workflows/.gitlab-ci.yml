@@ -91,7 +91,7 @@ semantic-release-info:
         echo "SEMREL_INFO_NEXT_VERSION=v$SEMREL_INFO_NEXT_VERSION" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
         echo "SEMREL_INFO_NEXT_VERSION_TYPE=${SEMREL_INFO_NEXT_VERSION_TYPE}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
         cat "${SEMREL_CONFIG_DIR}/semrel.out.env"
-        return 0
+        exit 0
       fi
 
       git fetch --tags

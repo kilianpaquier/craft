@@ -146,7 +146,7 @@ var _actionRegexp = regexp.MustCompile(`\.github/actions/[\w]+/action\.yml\.tmpl
 
 // githubActions returns the handler for all files related to .github/actions directory.
 func githubActions(metadata Metadata) FileHandler {
-	return func(src, _, name string) (_ bool, _ bool) {
+	return func(src, _, _ string) (_ bool, _ bool) {
 		// files related to dir .github/actions
 		if !_actionRegexp.MatchString(src) {
 			return false, false

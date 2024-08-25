@@ -68,7 +68,7 @@ runs:
           else
             echo "release=false" >> $GITHUB_OUTPUT
           fi
-          return 0
+          exit 0
         fi
 
         git fetch --tags
