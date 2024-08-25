@@ -1,3 +1,43 @@
+## [1.0.0-beta.12](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2024-08-25)
+
+### Features
+
+* **gitlab:** implement netlify and pages deployments ([d6a5890](https://github.com/kilianpaquier/craft/commit/d6a58900ac903133c71ddbea66ec18177b532c80))
+* **renovate:** add configuration for both gitlab and github CI ([4aa4350](https://github.com/kilianpaquier/craft/commit/4aa4350c23766036c3ca74a124eb09717c579e1a))
+* **upgrade:** add new command for easier upgrade of craft ([2dfefa0](https://github.com/kilianpaquier/craft/commit/2dfefa06b9e4b2360042ec85c1fd62fa2b7b1e16))
+
+### Bug Fixes
+
+* **ci:** change return 0 to exit 0 since returns can only be used in shell functions ([f60378d](https://github.com/kilianpaquier/craft/commit/f60378db0ac0dd06ff5a49432aca54a8e8b84e14))
+* **dependabot:** add specific time and zone for checks ([3dad6e8](https://github.com/kilianpaquier/craft/commit/3dad6e881a88a72d540fd8fd460a77b7b04293ec))
+* **github:** ensure version job has the same rights as release one ([1d9e45c](https://github.com/kilianpaquier/craft/commit/1d9e45cc71bcf3f6975cdcbc9f4677e2489ce4d0))
+* **github:** invalid version action path and name ([44608c1](https://github.com/kilianpaquier/craft/commit/44608c13dc32b22d44c4e79d5050d304f156e370))
+* **gitlab:** invalid semrel version when semantic-release successfully computed it ([ead6d67](https://github.com/kilianpaquier/craft/commit/ead6d67fb267016ac4bb6920ffae5fa53853c602))
+* **labeler:** invalid configuration and comittish name in CI ([7629601](https://github.com/kilianpaquier/craft/commit/7629601a0614612c29dc55f823bc5db0c9e9ee42))
+* **nodejs:** invalid required on repository when repository is private ([769b68c](https://github.com/kilianpaquier/craft/commit/769b68cec5bc4c74e2e7c08da4e52e56db5fe57c))
+* **renovate:** add author email and git signoff ([b884e19](https://github.com/kilianpaquier/craft/commit/b884e191487b91739e9c7d6edba94659f460ee7a))
+
+### Documentation
+
+* **upgrade:** add default installation destination path in help ([97049a8](https://github.com/kilianpaquier/craft/commit/97049a83a93e557a74d873893ea7d41ff3f86740))
+
+### Chores
+
+* **deps:** bump github.com/go-viper/mapstructure/v2 ([82b7360](https://github.com/kilianpaquier/craft/commit/82b736086ddbca39d5fd28331726e963ee279d08))
+* **deps:** migrate mergo go.mod import ([906ecfc](https://github.com/kilianpaquier/craft/commit/906ecfcd3861257df92aa7e314a4641af29da91a))
+* **deps:** upgrade indirect dependencies ([829fe00](https://github.com/kilianpaquier/craft/commit/829fe00eb9bd102567db09fe9e3e7c719a66649c))
+* **golangci:** lighten gocognit max-complixity to 30 ([8a84802](https://github.com/kilianpaquier/craft/commit/8a84802e78fce764437d3895e9761d25d38bd443))
+* **makefile:** remove for golang docker install script when no executable is detected ([98bb7e7](https://github.com/kilianpaquier/craft/commit/98bb7e735fe5a1d5fc7e34fc8a677a8c935ac888))
+* **renovate:** change base branches configuration for only default one and maintenance branches ([1dc5966](https://github.com/kilianpaquier/craft/commit/1dc5966726d058d8ff49847905618624b709e88c))
+* **renovate:** remove config migration option ([7c4760a](https://github.com/kilianpaquier/craft/commit/7c4760a754f9a297e75bdfc6df257afd9f62a2e9))
+* **renovate:** remove git author configuration ([6ab7ecb](https://github.com/kilianpaquier/craft/commit/6ab7ecbe2972d99e2ac0a4f65dc817fe018dd49c))
+* **renovate:** use CI variables instead of generation variable for autodiscover filter and git author ([59ce09f](https://github.com/kilianpaquier/craft/commit/59ce09fced7b3b3f0627b793027d8d144f92205c))
+
+### Code Refactoring
+
+* **filehandler:** rework github and gitlab handling of optional files ([bf43c29](https://github.com/kilianpaquier/craft/commit/bf43c2920283cbfa756a82da4bad8bc6241c49c8))
+* **github:** a lot of things reworked, but a small summary ([051680e](https://github.com/kilianpaquier/craft/commit/051680ef38ae5e7adba7324ade19c14af22cce2d))
+
 ## [1.0.0-beta.11](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2024-08-12)
 
 
