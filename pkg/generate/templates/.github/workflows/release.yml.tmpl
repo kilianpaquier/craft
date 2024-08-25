@@ -39,16 +39,54 @@ jobs:
     name: Version
     runs-on: ubuntu-latest
     environment: release
+<<- if or (eq $auth "github-token") $nodejs >>
+    permissions:
+<<- if eq $auth "github-token" >>
+      contents: write
+<<- if eq .CI.Release.Action "semantic-release" >>
+      issues: write
+      pull-requests: write
+<<- end >>
+<<- end >>
+<<- if $nodejs >>
+      id-token: write
+<<- end >>
+<<- end >>
     outputs:
       release: ${{ steps.version.outputs.release }}
       version: ${{ steps.version.outputs.version }}
     steps:
+<<- if eq $auth "github-app" >>
+      - id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+<<- end >>
       - uses: actions/checkout@v4
+<<- if or (.CI.Release.Backmerge) (ne $auth "github-token") >>
+        with:
+<<- if .CI.Release.Backmerge >>
+          fetch-depth: 0
+<<- end >>
+<<- if eq $auth "github-app" >>
+          token: ${{ steps.app_token.outputs.token }}
+<<- end >>
+<<- if ne $auth "github-token" >>
+          persist-credentials: false
+<<- end >>
+<<- end >>
       - id: version
         uses: ./.github/actions/version
         with:
           dry_run: true # compute only the version to build
+<<- if eq $auth "github-app" >>
+          token: ${{ steps.app_token.outputs.token }}
+<<- else if eq $auth "personal-token" >>
+          token: ${{ secrets.RELEASE_TOKEN }}
+<<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
+<<- end >>
 <<- if and $nodejs (not (get .Languages "nodejs").Private) (eq .CI.Release.Action "semantic-release") >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>

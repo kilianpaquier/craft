@@ -27,12 +27,21 @@ jobs:
       release: ${{ steps.version.outputs.release }}
       version: ${{ steps.version.outputs.version }}
     steps:
+      - id: app_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app_token.outputs.token }}
+          persist-credentials: false
       - id: version
         uses: ./.github/actions/version
         with:
           dry_run: true # compute only the version to build
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app_token.outputs.token }}
 
   release:
     name: Release

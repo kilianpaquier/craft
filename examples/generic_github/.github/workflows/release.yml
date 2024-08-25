@@ -17,6 +17,10 @@ jobs:
     name: Version
     runs-on: ubuntu-latest
     environment: release
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     outputs:
       release: ${{ steps.version.outputs.release }}
       version: ${{ steps.version.outputs.version }}

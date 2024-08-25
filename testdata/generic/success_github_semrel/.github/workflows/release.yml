@@ -23,11 +23,17 @@ jobs:
     name: Version
     runs-on: ubuntu-latest
     environment: release
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     outputs:
       release: ${{ steps.version.outputs.release }}
       version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - id: version
         uses: ./.github/actions/version
         with:
