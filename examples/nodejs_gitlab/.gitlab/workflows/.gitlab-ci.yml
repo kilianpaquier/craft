@@ -35,28 +35,32 @@ variables:
 
   CI_REGISTRY: ghcr.io
 
+  DOCKER_HEALTHCHECK_DISABLED: "true" # https://docs.docker.com/reference/dockerfile/#healthcheck
   DOCKER_KANIKO_IMAGE: "gcr.io/kaniko-project/executor:debug"
-  DOCKER_SNAPSHOT_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
-  DOCKER_RELEASE_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
-  DOCKER_RELEASE_EXTRA_TAGS: "latest \\g<major>.\\g<minor> \\g<major"
   DOCKER_METADATA: |
     --label org.opencontainers.image.created=${CI_JOB_STARTED_AT}
     --label org.opencontainers.image.ref.name=${CI_COMMIT_REF_NAME}
-    --label org.opencontainers.image.version=${SEMREL_INFO_NEXT_VERSION}
     --label org.opencontainers.image.revision=${CI_COMMIT_SHA}
-  DOCKER_SEMREL_RELEASE_DISABLED: "true"
-  DOCKER_HEALTHCHECK_DISABLED: "true"
-  DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: "MEDIUM,HIGH,CRITICAL"
+    --label org.opencontainers.image.version=${SEMREL_INFO_NEXT_VERSION}
+  DOCKER_RELEASE_EXTRA_TAGS: "latest \\g<major>.\\g<minor> \\g<major"
+  DOCKER_RELEASE_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
+  DOCKER_SBOM_DISABLED: "true" # https://github.com/anchore/syft
+  DOCKER_SEMREL_RELEASE_DISABLED: "true" # handled by docker build and push jobs to avoid too much dependency on semantic-release
+  DOCKER_SNAPSHOT_IMAGE: "${CI_REGISTRY_IMAGE}:${SEMREL_INFO_NEXT_VERSION}"
   DOCKER_TRIVY_ARGS: "--ignore-unfixed --exit-code 1 --exit-on-eol 1"
-  DOCKER_SBOM_DISABLED: "true"
+  DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: "MEDIUM,HIGH,CRITICAL"
 
-  NODE_IMAGE: "registry.hub.docker.com/library/node:lts-alpine"
+  NODE_AUDIT_DISABLED: "false"
   NODE_BUILD_ARGS: "run build --prod"
-  NODE_TEST_ARGS: "test -- --coverage"
-  NODE_LINT_ENABLED: "true"
+  NODE_IMAGE: "registry.hub.docker.com/library/node:lts-alpine"
   NODE_LINT_ARGS: "run lint"
-  NODE_OUTDATED_DISABLED: "true"
+  NODE_LINT_ENABLED: "true"
+  NODE_OUTDATED_ARGS: "--long"
+  NODE_OUTDATED_DISABLED: "false"
+  NODE_PUBLISH_ENABLED: "false"
   NODE_SBOM_DISABLED: "true"
+  NODE_SEMGREP_DISABLED: "false" # https://semgrep.dev/docs/
+  NODE_TEST_ARGS: "test -- --coverage"
 
   SONAR_HOST_URL: "https://sonarcloud.io"
   SONAR_BASE_ARGS: |
@@ -84,10 +88,10 @@ semantic-release-info:
     - >
       if echo "$SEMREL_INFO_NEXT_VERSION" | grep -Eq "^[0-9]+(\.[0-9]+){2}.*$"; then
         echo "SEMREL_INFO_LAST_VERSION=v${SEMREL_INFO_LAST_VERSION#v}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
-        echo "SEMREL_INFO_NEXT_VERSION=v${SEMREL_INFO_NEXT_VERSION#v}-build.${BRANCH_SHA}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
+        echo "SEMREL_INFO_NEXT_VERSION=v$SEMREL_INFO_NEXT_VERSION" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
         echo "SEMREL_INFO_NEXT_VERSION_TYPE=${SEMREL_INFO_NEXT_VERSION_TYPE}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
         cat "${SEMREL_CONFIG_DIR}/semrel.out.env"
-        exit 0
+        return 0
       fi
 
       git fetch --tags
@@ -104,7 +108,7 @@ semantic-release-info:
       SEMREL_INFO_NEXT_VERSION=${SEMREL_INFO_NEXT_VERSION%-*}
 
     - echo "SEMREL_INFO_LAST_VERSION=v${SEMREL_INFO_LAST_VERSION#v}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
-    - echo "SEMREL_INFO_NEXT_VERSION=v${SEMREL_INFO_NEXT_VERSION#v}-build.${SHA}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
+    - echo "SEMREL_INFO_NEXT_VERSION=v${SEMREL_INFO_NEXT_VERSION#v}-build.${BRANCH_SHA}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
     - echo "SEMREL_INFO_NEXT_VERSION_TYPE=build" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
     - cat "${SEMREL_CONFIG_DIR}/semrel.out.env"
 
