@@ -6,10 +6,10 @@ description: Compute the next release version or release it
 inputs:
   download_dist:
     description: Whether to build artifact into dist folder or not
-    default: false
+    default: "false"
   dry_run:
     description: Dry run
-    default: true
+    default: "true"
   token:
     description: Github access token
     required: true
@@ -57,6 +57,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
     - id: version
+      shell: bash
       run: |
         BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
         echo "branch_sha=${BRANCH_SHA}" >> $GITHUB_OUTPUT
@@ -83,6 +84,7 @@ runs:
       env:
         SEMREL_INFO_LAST_VERSION: ${{ steps.semrel_version.outputs.last_release_version }}
         SEMREL_INFO_NEXT_VERSION: ${{ steps.semrel_version.outputs.new_release_version }}
-    - run: echo $VERSION
+    - shell: bash
+      run: echo $VERSION
       env:
         VERSION: ${{ steps.version.outputs.version }}

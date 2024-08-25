@@ -2,6 +2,7 @@ package generate
 
 import (
 	"path"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -69,8 +70,8 @@ func Github(metadata Metadata) FileHandler {
 			return true, len(metadata.Languages) > 0 && metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.CodeCov)
 		}
 
-		// files related to dir .github
-		if ok, apply := gc(src, dest, name); ok {
+		// files related to dir .github/workflows
+		if ok, apply := gw(src, dest, name); ok {
 			return true, apply
 		}
 
@@ -79,8 +80,8 @@ func Github(metadata Metadata) FileHandler {
 			return true, apply
 		}
 
-		// files related to dir .github/workflows
-		if ok, apply := gw(src, dest, name); ok {
+		// files related to dir .github
+		if ok, apply := gc(src, dest, name); ok {
 			return true, apply
 		}
 
@@ -141,15 +142,17 @@ func githubWorkflows(metadata Metadata) FileHandler { // nolint:cyclop
 	}
 }
 
+var _actionRegexp = regexp.MustCompile(`\.github/actions/[\w]+/action\.yml\.tmpl$`)
+
 // githubActions returns the handler for all files related to .github/actions directory.
 func githubActions(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
 		// files related to dir .github/actions
-		if !strings.Contains(src, path.Join(".github", "actions", name)) {
+		if !_actionRegexp.MatchString(src) {
 			return false, false
 		}
 
-		if name == "version.yml" {
+		if strings.Contains(src, path.Join(".github", "actions", "version")) {
 			return true, metadata.IsCI(craft.Github) && (metadata.Docker != nil || metadata.HasRelease())
 		}
 		return true, metadata.IsCI(craft.Github)
@@ -159,8 +162,8 @@ func githubActions(metadata Metadata) FileHandler {
 // Gitlab returns the handler for gitlab option generation matching.
 func Gitlab(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
-		// root files related to gitlab
-		if name == ".gitlab-ci.yml" {
+		// files related to dir .gitlab/workflows
+		if strings.Contains(src, path.Join(".gitlab", "workflows", name)) {
 			return true, metadata.IsCI(craft.Gitlab)
 		}
 
@@ -172,11 +175,10 @@ func Gitlab(metadata Metadata) FileHandler {
 			return true, metadata.Platform == craft.Gitlab // keep early return in case some specify behavior on files occur
 		}
 
-		// files related to dir .gitlab/workflows
-		if strings.Contains(src, path.Join(".gitlab", "workflows", name)) {
+		// root files related to gitlab
+		if name == ".gitlab-ci.yml" {
 			return true, metadata.IsCI(craft.Gitlab)
 		}
-
 		return false, false
 	}
 }

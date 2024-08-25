@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: version
-        uses: ./.github/actions/version.yml
+        uses: ./.github/actions/version
         with:
           dry_run: true # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
       - pages
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/version.yml
+      - uses: ./.github/actions/version
         with:
           download_dist: true
           dry_run: ${{ inputs.dry_run }}

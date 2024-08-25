@@ -6,10 +6,10 @@ description: Compute the next release version or release it
 inputs:
   download_dist:
     description: Whether to build artifact into dist folder or not
-    default: false
+    default: "false"
   dry_run:
     description: Dry run
-    default: true
+    default: "true"
   token:
     description: Github access token
     required: true
@@ -28,6 +28,7 @@ runs:
   using: composite
   steps:
     - id: release_check
+      shell: bash
       run: |
         BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
         echo "branch_sha=${BRANCH_SHA}" >> $GITHUB_OUTPUT
@@ -65,6 +66,7 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
     - id: version
+      shell: bash
       run: |
         echo "branch_sha=${BRANCH_SHA}" >> $GITHUB_OUTPUT
         echo "release=${RELEASE}" >> $GITHUB_OUTPUT
@@ -93,6 +95,7 @@ runs:
             repo: context.repo.repo,
             release_id: ${{ steps.drafter.outputs.id }}
           })
-    - run: echo $VERSION
+    - shell: bash
+      run: echo $VERSION
       env:
         VERSION: ${{ steps.version.outputs.version }}

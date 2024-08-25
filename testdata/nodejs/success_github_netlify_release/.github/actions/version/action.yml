@@ -6,12 +6,15 @@ description: Compute the next release version or release it
 inputs:
   download_dist:
     description: Whether to build artifact into dist folder or not
-    default: false
+    default: "false"
   dry_run:
     description: Dry run
-    default: true
+    default: "true"
   token:
     description: Github access token
+    required: true
+  npm_token:
+    description: Access token for the npm registry
     required: true
 outputs:
   branch_sha: 
@@ -27,6 +30,11 @@ outputs:
 runs:
   using: composite
   steps:
+    - uses: actions/download-artifact@v4
+      if: ${{ inputs.download_dist == 'true' }}
+      with:
+        name: build
+        path: dist
     # https://github.com/marketplace/actions/action-for-semantic-release
     - id: semrel_version
       continue-on-error: true
@@ -39,6 +47,7 @@ runs:
           @semantic-release/exec
           @semantic-release/git
           @semantic-release/github
+          @semantic-release/npm
           @semantic-release/release-notes-generator
           conventional-changelog-conventionalcommits
         dry_run: ${{ inputs.dry_run != 'false' }}
@@ -55,7 +64,9 @@ runs:
           ]
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
+        NPM_TOKEN: ${{ inputs.npm_token }}
     - id: version
+      shell: bash
       run: |
         BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
         echo "branch_sha=${BRANCH_SHA}" >> $GITHUB_OUTPUT
@@ -82,6 +93,7 @@ runs:
       env:
         SEMREL_INFO_LAST_VERSION: ${{ steps.semrel_version.outputs.last_release_version }}
         SEMREL_INFO_NEXT_VERSION: ${{ steps.semrel_version.outputs.new_release_version }}
-    - run: echo $VERSION
+    - shell: bash
+      run: echo $VERSION
       env:
         VERSION: ${{ steps.version.outputs.version }}
