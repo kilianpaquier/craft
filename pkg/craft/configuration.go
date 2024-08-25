@@ -1,5 +1,21 @@
 package craft
 
+// Configuration represents all options configurable in .craft file at root project.
+//
+// yaml tags are for .craft file and json tags for templating.
+type Configuration struct {
+	Bot          *string      `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
+	CI           *CI          `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
+	Description  *string      `json:"description,omitempty" yaml:"description,omitempty"`
+	Docker       *Docker      `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
+	License      *string      `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
+	Maintainers  []Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
+	NoChart      bool         `json:"-"                     yaml:"no_chart,omitempty"`
+	NoGoreleaser bool         `json:"-"                     yaml:"no_goreleaser,omitempty"`
+	NoMakefile   bool         `json:"-"                     yaml:"no_makefile,omitempty"`
+	Platform     string       `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
+}
+
 // Auth contains all authentication methods related to CI configuration.
 type Auth struct {
 	Maintenance *string `json:"-" yaml:"maintenance,omitempty" validate:"omitempty,oneof=github-app github-token mend.io personal-token"`
@@ -15,10 +31,19 @@ type CI struct {
 	Static  *Static  `json:"-" yaml:"static,omitempty"                   validate:"omitempty,required"`
 }
 
-// Static represents the configuration for static deployment.
-type Static struct {
-	Auto bool   `json:"auto,omitempty"`
-	Name string `json:"name,omitempty" validate:"required,oneof=netlify pages"`
+// Docker is the struct for craft docker tuning.
+type Docker struct {
+	Port     *uint16 `json:"port,omitempty"     yaml:"port,omitempty"`
+	Registry *string `json:"registry,omitempty" yaml:"registry,omitempty"`
+}
+
+// Maintainer represents a project maintainer. It's inspired from helm Maintainer struct.
+//
+// The only difference are the present tags and the pointers on both email and url properties.
+type Maintainer struct {
+	Email *string `json:"email,omitempty" yaml:"email,omitempty"`
+	Name  string  `json:"name,omitempty"  yaml:"name,omitempty"  validate:"required"`
+	URL   *string `json:"url,omitempty"   yaml:"url,omitempty"`
 }
 
 // Release is the struct for craft continuous integration release specifics configuration.
@@ -28,35 +53,10 @@ type Release struct {
 	Backmerge bool   `json:"-" yaml:"backmerge,omitempty"`
 }
 
-// Docker is the struct for craft docker tuning.
-type Docker struct {
-	Registry *string `json:"registry,omitempty" yaml:"registry,omitempty"`
-	Port     *uint16 `json:"port,omitempty"     yaml:"port,omitempty"`
-}
-
-// Maintainer represents a project maintainer. It's inspired from helm Maintainer struct.
-//
-// The only difference are the present tags and the pointers on both email and url properties.
-type Maintainer struct {
-	Email *string `json:"email,omitempty" yaml:"email,omitempty"`
-	URL   *string `json:"url,omitempty"   yaml:"url,omitempty"`
-	Name  string  `json:"name,omitempty"  yaml:"name,omitempty"  validate:"required"`
-}
-
-// Configuration represents all options configurable in .craft file at root project.
-//
-// yaml tags are for .craft file and json tags for templating.
-type Configuration struct {
-	CI           *CI          `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
-	Description  *string      `json:"description,omitempty" yaml:"description,omitempty"`
-	Docker       *Docker      `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
-	License      *string      `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
-	Maintainers  []Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
-	Bot          *string      `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
-	NoChart      bool         `json:"-"                     yaml:"no_chart,omitempty"`
-	NoGoreleaser bool         `json:"-"                     yaml:"no_goreleaser,omitempty"`
-	NoMakefile   bool         `json:"-"                     yaml:"no_makefile,omitempty"`
-	Platform     string       `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
+// Static represents the configuration for static deployment.
+type Static struct {
+	Auto bool   `json:"auto,omitempty"`
+	Name string `json:"name,omitempty" validate:"required,oneof=netlify pages"`
 }
 
 // IsBot returns truthy in case the input bot is the one specified in configuration.

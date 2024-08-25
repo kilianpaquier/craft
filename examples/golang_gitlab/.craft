@@ -1,5 +1,6 @@
 # Craft configuration file (https://github.com/kilianpaquier/craft)
 ---
+bot: renovate
 ci:
   name: gitlab
   options:
@@ -11,6 +12,5 @@ docker:
 license: mit
 maintainers:
   - name: kilianpaquier
-bot: renovate
 no_chart: true
 platform: gitlab

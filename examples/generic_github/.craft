@@ -1,5 +1,6 @@
 # Craft configuration file (https://github.com/kilianpaquier/craft)
 ---
+bot: renovate
 ci:
   auth:
     maintenance: github-app
@@ -9,6 +10,5 @@ ci:
     action: semantic-release
 maintainers:
   - name: kilianpaquier
-bot: renovate
 no_chart: true
 platform: github
