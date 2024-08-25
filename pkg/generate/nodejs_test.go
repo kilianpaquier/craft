@@ -66,7 +66,7 @@ func TestDetectNodejs(t *testing.T) {
 		destdir := t.TempDir()
 
 		packagejson := filepath.Join(destdir, craft.PackageJSON)
-		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js", "packageManager": "bun@1.1.6", "repository": { "url": "here" } }`), cfs.RwRR)
+		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js", "packageManager": "bun@1.1.6", "private": true }`), cfs.RwRR)
 		require.NoError(t, err)
 
 		input := generate.Metadata{Languages: map[string]any{}}
@@ -78,11 +78,7 @@ func TestDetectNodejs(t *testing.T) {
 					Main:           helpers.ToPtr("index.js"),
 					Name:           "craft",
 					PackageManager: "bun@1.1.6",
-					Repository: struct {
-						URL string `json:"url,omitempty" validate:"required"`
-					}{
-						URL: "here",
-					},
+					Private:        true,
 				},
 			},
 			ProjectName: "craft",
