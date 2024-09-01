@@ -10,7 +10,7 @@ ci:
     - codeql
     - labeler
   release:
-    action: semantic-release
+    action: release-please
 license: mit
 maintainers:
   - name: kilianpaquier
