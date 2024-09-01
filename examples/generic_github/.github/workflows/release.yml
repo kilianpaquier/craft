@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Whether to only make a dry_run, create release / pull request as draft or to make the release completely
+        description: Whether to only make a dry_run or to make the release completely
         type: choice
         default: dry_run
         options:

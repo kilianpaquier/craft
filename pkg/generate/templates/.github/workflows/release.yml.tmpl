@@ -19,7 +19,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-<<- if eq .CI.Release.Action "semantic-release" >>
+<<- if ne .CI.Release.Action "semantic-release" >>
         description: Whether to only make a dry_run, create release / pull request as draft or to make the release completely
 <<- else >>
         description: Whether to only make a dry_run or to make the release completely
