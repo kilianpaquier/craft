@@ -13,8 +13,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/go-sprout/sprout/sprigin"
-
+	"github.com/Masterminds/sprig/v3"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -143,7 +142,7 @@ func handleFile(fsys cfs.FS, src, dest string, data any, opts ExecOpts) error {
 	}
 
 	tmpl, err := template.New(filepath.Base(src)).
-		Funcs(sprigin.FuncMap()).
+		Funcs(sprig.FuncMap()).
 		Funcs(templating.FuncMap()).
 		Delims(opts.StartDelim, opts.EndDelim).
 		ParseFS(fsys, src)

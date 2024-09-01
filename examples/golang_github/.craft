@@ -8,8 +8,8 @@ ci:
   options:
     - codecov
     - codeql
-    - sonar
     - labeler
+    - sonar
   release:
     action: release-drafter
 docker:

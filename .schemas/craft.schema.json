@@ -83,6 +83,7 @@
                             "enum": [
                                 "gh-release",
                                 "release-drafter",
+                                "release-please",
                                 "semantic-release"
                             ]
                         },
@@ -98,7 +99,7 @@
                 },
                 "static": {
                     "description": "Static deployment configuration.",
-                    "type": "object", 
+                    "type": "object",
                     "properties": {
                         "name": {
                             "description": "Static deployment name.",

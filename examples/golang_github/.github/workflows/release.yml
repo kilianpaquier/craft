@@ -6,16 +6,21 @@ run-name: Release
 on:
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: Dry run
-        type: boolean
-        default: true
+      mode:
+        description: Whether to only make a dry_run or to make the release completely
+        type: choice
+        default: dry_run
+        options:
+          - dry_run
+          - draft
+          - release
 
 jobs:
 
   version:
     name: Version
     runs-on: ubuntu-latest
+    if: ${{ github.ref_protected }} # skip all jobs since they depend on version job
     environment: release
     permissions:
       contents: write
@@ -27,7 +32,7 @@ jobs:
       - id: version
         uses: ./.github/actions/version
         with:
-          dry_run: true # compute only the version to build
+          mode: dry_run # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
 
   docker:
@@ -42,18 +47,16 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.ref_protected }}
     environment: release
     permissions:
       contents: write
     needs:
       - version
-      - build
       - docker
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/version
         with:
           download_dist: true
-          dry_run: ${{ inputs.dry_run }}
+          mode: ${{ inputs.mode }}
           token: ${{ secrets.GITHUB_TOKEN }}

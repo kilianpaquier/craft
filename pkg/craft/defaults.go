@@ -9,7 +9,7 @@ import (
 // EnsureDefaults acts to ensure default properties are always sets
 // and migrates old properties into new fields.
 func (c *Configuration) EnsureDefaults() {
-	c.retroCompatibility() // nolint:revive
+	c.retroCompatibility()
 
 	// ensure defaults values are set for maintenance bot
 	if c.Bot != nil {
@@ -30,6 +30,7 @@ func (c *Configuration) ensureDefaultCI() {
 	if c.CI == nil {
 		return
 	}
+	slices.Sort(c.CI.Options)
 
 	// ensure default values are set for CI
 	// ...
@@ -61,9 +62,12 @@ func (c *Configuration) ensureDefaultCI() {
 			c.CI.Release.Action = SemanticRelease // only semantic release is available on gitlab CICD
 		}
 
+		if c.CI.Release.Action != SemanticRelease {
+			c.CI.Release.Backmerge = false // backmerge is only available with semantic-release
+		}
+
 		// specific github actions (to put inside its own condition when a third CI name is implemented)
 		if c.CI.Release.Action == ReleaseDrafter || c.CI.Release.Action == GhRelease {
-			c.CI.Release.Backmerge = false // gh-release or release-drafter don't handle backmerge
 			if !slices.Contains(c.CI.Options, Labeler) {
 				c.CI.Options = append(c.CI.Options, Labeler) // Labeler is mandatory for gh-release and release-drafter since those releaser are based on pull requests labels
 			}

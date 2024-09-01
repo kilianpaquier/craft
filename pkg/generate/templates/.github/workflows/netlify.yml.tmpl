@@ -11,7 +11,7 @@ on:
     branches:
       - main
       - master
-<<- if .IsReleaseAction "semantic-release" >>
+<<- if not (.IsReleaseAction "gh-release") >>
       - v[0-9]+.x
       - v[0-9]+.[0-9]+.x
 <<- end >>

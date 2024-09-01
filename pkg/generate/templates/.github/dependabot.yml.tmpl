@@ -5,6 +5,12 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
+<<- $nodejs := hasKey .Languages "nodejs" >>
+<<- $hugo := hasKey .Languages "hugo" >>
+<<- $golang := hasKey .Languages "golang" >>
+
+<<- $docker := and .Docker (gt .Binaries 0) >>
+
 version: 2
 updates:
 
@@ -28,7 +34,6 @@ updates:
       - << .Name >>
 <<- end >>
 
-<<- $docker := and .Docker (gt .Binaries 0) >>
 <<- if $docker >>
   - package-ecosystem: docker
     directory: /
@@ -50,7 +55,7 @@ updates:
 <<- end >>
 <<- end >>
 
-<<- if hasKey .Languages "golang" >>
+<<- if $golang >>
   - package-ecosystem: gomod
     directory: /
     schedule:
@@ -71,7 +76,7 @@ updates:
 <<- end >>
 <<- end >>
 
-<<- if hasKey .Languages "nodejs" >>
+<<- if $nodejs >>
   - package-ecosystem: npm
     directory: /
     schedule:

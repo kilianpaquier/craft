@@ -60,7 +60,7 @@ crons:
       #   - folder_name
       # data:
       #   name: value
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#volume-v1-core
     volumes: []
       # - name: ""
@@ -75,15 +75,15 @@ crons:
       #     claimName: ""
       #     readOnly: false
       # - name: ""
-      #   secret: 
+      #   secret:
       #     secretName: ""
     volumeMounts: []
       # - mountPath: /etc/config/
       #   name: volume[*].name
       #   readOnly: true
-    
+
     podAnnotations: {}
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#podsecuritycontext-v1-core
     podSecurityContext: {}
       # fsGroup: 2
@@ -91,7 +91,7 @@ crons:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#securitycontext-v1-core
     securityContext: {}
       # allowPrivilegeEscalation: false
@@ -103,10 +103,10 @@ crons:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#nodeselector-v1-core
     nodeSelector: {}
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#toleration-v1-core
     tolerations: []
       # - effect: NoSchedule | PreferNoSchedule | NoExecute
@@ -114,7 +114,7 @@ crons:
       #   operator: Exists | Equal
       #   tolerationSeconds: 600
       #   value: ""
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#affinity-v1-core
     affinity: {}
 
@@ -161,7 +161,7 @@ jobs:
       #   - folder_name
       # data:
       #   name: value
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#volume-v1-core
     volumes: []
       # - name: ""
@@ -176,15 +176,15 @@ jobs:
       #     claimName: ""
       #     readOnly: false
       # - name: ""
-      #   secret: 
+      #   secret:
       #     secretName: ""
     volumeMounts: []
       # - mountPath: /etc/config/
       #   name: volume[*].name
       #   readOnly: true
-    
+
     podAnnotations: {}
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#podsecuritycontext-v1-core
     podSecurityContext: {}
       # fsGroup: 2
@@ -192,7 +192,7 @@ jobs:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#securitycontext-v1-core
     securityContext: {}
       # allowPrivilegeEscalation: false
@@ -204,10 +204,10 @@ jobs:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#nodeselector-v1-core
     nodeSelector: {}
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#toleration-v1-core
     tolerations: []
       # - effect: NoSchedule | PreferNoSchedule | NoExecute
@@ -215,7 +215,7 @@ jobs:
       #   operator: Exists | Equal
       #   tolerationSeconds: 600
       #   value: ""
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#affinity-v1-core
     affinity: {}
 
@@ -305,7 +305,7 @@ workers:
       #   - folder_name
       # data:
       #   name: value
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#volume-v1-core
     volumes: []
       # - name: ""
@@ -320,15 +320,15 @@ workers:
       #     claimName: ""
       #     readOnly: false
       # - name: ""
-      #   secret: 
+      #   secret:
       #     secretName: ""
     volumeMounts: []
       # - mountPath: /etc/config/
       #   name: volume[*].name
       #   readOnly: true
-    
+
     podAnnotations: {}
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#podsecuritycontext-v1-core
     podSecurityContext: {}
       # fsGroup: 2
@@ -336,7 +336,7 @@ workers:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#securitycontext-v1-core
     securityContext: {}
       # allowPrivilegeEscalation: false
@@ -348,10 +348,10 @@ workers:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#nodeselector-v1-core
     nodeSelector: {}
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#toleration-v1-core
     tolerations: []
       # - effect: NoSchedule | PreferNoSchedule | NoExecute
@@ -359,7 +359,7 @@ workers:
       #   operator: Exists | Equal
       #   tolerationSeconds: 600
       #   value: ""
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#affinity-v1-core
     affinity: {}
 

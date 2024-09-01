@@ -21,5 +21,5 @@ include: .gitlab/workflows/.gitlab-ci.yml
 
 variables:
   PROD_REF: /^(master|main)$/
-  SEMREL_BRANCHES_REF: /^(master|main|v[0-9]+(\.([0-9]+|x))?\.x|next|alpha|beta|staging|dev|develop|development)$/
+  SEMREL_BRANCHES_REF: /^(master|main|v[0-9]+\.x|v[0-9]+\.[0-9]+\.x|next|alpha|beta|staging|dev|develop|development)$/
   INTEG_REF: /^(staging|dev|develop|development)$/

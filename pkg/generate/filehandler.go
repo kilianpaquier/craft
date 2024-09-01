@@ -105,6 +105,8 @@ func githubConfig(metadata Metadata) FileHandler {
 			return true, metadata.IsCI(craft.Github) && metadata.IsReleaseAction(craft.ReleaseDrafter)
 		case "labeler.yml":
 			return true, metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.Labeler)
+		case "release-please.config.jsonc", "release-please.manifest.jsonc":
+			return true, metadata.IsCI(craft.Github) && metadata.IsReleaseAction(craft.ReleasePlease)
 		}
 		return true, metadata.Platform == craft.Github
 	}

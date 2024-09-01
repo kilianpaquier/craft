@@ -4,15 +4,15 @@ bot: renovate
 ci:
   auth:
     maintenance: personal-token
-    release: github-token
+    release: personal-token
   name: github
   options:
     - codecov
     - codeql
-    - sonar
     - labeler
+    - sonar
   release:
-    action: release-drafter
+    action: release-please
 docker:
   registry: ghcr.io
 license: mit

@@ -4,7 +4,7 @@ bot: renovate
 ci:
   auth:
     maintenance: github-app
-    release: github-token
+    release: github-app
   name: github
   release:
     action: semantic-release

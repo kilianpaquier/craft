@@ -117,9 +117,9 @@ variables:
 
   SONAR_HOST_URL: "https://sonarcloud.io"
   SONAR_BASE_ARGS: |
-    -Dsonar.properties=sonar.properties 
-    -Dsonar.links.homepage=${CI_PROJECT_URL} 
-    -Dsonar.links.ci=${CI_PROJECT_URL}/-/pipelines 
+    -Dsonar.properties=sonar.properties
+    -Dsonar.links.homepage=${CI_PROJECT_URL}
+    -Dsonar.links.ci=${CI_PROJECT_URL}/-/pipelines
     -Dsonar.links.issue=${CI_PROJECT_URL}/-/issues
   SONAR_QUALITY_GATE_ENABLED: "true"
 <<- end >>
@@ -151,7 +151,9 @@ semantic-release-info:
       git fetch --tags
 
       if [ "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" != "" ]; then
-        if echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep -Eq "^v[0-9]+(\.([0-9]+|x))?\.x$"; then
+        if echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep -Eq "^v[0-9]+\.x$"; then
+          SEARCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME%%.x*}"
+        elif echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep -Eq "^v[0-9]+\.[0-9]+\.x$"; then
           SEARCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME%%.x*}"
         fi
       fi
