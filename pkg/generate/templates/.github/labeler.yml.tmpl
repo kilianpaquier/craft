@@ -25,6 +25,8 @@ autolabeler:
   - label: documentation
     title:
       - /docs{0,1}\/.+/
+    branch:
+      - /docs{0,1}\/.+/
     files:
       - "**/*.md"
       - "**/doc.go"
@@ -36,6 +38,8 @@ autolabeler:
 
   - label: test
     title:
+      - /test\/.+/
+    branch:
       - /test\/.+/
     files:
       - "**/*_test.go"

@@ -194,7 +194,7 @@ func TestExec_Generic(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
 					Configuration: craft.Configuration{
-						Bot:        &tc,
+						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
 						Platform:   craft.Github,
 					},
@@ -303,7 +303,7 @@ func TestExec_Golang(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
 					Configuration: craft.Configuration{
-						Bot:        &tc,
+						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
 						Platform:   craft.Github,
 					},
@@ -496,7 +496,7 @@ func TestExec_Hugo(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
 					Configuration: craft.Configuration{
-						Bot:        &tc,
+						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
 						Platform:   craft.Github,
 					},
@@ -634,7 +634,7 @@ func TestExec_Nodejs(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
 					Configuration: craft.Configuration{
-						Bot:        &tc,
+						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
 						Platform:   craft.Github,
 					},
