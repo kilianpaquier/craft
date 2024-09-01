@@ -37,7 +37,9 @@ semantic-release-info:
       git fetch --tags
 
       if [ "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" != "" ]; then
-        if echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep -Eq "^v[0-9]+(\.([0-9]+|x))?\.x$"; then
+        if echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep -Eq "^v[0-9]+\.x$"; then
+          SEARCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME%%.x*}"
+        elif echo "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" | grep -Eq "^v[0-9]+\.[0-9]+\.x$"; then
           SEARCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME%%.x*}"
         fi
       fi

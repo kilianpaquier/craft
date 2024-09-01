@@ -12,9 +12,9 @@ serve:
 <<- if .IsStatic "netlify" >>
 production:
 	@netlify dev -c "make serve" \
-		--target-port 1313 --port 8888 
-		--dir public 
-		--framework hugo 
+		--target-port 1313 --port 8888
+		--dir public
+		--framework hugo
 		--context production
 <<- else >>
 production: build

@@ -7,26 +7,42 @@ inputs:
   download_dist:
     description: Whether to build artifact into dist folder or not
     default: "false"
-  dry_run:
-    description: Dry run
-    default: "true"
+  mode:
+    description: |
+      Action mode:
+        - "dry_run" to only get the next version number
+        - "draft" to get the next version number and create draft pull requests and releases
+        - "release" to get the next version number and create pull requests, tags and releases
   token:
     description: Github access token
     required: true
+
 outputs:
-  branch_sha: 
+  branch_sha:
     description: The concerned branch sha256 value
     value: ${{ steps.version.outputs.branch_sha }}
   release:
     description: Whether a release can be made or not
     value: ${{ steps.version.outputs.release }}
-  version: 
+  version:
     description: The computed version
     value: ${{ steps.version.outputs.version }}
 
 runs:
   using: composite
   steps:
+    - shell: bash
+      run: |
+        if [ "${MODE}" != "dry_run" ] && [ "${MODE}" != "draft" ] && [ "${MODE}" != "release" ]; then
+          echo "invalid input mode '${MODE}', must be one of 'dry_run', 'draft', 'release'"
+          exit 2
+        fi
+
+        if [ "${MODE}" != "dry_run" ] && [ "${GITHUB_REF_PROTECTED}" != "true" ]; then
+          echo "invalid input mode '${MODE}', can't be 'draft' or 'release' when github branch isn't protected"
+        fi
+      env:
+        MODE: ${{ inputs.mode }}
     - uses: actions/download-artifact@v4
       if: ${{ inputs.download_dist == 'true' }}
       with:
@@ -47,18 +63,7 @@ runs:
           @semantic-release/release-notes-generator
           conventional-changelog-conventionalcommits
           semantic-release-license
-        dry_run: ${{ inputs.dry_run != 'false' }}
-        tag_format: v${version}
-        branches: |
-          [
-            "(master|main)",
-            "v+([0-9])?(.{+([0-9]),x}).x",
-            { "name": "next", "prerelease": true },
-            { "name": "beta", "prerelease": true },
-            { "name": "alpha", "prerelease": true },
-            { "name": "staging", "prerelease": "beta" },
-            { "name": "(dev|develop|development)", "prerelease": "alpha" }
-          ]
+        dry_run: ${{ inputs.mode != 'release' }} # semantic-release doesn't handle draft mode since with dry_run as false mode will at least create and push the tag
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
     - id: version
@@ -67,9 +72,9 @@ runs:
         BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
         echo "branch_sha=${BRANCH_SHA}" >> $GITHUB_OUTPUT
 
-        if echo "$SEMREL_INFO_NEXT_VERSION" | grep -Eq "^[0-9]+(\.[0-9]+){2}.*$"; then
-          echo "version=v$SEMREL_INFO_NEXT_VERSION" >> $GITHUB_OUTPUT
-          if echo "$SEMREL_INFO_NEXT_VERSION" | grep -Eq "^[0-9]+(\.[0-9]+){2}$"; then
+        if echo "${SEMREL_INFO_NEXT_VERSION}" | grep -Eq "^[0-9]+(\.[0-9]+){2}.*$"; then
+          echo "version=v${SEMREL_INFO_NEXT_VERSION}" >> $GITHUB_OUTPUT
+          if echo "${SEMREL_INFO_NEXT_VERSION}" | grep -Eq "^[0-9]+(\.[0-9]+){2}$"; then
             echo "release=true" >> $GITHUB_OUTPUT
           else
             echo "release=false" >> $GITHUB_OUTPUT

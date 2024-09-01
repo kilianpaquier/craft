@@ -48,7 +48,7 @@ type Maintainer struct {
 
 // Release is the struct for craft continuous integration release specifics configuration.
 type Release struct {
-	Action    string `json:"-" yaml:"action"              validate:"required,oneof=gh-release release-drafter semantic-release"`
+	Action    string `json:"-" yaml:"action"              validate:"required,oneof=gh-release release-drafter release-please semantic-release"`
 	Auto      bool   `json:"-" yaml:"auto,omitempty"`
 	Backmerge bool   `json:"-" yaml:"backmerge,omitempty"`
 }

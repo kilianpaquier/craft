@@ -38,9 +38,9 @@
 
     "baseBranches": [
       "$default",
-<<- if or (not .CI) (not .CI.Release) (eq .CI.Release.Action "semantic-release") >>
-      "/^v[0-9]+.x/",
-      "/^v[0-9]+.[0-9]+.x/",
+<<- if not (.IsReleaseAction "gh-release") >>
+      "/^v[0-9]+\.x/",
+      "/^v[0-9]+\.[0-9]+\.x/",
 <<- end >>
     ],
 

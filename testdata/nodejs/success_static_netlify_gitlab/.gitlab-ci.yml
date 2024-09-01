@@ -1,0 +1,18 @@
+# This file is safe to edit. Once it exists it will not be overwritten.
+
+---
+include: .gitlab/workflows/.gitlab-ci.yml
+
+# secret variables
+# (define the variables below in your GitLab group/project variables)
+
+# GITLAB_TOKEN: A GitLab 'project access token' or 'personal access token' with `api`, `read_repository` and `write repository` scopes.
+# SEMREL_GPG_SIGNKEY: Path to the GPG signkey exported with `gpg --armor --export-secret-key` (optional).
+
+# NETLIFY_SITE_ID: The netlify site ID where builds will be published (should be retrieved if the project name is the same here https://app.netlify.com/sites/craft/configuration/general)
+# NETLIFY_AUTH_TOKEN: The netlify authentication token (it's a personal token) to use for deployments (once connected, can be retrieved here https://app.netlify.com/user/applications#content)
+
+variables:
+  PROD_REF: /^(master|main)$/
+  SEMREL_BRANCHES_REF: /^(master|main|v[0-9]+\.x|v[0-9]+\.[0-9]+\.x|next|alpha|beta|staging|dev|develop|development)$/
+  INTEG_REF: /^(staging|dev|develop|development)$/

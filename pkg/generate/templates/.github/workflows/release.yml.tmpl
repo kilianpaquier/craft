@@ -18,16 +18,26 @@ run-name: Release
 on:
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: Dry run
-        type: boolean
-        default: true
+      mode:
+<<- if eq .CI.Release.Action "semantic-release" >>
+        description: Whether to only make a dry_run, create release / pull request as draft or to make the release completely
+<<- else >>
+        description: Whether to only make a dry_run or to make the release completely
+<<- end >>
+        type: choice
+        default: dry_run
+        options:
+          - dry_run
+<<- if ne .CI.Release.Action "semantic-release" >>
+          - draft
+<<- end >>
+          - release
 <<- if .CI.Release.Auto >>
   push:
     branches:
       - main
       - master
-<<- if eq .CI.Release.Action "semantic-release" >>
+<<- if ne .CI.Release.Action "gh-release" >>
       - v[0-9]+.x
       - v[0-9]+.[0-9]+.x
 <<- end >>
@@ -38,6 +48,7 @@ jobs:
   version:
     name: Version
     runs-on: ubuntu-latest
+    if: ${{ github.ref_protected }} # skip all jobs since they depend on version job
     environment: release
 <<- if or (eq $auth "github-token") $nodejs >>
     permissions:
@@ -79,7 +90,7 @@ jobs:
       - id: version
         uses: ./.github/actions/version
         with:
-          dry_run: true # compute only the version to build
+          mode: dry_run # compute only the version to build
 <<- if eq $auth "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
 <<- else if eq $auth "personal-token" >>
@@ -128,18 +139,15 @@ jobs:
 
   pages:
     name: Pages
-    needs:
-      - version
-      - build
+    needs: build
     uses: ./.github/workflows/pages.yml
     with:
-      dry_run: ${{ inputs.dry_run }}
+      mode: ${{ inputs.mode }}
 <<- end >>
 
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.ref_protected }}
     environment: release
 <<- if or (eq $auth "github-token") $nodejs >>
     permissions:
@@ -156,7 +164,7 @@ jobs:
 <<- end >>
     needs:
       - version
-<<- if and (not $pages) (not $netlify) >>
+<<- if or $gobuild $nodejs >>
       - build
 <<- end >>
 <<- if $docker >>
@@ -192,7 +200,7 @@ jobs:
       - uses: ./.github/actions/version
         with:
           download_dist: true
-          dry_run: ${{ inputs.dry_run }}
+          mode: ${{ inputs.mode }}
 <<- if eq $auth "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
 <<- else if eq $auth "personal-token" >>
@@ -207,7 +215,7 @@ jobs:
       # https://github.com/marketplace/actions/npm-publish
       - uses: JS-DevTools/npm-publish@v3
         with:
-          dry-run: ${{ inputs.dry_run }}
+          dry-run: ${{ inputs.mode != 'release' }}
           tag: ${{ needs.version.outputs.version }}
           token: ${{ secrets.NPM_TOKEN }}
 <<- end >>

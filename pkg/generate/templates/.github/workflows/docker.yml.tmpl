@@ -35,7 +35,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: ./.github/actions/version
         with:
-          dry_run: true # compute only the version to build
+          mode: dry_run # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- if and $nodejs (not (get .Languages "nodejs").Private) (.IsReleaseAction "semantic-release") >>
           npm_token: ${{ secrets.NPM_TOKEN }}
@@ -108,7 +108,7 @@ jobs:
     environment: docker
     permissions:
       security-events: write
-    needs: 
+    needs:
       - version
       - docker-build
     steps:

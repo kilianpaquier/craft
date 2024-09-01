@@ -85,7 +85,7 @@ crons:
       # data:
       #   name: value
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#volume-v1-core
     <<- with $config.volumes >>
     volumes:
@@ -104,7 +104,7 @@ crons:
       #     claimName: ""
       #     readOnly: false
       # - name: ""
-      #   secret: 
+      #   secret:
       #     secretName: ""
     <<- end >>
     <<- with $config.volumeMounts >>
@@ -116,14 +116,14 @@ crons:
       #   name: volume[*].name
       #   readOnly: true
     <<- end >>
-    
+
     << with $config.podAnnotations ->>
     podAnnotations:
       <<- toYaml . | nindent 6 >>
     << else ->>
     podAnnotations: {}
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#podsecuritycontext-v1-core
     <<- with $config.podSecurityContext >>
     podSecurityContext:
@@ -136,7 +136,7 @@ crons:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#securitycontext-v1-core
     <<- with $config.securityContext >>
     securityContext:
@@ -153,7 +153,7 @@ crons:
       # runAsNonRoot: true
       # runAsUser: 1001
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#nodeselector-v1-core
     << with $config.nodeSelector ->>
     nodeSelector:
@@ -161,7 +161,7 @@ crons:
     << else ->>
     nodeSelector: {}
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#toleration-v1-core
     <<- with $config.tolerations >>
     tolerations:
@@ -174,7 +174,7 @@ crons:
       #   tolerationSeconds: 600
       #   value: ""
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#affinity-v1-core
     <<- with $config.affinity >>
     affinity:
@@ -244,7 +244,7 @@ jobs:
       # data:
       #   name: value
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#volume-v1-core
     <<- with $config.volumes >>
     volumes:
@@ -263,7 +263,7 @@ jobs:
       #     claimName: ""
       #     readOnly: false
       # - name: ""
-      #   secret: 
+      #   secret:
       #     secretName: ""
     <<- end >>
     <<- with $config.volumeMounts >>
@@ -275,14 +275,14 @@ jobs:
       #   name: volume[*].name
       #   readOnly: true
     <<- end >>
-    
+
     << with $config.podAnnotations ->>
     podAnnotations:
       <<- toYaml . | nindent 6 >>
     << else ->>
     podAnnotations: {}
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#podsecuritycontext-v1-core
     <<- with $config.podSecurityContext >>
     podSecurityContext:
@@ -295,7 +295,7 @@ jobs:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#securitycontext-v1-core
     <<- with $config.securityContext >>
     securityContext:
@@ -312,7 +312,7 @@ jobs:
       # runAsNonRoot: true
       # runAsUser: 1001
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#nodeselector-v1-core
     << with $config.nodeSelector ->>
     nodeSelector:
@@ -320,7 +320,7 @@ jobs:
     << else ->>
     nodeSelector: {}
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#toleration-v1-core
     <<- with $config.tolerations >>
     tolerations:
@@ -333,7 +333,7 @@ jobs:
       #   tolerationSeconds: 600
       #   value: ""
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#affinity-v1-core
     <<- with $config.affinity >>
     affinity:
@@ -463,7 +463,7 @@ workers:
       # data:
       #   name: value
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#volume-v1-core
     <<- with $config.volumes >>
     volumes:
@@ -482,7 +482,7 @@ workers:
       #     claimName: ""
       #     readOnly: false
       # - name: ""
-      #   secret: 
+      #   secret:
       #     secretName: ""
     <<- end >>
     <<- with $config.volumeMounts >>
@@ -494,14 +494,14 @@ workers:
       #   name: volume[*].name
       #   readOnly: true
     <<- end >>
-    
+
     << with $config.podAnnotations ->>
     podAnnotations:
       <<- toYaml . | nindent 6 >>
     << else ->>
     podAnnotations: {}
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#podsecuritycontext-v1-core
     <<- with $config.podSecurityContext >>
     podSecurityContext:
@@ -514,7 +514,7 @@ workers:
       # runAsGroup: 1001
       # runAsNonRoot: true
       # runAsUser: 1001
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#securitycontext-v1-core
     <<- with $config.securityContext >>
     securityContext:
@@ -531,7 +531,7 @@ workers:
       # runAsNonRoot: true
       # runAsUser: 1001
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#nodeselector-v1-core
     << with $config.nodeSelector ->>
     nodeSelector:
@@ -539,7 +539,7 @@ workers:
     << else ->>
     nodeSelector: {}
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#toleration-v1-core
     <<- with $config.tolerations >>
     tolerations:
@@ -552,7 +552,7 @@ workers:
       #   tolerationSeconds: 600
       #   value: ""
     <<- end >>
-    
+
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/<< $kubeVersion >>/#affinity-v1-core
     <<- with $config.affinity >>
     affinity:

@@ -8,6 +8,22 @@
 
 <<- $gobuild := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
 
+branches:
+  - (master|main)
+  - v+([0-9])?(.{+([0-9]),x}).x
+  - name: next
+    prerelease: true
+  - name: beta
+    prerelease: true
+  - name: alpha
+    prerelease: true
+  - name: staging
+    prerelease: beta
+  - name: (dev|develop|development)
+    prerelease: alpha
+
+tagFormat: v${version}
+
 plugins:
   - - "@semantic-release/commit-analyzer"
     - preset: conventionalcommits
@@ -80,35 +96,44 @@ plugins:
         - package.json
 <<- end >>
       message: "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+<<- if .IsCI "github" >>
   - - "@semantic-release/<< .CI.Name >>"
-    - assets:
-        - { path: CHANGELOG.md, label: CHANGELOG.md }
-<<- if $gobuild >>
-        - { path: checksums.txt }
-        - { path: dist }
-<<- end >>
+    - draftRelease: false
+      successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
       failComment: false
       failTitle: false
-      successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
+      assets:
+        - label: CHANGELOG.md
+          path: CHANGELOG.md
+<<- if $gobuild >>
+        - path: checksums.txt
+        - path: dist
+<<- end >>
+<<- end >>
+<<- if .IsCI "gitlab" >>
+  - - "@semantic-release/<< .CI.Name >>"
+    - successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
+      failComment: false
+      failTitle: false
+      assets:
+        - label: CHANGELOG.md
+          path: CHANGELOG.md
+<<- if $gobuild >>
+        - path: checksums.txt
+        - path: dist
+<<- end >>
+<<- end >>
 <<- if .CI.Release.Backmerge >>
   - - "@kilianpaquier/semantic-release-backmerge"
     - targets:
-        - { from: "^(master|main)$", to: "staging" }
-        - { from: "^(master|main)$", to: "^(dev|develop|development)$" }
-        - { from: staging, to: "^(dev|develop|development)$" }
+        - from: ^(master|main)$
+          to: staging
+        - from: ^(master|main)$
+          to: ^(dev|develop|development)$
+        - from: staging
+          to: ^(dev|develop|development)$
 <<- if ne .CI.Name .Platform >>
       platform: << .Platform >>
 <<- end >>
 <<- end >>
   - "@semantic-release/exec"
-<<- if eq .CI.Name "gitlab" >>
-branches:
-  - (master|main)
-  - v+([0-9])?(.{+([0-9]),x}).x
-  - { name: next, prerelease: true }
-  - { name: beta, prerelease: true }
-  - { name: alpha, prerelease: true }
-  - { name: staging, prerelease: beta }
-  - { name: "(dev|develop|development)", prerelease: alpha }
-tagFormat: v${version}
-<<- end >>

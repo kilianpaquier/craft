@@ -137,7 +137,7 @@ ci:
 
     # release auth for github only (how should the release token be retrieved)
     # will stay empty when using gitlab CICD
-    release: github-app | github-token | personal-token 
+    release: github-app | github-token | personal-token
 
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
@@ -151,12 +151,13 @@ ci:
 
   # release specific options
   release:
-    # which action to use for github releasing 
+    # which action to use for github releasing
     # only available for github, semantic-release will be automatically set for gitlab
     # https://github.com/marketplace/actions/action-for-semantic-release
-    # https://github.com/marketplace/actions/release-drafter
     # https://github.com/marketplace/actions/gh-release
-    action: gh-release | semantic-release | release-drafter
+    # https://github.com/marketplace/actions/release-drafter
+    # https://github.com/marketplace/actions/release-please-action
+    action: gh-release | release-drafter | release-please | semantic-release
     # whether the release should run automatically
     auto: true | false
     # whether backmerging should be configured for main, staging and develop branches
@@ -190,7 +191,7 @@ docker:
 # project's license (optional)
 # providing it will download the appropriate license
 # used in various places like goreleaser executables license
-# github release workflow license addition to releases 
+# github release workflow license addition to releases
 license: agpl-3.0 | apache-2.0 | bsd-2-clause | bsd-3-clause | bsl-1.0 | cc0-1.0 | epl-2.0 | gpl-2.0 | gpl-3.0 | lgpl-2.1 | mit | mpl-2.0 | unlicense
 
 # project's maintainers (at least one must be provided)
@@ -233,10 +234,10 @@ When working on vscode, feel free to use craft's schemas to help setup your proj
     },
     "yaml.schemas": {
         "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/craft.schema.json": [
-            "**/.craft", 
+            "**/.craft",
             "!**/chart/.craft"
         ],
-        "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/chart.schema.json": [ 
+        "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/chart.schema.json": [
             "**/chart/.craft"
         ]
     }
@@ -251,7 +252,7 @@ Multiple detections are implemented, and generates various files (please consult
 
 ### Generic
 
-When no primary generation is detected (golang, nodejs or hugo), then this generation is automatically used. 
+When no primary generation is detected (golang, nodejs or hugo), then this generation is automatically used.
 
 It doesn't generate much, just some CI files (in case CI option is provided) for versioning (semantic release), a README.md and makefiles (to easily generate again and clean the git repository).
 

@@ -70,14 +70,13 @@ const (
 
 const (
 	// GhRelease is the value for github release with gh-release, yet another github action to create github releases.
-	//
-	// With this action, in any case, the token used is the github-token mode.
 	GhRelease string = "gh-release"
 
-	// ReleaseDrafter is the value for github release with release-drafter instead of semantic-release.
-	//
-	// With this action, in any case, the token used is the github-token mode.
+	// ReleaseDrafter is the value for github release with release-drafter.
 	ReleaseDrafter string = "release-drafter"
+
+	// ReleasePlease is the value for github release with release-please.
+	ReleasePlease string = "release-please"
 
 	// SemanticRelease is the value for github / gitlab release with semantic-release.
 	SemanticRelease string = "semantic-release"
@@ -85,5 +84,5 @@ const (
 
 // CIOptions returns the slice with all availables CI options.
 func CIOptions() []string {
-	return []string{CodeCov, CodeQL, Sonar}
+	return []string{CodeCov, CodeQL, Labeler, Sonar}
 }
