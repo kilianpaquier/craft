@@ -322,6 +322,10 @@ runs:
         tag_name: ${{ steps.release_please.outputs.tag_name }}
         target_commitish: ${{ github.ref_name }}
         token: ${{ inputs.token }}
+    - shell: bash
+      run: echo $VERSION
+      env:
+        VERSION: ${{ steps.version.outputs.version }}
 <<- end >>
 
 <<- /* *********************************************************************************************** */ ->>
