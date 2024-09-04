@@ -68,8 +68,8 @@ runs:
         esac
     - shell: bash
       run: |
-        envsubst < .github/release-please.config.jsonc > .github/release-please.envsubst.config.jsonc
-        mv .github/release-please.envsubst.config.jsonc .github/release-please.config.jsonc
+        envsubst < .github/release-please.config.json > .github/release-please.envsubst.config.json
+        mv .github/release-please.envsubst.config.json .github/release-please.config.json
       env:
         DRAFT: ${{ inputs.mode != 'release' }}
         PRERELEASE: ${{ steps.release_check.outputs.release != 'true' }}
@@ -78,8 +78,8 @@ runs:
     - id: release_please
       uses: googleapis/release-please-action@v4
       with:
-        config-file: .github/release-please.config.jsonc
-        manifest-file: .github/release-please.manifest.jsonc
+        config-file: .github/release-please.config.json
+        manifest-file: .github/release-please.manifest.json
         skip-github-pull-request: ${{ inputs.mode == 'dry_run' }} # don't create pull request in dry run mode
         skip-github-release: ${{ inputs.mode == 'dry_run' }} # don't create release in dry run mode
         target-branch: ${{ github.ref_name }}
