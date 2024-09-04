@@ -1,5 +1,1 @@
-{
-    "//": "This file is safe to edit. Once it exists it will not be overwritten.",
-    "//": "This file should anyway almost never be modified since it's release-please who is taking care of it.",
-    "//": "https://github.com/googleapis/release-please/blob/main/docs/manifest-releaser.md#manifest"
-}
+{}
