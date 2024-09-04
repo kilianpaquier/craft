@@ -75,13 +75,10 @@ runs:
       run: |
         envsubst < .github/release-please.config.json > .github/release-please.envsubst.config.json
         mv .github/release-please.envsubst.config.json .github/release-please.config.json
-        cat .github/release-please.config.json
       env:
         DRAFT: ${{ inputs.mode != 'release' }}
         PRERELEASE: ${{ steps.release_check.outputs.release != 'true' }}
         PRERELEASE_IDENTIFIER: ${{ steps.release_check.outputs.identifier }}
-    - shell: bash
-      run: cat .github/release-please.config.json
     # https://github.com/marketplace/actions/release-please-action
     - id: release_please
       uses: googleapis/release-please-action@v4
