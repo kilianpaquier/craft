@@ -85,7 +85,6 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	execo := o.toExecOptions(props)
 	execerrs := make(chan error, len(execs))
 	for _, exec := range execs {
-		exec := exec
 		go func() {
 			defer wg.Done()
 			execerrs <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execo)
