@@ -16,9 +16,9 @@
         { "type": "style", "section": "Styles", "hidden": true },
         { "type": "test", "section": "Tests", "hidden": true }
     ],
-    "draft-pull-request": ${DRAFT},
-    "draft": ${DRAFT},
-    "group-pull-request-title-pattern": "chore(release): v$${version}",
+    "draft-pull-request": true,
+    "draft": true,
+    "group-pull-request-title-pattern": "chore(release): v${version}",
     "include-component-in-tag": false,
     "include-v-in-tag": true,
     "packages": {
@@ -26,8 +26,8 @@
             "release-type": "go"
         }
     },
-    "prerelease": ${PRERELEASE},
-    "prerelease-type": "${PRERELEASE_IDENTIFIER}",
-    "pull-request-title-pattern": "chore(release): v$${version}",
+    "prerelease": true,
+    "prerelease-type": "rc",
+    "pull-request-title-pattern": "chore(release): v${version}",
     "separate-pull-requests": false
 }
