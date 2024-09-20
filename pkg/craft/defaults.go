@@ -49,28 +49,13 @@ func (c *Configuration) ensureDefaultCI() {
 		// ensure default values are set for release
 		// ...
 
-		if c.CI.Release.Action == "" {
-			c.CI.Release.Action = GhRelease // set default release action in case it's not provided
-		}
 		if c.CI.Auth.Release == nil {
 			c.CI.Auth.Release = helpers.ToPtr(GithubToken) // set default release mode for github actions
 		}
 
 		// specific gitlab CICD
 		if c.CI.Name == Gitlab {
-			c.CI.Auth.Release = nil               // release auth isn't available with gitlab CICD
-			c.CI.Release.Action = SemanticRelease // only semantic release is available on gitlab CICD
-		}
-
-		if c.CI.Release.Action != SemanticRelease {
-			c.CI.Release.Backmerge = false // backmerge is only available with semantic-release
-		}
-
-		// specific github actions (to put inside its own condition when a third CI name is implemented)
-		if c.CI.Release.Action == ReleaseDrafter || c.CI.Release.Action == GhRelease {
-			if !slices.Contains(c.CI.Options, Labeler) {
-				c.CI.Options = append(c.CI.Options, Labeler) // Labeler is mandatory for gh-release and release-drafter since those releaser are based on pull requests labels
-			}
+			c.CI.Auth.Release = nil // release auth isn't available with gitlab CICD
 		}
 	}()
 }

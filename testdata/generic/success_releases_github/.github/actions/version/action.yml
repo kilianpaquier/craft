@@ -43,11 +43,6 @@ runs:
         fi
       env:
         MODE: ${{ inputs.mode }}
-    - uses: actions/download-artifact@v4
-      if: ${{ inputs.download_dist == 'true' }}
-      with:
-        name: build
-        path: dist
     # https://github.com/marketplace/actions/action-for-semantic-release
     - id: semrel_version
       continue-on-error: true
@@ -62,7 +57,7 @@ runs:
           @semantic-release/github
           @semantic-release/release-notes-generator
           conventional-changelog-conventionalcommits
-          semantic-release-license
+          @kilianpaquier/semantic-release-backmerge
         dry_run: ${{ inputs.mode != 'release' }}
       env:
         GITHUB_TOKEN: ${{ inputs.token }}

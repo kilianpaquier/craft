@@ -5,8 +5,7 @@ ci:
   name: gitlab
   options:
     - sonar
-  release:
-    action: semantic-release
+  release: {}
 docker:
   registry: ghcr.io
 license: mit

@@ -33,6 +33,7 @@ jobs:
         with:
           mode: dry_run # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
+          npm_token: ${{ secrets.NPM_TOKEN }}
       - id: version_merge
         run: |
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then

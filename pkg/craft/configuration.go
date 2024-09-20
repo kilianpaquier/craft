@@ -27,7 +27,7 @@ type CI struct {
 	Auth    Auth     `json:"-" yaml:"auth,omitempty"                     validate:"omitempty,required"`
 	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required"`
 	Options []string `json:"-" yaml:"options,omitempty" builder:"append"`
-	Release *Release `json:"-" yaml:"release"                            validate:"omitempty,required"`
+	Release *Release `json:"-" yaml:"release,omitempty"                  validate:"omitempty,required"`
 	Static  *Static  `json:"-" yaml:"static,omitempty"                   validate:"omitempty,required"`
 }
 
@@ -48,9 +48,8 @@ type Maintainer struct {
 
 // Release is the struct for craft continuous integration release specifics configuration.
 type Release struct {
-	Action    string `json:"-" yaml:"action"              validate:"required,oneof=gh-release release-drafter release-please semantic-release"`
-	Auto      bool   `json:"-" yaml:"auto,omitempty"`
-	Backmerge bool   `json:"-" yaml:"backmerge,omitempty"`
+	Auto      bool `json:"-" yaml:"auto,omitempty"`
+	Backmerge bool `json:"-" yaml:"backmerge,omitempty"`
 }
 
 // Static represents the configuration for static deployment.
@@ -95,13 +94,6 @@ func (c Configuration) IsReleaseAuth(auth string) bool {
 // HasRelease returns truthy in case the configuration has CI enabled and Release configuration.
 func (c Configuration) HasRelease() bool {
 	return c.CI != nil && c.CI.Release != nil
-}
-
-// IsReleaseAction returns truthy in case the input action is the one specified by the configuration release action.
-//
-// It returns false if there's no CI or Release specified in configuration.
-func (c Configuration) IsReleaseAction(action string) bool {
-	return c.CI != nil && c.CI.Release != nil && c.CI.Release.Action == action
 }
 
 // IsStatic returns truthy in case the input static value is the one specified in configuration as static name.

@@ -151,17 +151,9 @@ ci:
 
   # release specific options
   release:
-    # which action to use for github releasing
-    # only available for github, semantic-release will be automatically set for gitlab
-    # https://github.com/marketplace/actions/action-for-semantic-release
-    # https://github.com/marketplace/actions/gh-release
-    # https://github.com/marketplace/actions/release-drafter
-    # https://github.com/marketplace/actions/release-please-action
-    action: gh-release | release-drafter | release-please | semantic-release
     # whether the release should run automatically
     auto: true | false
     # whether backmerging should be configured for main, staging and develop branches
-    # this feature is only available with semantic-release (no matter the CI)
     backmerge: true | false
     # whether releasing should be disabled
     disable: true | false

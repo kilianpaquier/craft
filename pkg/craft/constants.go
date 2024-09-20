@@ -68,19 +68,8 @@ const (
 	Mendio string = "mend.io"
 )
 
-const (
-	// GhRelease is the value for github release with gh-release, yet another github action to create github releases.
-	GhRelease string = "gh-release"
-
-	// ReleaseDrafter is the value for github release with release-drafter.
-	ReleaseDrafter string = "release-drafter"
-
-	// ReleasePlease is the value for github release with release-please.
-	ReleasePlease string = "release-please"
-
-	// SemanticRelease is the value for github / gitlab release with semantic-release.
-	SemanticRelease string = "semantic-release"
-)
+// SemanticRelease is the value for github / gitlab release with semantic-release.
+const SemanticRelease string = "semantic-release"
 
 // CIOptions returns the slice with all availables CI options.
 func CIOptions() []string {

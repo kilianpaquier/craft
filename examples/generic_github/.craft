@@ -6,8 +6,7 @@ ci:
     maintenance: github-app
     release: github-app
   name: github
-  release:
-    action: semantic-release
+  release: {}
 maintainers:
   - name: kilianpaquier
 no_chart: true

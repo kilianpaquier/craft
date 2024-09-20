@@ -182,55 +182,6 @@ func TestEnsureDefaults(t *testing.T) {
 		assert.Nil(t, config.CI.Auth.Release)
 	})
 
-	t.Run("success_default_github_ghrelease", func(t *testing.T) {
-		// Arrange
-		config := craft.Configuration{
-			CI: &craft.CI{
-				Name:    craft.Github,
-				Release: &craft.Release{Backmerge: true},
-			},
-		}
-		expected := craft.Configuration{
-			CI: &craft.CI{
-				Name:    craft.Github,
-				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
-				Options: []string{craft.Labeler},
-				Release: &craft.Release{Action: craft.GhRelease},
-			},
-		}
-
-		// Act
-		config.EnsureDefaults()
-
-		// Assert
-		assert.Equal(t, expected, config)
-	})
-
-	t.Run("success_github_release_drafter", func(t *testing.T) {
-		// Arrange
-		config := craft.Configuration{
-			CI: &craft.CI{
-				Name:    craft.Github,
-				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubApp)},
-				Release: &craft.Release{Action: craft.ReleaseDrafter, Backmerge: true},
-			},
-		}
-		expected := craft.Configuration{
-			CI: &craft.CI{
-				Name:    craft.Github,
-				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubApp)},
-				Options: []string{craft.Labeler},
-				Release: &craft.Release{Action: craft.ReleaseDrafter},
-			},
-		}
-
-		// Act
-		config.EnsureDefaults()
-
-		// Assert
-		assert.Equal(t, expected, config)
-	})
-
 	t.Run("success_default_gitlab_semrel", func(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
@@ -246,7 +197,6 @@ func TestEnsureDefaults(t *testing.T) {
 
 		// Assert
 		assert.Nil(t, config.CI.Auth.Release)
-		assert.Equal(t, craft.SemanticRelease, config.CI.Release.Action)
 	})
 
 	t.Run("success_migrate_dependabot", func(t *testing.T) {

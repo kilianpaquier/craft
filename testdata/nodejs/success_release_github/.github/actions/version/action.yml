@@ -16,6 +16,9 @@ inputs:
   token:
     description: Github access token
     required: true
+  npm_token:
+    description: Access token for the npm registry
+    required: true
 
 outputs:
   branch_sha:
@@ -60,12 +63,13 @@ runs:
           @semantic-release/exec
           @semantic-release/git
           @semantic-release/github
+          @semantic-release/npm
           @semantic-release/release-notes-generator
           conventional-changelog-conventionalcommits
-          semantic-release-license
         dry_run: ${{ inputs.mode != 'release' }}
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
+        NPM_TOKEN: ${{ inputs.npm_token }}
     - id: version
       shell: bash
       run: |

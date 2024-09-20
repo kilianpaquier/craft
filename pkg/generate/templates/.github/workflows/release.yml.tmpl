@@ -19,28 +19,19 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-<<- if ne .CI.Release.Action "semantic-release" >>
-        description: Whether to only make a dry_run, create release / pull request as draft or to make the release completely
-<<- else >>
         description: Whether to only make a dry_run or to make the release completely
-<<- end >>
         type: choice
         default: dry_run
         options:
           - dry_run
-<<- if ne .CI.Release.Action "semantic-release" >>
-          - draft
-<<- end >>
           - release
 <<- if .CI.Release.Auto >>
   push:
     branches:
       - main
       - master
-<<- if ne .CI.Release.Action "gh-release" >>
       - v[0-9]+.x
       - v[0-9]+.[0-9]+.x
-<<- end >>
 <<- end >>
 
 jobs:
@@ -54,10 +45,8 @@ jobs:
     permissions:
 <<- if eq $auth "github-token" >>
       contents: write
-<<- if eq .CI.Release.Action "semantic-release" >>
       issues: write
       pull-requests: write
-<<- end >>
 <<- end >>
 <<- if $nodejs >>
       id-token: write
@@ -98,7 +87,7 @@ jobs:
 <<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (eq .CI.Release.Action "semantic-release") >>
+<<- if and $nodejs (not (get .Languages "nodejs").Private) >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
 
@@ -153,10 +142,8 @@ jobs:
     permissions:
 <<- if eq $auth "github-token" >>
       contents: write
-<<- if eq .CI.Release.Action "semantic-release" >>
       issues: write
       pull-requests: write
-<<- end >>
 <<- end >>
 <<- if $nodejs >>
       id-token: write
@@ -208,14 +195,6 @@ jobs:
 <<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (eq .CI.Release.Action "semantic-release") >>
+<<- if and $nodejs (not (get .Languages "nodejs").Private) >>
           npm_token: ${{ secrets.NPM_TOKEN }}
-<<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (ne .CI.Release.Action "semantic-release") >>
-      # https://github.com/marketplace/actions/npm-publish
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          dry-run: ${{ inputs.mode != 'release' }}
-          tag: ${{ needs.version.outputs.version }}
-          token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
