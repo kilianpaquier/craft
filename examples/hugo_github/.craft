@@ -8,8 +8,7 @@ ci:
   name: github
   options:
     - labeler
-  release:
-    action: gh-release
+  release: {}
   static:
     name: pages
 license: mit

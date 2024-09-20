@@ -101,12 +101,8 @@ func githubConfig(metadata Metadata) FileHandler {
 		case "release.yml":
 			// useful to sometimes make manual releases (since it's a github configuration and not something specific to an action)
 			return true, metadata.Platform == craft.Github
-		case "release-drafter.yml":
-			return true, metadata.IsCI(craft.Github) && metadata.IsReleaseAction(craft.ReleaseDrafter)
 		case "labeler.yml":
 			return true, metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.Labeler)
-		case "release-please.config.json", "release-please.manifest.json":
-			return true, metadata.IsCI(craft.Github) && metadata.IsReleaseAction(craft.ReleasePlease)
 		}
 		return true, metadata.Platform == craft.Github
 	}
@@ -208,7 +204,7 @@ func Releaserc(metadata Metadata) FileHandler {
 		if name != ".releaserc.yml" {
 			return false, false
 		}
-		return true, metadata.IsReleaseAction(craft.SemanticRelease)
+		return true, metadata.HasRelease()
 	}
 }
 

@@ -11,8 +11,7 @@ ci:
     - codeql
     - labeler
     - sonar
-  release:
-    action: release-please
+  release: {}
 docker:
   registry: ghcr.io
 license: mit

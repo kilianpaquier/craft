@@ -9,8 +9,7 @@ ci:
     - codecov
     - codeql
     - labeler
-  release:
-    action: release-please
+  release: {}
 license: mit
 maintainers:
   - name: kilianpaquier

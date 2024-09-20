@@ -7,12 +7,11 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Whether to only make a dry_run, create release / pull request as draft or to make the release completely
+        description: Whether to only make a dry_run or to make the release completely
         type: choice
         default: dry_run
         options:
           - dry_run
-          - draft
           - release
 
 jobs:
@@ -36,6 +35,7 @@ jobs:
         with:
           mode: dry_run # compute only the version to build
           token: ${{ secrets.RELEASE_TOKEN }}
+          npm_token: ${{ secrets.NPM_TOKEN }}
 
   build:
     name: Build
@@ -70,9 +70,4 @@ jobs:
           download_dist: true
           mode: ${{ inputs.mode }}
           token: ${{ secrets.RELEASE_TOKEN }}
-      # https://github.com/marketplace/actions/npm-publish
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          dry-run: ${{ inputs.mode != 'release' }}
-          tag: ${{ needs.version.outputs.version }}
-          token: ${{ secrets.NPM_TOKEN }}
+          npm_token: ${{ secrets.NPM_TOKEN }}

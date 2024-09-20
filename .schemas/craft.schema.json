@@ -49,7 +49,7 @@
                             ]
                         },
                         "release": {
-                            "description": "Release auth strategy for semantic-release.",
+                            "description": "Release auth strategy.",
                             "type": "string",
                             "default": "github-token",
                             "enum": [
@@ -76,17 +76,6 @@
                     "description": "Release specific configuration.",
                     "type": "object",
                     "properties": {
-                        "action": {
-                            "description": "Action to be used for releasing. Only semantic-release can be provided when working with gitlab.",
-                            "type": "string",
-                            "default": "semantic-release",
-                            "enum": [
-                                "gh-release",
-                                "release-drafter",
-                                "release-please",
-                                "semantic-release"
-                            ]
-                        },
                         "auto": {
                             "description": "Whether the release should run automatically.",
                             "type": "boolean"

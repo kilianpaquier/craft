@@ -37,7 +37,7 @@ jobs:
         with:
           mode: dry_run # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (.IsReleaseAction "semantic-release") >>
+<<- if and .HasRelease $nodejs (not (get .Languages "nodejs").Private) >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
       - id: version_merge

@@ -2,8 +2,7 @@
 ---
 ci:
   name: gitlab
-  release:
-    action: semantic-release
+  release: {}
   static:
     name: pages
 license: mit
