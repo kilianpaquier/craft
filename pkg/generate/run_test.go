@@ -96,7 +96,7 @@ func TestRun(t *testing.T) {
 		require.NoError(t, os.Mkdir(destdir, cfs.RwxRxRxRx))
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 			Platform:    craft.Github,
 		}
@@ -123,10 +123,10 @@ func TestRun(t *testing.T) {
 		require.NoError(t, err)
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 		}
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			Platform:    craft.Github,
 		}
 
@@ -154,11 +154,11 @@ func TestRun(t *testing.T) {
 		require.NoError(t, err)
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoMakefile:  true,
 		}
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoMakefile:  true,
 			Platform:    craft.Github,
 		}
@@ -185,12 +185,12 @@ func TestRun(t *testing.T) {
 		require.NoError(t, err)
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 			Platform:    craft.Github,
 		}
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 			NoMakefile:  true,
 			Platform:    craft.Github,

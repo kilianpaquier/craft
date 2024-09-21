@@ -130,7 +130,7 @@ func TestExec_Generic(t *testing.T) {
 	exec := generate.DefaultExec("lang_generic")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
-		metadata.Maintainers = []craft.Maintainer{{Name: "maintainer name"}}
+		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
 		metadata.ProjectHost = "example.com"
 		metadata.ProjectName = "craft"
 		metadata.ProjectPath = "kilianpaquier/craft"
@@ -236,7 +236,7 @@ func TestExec_Golang(t *testing.T) {
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Languages = map[string]any{"golang": generate.Gomod{LangVersion: "1.22"}}
-		metadata.Maintainers = []craft.Maintainer{{Name: "maintainer name"}}
+		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
 		metadata.ProjectHost = "example.com"
 		metadata.ProjectName = "craft"
 		metadata.ProjectPath = "kilianpaquier/craft"
@@ -425,7 +425,7 @@ func TestExec_Hugo(t *testing.T) {
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Languages = map[string]any{"hugo": generate.Gomod{LangVersion: "1.22"}}
-		metadata.Maintainers = []craft.Maintainer{{Name: "maintainer name"}}
+		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
 		metadata.ProjectHost = "example.com"
 		metadata.ProjectName = "craft"
 		metadata.ProjectPath = "kilianpaquier/craft"
@@ -549,7 +549,7 @@ func TestExec_Nodejs(t *testing.T) {
 	nodejs := generate.DefaultExec("lang_nodejs")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
-		metadata.Maintainers = []craft.Maintainer{{Name: "maintainer name"}}
+		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
 		metadata.NoMakefile = true
 		metadata.ProjectHost = "example.com"
 		metadata.ProjectName = "craft"
