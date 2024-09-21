@@ -131,7 +131,7 @@ type option struct {
 // newOpt creates a new option struct with all input Option functions
 // while taking care of default values.
 func newOpt(opts ...RunOption) option {
-	o := option{}
+	var o option
 	for _, opt := range opts {
 		if opt != nil {
 			o = opt(o)

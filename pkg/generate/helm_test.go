@@ -57,7 +57,7 @@ func TestGenerateHelm(t *testing.T) {
 	exec := generate.GenerateHelm
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
-		metadata.Maintainers = []craft.Maintainer{{Name: "maintainer name"}}
+		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
 		metadata.ProjectHost = "example.com"
 		metadata.ProjectName = "craft"
 		metadata.ProjectPath = "kilianpaquier/craft"

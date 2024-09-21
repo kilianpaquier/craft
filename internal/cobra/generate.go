@@ -23,7 +23,7 @@ var (
 			ctx := cmd.Context()
 			destdir, _ := os.Getwd()
 
-			config, err := initialize.Run(ctx, destdir, initialize.WithLogger(_log))
+			config, err := initialize.Run(ctx, destdir)
 			if err != nil && !errors.Is(err, initialize.ErrAlreadyInitialized) {
 				fatal(ctx, err)
 			}

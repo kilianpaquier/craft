@@ -15,13 +15,13 @@ Example:
 		config, err := initialize.Run(ctx, destdir)
 	}
 
-Example with a custom InputReader:
+Example with a custom FormGroup:
 
 	func main() {
 		ctx := context.Background()
 		destdir, _ := os.Getwd()
 
-		config, err := initialize.Run(ctx, destdir, initialize.WithInputReaders(initialize.ReadMaintainer, initialize.ReadChart, ReadLicense))
+		config, err := initialize.Run(ctx, destdir, initialize.WithFormGroups(initialize.ReadMaintainer, initialize.ReadChart, ReadLicense))
 	}
 
 	// ReadLicense reads an answer from stream reader (by default os.Stdin or the one provided by WithReader)

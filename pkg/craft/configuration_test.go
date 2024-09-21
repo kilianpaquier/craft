@@ -61,7 +61,7 @@ func TestReadCraft(t *testing.T) {
 		// Arrange
 		srcdir := t.TempDir()
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 		}
 
@@ -96,7 +96,7 @@ func TestWriteCraft(t *testing.T) {
 		// Arrange
 		tmp := t.TempDir()
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 		}
 

@@ -84,7 +84,7 @@ func TestDownloadLicense(t *testing.T) {
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
-				Maintainers: []craft.Maintainer{{Name: "name"}},
+				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
@@ -109,7 +109,7 @@ func TestDownloadLicense(t *testing.T) {
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
-				Maintainers: []craft.Maintainer{{Name: "name"}},
+				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
@@ -134,7 +134,7 @@ func TestDownloadLicense(t *testing.T) {
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
-				Maintainers: []craft.Maintainer{{Name: "name"}},
+				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
@@ -162,7 +162,7 @@ func TestDownloadLicense(t *testing.T) {
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
-				Maintainers: []craft.Maintainer{{Name: "name"}},
+				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
@@ -191,7 +191,7 @@ func TestDownloadLicense(t *testing.T) {
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
-				Maintainers: []craft.Maintainer{{Name: "name"}},
+				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
@@ -224,7 +224,7 @@ func TestDownloadLicense(t *testing.T) {
 		config := generate.Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
-				Maintainers: []craft.Maintainer{{Name: "name"}},
+				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}

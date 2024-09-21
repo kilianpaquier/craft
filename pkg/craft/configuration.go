@@ -4,16 +4,16 @@ package craft
 //
 // yaml tags are for .craft file and json tags for templating.
 type Configuration struct {
-	Bot          *string      `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
-	CI           *CI          `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
-	Description  *string      `json:"description,omitempty" yaml:"description,omitempty"`
-	Docker       *Docker      `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
-	License      *string      `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
-	Maintainers  []Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
-	NoChart      bool         `json:"-"                     yaml:"no_chart,omitempty"`
-	NoGoreleaser bool         `json:"-"                     yaml:"no_goreleaser,omitempty"`
-	NoMakefile   bool         `json:"-"                     yaml:"no_makefile,omitempty"`
-	Platform     string       `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
+	Bot          *string       `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
+	CI           *CI           `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
+	Description  *string       `json:"description,omitempty" yaml:"description,omitempty"`
+	Docker       *Docker       `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
+	License      *string       `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
+	Maintainers  []*Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
+	NoChart      bool          `json:"-"                     yaml:"no_chart,omitempty"`
+	NoGoreleaser bool          `json:"-"                     yaml:"no_goreleaser,omitempty"`
+	NoMakefile   bool          `json:"-"                     yaml:"no_makefile,omitempty"`
+	Platform     string        `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
 }
 
 // Auth contains all authentication methods related to CI configuration.
