@@ -7,10 +7,10 @@ toolchain go1.23.1
 require (
 	dario.cat/mergo v1.0.1
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/charmbracelet/bubbletea v1.1.0
+	github.com/charmbracelet/bubbletea v1.1.1
 	github.com/charmbracelet/huh v0.6.0
 	github.com/go-playground/validator/v10 v10.22.1
-	github.com/go-viper/mapstructure/v2 v2.1.0
+	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/kilianpaquier/cli-sdk v0.0.0-20240824154846-992810f57804
