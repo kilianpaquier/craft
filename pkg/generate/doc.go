@@ -36,6 +36,9 @@ Example:
 			// the first input string it the folder path where the templates are located
 			generate.WithTemplates("templates", generate.FS()),
 		)
+		if err != nil {
+			// handle err
+		}
 	}
 */
 package generate

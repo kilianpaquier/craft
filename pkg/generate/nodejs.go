@@ -16,7 +16,9 @@ import (
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-var _packageManagerRegexp = regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\d+(-.+)?$`)
+var errMissingPackageManager = errors.New("package.json packageManager isn't valid")
+
+var packageManagerRegexp = regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\d+(-.+)?$`)
 
 // PackageJSON represents the node package json descriptor.
 type PackageJSON struct {
@@ -47,9 +49,9 @@ type PackageJSON struct {
 func (p *PackageJSON) Validate() error {
 	var errs []error
 
-	if p.PackageManager != "" && !_packageManagerRegexp.MatchString(p.PackageManager) {
+	if p.PackageManager != "" && !packageManagerRegexp.MatchString(p.PackageManager) {
 		// json schema takes care of saying which regexp must be validated
-		errs = append(errs, errors.New("package.json packageManager isn't valid"))
+		errs = append(errs, errMissingPackageManager)
 	}
 
 	if err := validator.New().Struct(p); err != nil {

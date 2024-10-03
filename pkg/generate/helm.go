@@ -33,9 +33,9 @@ var _ Detect = DetectHelm // ensure interface is implemented
 //
 // To be able to use the maximum number of variables in templates (in input fsys inside helm folder),
 // a marshal is applied on input config and on {{destdir}}/chart/.craft.
-func generateHelm(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error { // nolint:revive
-	srcdir = path.Join(srcdir, "lang_helm")   // nolint:revive
-	destdir = filepath.Join(destdir, "chart") // nolint:revive
+func generateHelm(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error { //nolint:revive
+	srcdir = path.Join(srcdir, "lang_helm")   //nolint:revive
+	destdir = filepath.Join(destdir, "chart") //nolint:revive
 
 	// transform craft configuration into generic chart configuration (easier to maintain)
 	var chart map[string]any
@@ -57,7 +57,7 @@ func generateHelm(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destd
 }
 
 // removeHelm deletes the chart folder inside destdir.
-func removeHelm(_ context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { // nolint:revive
+func removeHelm(_ context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { //nolint:revive
 	if err := os.RemoveAll(filepath.Join(destdir, "chart")); err != nil {
 		return fmt.Errorf("delete directory: %w", err)
 	}

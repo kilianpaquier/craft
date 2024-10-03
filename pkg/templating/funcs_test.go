@@ -11,12 +11,12 @@ import (
 
 func TestMergeMaps(t *testing.T) {
 	fm := templating.FuncMap()["map"]
-	f, ok := fm.(func(dest map[string]any, src ...any) map[string]any)
+	mergeMap, ok := fm.(func(dest map[string]any, src ...any) map[string]any)
 	require.True(t, ok)
 
 	t.Run("error_decode", func(t *testing.T) {
 		// Act
-		m := f(map[string]any{}, "hey !")
+		m := mergeMap(map[string]any{}, "hey !")
 
 		// Assert
 		assert.Equal(t, map[string]any{"0_decode_error": "'' expected a map, got 'string'"}, m)
@@ -24,7 +24,7 @@ func TestMergeMaps(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		// Act
-		m := f(map[string]any{"key": "value"}, map[string]any{"key_one": "value"})
+		m := mergeMap(map[string]any{"key": "value"}, map[string]any{"key_one": "value"})
 
 		// Assert
 		assert.Equal(t, map[string]any{

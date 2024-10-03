@@ -109,7 +109,7 @@ func githubConfig(metadata Metadata) FileHandler {
 }
 
 // githubWorkflows returns the handler related to files in .github/workflows (github actions files).
-func githubWorkflows(metadata Metadata) FileHandler { // nolint:cyclop
+func githubWorkflows(metadata Metadata) FileHandler { //nolint:cyclop
 	return func(src, _, name string) (_ bool, _ bool) {
 		// files related to dir .github/workflows
 		if !strings.Contains(src, path.Join(".github", "workflows", name)) {
@@ -130,9 +130,9 @@ func githubWorkflows(metadata Metadata) FileHandler { // nolint:cyclop
 		case "pages.yml":
 			return true, metadata.IsCI(craft.Github) && metadata.IsStatic(craft.Pages)
 		case "release.yml":
-			return true, metadata.IsCI(craft.Github) && metadata.CI.Release != nil // nolint:revive
+			return true, metadata.IsCI(craft.Github) && metadata.CI.Release != nil //nolint:revive
 		case "renovate.yml":
-			return true, metadata.IsBot(craft.Renovate) && metadata.CI != nil && metadata.CI.Auth.Maintenance != nil && *metadata.CI.Auth.Maintenance != craft.Mendio // nolint:revive
+			return true, metadata.IsBot(craft.Renovate) && metadata.CI != nil && metadata.CI.Auth.Maintenance != nil && *metadata.CI.Auth.Maintenance != craft.Mendio //nolint:revive
 		case "labeler.yml":
 			return true, metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.Labeler)
 		}

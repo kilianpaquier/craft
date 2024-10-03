@@ -25,8 +25,8 @@ func TestDetectGolang(t *testing.T) {
 		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), "", generate.Metadata{})
 
 		// Assert
-		assert.NoError(t, err)
-		assert.Len(t, exec, 0)
+		require.NoError(t, err)
+		assert.Empty(t, exec)
 		assert.Zero(t, output)
 	})
 
@@ -43,7 +43,7 @@ func TestDetectGolang(t *testing.T) {
 
 		// Assert
 		assert.ErrorContains(t, err, "read go.mod")
-		assert.Len(t, exec, 0)
+		assert.Empty(t, exec)
 		assert.Zero(t, output)
 	})
 
@@ -62,7 +62,7 @@ func TestDetectGolang(t *testing.T) {
 		assert.ErrorContains(t, err, "read go.mod")
 		assert.ErrorContains(t, err, "invalid go.mod, module statement is missing")
 		assert.ErrorContains(t, err, "invalid go.mod, go statement is missing")
-		assert.Len(t, exec, 0)
+		assert.Empty(t, exec)
 		assert.Zero(t, output)
 	})
 
@@ -99,7 +99,7 @@ func TestDetectGolang(t *testing.T) {
 		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, input)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})
@@ -142,7 +142,7 @@ func TestDetectGolang(t *testing.T) {
 		output, exec, err := generate.DetectGolang(ctx, clog.Std(), destdir, input)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 		assert.Contains(t, buf.String(), "hugo detected, a hugo configuration file or hugo theme file is present")
@@ -205,7 +205,7 @@ func TestDetectGolang(t *testing.T) {
 		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, input)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})

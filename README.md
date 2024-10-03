@@ -44,7 +44,7 @@ go install github.com/kilianpaquier/craft/cmd/craft@latest
 ```sh
 if which craft >/dev/null; then
   craft upgrade
-  return $?
+  exit $?
 fi
 
 OS="linux" # change it depending on our case

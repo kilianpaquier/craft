@@ -53,6 +53,7 @@ jobs:
 <<- end >>
 <<- end >>
     outputs:
+      mode: ${{ steps.mode.outputs.mode }}
       release: ${{ steps.version.outputs.release }}
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -90,6 +91,15 @@ jobs:
 <<- if and $nodejs (not (get .Languages "nodejs").Private) >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
+      - id: mode
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            echo "mode=release" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "mode=${INPUT_MODE}" >> $GITHUB_OUTPUT
+        env:
+          INPUT_MODE: ${{ inputs.mode }}
 
 <<- if or $gobuild $nodejs >>
 
@@ -109,9 +119,11 @@ jobs:
     name: Docker
     needs: version
     uses: ./.github/workflows/docker.yml
+    permissions:
+      security-events: write
     with:
-      version: ${{ steps.version.outputs.version }}
-      release: ${{ steps.version.outputs.release }}
+      version: ${{ needs.version.outputs.version }}
+      release: ${{ needs.version.outputs.release == 'true' }}
     secrets: inherit
 <<- end >>
 
@@ -128,10 +140,12 @@ jobs:
 
   pages:
     name: Pages
-    needs: build
+    needs:
+      - version
+      - build
     uses: ./.github/workflows/pages.yml
     with:
-      mode: ${{ inputs.mode }}
+      mode: ${{ needs.version.outputs.mode }}
 <<- end >>
 
   release:
@@ -187,7 +201,7 @@ jobs:
       - uses: ./.github/actions/version
         with:
           download_dist: true
-          mode: ${{ inputs.mode }}
+          mode: ${{ needs.version.outputs.mode }}
 <<- if eq $auth "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
 <<- else if eq $auth "personal-token" >>

@@ -713,7 +713,7 @@ func test(ctx context.Context, exec generate.Exec, name string) func(t *testing.
 		err := exec(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 	}
 }

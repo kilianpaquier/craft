@@ -81,7 +81,7 @@ func downloadLicense(client *gitlab.Client) Exec {
 }
 
 // removeLicense deletes the license file in input destdir.
-func removeLicense(_ context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { // nolint:revive
+func removeLicense(_ context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { //nolint:revive
 	if err := os.Remove(filepath.Join(destdir, craft.License)); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("delete file: %w", err)
 	}

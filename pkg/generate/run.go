@@ -20,12 +20,12 @@ var ErrMultipleLanguages = errors.New("multiple languages detected, please open 
 // As a Detect function can alter the configuration, the final configuration is returned
 // alongside any encountered error.
 func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (craft.Configuration, error) {
-	o := newOpt(opts...)
+	ro := newOpt(opts...)
 
 	// parse remote information
-	rawRemote, err := OriginURL(*o.destdir)
+	rawRemote, err := OriginURL(*ro.destdir)
 	if err != nil {
-		o.log.Warnf("failed to retrieve git remote.origin.url: %s", err.Error())
+		ro.log.Warnf("failed to retrieve git remote.origin.url: %s", err.Error())
 	}
 
 	host, subpath := ParseRemote(string(rawRemote))
@@ -49,10 +49,10 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	}
 
 	// detect all available languages and specificities in current project
-	execs := make([]Exec, 0, len(o.detects))
-	detecterrs := make([]error, 0, len(o.detects))
-	for _, detect := range o.detects {
-		p, exec, err := detect(ctx, o.log, *o.destdir, props)
+	execs := make([]Exec, 0, len(ro.detects))
+	detecterrs := make([]error, 0, len(ro.detects))
+	for _, detect := range ro.detects {
+		p, exec, err := detect(ctx, ro.log, *ro.destdir, props)
 		if err != nil {
 			detecterrs = append(detecterrs, err)
 			continue
@@ -72,9 +72,9 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 
 	// add generic exec in case no languages were detected
 	if len(props.Languages) == 0 {
-		o.log.Warnf("no language detected, fallback to generic generation")
+		ro.log.Warnf("no language detected, fallback to generic generation")
 
-		p, exec, _ := DetectGeneric(ctx, o.log, *o.destdir, props)
+		p, exec, _ := DetectGeneric(ctx, ro.log, *ro.destdir, props)
 		props = p
 		execs = append(execs, exec...)
 	}
@@ -82,12 +82,12 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	// initialize waitGroup for all executions and deletions
 	var wg sync.WaitGroup
 	wg.Add(len(execs))
-	execo := o.toExecOptions(props)
+	execo := ro.toExecOptions(props)
 	execerrs := make(chan error, len(execs))
 	for _, exec := range execs {
 		go func() {
 			defer wg.Done()
-			execerrs <- exec(ctx, o.log, o.fs, o.tmplDir, *o.destdir, props, execo)
+			execerrs <- exec(ctx, ro.log, ro.fs, ro.tmplDir, *ro.destdir, props, execo)
 		}()
 	}
 	wg.Wait()

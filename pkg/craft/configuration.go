@@ -2,7 +2,7 @@ package craft
 
 // Configuration represents all options configurable in .craft file at root project.
 //
-// yaml tags are for .craft file and json tags for templating.
+// Note that yaml tags are for .craft file property keys and json tags for templating data.
 type Configuration struct {
 	Bot          *string       `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
 	CI           *CI           `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`

@@ -1,4 +1,4 @@
-package generate // nolint:testpackage
+package generate //nolint:testpackage
 
 import (
 	"testing"
@@ -14,7 +14,7 @@ func TestOption(t *testing.T) {
 		f := WithDelimiters("{{", "}}")
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		assert.Equal(t, "{{", o.startDelim)
@@ -26,7 +26,7 @@ func TestOption(t *testing.T) {
 		f := WithDestination("dest")
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		require.NotNil(t, o.destdir)
@@ -38,7 +38,7 @@ func TestOption(t *testing.T) {
 		f := WithForce("name")
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		assert.Contains(t, o.force, "name")
@@ -49,7 +49,7 @@ func TestOption(t *testing.T) {
 		f := WithForceAll(true)
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		assert.True(t, o.forceAll)
@@ -61,7 +61,7 @@ func TestOption(t *testing.T) {
 		f := WithLogger(log)
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		assert.Equal(t, log, o.log)

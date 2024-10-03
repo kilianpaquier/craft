@@ -6,6 +6,7 @@ import (
 
 	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
@@ -19,7 +20,7 @@ func TestDetectGeneric(t *testing.T) {
 		output, exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", generate.Metadata{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Zero(t, output)
 	})
@@ -39,7 +40,7 @@ func TestDetectGeneric(t *testing.T) {
 		output, exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", input)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})

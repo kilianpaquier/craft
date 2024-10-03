@@ -24,8 +24,8 @@ func TestDetectNodejs(t *testing.T) {
 		_, exec, err := generate.DetectNodejs(ctx, clog.Noop(), "", generate.Metadata{})
 
 		// Assert
-		assert.NoError(t, err)
-		assert.Len(t, exec, 0)
+		require.NoError(t, err)
+		assert.Empty(t, exec)
 	})
 
 	t.Run("invalid_packagejson", func(t *testing.T) {
@@ -42,7 +42,7 @@ func TestDetectNodejs(t *testing.T) {
 
 		// Assert
 		assert.ErrorContains(t, err, "read package.json")
-		assert.Len(t, exec, 0)
+		assert.Empty(t, exec)
 	})
 
 	t.Run("error_validation_packagejson", func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestDetectNodejs(t *testing.T) {
 
 		// Assert
 		assert.ErrorContains(t, err, "read package.json")
-		assert.Len(t, exec, 0)
+		assert.Empty(t, exec)
 	})
 
 	t.Run("nodejs_detected_with_options", func(t *testing.T) {
@@ -88,7 +88,7 @@ func TestDetectNodejs(t *testing.T) {
 		output, exec, err := generate.DetectNodejs(ctx, clog.Noop(), destdir, input)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, output)
 	})

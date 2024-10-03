@@ -32,7 +32,7 @@ func TestDetectHelm(t *testing.T) {
 		_, exec, err := generate.DetectHelm(ctx, clog.Std(), "", metadata)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.NotContains(t, buf.String(), fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
 	})
@@ -46,7 +46,7 @@ func TestDetectHelm(t *testing.T) {
 		_, exec, err := generate.DetectHelm(ctx, clog.Std(), "", generate.Metadata{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Contains(t, buf.String(), fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
 	})
@@ -135,7 +135,7 @@ func TestRemoveHelm(t *testing.T) {
 		err := generate.RemoveHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoDirExists(t, chart)
 	})
 
@@ -149,7 +149,7 @@ func TestRemoveHelm(t *testing.T) {
 		err := generate.RemoveHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoDirExists(t, chart)
 	})
 }

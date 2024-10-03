@@ -23,11 +23,11 @@ var (
 )
 
 // RunOption represents an option to be given to Run function.
-type RunOption func(option) option
+type RunOption func(runOptions) runOptions
 
 // WithTeaOptions sets the slice of tea.ProgramOption for huh form tuning.
 func WithTeaOptions(opts ...tea.ProgramOption) RunOption {
-	return func(o option) option {
+	return func(o runOptions) runOptions {
 		o.options = opts
 		return o
 	}
@@ -39,21 +39,21 @@ type FormGroup func(config *craft.Configuration) *huh.Group
 
 // WithFormGroups sets (it overrides the previously defined functions everytime it's called) the functions reading user inputs in Run function.
 func WithFormGroups(inputs ...FormGroup) RunOption {
-	return func(o option) option {
+	return func(o runOptions) runOptions {
 		o.formGroups = inputs
 		return o
 	}
 }
 
-// option represents the struct with all available options in Run function.
-type option struct {
+// runOptions represents the struct with all available options in Run function.
+type runOptions struct {
 	formGroups []FormGroup
 	options    []tea.ProgramOption
 }
 
 // newOpt creates a new option struct with all input Option functions while taking care of default values.
-func newOpt(opts ...RunOption) option {
-	var o option
+func newOpt(opts ...RunOption) runOptions {
+	var o runOptions
 	for _, opt := range opts {
 		if opt != nil {
 			o = opt(o)
@@ -75,7 +75,7 @@ func newOpt(opts ...RunOption) option {
 //
 // In case craft.CraftFile already exists, it's read and returned alongside ErrAlreadyInitialized (should be handled in caller).
 func Run(ctx context.Context, destdir string, opts ...RunOption) (craft.Configuration, error) {
-	o := newOpt(opts...)
+	ro := newOpt(opts...)
 
 	// read config configuration
 	var config craft.Configuration
@@ -87,16 +87,16 @@ func Run(ctx context.Context, destdir string, opts ...RunOption) (craft.Configur
 		return craft.Configuration{}, fmt.Errorf("%s exists but is not readable: %w", craft.File, err)
 	}
 
-	groups := make([]*huh.Group, 0, len(o.formGroups))
-	for _, formGroup := range o.formGroups {
+	groups := make([]*huh.Group, 0, len(ro.formGroups))
+	for _, formGroup := range ro.formGroups {
 		if group := formGroup(&config); group != nil {
 			groups = append(groups, group)
 		}
 	}
 
-	f := huh.NewForm(groups...).WithProgramOptions(o.options...).WithShowErrors(true)
+	f := huh.NewForm(groups...).WithProgramOptions(ro.options...).WithShowErrors(true)
 	if err := f.RunWithContext(ctx); err != nil {
-		return craft.Configuration{}, err
+		return craft.Configuration{}, fmt.Errorf("run with context: %w", err)
 	}
 	return config, nil
 }

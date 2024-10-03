@@ -9,6 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var errInvalidLogFormat = errors.New(`invalid --log-format argument, must be either "json" or "text"`)
+
 var (
 	_log = logrus.StandardLogger()
 
@@ -51,7 +53,7 @@ func preRun() error {
 			TimestampFormat: time.RFC3339,
 		})
 	default:
-		return errors.New(`invalid --log-format argument, must be either "json" or "text"`)
+		return errInvalidLogFormat
 	}
 
 	level, err := logrus.ParseLevel(logLevel)

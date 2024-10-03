@@ -35,7 +35,7 @@ func TestDetectLicense(t *testing.T) {
 		_, exec, err := generate.DetectLicense(ctx, clog.Std(), "", generate.Metadata{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.NotContains(t, buf.String(), fmt.Sprintf("license detected, %s has license key", craft.File))
 	})
@@ -51,7 +51,7 @@ func TestDetectLicense(t *testing.T) {
 		_, exec, err := generate.DetectLicense(ctx, clog.Std(), "", config)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Contains(t, buf.String(), fmt.Sprintf("license detected, %s has license key", craft.File))
 	})
@@ -143,9 +143,9 @@ func TestDownloadLicense(t *testing.T) {
 		err := downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		bytes, err := os.ReadFile(dest)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "some content to appear in assert", string(bytes))
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
 	})
@@ -171,7 +171,7 @@ func TestDownloadLicense(t *testing.T) {
 		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, 0, httpmock.GetTotalCallCount())
 	})
 
@@ -201,9 +201,9 @@ func TestDownloadLicense(t *testing.T) {
 		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		bytes, err := os.ReadFile(dest)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "some content to appear in assert", string(bytes))
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
 	})
@@ -234,9 +234,9 @@ func TestDownloadLicense(t *testing.T) {
 		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		bytes, err := os.ReadFile(dest)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "some content to appear in assert", string(bytes))
 		assert.Equal(t, 1, httpmock.GetTotalCallCount())
 	})
@@ -269,7 +269,7 @@ func TestRemoveLicense(t *testing.T) {
 		err := generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoFileExists(t, dest)
 	})
 
@@ -286,7 +286,7 @@ func TestRemoveLicense(t *testing.T) {
 		err = generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoFileExists(t, dest)
 	})
 }

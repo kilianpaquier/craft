@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
@@ -27,7 +28,7 @@ func TestOriginURL(t *testing.T) {
 		originURL, err := generate.OriginURL(".")
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Contains(t, string(originURL), "kilianpaquier/craft") // contains condition to ensure it's working on github actions too
 	})
 }

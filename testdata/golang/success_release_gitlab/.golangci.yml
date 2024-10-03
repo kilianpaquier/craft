@@ -260,6 +260,22 @@ linters-settings:
     # Default: false
     strict: true
 
+  testifylint:
+    require-error:
+      # Regexp for assertions to analyze. If defined, then only matched error assertions will be reported.
+      # Default: ""
+      fn-pattern: ^NoErrorf?$
+
+  varnamelen:
+    # The longest distance, in source lines, that is being considered a "small scope".
+    # Variables used in at most this many lines will be ignored.
+    # Default: 5
+    max-distance: 10
+    # The minimum length of a variable's name that is considered "long".
+    # Variable names that are at least this long will be ignored.
+    # Default: 3
+    min-name-length: 2
+
   whitespace:
     # Enforces newlines (or comments) after every multi-line if statement.
     # Default: false
@@ -286,6 +302,7 @@ issues:
     - path: _test.go
       linters:
         - dupl
+        - err113
         - funlen
         - goconst
         - maintidx
@@ -303,17 +320,24 @@ linters:
   # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
   disable-all: true
   enable:
+    - asasalint
     - bodyclose
+    - canonicalheader
+    - containedctx
     - contextcheck
+    - copyloopvar
     - cyclop
     - decorder
     - dogsled
     - dupl
     - durationcheck
+    - err113
     - errcheck
     - errname
     - errorlint
-    - exportloopref
+    - exhaustive
+    - fatcontext
+    - forbidigo
     - forcetypeassert
     - funlen
     - gci
@@ -324,23 +348,52 @@ linters:
     - gocyclo
     - godox
     - gofumpt
+    - goprintffuncname
     - gosec
     - gosimple
     - govet
+    - grouper
+    - importas
+    - inamedparam
     - ineffassign
     - interfacebloat
+    - intrange
     - maintidx
+    - makezero
+    - mirror
     - misspell
+    - musttag
     - nakedret
+    - nestif
+    - nilerr
+    - nilnil
+    - noctx
+    - nolintlint
+    - nosprintfhostport
     - paralleltest
     - perfsprint
     - prealloc
+    - predeclared
+    - reassign
     - revive
+    - rowserrcheck
+    - sloglint
+    - spancheck
+    - sqlclosecheck
     - staticcheck
     - stylecheck
     - tagalign
+    - tenv
+    - testableexamples
+    - testifylint
     - testpackage
+    - thelper
+    - tparallel
     - typecheck
     - unconvert
     - unused
+    - usestdlibvars
+    - varnamelen
+    - wastedassign
     - whitespace
+    - wrapcheck

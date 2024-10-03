@@ -73,7 +73,7 @@ func TestReadCraft(t *testing.T) {
 		err = craft.Read(srcdir, &actual)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expected, actual)
 	})
 }

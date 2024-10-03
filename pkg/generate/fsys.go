@@ -61,7 +61,7 @@ func DefaultExec(name string) Exec {
 }
 
 // handleDir walks over input srcdir and apply template of every src entry into destdir.
-func handleDir(log clog.Logger, fsys cfs.FS, srcdir, destdir string, data any, name string, opts ExecOpts) error { // nolint:revive
+func handleDir(log clog.Logger, fsys cfs.FS, srcdir, destdir string, data any, name string, opts ExecOpts) error { //nolint:revive
 	// read source directory
 	entries, err := fsys.ReadDir(srcdir)
 	if err != nil {
@@ -148,5 +148,9 @@ func handleFile(fsys cfs.FS, src, dest string, data any, opts ExecOpts) error {
 	if err != nil {
 		return fmt.Errorf("parse template file: %w", err)
 	}
-	return templating.Execute(tmpl, data, dest)
+
+	if err := templating.Execute(tmpl, data, dest); err != nil {
+		return fmt.Errorf("template execute: %w", err)
+	}
+	return nil
 }

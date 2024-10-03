@@ -74,6 +74,9 @@ func TestRun(t *testing.T) {
 		input := craft.Configuration{}
 		destdir := t.TempDir()
 
+		readme := filepath.Join(destdir, "README.md")
+		t.Cleanup(func() { assert.NoError(t, os.Remove(readme)) })
+
 		// Act
 		_, err := generate.Run(ctx, input,
 			generate.WithDelimiters("{{", "}}"),
@@ -82,8 +85,8 @@ func TestRun(t *testing.T) {
 			generate.WithTemplates(templates, cfs.OS()))
 
 		// Assert
-		assert.NoError(t, err)
-		bytes, err := os.ReadFile(filepath.Join(destdir, "README.md"))
+		require.NoError(t, err)
+		bytes, err := os.ReadFile(readme)
 		require.NoError(t, err)
 		assert.Equal(t, []byte("# ."), bytes)
 		assert.NoFileExists(t, filepath.Join(destdir, "NOT_GENERATED.md"))
@@ -108,7 +111,7 @@ func TestRun(t *testing.T) {
 			generate.WithTemplates("templates", cfs.OS()))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, input, output)
 	})
@@ -137,7 +140,7 @@ func TestRun(t *testing.T) {
 			generate.WithTemplates("templates", generate.FS()))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, expected, output)
 	})
@@ -170,7 +173,7 @@ func TestRun(t *testing.T) {
 			generate.WithForceAll(true))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, expected, output)
 	})
@@ -203,7 +206,7 @@ func TestRun(t *testing.T) {
 			generate.WithForceAll(true))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, expected, output)
 	})

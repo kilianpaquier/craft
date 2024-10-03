@@ -18,7 +18,12 @@ import (
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-var _versionRegexp = regexp.MustCompile("^v[0-9]+$")
+var (
+	errMissingModuleStatement = errors.New("invalid go.mod, module statement is missing")
+	errMissingGoStatement     = errors.New("invalid go.mod, go statement is missing")
+)
+
+var versionRegexp = regexp.MustCompile("^v[0-9]+$")
 
 // Gomod represents the parsed struct for go.mod file
 type Gomod struct {
@@ -51,7 +56,7 @@ func DetectGolang(ctx context.Context, log clog.Logger, destdir string, metadata
 	metadata.ProjectPath = statements.ProjectPath
 
 	// check hugo detection
-	if metadata, exec, _ := detectHugo(ctx, log, destdir, metadata); len(exec) > 0 { // nolint:revive
+	if metadata, exec, _ := detectHugo(ctx, log, destdir, metadata); len(exec) > 0 { //nolint:revive
 		return metadata, exec, nil
 	}
 
@@ -131,11 +136,11 @@ func readGomod(modpath string) (Gomod, error) {
 
 	// parse module statement
 	if file.Module == nil || file.Module.Mod.Path == "" {
-		errs = append(errs, errors.New("invalid go.mod, module statement is missing"))
+		errs = append(errs, errMissingModuleStatement)
 	} else {
 		gomod.ProjectHost, gomod.ProjectPath = func() (host, subpath string) {
 			sections := strings.Split(file.Module.Mod.Path, "/")
-			if _versionRegexp.MatchString(sections[len(sections)-1]) {
+			if versionRegexp.MatchString(sections[len(sections)-1]) {
 				return sections[0], strings.Join(sections[1:len(sections)-1], "/") // retrieve all sections but the last element
 			}
 			return sections[0], strings.Join(sections[1:], "/") // retrieve all sections
@@ -146,7 +151,7 @@ func readGomod(modpath string) (Gomod, error) {
 
 	// parse go statement
 	if file.Go == nil {
-		errs = append(errs, errors.New("invalid go.mod, go statement is missing"))
+		errs = append(errs, errMissingGoStatement)
 	} else {
 		gomod.LangVersion = file.Go.Version
 	}

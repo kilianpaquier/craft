@@ -27,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     outputs:
-      release: ${{ needs.version.outputs.release }}
-      version: ${{ needs.version.outputs.version }}
+      release: ${{ steps.version_merge.outputs.release }}
+      version: ${{ steps.version_merge.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - id: version
@@ -45,10 +45,10 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
             echo "release=${RELEASE}" >> $GITHUB_OUTPUT
             echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          else
-            echo "release=${INPUTS_RELEASE}" >> $GITHUB_OUTPUT
-            echo "version=${INPUTS_VERSION}" >> $GITHUB_OUTPUT
+            exit 0
           fi
+          echo "release=${INPUTS_RELEASE}" >> $GITHUB_OUTPUT
+          echo "version=${INPUTS_VERSION}" >> $GITHUB_OUTPUT
         env:
           VERSION: ${{ steps.version.outputs.version }}
           RELEASE: ${{ steps.version.outputs.release }}
@@ -106,8 +106,6 @@ jobs:
     name: Docker Trivy
     runs-on: ubuntu-latest
     environment: docker
-    permissions:
-      security-events: write
     needs:
       - version
       - docker-build

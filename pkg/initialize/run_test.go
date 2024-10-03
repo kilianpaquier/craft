@@ -62,7 +62,7 @@ func TestRun(t *testing.T) {
 		// Arrange
 		expected := craft.Configuration{License: helpers.ToPtr("mit")}
 
-		f := func(config *craft.Configuration) *huh.Group {
+		customGroup := func(config *craft.Configuration) *huh.Group {
 			return huh.NewGroup(huh.NewInput().
 				Title("Would you like to specify a license ?").
 				Validate(func(s string) error {
@@ -77,10 +77,10 @@ func TestRun(t *testing.T) {
 		reader := strings.NewReader(strings.Join(inputs, ""))
 
 		// Act
-		config, err := initialize.Run(ctx, "", initialize.WithFormGroups(f), initialize.WithTeaOptions(tea.WithInput(reader)))
+		config, err := initialize.Run(ctx, "", initialize.WithFormGroups(customGroup), initialize.WithTeaOptions(tea.WithInput(reader)))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expected, config)
 	})
 
@@ -101,7 +101,7 @@ func TestRun(t *testing.T) {
 		config, err := initialize.Run(ctx, destdir, initialize.WithTeaOptions(tea.WithInput(reader)))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expected, config)
 	})
 }

@@ -35,7 +35,7 @@ func Write(destdir string, config Configuration) error {
 	dest := filepath.Join(destdir, File)
 
 	// create a buffer with craft notice
-	buffer := bytes.NewBuffer([]byte("# Craft configuration file (https://github.com/kilianpaquier/craft)\n---\n"))
+	buffer := bytes.NewBufferString("# Craft configuration file (https://github.com/kilianpaquier/craft)\n---\n")
 
 	// create yaml encoder and writes the full configuration in the buffer,
 	// following the craft notice
