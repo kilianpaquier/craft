@@ -13,6 +13,7 @@ type Configuration struct {
 	NoChart      bool          `json:"-"                     yaml:"no_chart,omitempty"`
 	NoGoreleaser bool          `json:"-"                     yaml:"no_goreleaser,omitempty"`
 	NoMakefile   bool          `json:"-"                     yaml:"no_makefile,omitempty"`
+	NoReadme     bool          `json:"-"                     yaml:"no_readme,omitempty"`
 	Platform     string        `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
 }
 

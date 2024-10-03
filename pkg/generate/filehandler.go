@@ -30,6 +30,7 @@ func MetaHandlers() []MetaHandler {
 		Gitlab,
 		Goreleaser,
 		Makefile,
+		Readme,
 		Releaserc,
 		Renovate,
 		Sonar,
@@ -140,13 +141,13 @@ func githubWorkflows(metadata Metadata) FileHandler { //nolint:cyclop
 	}
 }
 
-var _actionRegexp = regexp.MustCompile(`\.github/actions/[\w]+/action\.yml\.tmpl$`)
+var githubActionFileRegexp = regexp.MustCompile(`\.github/actions/[\w]+/action\.yml\.tmpl$`)
 
 // githubActions returns the handler for all files related to .github/actions directory.
 func githubActions(metadata Metadata) FileHandler {
 	return func(src, _, _ string) (_ bool, _ bool) {
 		// files related to dir .github/actions
-		if !_actionRegexp.MatchString(src) {
+		if !githubActionFileRegexp.MatchString(src) {
 			return false, false
 		}
 
@@ -195,6 +196,16 @@ func Goreleaser(metadata Metadata) FileHandler {
 func Makefile(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
 		return name == "Makefile" || strings.HasSuffix(name, ".mk"), !metadata.NoMakefile
+	}
+}
+
+// Readme returns the handler for README.md option generation matching.
+func Readme(metadata Metadata) FileHandler {
+	return func(src, dest, name string) (ok bool, apply bool) {
+		if name != "README.md" {
+			return false, false
+		}
+		return true, !metadata.NoReadme
 	}
 }
 

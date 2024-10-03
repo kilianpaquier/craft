@@ -208,6 +208,9 @@ no_goreleaser: true | false
 # this option is automatically disabled when working with nodejs generation
 no_makefile: true | false
 
+# whether to generate a README.md with initial badges and informations (optional)
+no_readme: true | false
+
 # platform override in case of gitlab on premise, bitbucket on premise, etc.
 # by default, an on premise gitlab will be matched if the host contains "gitlab"
 # by default, an on premise bitbucket will be matched if the host contains "bitbucket" or "stash"
