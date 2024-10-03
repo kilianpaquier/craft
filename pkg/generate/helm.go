@@ -19,12 +19,12 @@ import (
 
 // DetectHelm handles the detection of helm chart generation option in metadata
 // and returns the appropriate slice of Exec.
-func DetectHelm(_ context.Context, log clog.Logger, _ string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectHelm(_ context.Context, log clog.Logger, _ string, metadata *Metadata) ([]Exec, error) {
 	if metadata.NoChart {
-		return metadata, []Exec{removeHelm}, nil
+		return []Exec{removeHelm}, nil
 	}
 	log.Infof("helm chart detected, %s doesn't have no_chart key", craft.File)
-	return metadata, []Exec{generateHelm}, nil
+	return []Exec{generateHelm}, nil
 }
 
 var _ Detect = DetectHelm // ensure interface is implemented

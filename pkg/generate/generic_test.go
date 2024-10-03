@@ -16,18 +16,21 @@ func TestDetectGeneric(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("no_ci", func(t *testing.T) {
+		// Arrange
+		config := generate.Metadata{}
+
 		// Act
-		output, exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", generate.Metadata{})
+		exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", &config)
 
 		// Assert
 		require.NoError(t, err)
 		assert.Len(t, exec, 1)
-		assert.Zero(t, output)
+		assert.Zero(t, config)
 	})
 
 	t.Run("ci_options", func(t *testing.T) {
 		// Arrange
-		input := generate.Metadata{
+		config := generate.Metadata{
 			Configuration: craft.Configuration{CI: &craft.CI{
 				Options: craft.CIOptions(),
 			}},
@@ -37,11 +40,11 @@ func TestDetectGeneric(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", input)
+		exec, err := generate.DetectGeneric(ctx, clog.Noop(), "", &config)
 
 		// Assert
 		require.NoError(t, err)
 		assert.Len(t, exec, 1)
-		assert.Equal(t, expected, output)
+		assert.Equal(t, expected, config)
 	})
 }

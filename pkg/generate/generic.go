@@ -10,11 +10,16 @@ import (
 //
 // It returns the input metadata but modified with appropriate properties
 // alongside the slice of Exec to be executed to templatize the project.
-func DetectGeneric(_ context.Context, _ clog.Logger, _ string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectGeneric(_ context.Context, log clog.Logger, _ string, metadata *Metadata) ([]Exec, error) {
+	if len(metadata.Languages) != 0 {
+		return nil, nil
+	}
+
+	log.Warnf("no language detected, fallback to generic generation")
 	if metadata.CI != nil {
 		metadata.CI.Options = nil
 	}
-	return metadata, []Exec{DefaultExec("lang_generic")}, nil
+	return []Exec{DefaultExec("lang_generic")}, nil
 }
 
 var _ Detect = DetectGeneric // ensure interface is implemented

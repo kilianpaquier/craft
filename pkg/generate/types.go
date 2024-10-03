@@ -22,16 +22,22 @@ func FS() cfs.FS {
 
 // Detect is the signature function to implement to add a new language or framework detection in craft.
 //
-// The input configuration can be altered in any way
-// and is as such returned after alteration for update (for the other detect functions that could be executed).
-type Detect func(ctx context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error)
+// The input configuration can be altered in any way since it's a pointer
+// and the returned slice of Exec will be run by the main Run function of generate package.
+type Detect func(ctx context.Context, log clog.Logger, destdir string, metadata *Metadata) ([]Exec, error)
 
-// Exec is the signature function to implement to add a new language or framework templatization in craft.
+// Exec is the signature function to implement to add a new language or framework generation in craft.
+//
+// An Exec function is to be returned by its associated Detect function.
+// For more information about Detect function, see its documentation.
 type Exec func(ctx context.Context, log clog.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error
 
 // Detects returns the slice of default detection functions when craft is not used as a SDK.
+//
+// Note that DetectGeneric must always be the last one to be computed
+// since it's a fallback to be used in case no languages are detected.
 func Detects() []Detect {
-	return []Detect{DetectGolang, DetectHelm, DetectLicense, DetectNodejs}
+	return []Detect{DetectGolang, DetectHelm, DetectLicense, DetectNodejs, DetectGeneric}
 }
 
 // Metadata represents all properties available for enrichment during detection.

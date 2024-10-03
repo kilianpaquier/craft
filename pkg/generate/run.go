@@ -48,35 +48,23 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 		Workers: map[string]struct{}{},
 	}
 
+	// initialize a slice of errors to stack in each main step (detection, execution) errors
+	var errs []error
+
 	// detect all available languages and specificities in current project
 	execs := make([]Exec, 0, len(ro.detects))
-	detecterrs := make([]error, 0, len(ro.detects))
 	for _, detect := range ro.detects {
-		p, exec, err := detect(ctx, ro.log, *ro.destdir, props)
-		if err != nil {
-			detecterrs = append(detecterrs, err)
-			continue
-		}
-
-		props = p // override props with output props (updated)
+		exec, err := detect(ctx, ro.log, *ro.destdir, &props)
+		errs = append(errs, err)
 		execs = append(execs, exec...)
 	}
-	if len(detecterrs) > 0 {
-		return props.Configuration, errors.Join(detecterrs...)
+	if err := errors.Join(errs...); err != nil {
+		return props.Configuration, err
 	}
 
 	// avoid multiple languages detected since no tests are made around that
 	if len(props.Languages) > 1 {
 		return config, ErrMultipleLanguages
-	}
-
-	// add generic exec in case no languages were detected
-	if len(props.Languages) == 0 {
-		ro.log.Warnf("no language detected, fallback to generic generation")
-
-		p, exec, _ := DetectGeneric(ctx, ro.log, *ro.destdir, props)
-		props = p
-		execs = append(execs, exec...)
 	}
 
 	// initialize waitGroup for all executions and deletions
@@ -93,7 +81,6 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	wg.Wait()
 	close(execerrs)
 
-	errs := make([]error, 0, len(execerrs))
 	for err := range execerrs {
 		errs = append(errs, err)
 	}

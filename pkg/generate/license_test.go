@@ -32,7 +32,7 @@ func TestDetectLicense(t *testing.T) {
 		log.SetOutput(&buf)
 
 		// Act
-		_, exec, err := generate.DetectLicense(ctx, clog.Std(), "", generate.Metadata{})
+		exec, err := generate.DetectLicense(ctx, clog.Std(), "", &generate.Metadata{})
 
 		// Assert
 		require.NoError(t, err)
@@ -48,7 +48,7 @@ func TestDetectLicense(t *testing.T) {
 		log.SetOutput(&buf)
 
 		// Act
-		_, exec, err := generate.DetectLicense(ctx, clog.Std(), "", config)
+		exec, err := generate.DetectLicense(ctx, clog.Std(), "", &config)
 
 		// Assert
 		require.NoError(t, err)

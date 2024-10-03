@@ -61,7 +61,7 @@ func TestRun(t *testing.T) {
 		_, err := generate.Run(ctx, input,
 			generate.WithDelimiters("{{", "}}"),
 			generate.WithDestination(t.TempDir()),
-			generate.WithDetects(detectNoop), // avoid testing detections since we only want the generic generation
+			generate.WithDetects(detectNoop, generate.DetectGeneric), // avoid testing detections since we only want the generic generation
 			generate.WithTemplates(templates, cfs.OS()))
 
 		// Assert
@@ -81,7 +81,7 @@ func TestRun(t *testing.T) {
 		_, err := generate.Run(ctx, input,
 			generate.WithDelimiters("{{", "}}"),
 			generate.WithDestination(destdir),
-			generate.WithDetects(detectNoop), // avoid testing detections since we only want the generic generation
+			generate.WithDetects(detectNoop, generate.DetectGeneric), // avoid testing detections since we only want the generic generation
 			generate.WithTemplates(templates, cfs.OS()))
 
 		// Assert
@@ -212,24 +212,24 @@ func TestRun(t *testing.T) {
 	})
 }
 
-func detectNoop(_ context.Context, _ clog.Logger, _ string, metadata generate.Metadata) (generate.Metadata, []generate.Exec, error) {
-	return metadata, nil, nil
+func detectNoop(_ context.Context, _ clog.Logger, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
+	return nil, nil
 }
 
 var _ generate.Detect = detectNoop // ensure interface is implemented
 
 func detectErr(err error) generate.Detect {
-	return func(_ context.Context, _ clog.Logger, _ string, metadata generate.Metadata) (generate.Metadata, []generate.Exec, error) {
-		return metadata, nil, err
+	return func(_ context.Context, _ clog.Logger, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
+		return nil, err
 	}
 }
 
 var _ generate.Detect = detectErr(nil) // ensure interface is implemented
 
-func detectMulti(_ context.Context, _ clog.Logger, _ string, metadata generate.Metadata) (generate.Metadata, []generate.Exec, error) {
+func detectMulti(_ context.Context, _ clog.Logger, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
 	metadata.Languages["lang1"] = ""
 	metadata.Languages["lang2"] = ""
-	return metadata, nil, nil
+	return nil, nil
 }
 
 var _ generate.Detect = detectMulti // ensure interface is implemented

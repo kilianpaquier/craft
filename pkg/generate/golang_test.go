@@ -21,13 +21,16 @@ func TestDetectGolang(t *testing.T) {
 	ctx := context.Background()
 
 	t.Run("no_gomod", func(t *testing.T) {
+		// Arrange
+		config := generate.Metadata{}
+
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), "", generate.Metadata{})
+		exec, err := generate.DetectGolang(ctx, clog.Noop(), "", &config)
 
 		// Assert
 		require.NoError(t, err)
 		assert.Empty(t, exec)
-		assert.Zero(t, output)
+		assert.Zero(t, config)
 	})
 
 	t.Run("invalid_gomod", func(t *testing.T) {
@@ -38,13 +41,15 @@ func TestDetectGolang(t *testing.T) {
 		err := os.WriteFile(gomod, []byte("an invalid go.mod file"), cfs.RwRR)
 		require.NoError(t, err)
 
+		config := generate.Metadata{}
+
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, generate.Metadata{})
+		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "read go.mod")
 		assert.Empty(t, exec)
-		assert.Zero(t, output)
+		assert.Zero(t, config)
 	})
 
 	t.Run("missing_gomod_statements", func(t *testing.T) {
@@ -55,15 +60,17 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, gomod.Close())
 
+		config := generate.Metadata{}
+
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, generate.Metadata{})
+		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "read go.mod")
 		assert.ErrorContains(t, err, "invalid go.mod, module statement is missing")
 		assert.ErrorContains(t, err, "invalid go.mod, go statement is missing")
 		assert.Empty(t, exec)
-		assert.Zero(t, output)
+		assert.Zero(t, config)
 	})
 
 	t.Run("detected_no_gocmd", func(t *testing.T) {
@@ -78,7 +85,7 @@ func TestDetectGolang(t *testing.T) {
 		), cfs.RwRR)
 		require.NoError(t, err)
 
-		input := generate.Metadata{Languages: map[string]any{}}
+		config := generate.Metadata{Languages: map[string]any{}}
 		expected := generate.Metadata{
 			Configuration: craft.Configuration{Platform: craft.Github},
 			Languages: map[string]any{
@@ -96,12 +103,12 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, input)
+		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
 
 		// Assert
 		require.NoError(t, err)
 		assert.Len(t, exec, 1)
-		assert.Equal(t, expected, output)
+		assert.Equal(t, expected, config)
 	})
 
 	t.Run("detected_hugo_override", func(t *testing.T) {
@@ -120,7 +127,7 @@ func TestDetectGolang(t *testing.T) {
 		require.NoError(t, err)
 		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
-		input := generate.Metadata{
+		config := generate.Metadata{
 			Configuration: craft.Configuration{CI: &craft.CI{Options: []string{craft.CodeCov, craft.CodeQL, craft.Sonar}}},
 			Languages:     map[string]any{},
 		}
@@ -139,12 +146,12 @@ func TestDetectGolang(t *testing.T) {
 		log.SetOutput(&buf)
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, clog.Std(), destdir, input)
+		exec, err := generate.DetectGolang(ctx, clog.Std(), destdir, &config)
 
 		// Assert
 		require.NoError(t, err)
 		assert.Len(t, exec, 1)
-		assert.Equal(t, expected, output)
+		assert.Equal(t, expected, config)
 		assert.Contains(t, buf.String(), "hugo detected, a hugo configuration file or hugo theme file is present")
 	})
 
@@ -173,7 +180,7 @@ func TestDetectGolang(t *testing.T) {
 			require.NoError(t, os.Mkdir(dir, cfs.RwxRxRxRx))
 		}
 
-		input := generate.Metadata{
+		config := generate.Metadata{
 			Clis:      map[string]struct{}{},
 			Crons:     map[string]struct{}{},
 			Jobs:      map[string]struct{}{},
@@ -202,11 +209,11 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, input)
+		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
 
 		// Assert
 		require.NoError(t, err)
 		assert.Len(t, exec, 1)
-		assert.Equal(t, expected, output)
+		assert.Equal(t, expected, config)
 	})
 }

@@ -62,14 +62,14 @@ func (p *PackageJSON) Validate() error {
 
 // DetectNodejs handles nodejs detection at destdir.
 // It scans the project for a package.json and validates it.
-func DetectNodejs(_ context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectNodejs(_ context.Context, log clog.Logger, destdir string, metadata *Metadata) ([]Exec, error) {
 	jsonpath := filepath.Join(destdir, craft.PackageJSON)
 	pkg, err := readPackageJSON(jsonpath)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
-			return metadata, nil, fmt.Errorf("read package.json: %w", err)
+			return nil, fmt.Errorf("read package.json: %w", err)
 		}
-		return metadata, nil, nil
+		return nil, nil
 	}
 
 	log.Infof("nodejs detected, a '%s' is present and valid", craft.PackageJSON)
@@ -86,7 +86,7 @@ func DetectNodejs(_ context.Context, log clog.Logger, destdir string, metadata M
 		metadata.NoMakefile = true
 	}
 
-	return metadata, []Exec{DefaultExec("lang_nodejs")}, nil
+	return []Exec{DefaultExec("lang_nodejs")}, nil
 }
 
 var _ Detect = DetectNodejs // ensure interface is implemented

@@ -28,8 +28,9 @@ func TestDetectHelm(t *testing.T) {
 
 		var buf bytes.Buffer
 		log.SetOutput(&buf)
+
 		// Act
-		_, exec, err := generate.DetectHelm(ctx, clog.Std(), "", metadata)
+		exec, err := generate.DetectHelm(ctx, clog.Std(), "", &metadata)
 
 		// Assert
 		require.NoError(t, err)
@@ -43,7 +44,7 @@ func TestDetectHelm(t *testing.T) {
 		log.SetOutput(&buf)
 
 		// Act
-		_, exec, err := generate.DetectHelm(ctx, clog.Std(), "", generate.Metadata{})
+		exec, err := generate.DetectHelm(ctx, clog.Std(), "", &generate.Metadata{})
 
 		// Assert
 		require.NoError(t, err)
