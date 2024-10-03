@@ -201,7 +201,7 @@ func Makefile(metadata Metadata) FileHandler {
 
 // Readme returns the handler for README.md option generation matching.
 func Readme(metadata Metadata) FileHandler {
-	return func(src, dest, name string) (ok bool, apply bool) {
+	return func(_, _, name string) (ok bool, apply bool) {
 		if name != "README.md" {
 			return false, false
 		}

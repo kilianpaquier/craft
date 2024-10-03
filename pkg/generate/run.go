@@ -49,7 +49,7 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	}
 
 	// initialize a slice of errors to stack in each main step (detection, execution) errors
-	var errs []error
+	var errs []error //nolint:prealloc
 
 	// detect all available languages and specificities in current project
 	execs := make([]Exec, 0, len(ro.detects))

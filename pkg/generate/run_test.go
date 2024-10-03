@@ -212,14 +212,14 @@ func TestRun(t *testing.T) {
 	})
 }
 
-func detectNoop(_ context.Context, _ clog.Logger, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
+func detectNoop(_ context.Context, _ clog.Logger, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
 	return nil, nil
 }
 
 var _ generate.Detect = detectNoop // ensure interface is implemented
 
 func detectErr(err error) generate.Detect {
-	return func(_ context.Context, _ clog.Logger, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
+	return func(_ context.Context, _ clog.Logger, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
 		return nil, err
 	}
 }

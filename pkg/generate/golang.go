@@ -56,7 +56,7 @@ func DetectGolang(ctx context.Context, log clog.Logger, destdir string, metadata
 	metadata.ProjectPath = statements.ProjectPath
 
 	// check hugo detection
-	if execs, _ := detectHugo(ctx, log, destdir, metadata); len(execs) > 0 { //nolint:revive
+	if execs, _ := detectHugo(ctx, log, destdir, metadata); len(execs) > 0 {
 		return execs, nil
 	}
 
