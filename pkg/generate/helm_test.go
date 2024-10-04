@@ -1,16 +1,12 @@
 package generate_test
 
 import (
-	"bytes"
 	"context"
-	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -19,43 +15,12 @@ import (
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
 
-func TestDetectHelm(t *testing.T) {
-	ctx := context.Background()
-
-	t.Run("no_chart_config_present", func(t *testing.T) {
-		// Arrange
-		metadata := generate.Metadata{Configuration: craft.Configuration{NoChart: true}}
-
-		var buf bytes.Buffer
-		log.SetOutput(&buf)
-
-		// Act
-		exec, err := generate.DetectHelm(ctx, clog.Std(), "", &metadata)
-
-		// Assert
-		require.NoError(t, err)
-		assert.Len(t, exec, 1)
-		assert.NotContains(t, buf.String(), fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
-	})
-
-	t.Run("no_chart_config_absent", func(t *testing.T) {
-		// Arrange
-		var buf bytes.Buffer
-		log.SetOutput(&buf)
-
-		// Act
-		exec, err := generate.DetectHelm(ctx, clog.Std(), "", &generate.Metadata{})
-
-		// Assert
-		require.NoError(t, err)
-		assert.Len(t, exec, 1)
-		assert.Contains(t, buf.String(), fmt.Sprintf("helm chart detected, %s doesn't have no_chart key", craft.File))
-	})
-}
-
 func TestGenerateHelm(t *testing.T) {
 	ctx := context.Background()
-	exec := generate.GenerateHelm
+
+	execs, err := generate.DetectHelm(ctx, "", &generate.Metadata{})
+	require.NoError(t, err)
+	require.Len(t, execs, 1)
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
@@ -65,7 +30,7 @@ func TestGenerateHelm(t *testing.T) {
 		return metadata
 	}
 
-	verify := test(ctx, exec, "helm")
+	verify := test(ctx, execs[0], "helm")
 
 	t.Run("error_invalid_overrides", func(t *testing.T) {
 		// Arrange
@@ -76,7 +41,7 @@ func TestGenerateHelm(t *testing.T) {
 		metadata := setup(generate.Metadata{})
 
 		// Act
-		err := generate.GenerateHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, metadata, generate.ExecOpts{})
+		err := execs[0](ctx, cfs.OS(), "", destdir, metadata, generate.ExecOpts{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read helm chart overrides")
@@ -127,13 +92,17 @@ func TestGenerateHelm(t *testing.T) {
 func TestRemoveHelm(t *testing.T) {
 	ctx := context.Background()
 
+	execs, err := generate.DetectHelm(ctx, "", &generate.Metadata{Configuration: craft.Configuration{NoChart: true}})
+	require.NoError(t, err)
+	require.Len(t, execs, 1)
+
 	t.Run("success_no_dir", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 		chart := filepath.Join(destdir, "chart")
 
 		// Act
-		err := generate.RemoveHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := execs[0](ctx, nil, "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
 		require.NoError(t, err)
@@ -147,7 +116,7 @@ func TestRemoveHelm(t *testing.T) {
 		require.NoError(t, os.Mkdir(chart, cfs.RwxRxRxRx))
 
 		// Act
-		err := generate.RemoveHelm(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := execs[0](ctx, nil, "", destdir, generate.Metadata{}, generate.ExecOpts{})
 
 		// Assert
 		require.NoError(t, err)

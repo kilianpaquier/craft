@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 )
 
 // ExecOpts represents all options given to Exec functions.
@@ -87,14 +86,6 @@ func WithForceAll(forceAll bool) RunOption {
 	}
 }
 
-// WithLogger defines the logger implementation for Run function.
-func WithLogger(log clog.Logger) RunOption {
-	return func(o runOptions) runOptions {
-		o.log = log
-		return o
-	}
-}
-
 // WithTemplates is an option for Run function to specify the templates directory and filesystem.
 //
 // Please not that the input dir path separator must be the one used with path.Join
@@ -122,8 +113,6 @@ type runOptions struct {
 	fs      cfs.FS
 	tmplDir string
 
-	log clog.Logger
-
 	endDelim   string
 	startDelim string
 }
@@ -150,9 +139,6 @@ func newOpt(opts ...RunOption) runOptions {
 		ro.fs = FS()
 		ro.tmplDir = "templates"
 	}
-	if ro.log == nil {
-		ro.log = clog.Noop()
-	}
 	if len(ro.detects) == 0 {
 		ro.detects = Detects()
 	}
@@ -161,21 +147,4 @@ func newOpt(opts ...RunOption) runOptions {
 	}
 
 	return ro
-}
-
-// toExecOptions transforms the option struct into exported type ExecOpts.
-func (o runOptions) toExecOptions(metadata Metadata) ExecOpts {
-	return ExecOpts{
-		EndDelim: o.endDelim,
-		FileHandlers: func() []FileHandler {
-			result := make([]FileHandler, 0, len(o.handlers))
-			for _, handler := range o.handlers {
-				result = append(result, handler(metadata))
-			}
-			return result
-		}(),
-		Force:      o.force,
-		ForceAll:   o.forceAll,
-		StartDelim: o.startDelim,
-	}
 }

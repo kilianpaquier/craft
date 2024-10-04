@@ -1,10 +1,10 @@
-package generate_test
+package generate //nolint:testpackage
 
 import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
+	stdlog "log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -20,19 +20,26 @@ import (
 
 	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
 )
 
 func TestDetectLicense(t *testing.T) {
 	ctx := context.Background()
 
+	logs := func(t *testing.T) *bytes.Buffer {
+		t.Helper()
+
+		var buf bytes.Buffer
+		log = clog.StdWith(stdlog.New(&buf, "", stdlog.LstdFlags))
+		t.Cleanup(func() { log = clog.Noop() })
+		return &buf
+	}
+
 	t.Run("no_license_detected", func(t *testing.T) {
 		// Arrange
-		var buf bytes.Buffer
-		log.SetOutput(&buf)
+		buf := logs(t)
 
 		// Act
-		exec, err := generate.DetectLicense(ctx, clog.Std(), "", &generate.Metadata{})
+		exec, err := DetectLicense(ctx, "", &Metadata{})
 
 		// Assert
 		require.NoError(t, err)
@@ -42,13 +49,11 @@ func TestDetectLicense(t *testing.T) {
 
 	t.Run("license_detected", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{Configuration: craft.Configuration{License: helpers.ToPtr("mit")}}
-
-		var buf bytes.Buffer
-		log.SetOutput(&buf)
+		buf := logs(t)
+		config := Metadata{Configuration: craft.Configuration{License: helpers.ToPtr("mit")}}
 
 		// Act
-		exec, err := generate.DetectLicense(ctx, clog.Std(), "", &config)
+		exec, err := DetectLicense(ctx, "", &config)
 
 		// Assert
 		require.NoError(t, err)
@@ -60,19 +65,18 @@ func TestDetectLicense(t *testing.T) {
 func TestDownloadLicense(t *testing.T) {
 	ctx := context.Background()
 
-	// setup gitlab mocking
 	httpClient := cleanhttp.DefaultClient()
 	httpmock.ActivateNonDefault(httpClient)
 	t.Cleanup(httpmock.DeactivateAndReset)
+
 	client, err := gitlab.NewClient("",
-		gitlab.WithBaseURL(generate.GitlabURL),
+		gitlab.WithBaseURL(GitlabURL),
 		gitlab.WithHTTPClient(httpClient),
 		gitlab.WithoutRetries(),
 	)
 	require.NoError(t, err)
-	downloader := generate.DownloadLicense(client)
 
-	url := generate.GitlabURL + "/templates/licenses/mit"
+	url := GitlabURL + "/templates/licenses/mit"
 
 	t.Run("error_get_template", func(t *testing.T) {
 		// Arrange
@@ -81,7 +85,7 @@ func TestDownloadLicense(t *testing.T) {
 			httpmock.NewStringResponder(http.StatusInternalServerError, "error message"))
 
 		destdir := t.TempDir()
-		config := generate.Metadata{
+		config := Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
 				Maintainers: []*craft.Maintainer{{Name: "name"}},
@@ -90,7 +94,7 @@ func TestDownloadLicense(t *testing.T) {
 		}
 
 		// Act
-		err := downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
+		err := downloadLicense(client)(ctx, cfs.OS(), "", destdir, config, ExecOpts{})
 
 		// Assert
 		assert.ErrorContains(t, err, "license template retrieval")
@@ -106,17 +110,17 @@ func TestDownloadLicense(t *testing.T) {
 		dest := filepath.Join(destdir, craft.License)
 		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), cfs.RwxRxRxRx))
 
-		config := generate.Metadata{
+		config := Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
 				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
-		opts := generate.ExecOpts{Force: []string{craft.License}}
+		opts := ExecOpts{Force: []string{craft.License}}
 
 		// Act
-		err := downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
+		err := downloadLicense(client)(ctx, cfs.OS(), "", destdir, config, opts)
 
 		// Assert
 		assert.ErrorContains(t, err, "delete file")
@@ -131,7 +135,7 @@ func TestDownloadLicense(t *testing.T) {
 		destdir := t.TempDir()
 		dest := filepath.Join(destdir, craft.License)
 
-		config := generate.Metadata{
+		config := Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
 				Maintainers: []*craft.Maintainer{{Name: "name"}},
@@ -140,7 +144,7 @@ func TestDownloadLicense(t *testing.T) {
 		}
 
 		// Act
-		err := downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
+		err := downloadLicense(client)(ctx, cfs.OS(), "", destdir, config, ExecOpts{})
 
 		// Assert
 		require.NoError(t, err)
@@ -159,7 +163,7 @@ func TestDownloadLicense(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
-		config := generate.Metadata{
+		config := Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
 				Maintainers: []*craft.Maintainer{{Name: "name"}},
@@ -168,7 +172,7 @@ func TestDownloadLicense(t *testing.T) {
 		}
 
 		// Act
-		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, generate.ExecOpts{})
+		err = downloadLicense(client)(ctx, cfs.OS(), "", destdir, config, ExecOpts{})
 
 		// Assert
 		require.NoError(t, err)
@@ -188,17 +192,17 @@ func TestDownloadLicense(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
-		config := generate.Metadata{
+		config := Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
 				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
-		opts := generate.ExecOpts{Force: []string{craft.License}}
+		opts := ExecOpts{Force: []string{craft.License}}
 
 		// Act
-		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
+		err = downloadLicense(client)(ctx, cfs.OS(), "", destdir, config, opts)
 
 		// Assert
 		require.NoError(t, err)
@@ -221,17 +225,17 @@ func TestDownloadLicense(t *testing.T) {
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
-		config := generate.Metadata{
+		config := Metadata{
 			Configuration: craft.Configuration{
 				License:     helpers.ToPtr("mit"),
 				Maintainers: []*craft.Maintainer{{Name: "name"}},
 			},
 			ProjectName: "craft",
 		}
-		opts := generate.ExecOpts{ForceAll: true}
+		opts := ExecOpts{ForceAll: true}
 
 		// Act
-		err = downloader(ctx, clog.Noop(), cfs.OS(), "", destdir, config, opts)
+		err = downloadLicense(client)(ctx, cfs.OS(), "", destdir, config, opts)
 
 		// Assert
 		require.NoError(t, err)
@@ -253,7 +257,7 @@ func TestRemoveLicense(t *testing.T) {
 		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), cfs.RwxRxRxRx))
 
 		// Act
-		err := generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := removeLicense(ctx, cfs.OS(), "", destdir, Metadata{}, ExecOpts{})
 
 		// Assert
 		assert.ErrorContains(t, err, "delete file")
@@ -266,7 +270,7 @@ func TestRemoveLicense(t *testing.T) {
 		dest := filepath.Join(destdir, craft.License)
 
 		// Act
-		err := generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err := removeLicense(ctx, cfs.OS(), "", destdir, Metadata{}, ExecOpts{})
 
 		// Assert
 		require.NoError(t, err)
@@ -283,7 +287,7 @@ func TestRemoveLicense(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		// Act
-		err = generate.RemoveLicense(ctx, clog.Noop(), cfs.OS(), "", destdir, generate.Metadata{}, generate.ExecOpts{})
+		err = removeLicense(ctx, cfs.OS(), "", destdir, Metadata{}, ExecOpts{})
 
 		// Assert
 		require.NoError(t, err)

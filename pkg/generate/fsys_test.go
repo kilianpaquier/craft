@@ -13,7 +13,6 @@ import (
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	testfs "github.com/kilianpaquier/cli-sdk/pkg/cfs/tests"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
@@ -710,7 +709,7 @@ func test(ctx context.Context, exec generate.Exec, name string) func(t *testing.
 		}
 
 		// Act
-		err := exec(ctx, clog.Noop(), cfs.OS(), srcdir, destdir, metadata, opts)
+		err := exec(ctx, cfs.OS(), srcdir, destdir, metadata, opts)
 
 		// Assert
 		require.NoError(t, err)

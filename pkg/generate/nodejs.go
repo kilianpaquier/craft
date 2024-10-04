@@ -11,7 +11,6 @@ import (
 	"regexp"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
@@ -62,7 +61,7 @@ func (p *PackageJSON) Validate() error {
 
 // DetectNodejs handles nodejs detection at destdir.
 // It scans the project for a package.json and validates it.
-func DetectNodejs(_ context.Context, log clog.Logger, destdir string, metadata *Metadata) ([]Exec, error) {
+func DetectNodejs(_ context.Context, destdir string, metadata *Metadata) ([]Exec, error) {
 	jsonpath := filepath.Join(destdir, craft.PackageJSON)
 	pkg, err := readPackageJSON(jsonpath)
 	if err != nil {

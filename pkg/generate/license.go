@@ -11,7 +11,6 @@ import (
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/xanzy/go-gitlab"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -22,7 +21,7 @@ const GitlabURL = "https://gitlab.com/api/v4"
 
 // DetectLicense handles the detection of license option in craft configuration.
 // It also initializes a gitlab client to retrieve the appropriate license in returned slice of GenerateFunc.
-func DetectLicense(ctx context.Context, log clog.Logger, _ string, metadata *Metadata) ([]Exec, error) {
+func DetectLicense(ctx context.Context, _ string, metadata *Metadata) ([]Exec, error) {
 	if metadata.License == nil {
 		return []Exec{removeLicense}, nil
 	}
@@ -49,7 +48,7 @@ var _ Detect = DetectLicense // ensure interface is implemented
 
 // downloadLicense returns the GenerateFunc to download the appropriate license file from gitlab API.
 func downloadLicense(client *gitlab.Client) Exec {
-	return func(ctx context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, metadata Metadata, opts ExecOpts) error {
+	return func(ctx context.Context, _ cfs.FS, _, destdir string, metadata Metadata, opts ExecOpts) error {
 		dest := filepath.Join(destdir, craft.License)
 
 		// don't fetch template is force on file or force all isn't activated
@@ -81,7 +80,7 @@ func downloadLicense(client *gitlab.Client) Exec {
 }
 
 // removeLicense deletes the license file in input destdir.
-func removeLicense(_ context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { //nolint:revive
+func removeLicense(_ context.Context, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error {
 	if err := os.Remove(filepath.Join(destdir, craft.License)); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("delete file: %w", err)
 	}

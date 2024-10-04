@@ -12,17 +12,17 @@ import (
 
 	"dario.cat/mergo"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
 // DetectHelm handles the detection of helm chart generation option in metadata
 // and returns the appropriate slice of Exec.
-func DetectHelm(_ context.Context, log clog.Logger, _ string, metadata *Metadata) ([]Exec, error) {
+func DetectHelm(_ context.Context, _ string, metadata *Metadata) ([]Exec, error) {
 	if metadata.NoChart {
 		return []Exec{removeHelm}, nil
 	}
+
 	log.Infof("helm chart detected, %s doesn't have no_chart key", craft.File)
 	return []Exec{generateHelm}, nil
 }
@@ -33,9 +33,9 @@ var _ Detect = DetectHelm // ensure interface is implemented
 //
 // To be able to use the maximum number of variables in templates (in input fsys inside helm folder),
 // a marshal is applied on input config and on {{destdir}}/chart/.craft.
-func generateHelm(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error { //nolint:revive
-	srcdir = path.Join(srcdir, "lang_helm")   //nolint:revive
-	destdir = filepath.Join(destdir, "chart") //nolint:revive
+func generateHelm(_ context.Context, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error {
+	helmdir := path.Join(srcdir, "lang_helm")
+	chartdir := filepath.Join(destdir, "chart")
 
 	// transform craft configuration into generic chart configuration (easier to maintain)
 	var chart map[string]any
@@ -44,7 +44,7 @@ func generateHelm(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destd
 
 	// read overrides values
 	var overrides map[string]any
-	if err := craft.Read(destdir, &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := craft.Read(chartdir, &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("read helm chart overrides: %w", err)
 	}
 
@@ -53,11 +53,11 @@ func generateHelm(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destd
 		return fmt.Errorf("merge helm chart overrides with craft configuration: %w", err)
 	}
 
-	return handleDir(log, fsys, srcdir, destdir, chart, "helm", opts)
+	return handleDir(fsys, helmdir, chartdir, chart, "helm", opts)
 }
 
 // removeHelm deletes the chart folder inside destdir.
-func removeHelm(_ context.Context, _ clog.Logger, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error { //nolint:revive
+func removeHelm(_ context.Context, _ cfs.FS, _, destdir string, _ Metadata, _ ExecOpts) error {
 	if err := os.RemoveAll(filepath.Join(destdir, "chart")); err != nil {
 		return fmt.Errorf("delete directory: %w", err)
 	}

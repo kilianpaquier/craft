@@ -14,7 +14,6 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/templating"
 )
@@ -55,13 +54,13 @@ func IsGenerated(dest string) bool {
 
 // DefaultExec is a simplified function returning a basic Exec for an input template folder name.
 func DefaultExec(name string) Exec {
-	return func(_ context.Context, log clog.Logger, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error {
-		return handleDir(log, fsys, srcdir, destdir, metadata, name, opts)
+	return func(_ context.Context, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error {
+		return handleDir(fsys, srcdir, destdir, metadata, name, opts)
 	}
 }
 
 // handleDir walks over input srcdir and apply template of every src entry into destdir.
-func handleDir(log clog.Logger, fsys cfs.FS, srcdir, destdir string, data any, name string, opts ExecOpts) error { //nolint:revive
+func handleDir(fsys cfs.FS, srcdir, destdir string, data any, name string, opts ExecOpts) error {
 	// read source directory
 	entries, err := fsys.ReadDir(srcdir)
 	if err != nil {
@@ -76,13 +75,13 @@ func handleDir(log clog.Logger, fsys cfs.FS, srcdir, destdir string, data any, n
 		if entry.IsDir() {
 			// apply generation at root if the folder name is the dir generate name
 			if entry.Name() == name {
-				errs = append(errs, handleDir(log, fsys, src, destdir, data, name, opts))
+				errs = append(errs, handleDir(fsys, src, destdir, data, name, opts))
 				continue
 			}
 
 			// apply templates on subdirs not being the reserved ones for languages
 			if !strings.HasPrefix(entry.Name(), "lang_") {
-				errs = append(errs, handleDir(log, fsys, src, dest, data, name, opts))
+				errs = append(errs, handleDir(fsys, src, dest, data, name, opts))
 				continue
 			}
 			continue

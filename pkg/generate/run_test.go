@@ -10,7 +10,6 @@ import (
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	testfs "github.com/kilianpaquier/cli-sdk/pkg/cfs/tests"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -202,7 +201,6 @@ func TestRun(t *testing.T) {
 		// Act
 		output, err := generate.Run(ctx, input,
 			generate.WithDestination(destdir),
-			generate.WithMetaHandlers(generate.MetaHandlers()...),
 			generate.WithForceAll(true))
 
 		// Assert
@@ -212,21 +210,21 @@ func TestRun(t *testing.T) {
 	})
 }
 
-func detectNoop(_ context.Context, _ clog.Logger, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
+func detectNoop(_ context.Context, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
 	return nil, nil
 }
 
 var _ generate.Detect = detectNoop // ensure interface is implemented
 
 func detectErr(err error) generate.Detect {
-	return func(_ context.Context, _ clog.Logger, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
+	return func(_ context.Context, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
 		return nil, err
 	}
 }
 
 var _ generate.Detect = detectErr(nil) // ensure interface is implemented
 
-func detectMulti(_ context.Context, _ clog.Logger, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
+func detectMulti(_ context.Context, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
 	metadata.Languages["lang1"] = ""
 	metadata.Languages["lang2"] = ""
 	return nil, nil

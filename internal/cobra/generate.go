@@ -33,16 +33,14 @@ var (
 			if err := validator.New().Struct(config); err != nil {
 				fatal(ctx, err)
 			}
+			generate.SetLogger(_log)
 
 			// run generation
 			options := []generate.RunOption{
 				generate.WithDelimiters("<<", ">>"),
 				generate.WithDestination(destdir),
-				generate.WithDetects(generate.Detects()...),
-				generate.WithMetaHandlers(generate.MetaHandlers()...),
 				generate.WithForce(force...),
 				generate.WithForceAll(forceAll),
-				generate.WithLogger(_log),
 				generate.WithTemplates("templates", generate.FS()),
 			}
 			config, err = generate.Run(ctx, config, options...)

@@ -1,15 +1,12 @@
 package generate_test
 
 import (
-	"bytes"
 	"context"
-	"log"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -25,7 +22,7 @@ func TestDetectGolang(t *testing.T) {
 		config := generate.Metadata{}
 
 		// Act
-		exec, err := generate.DetectGolang(ctx, clog.Noop(), "", &config)
+		exec, err := generate.DetectGolang(ctx, "", &config)
 
 		// Assert
 		require.NoError(t, err)
@@ -44,7 +41,7 @@ func TestDetectGolang(t *testing.T) {
 		config := generate.Metadata{}
 
 		// Act
-		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
+		exec, err := generate.DetectGolang(ctx, destdir, &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "read go.mod")
@@ -63,7 +60,7 @@ func TestDetectGolang(t *testing.T) {
 		config := generate.Metadata{}
 
 		// Act
-		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
+		exec, err := generate.DetectGolang(ctx, destdir, &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "read go.mod")
@@ -103,7 +100,7 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
+		exec, err := generate.DetectGolang(ctx, destdir, &config)
 
 		// Assert
 		require.NoError(t, err)
@@ -142,17 +139,13 @@ func TestDetectGolang(t *testing.T) {
 			ProjectPath: "kilianpaquier/craft",
 		}
 
-		var buf bytes.Buffer
-		log.SetOutput(&buf)
-
 		// Act
-		exec, err := generate.DetectGolang(ctx, clog.Std(), destdir, &config)
+		exec, err := generate.DetectGolang(ctx, destdir, &config)
 
 		// Assert
 		require.NoError(t, err)
 		assert.Len(t, exec, 1)
 		assert.Equal(t, expected, config)
-		assert.Contains(t, buf.String(), "hugo detected, a hugo configuration file or hugo theme file is present")
 	})
 
 	t.Run("detected_all_binaries", func(t *testing.T) {
@@ -209,7 +202,7 @@ func TestDetectGolang(t *testing.T) {
 		}
 
 		// Act
-		exec, err := generate.DetectGolang(ctx, clog.Noop(), destdir, &config)
+		exec, err := generate.DetectGolang(ctx, destdir, &config)
 
 		// Assert
 		require.NoError(t, err)

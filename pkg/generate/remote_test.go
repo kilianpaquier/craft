@@ -29,11 +29,20 @@ func TestOriginURL(t *testing.T) {
 
 		// Assert
 		require.NoError(t, err)
-		assert.Contains(t, string(originURL), "kilianpaquier/craft") // contains condition to ensure it's working on github actions too
+		assert.Contains(t, originURL, "kilianpaquier/craft") // contains condition to ensure it's working on github actions too
 	})
 }
 
 func TestParseRemote(t *testing.T) {
+	t.Run("empty_remote", func(t *testing.T) {
+		// Act
+		host, subpath := generate.ParseRemote("")
+
+		// Assert
+		assert.Empty(t, host)
+		assert.Empty(t, subpath)
+	})
+
 	t.Run("parse_ssh_remote", func(t *testing.T) {
 		// Arrange
 		rawRemote := "git@github.com:kilianpaquier/craft.git"

@@ -3,7 +3,6 @@ package generate //nolint:testpackage
 import (
 	"testing"
 
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -53,17 +52,5 @@ func TestOption(t *testing.T) {
 
 		// Assert
 		assert.True(t, o.forceAll)
-	})
-
-	t.Run("success_logger", func(t *testing.T) {
-		// Arrange
-		log := clog.Noop()
-		f := WithLogger(log)
-
-		// Act
-		o := f(runOptions{})
-
-		// Assert
-		assert.Equal(t, log, o.log)
 	})
 }
