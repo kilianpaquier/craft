@@ -7,8 +7,8 @@ import (
 // DetectGeneric represents the detection for generic projects (those without any associated implemented language).
 //
 // It returns the input metadata but modified with appropriate properties
-// alongside the slice of Exec to be executed to templatize the project.
-func DetectGeneric(_ context.Context, _ string, metadata *Metadata) ([]Exec, error) {
+// alongside the slice of ExecFunc to be executed to templatize the project.
+func DetectGeneric(_ context.Context, _ string, metadata *Metadata) ([]ExecFunc, error) {
 	if len(metadata.Languages) != 0 {
 		return nil, nil
 	}
@@ -17,7 +17,7 @@ func DetectGeneric(_ context.Context, _ string, metadata *Metadata) ([]Exec, err
 	if metadata.CI != nil {
 		metadata.CI.Options = nil
 	}
-	return []Exec{DefaultExec("lang_generic")}, nil
+	return []ExecFunc{HandleDir("lang_generic")}, nil
 }
 
-var _ Detect = DetectGeneric // ensure interface is implemented
+var _ DetectFunc = DetectGeneric // ensure interface is implemented

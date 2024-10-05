@@ -61,7 +61,7 @@ func (p *PackageJSON) Validate() error {
 
 // DetectNodejs handles nodejs detection at destdir.
 // It scans the project for a package.json and validates it.
-func DetectNodejs(_ context.Context, destdir string, metadata *Metadata) ([]Exec, error) {
+func DetectNodejs(_ context.Context, destdir string, metadata *Metadata) ([]ExecFunc, error) {
 	jsonpath := filepath.Join(destdir, craft.PackageJSON)
 	pkg, err := readPackageJSON(jsonpath)
 	if err != nil {
@@ -85,10 +85,10 @@ func DetectNodejs(_ context.Context, destdir string, metadata *Metadata) ([]Exec
 		metadata.NoMakefile = true
 	}
 
-	return []Exec{DefaultExec("lang_nodejs")}, nil
+	return []ExecFunc{HandleDir("lang_nodejs")}, nil
 }
 
-var _ Detect = DetectNodejs // ensure interface is implemented
+var _ DetectFunc = DetectNodejs // ensure interface is implemented
 
 // readPackageJSON reads the package.json provided at input jsonpath. It returns any error encountered.
 func readPackageJSON(jsonpath string) (PackageJSON, error) {

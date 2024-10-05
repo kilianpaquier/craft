@@ -21,9 +21,9 @@ const GitlabURL = "https://gitlab.com/api/v4"
 
 // DetectLicense handles the detection of license option in craft configuration.
 // It also initializes a gitlab client to retrieve the appropriate license in returned slice of GenerateFunc.
-func DetectLicense(ctx context.Context, _ string, metadata *Metadata) ([]Exec, error) {
+func DetectLicense(ctx context.Context, _ string, metadata *Metadata) ([]ExecFunc, error) {
 	if metadata.License == nil {
-		return []Exec{removeLicense}, nil
+		return []ExecFunc{removeLicense}, nil
 	}
 
 	client, err := gitlab.NewClient(os.Getenv("GITLAB_TOKEN"),
@@ -41,13 +41,13 @@ func DetectLicense(ctx context.Context, _ string, metadata *Metadata) ([]Exec, e
 	}
 
 	log.Infof("license detected, %s has license key", craft.File)
-	return []Exec{downloadLicense(client)}, nil
+	return []ExecFunc{downloadLicense(client)}, nil
 }
 
-var _ Detect = DetectLicense // ensure interface is implemented
+var _ DetectFunc = DetectLicense // ensure interface is implemented
 
 // downloadLicense returns the GenerateFunc to download the appropriate license file from gitlab API.
-func downloadLicense(client *gitlab.Client) Exec {
+func downloadLicense(client *gitlab.Client) ExecFunc {
 	return func(ctx context.Context, _ cfs.FS, _, destdir string, metadata Metadata, opts ExecOpts) error {
 		dest := filepath.Join(destdir, craft.License)
 

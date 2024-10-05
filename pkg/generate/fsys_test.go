@@ -126,7 +126,7 @@ func TestIsGenerated(t *testing.T) {
 
 func TestExec_Generic(t *testing.T) {
 	ctx := context.Background()
-	exec := generate.DefaultExec("lang_generic")
+	exec := generate.HandleDir("lang_generic")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
@@ -231,7 +231,7 @@ func TestExec_Generic(t *testing.T) {
 
 func TestExec_Golang(t *testing.T) {
 	ctx := context.Background()
-	golang := generate.DefaultExec("lang_golang")
+	golang := generate.HandleDir("lang_golang")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Languages = map[string]any{"golang": generate.Gomod{LangVersion: "1.22"}}
@@ -420,7 +420,7 @@ func TestExec_Golang(t *testing.T) {
 
 func TestExec_Hugo(t *testing.T) {
 	ctx := context.Background()
-	hugo := generate.DefaultExec("lang_hugo")
+	hugo := generate.HandleDir("lang_hugo")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Languages = map[string]any{"hugo": generate.Gomod{LangVersion: "1.22"}}
@@ -545,7 +545,7 @@ func TestExec_Hugo(t *testing.T) {
 
 func TestExec_Nodejs(t *testing.T) {
 	ctx := context.Background()
-	nodejs := generate.DefaultExec("lang_nodejs")
+	nodejs := generate.HandleDir("lang_nodejs")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
@@ -684,7 +684,7 @@ func TestExec_Nodejs(t *testing.T) {
 }
 
 // test returns the verify function for every generation verification to do.
-func test(ctx context.Context, exec generate.Exec, name string) func(t *testing.T, destdir string, metadata generate.Metadata) {
+func test(ctx context.Context, exec generate.ExecFunc, name string) func(t *testing.T, destdir string, metadata generate.Metadata) {
 	srcdir := "templates"
 	assertdir := filepath.Join("..", "..", "testdata", name)
 

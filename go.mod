@@ -2,7 +2,7 @@ module github.com/kilianpaquier/craft
 
 go 1.23
 
-toolchain go1.23.1
+toolchain go1.23.2
 
 require (
 	dario.cat/mergo v1.0.1

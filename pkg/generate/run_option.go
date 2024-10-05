@@ -6,7 +6,7 @@ import (
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 )
 
-// ExecOpts represents all options given to Exec functions.
+// ExecOpts represents all options given to ExecFunc functions.
 type ExecOpts struct {
 	FileHandlers []FileHandler
 
@@ -26,7 +26,7 @@ type RunOption func(runOptions) runOptions
 // When not given, MetaHandlers' function result is used as default slice.
 func WithMetaHandlers(handlers ...MetaHandler) RunOption {
 	return func(o runOptions) runOptions {
-		o.handlers = handlers
+		o.metaHandlers = handlers
 		return o
 	}
 }
@@ -56,9 +56,9 @@ func WithDestination(destdir string) RunOption {
 // WithDetects is an option for Run function defining the detections (languages) to identify.
 //
 // When not given, Detects is used as default slice.
-func WithDetects(funcs ...Detect) RunOption {
+func WithDetects(funcs ...DetectFunc) RunOption {
 	return func(o runOptions) runOptions {
-		o.detects = funcs
+		o.detectFuncs = funcs
 		return o
 	}
 }
@@ -102,8 +102,8 @@ func WithTemplates(dir string, fs cfs.FS) RunOption {
 
 // runOptions is the struct related to Option function(s) defining all optional properties.
 type runOptions struct {
-	detects  []Detect
-	handlers []MetaHandler
+	detectFuncs  []DetectFunc
+	metaHandlers []MetaHandler
 
 	destdir *string
 
@@ -117,9 +117,9 @@ type runOptions struct {
 	startDelim string
 }
 
-// newOpt creates a new option struct with all input Option functions
+// newRunOpt creates a new option struct with all input Option functions
 // while taking care of default values.
-func newOpt(opts ...RunOption) runOptions {
+func newRunOpt(opts ...RunOption) runOptions {
 	var ro runOptions
 	for _, opt := range opts {
 		if opt != nil {
@@ -139,11 +139,11 @@ func newOpt(opts ...RunOption) runOptions {
 		ro.fs = FS()
 		ro.tmplDir = "templates"
 	}
-	if len(ro.detects) == 0 {
-		ro.detects = Detects()
+	if len(ro.detectFuncs) == 0 {
+		ro.detectFuncs = DetectFuncs()
 	}
-	if len(ro.handlers) == 0 {
-		ro.handlers = MetaHandlers()
+	if len(ro.metaHandlers) == 0 {
+		ro.metaHandlers = MetaHandlers()
 	}
 
 	return ro

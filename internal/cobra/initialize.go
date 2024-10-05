@@ -22,7 +22,7 @@ var initializeCmd = &cobra.Command{
 			if !errors.Is(err, initialize.ErrAlreadyInitialized) {
 				fatal(ctx, err)
 			}
-			_log.Info("project already initialized")
+			log.Info("project already initialized")
 			return
 		}
 

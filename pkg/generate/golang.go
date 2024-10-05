@@ -36,7 +36,7 @@ type Gomod struct {
 // DetectGolang handles the detection of golang at destdir.
 //
 // A valid golang project must have a valid go.mod file.
-func DetectGolang(ctx context.Context, destdir string, metadata *Metadata) ([]Exec, error) {
+func DetectGolang(ctx context.Context, destdir string, metadata *Metadata) ([]ExecFunc, error) {
 	gomod := filepath.Join(destdir, craft.Gomod)
 	gocmd := filepath.Join(destdir, craft.Gocmd)
 
@@ -85,13 +85,13 @@ func DetectGolang(ctx context.Context, destdir string, metadata *Metadata) ([]Ex
 		}
 	}
 
-	return []Exec{DefaultExec("lang_golang")}, nil
+	return []ExecFunc{HandleDir("lang_golang")}, nil
 }
 
-var _ Detect = DetectGolang // ensure interface is implemented
+var _ DetectFunc = DetectGolang // ensure interface is implemented
 
 // detectHugo handles the detection of hugo at destdir.
-func detectHugo(_ context.Context, destdir string, metadata *Metadata) ([]Exec, error) {
+func detectHugo(_ context.Context, destdir string, metadata *Metadata) ([]ExecFunc, error) {
 	// detect hugo project
 	configs, _ := filepath.Glob(filepath.Join(destdir, "hugo.*"))
 
@@ -109,12 +109,12 @@ func detectHugo(_ context.Context, destdir string, metadata *Metadata) ([]Exec, 
 		}
 
 		metadata.Languages["hugo"] = nil
-		return []Exec{DefaultExec("lang_hugo")}, nil
+		return []ExecFunc{HandleDir("lang_hugo")}, nil
 	}
 	return nil, nil
 }
 
-var _ Detect = detectHugo // ensure interface is implemented
+var _ DetectFunc = detectHugo // ensure interface is implemented
 
 // readGomod reads the go.mod file at modpath input and returns its gomod representation.
 func readGomod(modpath string) (Gomod, error) {

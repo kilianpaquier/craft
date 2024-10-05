@@ -28,32 +28,32 @@ func FS() cfs.FS {
 
 var log clog.Logger = clog.Noop()
 
-// SetLogger sets the logger for all default features (Detects and Execs) offered by craft as a SDK.
+// SetLogger sets the logger for all default features (DetectFuncs and ExecFuncs) offered by craft as a SDK.
 func SetLogger(input clog.Logger) {
 	if input != nil {
 		log = input
 	}
 }
 
-// Detect is the signature function to implement to add a new language or framework detection in craft.
+// DetectFunc is the signature function to implement to add a new language or framework detection in craft.
 //
 // The input configuration can be altered in any way since it's a pointer
-// and the returned slice of Exec will be run by the main Run function of generate package.
-type Detect func(ctx context.Context, destdir string, metadata *Metadata) ([]Exec, error)
+// and the returned slice of ExecFunc will be run by the main Run function of generate package.
+type DetectFunc func(ctx context.Context, destdir string, metadata *Metadata) ([]ExecFunc, error)
 
-// Detects returns the slice of default detection functions when craft is not used as a SDK.
+// DetectFuncs returns the slice of default detection functions when craft is not used as a SDK.
 //
 // Note that DetectGeneric must always be the last one to be computed
 // since it's a fallback to be used in case no languages are detected.
-func Detects() []Detect {
-	return []Detect{DetectGolang, DetectHelm, DetectLicense, DetectNodejs, DetectGeneric}
+func DetectFuncs() []DetectFunc {
+	return []DetectFunc{DetectGolang, DetectHelm, DetectLicense, DetectNodejs, DetectGeneric}
 }
 
-// Exec is the signature function to implement to add a new language or framework generation in craft.
+// ExecFunc is the signature function to implement to add a new language or framework generation in craft.
 //
-// An Exec function is to be returned by its associated Detect function.
-// For more information about Detect function, see its documentation.
-type Exec func(ctx context.Context, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error
+// An ExecFunc function is to be returned by its associated DetectFunc function.
+// For more information about DetectFunc type, see its documentation.
+type ExecFunc func(ctx context.Context, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error
 
 // Metadata represents all properties available for enrichment during detection.
 //
@@ -87,28 +87,27 @@ type Metadata struct {
 	// but also in nodejs generation in case a "main" property is present in package.json.
 	Binaries uint8 `json:"-"`
 
-	// Clis is a map of CLI names without value (empty struct). It can be populated by Detect functions.
+	// Clis is a map of CLI names without value (empty struct). It can be populated by DetectFunc functions.
 	Clis map[string]struct{} `json:"-"`
 
-	// Crons is a map of cronjob names without value (empty struct). It can be populated by Detect functions.
+	// Crons is a map of cronjob names without value (empty struct). It can be populated by DetectFunc functions.
 	Crons map[string]struct{} `json:"crons,omitempty"`
 
-	// Jobs is a map of job names without value (empty struct). It can be populated by Detect functions.
+	// Jobs is a map of job names without value (empty struct). It can be populated by DetectFunc functions.
 	Jobs map[string]struct{} `json:"jobs,omitempty"`
 
-	// Workers is a map of workers names without value (empty struct). It can be populated by Detect functions.
+	// Workers is a map of workers names without value (empty struct). It can be populated by DetectFunc functions.
 	Workers map[string]struct{} `json:"workers,omitempty"`
 }
 
 // Run is the main function for this package generate.
 //
 // It's a flexible function to run to generate a project layout depending on various behaviors (MetaHandler and FileHandler)
-// and various detections (Detect).
+// and various detections (DetectFunc).
 //
-// As a Detect function can alter the configuration, the final configuration is returned
-// alongside any encountered error.
+// As a DetectFunc function can alter the configuration, the final configuration is returned alongside any encountered error.
 func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (craft.Configuration, error) {
-	ro := newOpt(opts...)
+	ro := newRunOpt(opts...)
 
 	// parse remote information
 	rawRemote, err := OriginURL(*ro.destdir)
@@ -140,12 +139,10 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	var errs []error //nolint:prealloc
 
 	// detect all available languages and specificities in current project
-	execs := make([]Exec, 0, len(ro.detects))
-	for _, detect := range ro.detects {
-		exec, err := detect(ctx, *ro.destdir, &props)
-		if err != nil {
-			errs = append(errs, err)
-		}
+	execs := make([]ExecFunc, 0, len(ro.detectFuncs))
+	for _, f := range ro.detectFuncs {
+		exec, err := f(ctx, *ro.destdir, &props)
+		errs = append(errs, err)
 		execs = append(execs, exec...)
 	}
 	if err := errors.Join(errs...); err != nil {
@@ -160,8 +157,8 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	eo := ExecOpts{
 		EndDelim: ro.endDelim,
 		FileHandlers: func() []FileHandler {
-			result := make([]FileHandler, 0, len(ro.handlers))
-			for _, handler := range ro.handlers {
+			result := make([]FileHandler, 0, len(ro.metaHandlers))
+			for _, handler := range ro.metaHandlers {
 				result = append(result, handler(props))
 			}
 			return result
@@ -175,10 +172,10 @@ func Run(ctx context.Context, config craft.Configuration, opts ...RunOption) (cr
 	var wg sync.WaitGroup
 	wg.Add(len(execs))
 	cerrs := make(chan error, len(execs))
-	for _, exec := range execs {
+	for _, f := range execs {
 		go func() {
 			defer wg.Done()
-			cerrs <- exec(ctx, ro.fs, ro.tmplDir, *ro.destdir, props, eo)
+			cerrs <- f(ctx, ro.fs, ro.tmplDir, *ro.destdir, props, eo)
 		}()
 	}
 	wg.Wait()

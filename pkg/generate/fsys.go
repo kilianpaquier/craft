@@ -52,8 +52,8 @@ func IsGenerated(dest string) bool {
 	return false
 }
 
-// DefaultExec is a simplified function returning a basic Exec for an input template folder name.
-func DefaultExec(name string) Exec {
+// HandleDir is a simplified function returning a basic ExecFunc for an input template folder name.
+func HandleDir(name string) ExecFunc {
 	return func(_ context.Context, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error {
 		return handleDir(fsys, srcdir, destdir, metadata, name, opts)
 	}

@@ -210,24 +210,24 @@ func TestRun(t *testing.T) {
 	})
 }
 
-func detectNoop(_ context.Context, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
+func detectNoop(_ context.Context, _ string, _ *generate.Metadata) ([]generate.ExecFunc, error) {
 	return nil, nil
 }
 
-var _ generate.Detect = detectNoop // ensure interface is implemented
+var _ generate.DetectFunc = detectNoop // ensure interface is implemented
 
-func detectErr(err error) generate.Detect {
-	return func(_ context.Context, _ string, _ *generate.Metadata) ([]generate.Exec, error) {
+func detectErr(err error) generate.DetectFunc {
+	return func(_ context.Context, _ string, _ *generate.Metadata) ([]generate.ExecFunc, error) {
 		return nil, err
 	}
 }
 
-var _ generate.Detect = detectErr(nil) // ensure interface is implemented
+var _ generate.DetectFunc = detectErr(nil) // ensure interface is implemented
 
-func detectMulti(_ context.Context, _ string, metadata *generate.Metadata) ([]generate.Exec, error) {
+func detectMulti(_ context.Context, _ string, metadata *generate.Metadata) ([]generate.ExecFunc, error) {
 	metadata.Languages["lang1"] = ""
 	metadata.Languages["lang2"] = ""
 	return nil, nil
 }
 
-var _ generate.Detect = detectMulti // ensure interface is implemented
+var _ generate.DetectFunc = detectMulti // ensure interface is implemented

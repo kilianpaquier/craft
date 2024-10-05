@@ -33,7 +33,7 @@ var (
 			if err := validator.New().Struct(config); err != nil {
 				fatal(ctx, err)
 			}
-			generate.SetLogger(_log)
+			generate.SetLogger(log)
 
 			// run generation
 			options := []generate.RunOption{

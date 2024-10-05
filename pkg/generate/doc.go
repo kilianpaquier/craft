@@ -15,12 +15,14 @@ Example:
 		ctx := context.Background()
 		config := craft.Configuration{} // may be read and saved with craft package
 
+		generate.SetLogger(clog.Std()) // set stdlib log, clog.Slog() can also be used or even a custom implement of clog.Logger interface
+
 		config, err := generate.Run(ctx, config,
 			generate.WithDelimiters("<<", ">>"),
 			generate.WithDestination(destdir),
 
-			// Detects returns the default slice of Detects which are golang, helm, license and nodejs (may evolve in the future)
-			generate.WithDetects(generate.Detects()...),
+			// Detects returns the default slice of DetectFuncs
+			generate.WithDetectFuncs(generate.Detects()...),
 
 			// MetaHandlers returns the default slice of MetaHandlers
 			// which is a slice of funcs each taking as input Metadata and returning a func handling a specific file
@@ -29,10 +31,10 @@ Example:
 
 			generate.WithForce(force...),
 			generate.WithForceAll(forceAll),
-			generate.WithLogger(logger.Std()), // may also be any other logger from the moment the interface logger.Logger is implemented (see related package)
 
 			// override the templates, by default here FS is the embedded fs of craft which default templates
-			// another possibility is OS which takes an implementation reading the current filesystem
+			// another possibility is cfs.OS which takes an implementation reading the current filesystem
+			//
 			// the first input string it the folder path where the templates are located
 			generate.WithTemplates("templates", generate.FS()),
 		)

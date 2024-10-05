@@ -24,31 +24,33 @@ type MetaHandler func(metadata Metadata) FileHandler
 func MetaHandlers() []MetaHandler {
 	// order is important since the first ok return will not execute the next ones
 	return []MetaHandler{
-		Docker,
-		Dependabot,
-		Github,
-		Gitlab,
-		Goreleaser,
-		Makefile,
-		Readme,
-		Releaserc,
-		Renovate,
-		Sonar,
+		BotsHandler,
+		DockerHandler,
+		GithubHandler,
+		GitlabHandler,
+		GoreleaserHandler,
+		MkHandler,
+		ReadmeHandler,
+		ReleasercHandler,
+		SonarHandler,
 	}
 }
 
-// Dependabot returns the handler for dependanbot maintenance bot optional files.
-func Dependabot(metadata Metadata) FileHandler {
+// BotsHandler returns the handler for dependabot and renovate maintenance bots optional generation.
+func BotsHandler(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
-		if name != "dependabot.yml" {
-			return false, false
+		switch name {
+		case "dependabot.yml":
+			return true, metadata.Platform == craft.Github && metadata.IsBot(craft.Dependabot)
+		case "renovate.json5":
+			return true, metadata.IsBot(craft.Renovate)
 		}
-		return name == "dependabot.yml", metadata.Platform == craft.Github && metadata.IsBot(craft.Dependabot)
+		return false, false
 	}
 }
 
-// Docker returns the handler for docker option generation matching.
-func Docker(metadata Metadata) FileHandler {
+// DockerHandler returns the handler for docker option generation matching.
+func DockerHandler(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
 		if slices.Contains([]string{"Dockerfile", ".dockerignore"}, name) {
 			return true, metadata.Docker != nil && metadata.Binaries > 0
@@ -60,11 +62,11 @@ func Docker(metadata Metadata) FileHandler {
 	}
 }
 
-// Github returns the handler for github option generation matching.
-func Github(metadata Metadata) FileHandler {
-	ga := githubActions(metadata)
-	gc := githubConfig(metadata)
-	gw := githubWorkflows(metadata)
+// GithubHandler returns the handler for github option generation matching.
+func GithubHandler(metadata Metadata) FileHandler {
+	ga := githubActionsHandler(metadata)
+	gc := githubConfigHandler(metadata)
+	gw := githubWorkflowsHandler(metadata)
 
 	return func(src, dest, name string) (_ bool, _ bool) {
 		if name == ".codecov.yml" {
@@ -90,8 +92,8 @@ func Github(metadata Metadata) FileHandler {
 	}
 }
 
-// githubConfig returns the handler related to files in .github folder (github platform configuration files).
-func githubConfig(metadata Metadata) FileHandler {
+// githubConfigHandler returns the handler related to files in .github folder (github platform configuration files).
+func githubConfigHandler(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
 		// files related to dir .github
 		if !strings.Contains(src, path.Join(".github", name)) {
@@ -109,8 +111,8 @@ func githubConfig(metadata Metadata) FileHandler {
 	}
 }
 
-// githubWorkflows returns the handler related to files in .github/workflows (github actions files).
-func githubWorkflows(metadata Metadata) FileHandler { //nolint:cyclop
+// githubWorkflowsHandler returns the handler related to files in .github/workflows (github actions files).
+func githubWorkflowsHandler(metadata Metadata) FileHandler { //nolint:cyclop
 	return func(src, _, name string) (_ bool, _ bool) {
 		// files related to dir .github/workflows
 		if !strings.Contains(src, path.Join(".github", "workflows", name)) {
@@ -143,8 +145,8 @@ func githubWorkflows(metadata Metadata) FileHandler { //nolint:cyclop
 
 var githubActionFileRegexp = regexp.MustCompile(`\.github/actions/[\w]+/action\.yml\.tmpl$`)
 
-// githubActions returns the handler for all files related to .github/actions directory.
-func githubActions(metadata Metadata) FileHandler {
+// githubActionsHandler returns the handler for all files related to .github/actions directory.
+func githubActionsHandler(metadata Metadata) FileHandler {
 	return func(src, _, _ string) (_ bool, _ bool) {
 		// files related to dir .github/actions
 		if !githubActionFileRegexp.MatchString(src) {
@@ -158,8 +160,8 @@ func githubActions(metadata Metadata) FileHandler {
 	}
 }
 
-// Gitlab returns the handler for gitlab option generation matching.
-func Gitlab(metadata Metadata) FileHandler {
+// GitlabHandler returns the handler for gitlab option generation matching.
+func GitlabHandler(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
 		// files related to dir .gitlab/workflows
 		if strings.Contains(src, path.Join(".gitlab", "workflows", name)) {
@@ -182,8 +184,8 @@ func Gitlab(metadata Metadata) FileHandler {
 	}
 }
 
-// Goreleaser returns the handler for goreleaser option generation matching.
-func Goreleaser(metadata Metadata) FileHandler {
+// GoreleaserHandler returns the handler for goreleaser option generation matching.
+func GoreleaserHandler(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
 		if name != ".goreleaser.yml" {
 			return false, false
@@ -192,15 +194,15 @@ func Goreleaser(metadata Metadata) FileHandler {
 	}
 }
 
-// Makefile returns the handler for makefile option generation matching.
-func Makefile(metadata Metadata) FileHandler {
+// MkHandler returns the handler for makefile option generation matching.
+func MkHandler(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
 		return name == "Makefile" || strings.HasSuffix(name, ".mk"), !metadata.NoMakefile
 	}
 }
 
-// Readme returns the handler for README.md option generation matching.
-func Readme(metadata Metadata) FileHandler {
+// ReadmeHandler returns the handler for README.md option generation matching.
+func ReadmeHandler(metadata Metadata) FileHandler {
 	return func(_, _, name string) (ok bool, apply bool) {
 		if name != "README.md" {
 			return false, false
@@ -209,8 +211,8 @@ func Readme(metadata Metadata) FileHandler {
 	}
 }
 
-// Releaserc returns the handler for releaserc option generation matching.
-func Releaserc(metadata Metadata) FileHandler {
+// ReleasercHandler returns the handler for releaserc option generation matching.
+func ReleasercHandler(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
 		if name != ".releaserc.yml" {
 			return false, false
@@ -219,18 +221,8 @@ func Releaserc(metadata Metadata) FileHandler {
 	}
 }
 
-// Renovate returns the handler for renovate maintenance bot optional files.
-func Renovate(metadata Metadata) FileHandler {
-	return func(_, _, name string) (_ bool, _ bool) {
-		if name != "renovate.json5" {
-			return false, false
-		}
-		return true, metadata.IsBot(craft.Renovate)
-	}
-}
-
-// Sonar returns the handler for sonar option generation matching.
-func Sonar(metadata Metadata) FileHandler {
+// SonarHandler returns the handler for sonar option generation matching.
+func SonarHandler(metadata Metadata) FileHandler {
 	hasSonar := metadata.CI != nil && slices.Contains(metadata.CI.Options, craft.Sonar)
 	return func(_, _, name string) (_ bool, _ bool) {
 		if name != "sonar.properties" {
