@@ -92,7 +92,7 @@ runs:
 <<- /* *********************************************************************************************** */ ->>
 
 <<- if .CI.Release >>
-<<- /* retrieve dist for go binaries and nodejs dist folder (uploaded with semantic-release to npm registry) */>>
+<<- /* retrieve dist for go binaries and nodejs dist folder (uploaded with semantic-release to npm registry) */ ->>
 <<- if or $gobuild $nodejs >>
     - uses: actions/download-artifact@v4
       if: ${{ inputs.download_dist == 'true' }}

@@ -133,6 +133,9 @@ jobs:
     name: Netlify
     needs: build
     uses: ./.github/workflows/netlify.yml
+    permissions:
+      deployments: write
+      pull-requests: write
     secrets: inherit
 <<- end >>
 
@@ -144,6 +147,9 @@ jobs:
       - version
       - build
     uses: ./.github/workflows/pages.yml
+    permissions:
+      pages: write
+      id-token: write
     with:
       mode: ${{ needs.version.outputs.mode }}
 <<- end >>

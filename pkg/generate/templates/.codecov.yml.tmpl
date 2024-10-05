@@ -13,7 +13,7 @@ coverage:
       default:
         threshold: 2.5%
 
-<<- /* coverable is meant to be true only when there's at least on language that can be affected by coverage */>>
+<<- /* coverable is meant to be true only when there's at least on language that can be affected by coverage */ ->>
 <<- $coverable := or (hasKey .Languages "golang") (hasKey .Languages "nodejs") >>
 
 <<- if $coverable >>

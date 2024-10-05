@@ -55,14 +55,14 @@ COPY --from=build \
 
 <<- if eq .Binaries 1 >>
 
-<<- /* directly use the only binary */>>
+<<- /* directly use the only binary */ ->>
 <<- range $name, $config := $binaries >>
 <<- $entrypoint = $name >>
 <<- end >>
 
 <<- end >>
 
-<<- /* copy launcher if the entrypoint is the launcher */>>
+<<- /* copy launcher if the entrypoint is the launcher */ ->>
 <<- if eq $entrypoint "launcher.sh" >>
 COPY launcher.sh launcher.sh
 <<- end >>

@@ -514,22 +514,30 @@ func TestExec_Hugo(t *testing.T) {
 	t.Run("success_statics", func(t *testing.T) {
 		cases := []struct {
 			CI     string
-			Static string
+			Static craft.Static
 		}{
-			{CI: craft.Github, Static: craft.Netlify},
-			{CI: craft.Github, Static: craft.Pages},
-			{CI: craft.Gitlab, Static: craft.Netlify},
-			{CI: craft.Gitlab, Static: craft.Pages},
+			{CI: craft.Github, Static: craft.Static{Name: craft.Netlify}},
+			{CI: craft.Github, Static: craft.Static{Name: craft.Netlify, Auto: true}},
+			{CI: craft.Github, Static: craft.Static{Name: craft.Pages}},
+			{CI: craft.Github, Static: craft.Static{Name: craft.Pages, Auto: true}},
+			{CI: craft.Gitlab, Static: craft.Static{Name: craft.Netlify}},
+			{CI: craft.Gitlab, Static: craft.Static{Name: craft.Pages}},
 		}
 
 		for _, tc := range cases {
-			t.Run(fmt.Sprintf("success_static_%s_%s", tc.Static, tc.CI), func(t *testing.T) {
+			name := func() string {
+				if tc.Static.Auto {
+					return fmt.Sprintf("success_static_%s_auto_%s", tc.Static.Name, tc.CI)
+				}
+				return fmt.Sprintf("success_static_%s_%s", tc.Static.Name, tc.CI)
+			}()
+			t.Run(name, func(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
 					Configuration: craft.Configuration{
 						CI: &craft.CI{
 							Name:   tc.CI,
-							Static: &craft.Static{Name: tc.Static},
+							Static: &tc.Static,
 						},
 						Platform: tc.CI,
 					},

@@ -3,12 +3,9 @@
 name: Netlify
 run-name: Netlify
 
-<<- $autoRelease := and .HasRelease .CI.Release.Auto >>
-
 on:
   workflow_call:
   workflow_dispatch:
-<<- if .CI.Static.Auto >>
   push:
     branches:
       - alpha
@@ -16,19 +13,12 @@ on:
       - dev
       - develop
       - development
-<<- /* avoid deploying two times when static and release are in auto mode */ ->>
-<<- if not $autoRelease >>
       - main
       - master
-<<- end >>
       - next
       - staging
-<<- /* avoid deploying two times when static and release are in auto mode */ ->>
-<<- if not $autoRelease >>
       - v[0-9]+.[0-9]+.x
       - v[0-9]+.x
-<<- end >>
-<<- end >>
 
 jobs:
 
