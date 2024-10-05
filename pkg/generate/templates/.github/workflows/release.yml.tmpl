@@ -120,6 +120,12 @@ jobs:
     needs: version
     uses: ./.github/workflows/docker.yml
     permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+<<- if $nodejs >>
+      id-token: write
+<<- end >>
       security-events: write
     with:
       version: ${{ needs.version.outputs.version }}
