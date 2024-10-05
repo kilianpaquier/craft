@@ -85,7 +85,7 @@ func DetectGolang(ctx context.Context, destdir string, metadata *Metadata) ([]Ex
 		}
 	}
 
-	return []ExecFunc{HandleDir("lang_golang")}, nil
+	return []ExecFunc{BasicExecFunc("lang_golang")}, nil
 }
 
 var _ DetectFunc = DetectGolang // ensure interface is implemented
@@ -109,7 +109,7 @@ func detectHugo(_ context.Context, destdir string, metadata *Metadata) ([]ExecFu
 		}
 
 		metadata.Languages["hugo"] = nil
-		return []ExecFunc{HandleDir("lang_hugo")}, nil
+		return []ExecFunc{BasicExecFunc("lang_hugo")}, nil
 	}
 	return nil, nil
 }

@@ -17,7 +17,7 @@ func DetectGeneric(_ context.Context, _ string, metadata *Metadata) ([]ExecFunc,
 	if metadata.CI != nil {
 		metadata.CI.Options = nil
 	}
-	return []ExecFunc{HandleDir("lang_generic")}, nil
+	return []ExecFunc{BasicExecFunc("lang_generic")}, nil
 }
 
 var _ DetectFunc = DetectGeneric // ensure interface is implemented

@@ -126,7 +126,7 @@ func TestIsGenerated(t *testing.T) {
 
 func TestExec_Generic(t *testing.T) {
 	ctx := context.Background()
-	exec := generate.HandleDir("lang_generic")
+	exec := generate.BasicExecFunc("lang_generic")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}
@@ -231,7 +231,7 @@ func TestExec_Generic(t *testing.T) {
 
 func TestExec_Golang(t *testing.T) {
 	ctx := context.Background()
-	golang := generate.HandleDir("lang_golang")
+	golang := generate.BasicExecFunc("lang_golang")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Languages = map[string]any{"golang": generate.Gomod{LangVersion: "1.22"}}
@@ -420,7 +420,7 @@ func TestExec_Golang(t *testing.T) {
 
 func TestExec_Hugo(t *testing.T) {
 	ctx := context.Background()
-	hugo := generate.HandleDir("lang_hugo")
+	hugo := generate.BasicExecFunc("lang_hugo")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Languages = map[string]any{"hugo": generate.Gomod{LangVersion: "1.22"}}
@@ -545,7 +545,7 @@ func TestExec_Hugo(t *testing.T) {
 
 func TestExec_Nodejs(t *testing.T) {
 	ctx := context.Background()
-	nodejs := generate.HandleDir("lang_nodejs")
+	nodejs := generate.BasicExecFunc("lang_nodejs")
 
 	setup := func(metadata generate.Metadata) generate.Metadata {
 		metadata.Maintainers = []*craft.Maintainer{{Name: "maintainer name"}}

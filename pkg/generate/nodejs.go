@@ -85,7 +85,7 @@ func DetectNodejs(_ context.Context, destdir string, metadata *Metadata) ([]Exec
 		metadata.NoMakefile = true
 	}
 
-	return []ExecFunc{HandleDir("lang_nodejs")}, nil
+	return []ExecFunc{BasicExecFunc("lang_nodejs")}, nil
 }
 
 var _ DetectFunc = DetectNodejs // ensure interface is implemented
