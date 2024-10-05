@@ -1,3 +1,44 @@
+## [1.0.0-beta.13](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2024-10-05)
+
+### ⚠ BREAKING CHANGES
+
+* **release:** gh-release, release-drafter and release-please aren't available anymore
+
+Signed-off-by: kilianpaquier <kilian@kilianpaquier.com>
+
+### Features
+
+* add no_readme option in .craft ([8b100be](https://github.com/kilianpaquier/craft/commit/8b100be86947b7fcfb20dca7c2f829aacc38ad8d))
+* **github:** implement release please for releasing part - [#65](https://github.com/kilianpaquier/craft/issues/65) ([87a875f](https://github.com/kilianpaquier/craft/commit/87a875f53c691720f495de5583d8e94d14e6e82c))
+* **initialize:** use huh lib for a better project initialization UI ([1aae28a](https://github.com/kilianpaquier/craft/commit/1aae28a933fddb911caedc45ad0a20f97ee74119))
+
+### Bug Fixes
+
+* **github:** inverted description for workflow dispatch in release action ([0191249](https://github.com/kilianpaquier/craft/commit/01912491e637a9e7df7a2fcab29c4891e1d32f23))
+* **go:** add test timeout to all test commands ([7aa3257](https://github.com/kilianpaquier/craft/commit/7aa3257e38216215e0c5230697c474e17eba6ffb))
+* **golangci-lint:** add some exceptions for varnamelen and remove err113 ([1b0166c](https://github.com/kilianpaquier/craft/commit/1b0166cc391f4118b28d7eaf5af9e260f6c56622))
+* **labeler:** add missing branches configuration for autolabeler ([f234291](https://github.com/kilianpaquier/craft/commit/f23429156df44be98c84ae9c9f4af63f1b7becd4))
+* **lint:** rename HandleDir into BasicExecFunc ([471cb44](https://github.com/kilianpaquier/craft/commit/471cb4442bce2ab20a095d6421264c2c6c34bb21))
+* multiple fixes on ci for docker and release and straighten golangci-lint rules with multiple new linters ([c56f1a5](https://github.com/kilianpaquier/craft/commit/c56f1a5775d12caef54579f6bf003e7eccc5af84))
+* **release please:** fix envsubst with release PR title version variable ([c701666](https://github.com/kilianpaquier/craft/commit/c7016664548f230b0868ec1f74f95c0a5d216195))
+* **release please:** invalid config and manifest file name in github CI ([fe160e4](https://github.com/kilianpaquier/craft/commit/fe160e458104a82432ea4317b5403b575c5e127d))
+* **release please:** override computed version in some cases since configuration file can't be edited dynamically ([25389d3](https://github.com/kilianpaquier/craft/commit/25389d33892b89237d1cc8523f22209fd85c3c15))
+* **release please:** use .json config and manifest file ([098ee18](https://github.com/kilianpaquier/craft/commit/098ee189c3f0e5e87e11f9c9d93473188b3edc6a))
+
+### Chores
+
+* **deps:** bump the minor-patch group with 2 updates ([a054222](https://github.com/kilianpaquier/craft/commit/a054222caf45a9ff0250cd2fa9e7536acfa31494))
+* **deps:** bump the minor-patch group with 2 updates ([e57c60e](https://github.com/kilianpaquier/craft/commit/e57c60e96e99ce369bb45add275bb529f3037a44))
+* **deps:** upgrade golang.org/x/mod ([6a202bc](https://github.com/kilianpaquier/craft/commit/6a202bcd7356584f3e7140a651605e6de9deafa8))
+* **generated:** add markdown comment style in regexp for IsGenerated ([087a4d3](https://github.com/kilianpaquier/craft/commit/087a4d3bbc38cdf6bd6c04165be9a47ef9d20e6b))
+
+### Code Refactoring
+
+* **generate:** add suffixes to Detec, Exec types and FileHandlers functions ([1202a0e](https://github.com/kilianpaquier/craft/commit/1202a0e7d55db9a253fb1e1a5298f6067aeac32b))
+* **generate:** simplify logging feature ([6fa1977](https://github.com/kilianpaquier/craft/commit/6fa197793a98dd2e666fe2a1a319ba791aa36f3a))
+* **generate:** use metadata as ptr in Detect function and add Generic in global Detects slice to simplify Run behavior ([bb7f9a3](https://github.com/kilianpaquier/craft/commit/bb7f9a3189186825b6ddfff7b9d88cc734ddaa2d))
+* **release:** keep only semantic-release as available releaser in generation ([6df9b18](https://github.com/kilianpaquier/craft/commit/6df9b18490d1c0a6bb148bc8b59d9c094276c97a))
+
 ## [1.0.0-beta.12](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2024-08-25)
 
 ### Features
