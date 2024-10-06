@@ -47,7 +47,20 @@
                     "description": "CI Options.",
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "codecov",
+                                    "codeql",
+                                    "labeler",
+                                    "sonar"
+                                ]
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     }
                 },
                 "release": {
