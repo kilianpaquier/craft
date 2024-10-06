@@ -2,7 +2,7 @@
 
 .PHONY: build
 build:
-	@hugo --gc --minify --destination public
+	@hugo --gc --minify --destination dist
 
 .PHONY: serve
 serve:
@@ -10,4 +10,4 @@ serve:
 
 .PHONY: production
 production: build
-	@python3 -m http.server --directory public
+	@python3 -m http.server --directory dist

@@ -2,7 +2,7 @@
 
 .PHONY: build
 build:
-	@hugo --gc --minify --destination public
+	@hugo --gc --minify --destination dist
 
 .PHONY: serve
 serve:
@@ -12,6 +12,6 @@ serve:
 production:
 	@netlify dev -c "make serve" \
 		--target-port 1313 --port 8888
-		--dir public
+		--dir dist
 		--framework hugo
 		--context production
