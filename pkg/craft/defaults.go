@@ -13,13 +13,8 @@ func (c *Configuration) EnsureDefaults() {
 
 	// ensure defaults values are set for maintenance bot
 	if c.Bot != nil {
-		if *c.Bot == Dependabot {
-			c.CI.Auth.Maintenance = nil // dependabot doesn't need any mode
-		}
-
 		if c.Platform == Gitlab {
 			c.Bot = helpers.ToPtr(Renovate) // dependabot is not available on craft for gitlab
-			c.CI.Auth.Maintenance = nil     // renovate on gitlab isn't configurable
 		}
 	}
 
@@ -32,8 +27,11 @@ func (c *Configuration) ensureDefaultCI() {
 	}
 	slices.Sort(c.CI.Options)
 
-	// ensure default values are set for CI
-	// ...
+	if c.Bot != nil {
+		if *c.Bot == Dependabot || c.Platform == Gitlab {
+			c.CI.Auth.Maintenance = nil // dependabot and gitlab don't need any mode
+		}
+	}
 
 	// specific gitlab CICD
 	if c.CI.Name == Gitlab {
