@@ -1,3 +1,20 @@
+## [1.0.0-beta.14](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2024-10-16)
+
+### Bug Fixes
+
+* **ci:** add required permissions for docker and netlify github jobs when run with workflow_dispatch ([0279970](https://github.com/kilianpaquier/craft/commit/0279970270f66c1abdafd8b17a0b61d7cbc854b5))
+* **ci:** invalid rights on docker jobs in github release action ([506bb7b](https://github.com/kilianpaquier/craft/commit/506bb7b73da84076f65947a685a2b117effa5641))
+* **config defaults:** avoid panic with bot default authentication when no CI is defined ([be67d51](https://github.com/kilianpaquier/craft/commit/be67d510945b6670ee35e78bbcbc7ce2f0e43f2d))
+* **github:** invalid CI configurations for netlify and pages in release workflow with shared build workflow call ([7908dd5](https://github.com/kilianpaquier/craft/commit/7908dd55e84a7f60c17e996adce6f1a00d261ba4))
+* **hugo:** change production directory to dist to be coherent with CICD generation ([7ade0f6](https://github.com/kilianpaquier/craft/commit/7ade0f69be57efc223a5bd8960a943ffc7298f8a))
+* **schema:** add available CI option from craft codebase with extensibility possibilities ([960623e](https://github.com/kilianpaquier/craft/commit/960623e2722379620f6bc26520625fb5dd94fbf7))
+
+### Chores
+
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([3410f37](https://github.com/kilianpaquier/craft/commit/3410f3795802e5aa5252d67f3db3e5f9e2131155))
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([ed34afb](https://github.com/kilianpaquier/craft/commit/ed34afbb8ca43a0e50830a42d630546485238ae2))
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([7861c3d](https://github.com/kilianpaquier/craft/commit/7861c3da2596290f416422ae49f45c9b768d28c3))
+
 ## [1.0.0-beta.13](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2024-10-05)
 
 ### ⚠ BREAKING CHANGES
