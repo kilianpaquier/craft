@@ -11,7 +11,6 @@ jobs:
 
   build:
     name: Build
-    if: ${{ github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/build.yml
 
   netlify:
@@ -23,10 +22,9 @@ jobs:
     permissions:
       deployments: write
       pull-requests: write
-    needs:
-      - version
-      - build
+    needs: build
     steps:
+      - uses: actions/checkout@v4
       - id: branch_sha
         run: |
           BRANCH_SHA=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)
