@@ -7,6 +7,8 @@ run-name: Docker
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "golang" >>
 
+<<- $nodepublish := and $nodejs (not (get .Languages "nodejs").Private) >>
+
 on:
   workflow_call:
     inputs:
@@ -44,7 +46,7 @@ jobs:
         with:
           mode: dry_run # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
-<<- if and .HasRelease $nodejs (not (get .Languages "nodejs").Private) >>
+<<- if and .HasRelease $nodepublish >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
       - id: version_merge

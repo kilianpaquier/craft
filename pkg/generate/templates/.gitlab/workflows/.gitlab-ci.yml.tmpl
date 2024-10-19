@@ -4,7 +4,7 @@
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "golang" >>
 
-<<- $gobuild := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $gocli := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
 <<- $docker := and .Docker (gt .Binaries 0) >>
 
 <<- $pages := and (.IsStatic "pages") (or $nodejs $hugo) >>
@@ -175,7 +175,7 @@ semantic-release:
     GIT_DEPTH: "0"
 <<- end >>
 
-<<- if $gobuild >>
+<<- if $gocli >>
 
 go-build:
   image: ghcr.io/goreleaser/goreleaser:latest

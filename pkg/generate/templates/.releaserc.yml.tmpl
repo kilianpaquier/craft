@@ -6,7 +6,7 @@
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "golang" >>
 
-<<- $gobuild := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $gocli := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
 
 branches:
   - (master|main)
@@ -105,7 +105,7 @@ plugins:
       assets:
         - label: CHANGELOG.md
           path: CHANGELOG.md
-<<- if $gobuild >>
+<<- if $gocli >>
         - path: checksums.txt
         - path: dist
 <<- end >>
@@ -118,7 +118,7 @@ plugins:
       assets:
         - label: CHANGELOG.md
           path: CHANGELOG.md
-<<- if $gobuild >>
+<<- if $gocli >>
         - path: checksums.txt
         - path: dist
 <<- end >>

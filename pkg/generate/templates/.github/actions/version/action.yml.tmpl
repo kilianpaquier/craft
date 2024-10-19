@@ -7,7 +7,8 @@ description: Compute the next release version or release it
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "golang" >>
 
-<<- $gobuild := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $gocli := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $nodepublish := and $nodejs (not (get .Languages "nodejs").Private) >>
 
 <<- if .CI.Release >>
 
@@ -25,7 +26,7 @@ inputs:
   token:
     description: Github access token
     required: true
-<<- if and $nodejs (not (get .Languages "nodejs").Private) >>
+<<- if $nodepublish >>
   npm_token:
     description: Access token for the npm registry
     required: true
@@ -93,7 +94,7 @@ runs:
 
 <<- if .CI.Release >>
 <<- /* retrieve dist for go binaries and nodejs dist folder (uploaded with semantic-release to npm registry) */ ->>
-<<- if or $gobuild $nodejs >>
+<<- if or $gocli $nodejs >>
     - uses: actions/download-artifact@v4
       if: ${{ inputs.download_dist == 'true' }}
       with:
@@ -126,10 +127,8 @@ runs:
         dry_run: ${{ inputs.mode != 'release' }}
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
-<<- if $nodejs >>
-<<- if not (get .Languages "nodejs").Private >>
+<<- if $nodepublish >>
         NPM_TOKEN: ${{ inputs.npm_token }}
-<<- end >>
 <<- end >>
     - id: version
       shell: bash

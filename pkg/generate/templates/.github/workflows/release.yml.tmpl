@@ -7,7 +7,8 @@ run-name: Release
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "golang" >>
 
-<<- $gobuild := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $gocli := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $nodepublish := and $nodejs (not (get .Languages "nodejs").Private) >>
 <<- $docker := and .Docker (gt .Binaries 0) >>
 
 <<- $pages := and (.IsStatic "pages") (or $nodejs $hugo) >>
@@ -88,7 +89,7 @@ jobs:
 <<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) >>
+<<- if $nodepublish >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
       - id: mode
@@ -101,13 +102,13 @@ jobs:
         env:
           INPUT_MODE: ${{ inputs.mode }}
 
-<<- if or $gobuild $nodejs >>
+<<- if or $gocli $nodepublish >>
 
   build:
     name: Build
     needs: version
     uses: ./.github/workflows/build.yml
-<<- if $gobuild >>
+<<- if $gocli >>
     with:
       version: ${{ needs.version.outputs.version }}
 <<- end >>
@@ -171,7 +172,7 @@ jobs:
 <<- end >>
     needs:
       - version
-<<- if or $gobuild $nodejs >>
+<<- if or $gocli $nodepublish >>
       - build
 <<- end >>
 <<- if $docker >>
@@ -215,6 +216,6 @@ jobs:
 <<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) >>
+<<- if $nodepublish >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
