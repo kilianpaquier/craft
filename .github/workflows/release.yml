@@ -54,6 +54,7 @@ jobs:
       checks: write
     with:
       version: ${{ needs.version.outputs.version }}
+    secrets: inherit
 
   release:
     name: Release

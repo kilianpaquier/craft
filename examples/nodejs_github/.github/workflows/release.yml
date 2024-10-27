@@ -50,6 +50,7 @@ jobs:
   node:
     name: Node
     uses: ./.github/workflows/nodejs.yml
+    secrets: inherit
 
   docker:
     name: Docker
