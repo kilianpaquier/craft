@@ -81,9 +81,10 @@ plugins:
         - package.json
       message: "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
   - - "@semantic-release/gitlab"
-    - successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
-      failComment: false
-      failTitle: false
+    - failComment: ⚠️ Expected release for branch '${branch.name}' has failed due to the following errors:\n- ${errors.map(err => err.message).join('\\n- ')}
+      failCommentCondition: <% return false; %>
+      successComment: 🎉 This issue has been resolved in version v${nextRelease.version} 🎉
+      successCommentCondition: <% return true; %>
       assets:
         - label: CHANGELOG.md
           path: CHANGELOG.md
