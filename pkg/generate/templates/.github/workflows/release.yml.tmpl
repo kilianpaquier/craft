@@ -108,6 +108,8 @@ jobs:
     name: Golang
     needs: version
     uses: ./.github/workflows/golang.yml
+    permissions:
+      checks: write
     with:
       version: ${{ needs.version.outputs.version }}
 <<- end >>
