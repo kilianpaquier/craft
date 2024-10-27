@@ -1,3 +1,22 @@
+## [1.0.0-beta.15](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2024-10-27)
+
+### Features
+
+* prepare mono repositories generation (rename some files that could be conflictual) ([c553a82](https://github.com/kilianpaquier/craft/commit/c553a82f859d02f9f4d6f479bba0125d8601ec71))
+
+### Bug Fixes
+
+* **github actions:** missing run-workflow dependencies in docker actions file ([de0a432](https://github.com/kilianpaquier/craft/commit/de0a43213269fb0c1b681c9b8b7e2a6635bca871))
+* **github actions:** use input to run build job with nodejs and golang since 'workflow_call' isn't available for github.event_name ([60d7da1](https://github.com/kilianpaquier/craft/commit/60d7da10719f2a6fee02492c85d7620e5f0edaee))
+* missing rights in github actions release golang workflow call ([0f40fe7](https://github.com/kilianpaquier/craft/commit/0f40fe77935497a4cf8f5e7e77d41d345873ee85))
+* missing secrets inheritance in github release action ([0a55afd](https://github.com/kilianpaquier/craft/commit/0a55afdb7172b9e0d2cb567ac2bcc8cff75ae235))
+* **nodejs:** ensure build job in release workflow (github) is present only when release publishes on a registry ([1dba0c8](https://github.com/kilianpaquier/craft/commit/1dba0c8b161a08c33fc2d9460d39dcd278fddbe3))
+
+### Chores
+
+* **deps:** bump github.com/charmbracelet/bubbletea ([dfea6c2](https://github.com/kilianpaquier/craft/commit/dfea6c2e4dc81bb254cb77a6ae208f2dd9717f25))
+* **readme:** remove gitlab cicd and github actions badge since pipeline can be seen on last commit ([fced30e](https://github.com/kilianpaquier/craft/commit/fced30e6512e643925424fc41e106089734afa65))
+
 ## [1.0.0-beta.14](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2024-10-16)
 
 ### Bug Fixes
