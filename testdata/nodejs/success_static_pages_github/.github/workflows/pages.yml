@@ -9,14 +9,15 @@ on:
 
 jobs:
 
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
+  node:
+    name: Node
+    uses: ./.github/workflows/nodejs.yml
 
   pages:
     name: Pages
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - node
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -97,6 +97,11 @@ func (c Configuration) HasRelease() bool {
 	return c.CI != nil && c.CI.Release != nil
 }
 
+// IsAutoRelease returns truthy in case the configuration has CI enabled, release enabled and auto actived.
+func (c Configuration) IsAutoRelease() bool {
+	return c.CI != nil && c.CI.Release != nil && c.CI.Release.Auto
+}
+
 // IsStatic returns truthy in case the input static value is the one specified in configuration as static name.
 //
 // It returns false in case there's no CI or no Static configuration.

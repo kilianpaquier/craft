@@ -9,9 +9,9 @@ on:
 
 jobs:
 
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
+  hugo:
+    name: Hugo
+    uses: ./.github/workflows/hugo.yml
 
   netlify:
     name: Netlify
@@ -22,7 +22,8 @@ jobs:
     permissions:
       deployments: write
       pull-requests: write
-    needs: build
+    needs:
+      - hugo
     steps:
       - uses: actions/checkout@v4
       - id: branch_sha

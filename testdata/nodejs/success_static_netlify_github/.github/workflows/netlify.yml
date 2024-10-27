@@ -9,9 +9,9 @@ on:
 
 jobs:
 
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
+  node:
+    name: Node
+    uses: ./.github/workflows/nodejs.yml
 
   netlify:
     name: Netlify
@@ -22,7 +22,8 @@ jobs:
     permissions:
       deployments: write
       pull-requests: write
-    needs: build
+    needs:
+      - node
     steps:
       - uses: actions/checkout@v4
       - id: branch_sha

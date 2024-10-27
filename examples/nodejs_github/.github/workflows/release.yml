@@ -47,10 +47,9 @@ jobs:
         env:
           INPUT_MODE: ${{ inputs.mode }}
 
-  build:
-    name: Build
-    needs: version
-    uses: ./.github/workflows/build.yml
+  node:
+    name: Node
+    uses: ./.github/workflows/nodejs.yml
 
   docker:
     name: Docker
@@ -75,7 +74,7 @@ jobs:
       id-token: write
     needs:
       - version
-      - build
+      - node
       - docker
     steps:
       - uses: actions/checkout@v4

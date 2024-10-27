@@ -3,7 +3,8 @@
 name: Netlify
 run-name: Netlify
 
-<<- $autoRelease := and .HasRelease .CI.Release.Auto >>
+<<- $nodejs := hasKey .Languages "nodejs" >>
+<<- $hugo := hasKey .Languages "hugo" >>
 
 on:
   workflow_call:
@@ -16,15 +17,12 @@ on:
       - dev
       - develop
       - development
-<<- /* avoid deploying two times when static and release are in auto mode */ ->>
-<<- if not $autoRelease >>
-      - main
-      - master
-<<- end >>
       - next
       - staging
 <<- /* avoid deploying two times when static and release are in auto mode */ ->>
-<<- if not $autoRelease >>
+<<- if not .IsAutoRelease >>
+      - main
+      - master
       - v[0-9]+.[0-9]+.x
       - v[0-9]+.x
 <<- end >>
@@ -32,9 +30,19 @@ on:
 
 jobs:
 
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
+<<- if $hugo >>
+
+  hugo:
+    name: Hugo
+    uses: ./.github/workflows/hugo.yml
+<<- end >>
+
+<<- if $nodejs >>
+
+  node:
+    name: Node
+    uses: ./.github/workflows/nodejs.yml
+<<- end >>
 
   netlify:
     name: Netlify
@@ -45,7 +53,13 @@ jobs:
     permissions:
       deployments: write
       pull-requests: write
-    needs: build
+    needs:
+<<- if $hugo >>
+      - hugo
+<<- end >>
+<<- if $nodejs >>
+      - node
+<<- end >>
     steps:
       - uses: actions/checkout@v4
       - id: branch_sha

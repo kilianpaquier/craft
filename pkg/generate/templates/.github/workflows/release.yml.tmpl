@@ -26,7 +26,7 @@ on:
         options:
           - dry_run
           - release
-<<- if .CI.Release.Auto >>
+<<- if .IsAutoRelease >>
   push:
     branches:
       - main
@@ -102,16 +102,21 @@ jobs:
         env:
           INPUT_MODE: ${{ inputs.mode }}
 
-<<- if or $gocli $nodepublish >>
-
-  build:
-    name: Build
-    needs: version
-    uses: ./.github/workflows/build.yml
 <<- if $gocli >>
+
+  golang:
+    name: Golang
+    needs: version
+    uses: ./.github/workflows/golang.yml
     with:
       version: ${{ needs.version.outputs.version }}
 <<- end >>
+
+<<- if $nodepublish >>
+
+  node:
+    name: Node
+    uses: ./.github/workflows/nodejs.yml
 <<- end >>
 
 <<- if $docker >>
@@ -172,8 +177,11 @@ jobs:
 <<- end >>
     needs:
       - version
-<<- if or $gocli $nodepublish >>
-      - build
+<<- if $gocli >>
+      - golang
+<<- end >>
+<<- if $nodepublish >>
+      - node
 <<- end >>
 <<- if $docker >>
       - docker

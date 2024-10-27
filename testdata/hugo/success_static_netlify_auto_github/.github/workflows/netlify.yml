@@ -13,18 +13,18 @@ on:
       - dev
       - develop
       - development
-      - main
-      - master
       - next
       - staging
+      - main
+      - master
       - v[0-9]+.[0-9]+.x
       - v[0-9]+.x
 
 jobs:
 
-  build:
-    name: Build
-    uses: ./.github/workflows/build.yml
+  hugo:
+    name: Hugo
+    uses: ./.github/workflows/hugo.yml
 
   netlify:
     name: Netlify
@@ -35,7 +35,8 @@ jobs:
     permissions:
       deployments: write
       pull-requests: write
-    needs: build
+    needs:
+      - hugo
     steps:
       - uses: actions/checkout@v4
       - id: branch_sha

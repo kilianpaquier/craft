@@ -30,7 +30,9 @@ ignore:
 <<- if hasKey .Languages "nodejs" >>
   - "dist"
   - "node_modules"
+  - "**/*.spec.js"
   - "**/*.spec.ts"
   - "**/*.test.js"
+  - "**/*.test.ts"
 <<- end >>
 <<- end >>
