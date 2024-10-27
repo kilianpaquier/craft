@@ -118,7 +118,7 @@ jobs:
     name: Node Build
     runs-on: ubuntu-latest
     if: ${{ inputs.build }}
-    needs: 
+    needs:
       - run-workflow
       - node-test
     steps:

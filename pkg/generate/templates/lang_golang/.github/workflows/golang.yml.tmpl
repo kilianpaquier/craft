@@ -135,7 +135,7 @@ jobs:
     name: Go Build
     runs-on: ubuntu-latest
     if: ${{ inputs.build }}
-    needs: 
+    needs:
       - run-workflow
       - go-test
     steps:
