@@ -40,8 +40,19 @@
                 },
                 "name": {
                     "description": "CI Name.",
-                    "type": "string",
-                    "default": "github"
+                    "default": "github",
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "github",
+                                "gitlab"
+                            ]
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
                 },
                 "options": {
                     "description": "CI Options.",
