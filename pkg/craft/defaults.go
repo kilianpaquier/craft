@@ -13,7 +13,7 @@ func (c *Configuration) EnsureDefaults() {
 
 	// ensure defaults values are set for maintenance bot
 	if c.Bot != nil {
-		if c.Platform == Gitlab {
+		if c.Platform == GitLab {
 			c.Bot = helpers.ToPtr(Renovate) // dependabot is not available on craft for gitlab
 		}
 	}
@@ -28,13 +28,13 @@ func (c *Configuration) ensureDefaultCI() {
 	slices.Sort(c.CI.Options)
 
 	if c.Bot != nil {
-		if *c.Bot == Dependabot || c.Platform == Gitlab {
+		if *c.Bot == Dependabot || c.Platform == GitLab {
 			c.CI.Auth.Maintenance = nil // dependabot and gitlab don't need any mode
 		}
 	}
 
 	// specific gitlab CICD
-	if c.CI.Name == Gitlab {
+	if c.CI.Name == GitLab {
 		c.CI.Options = slices.DeleteFunc(c.CI.Options, func(option string) bool { return option == Labeler }) // labeler isn't available on gitlab CICD
 	}
 
@@ -48,11 +48,11 @@ func (c *Configuration) ensureDefaultCI() {
 		// ...
 
 		if c.CI.Auth.Release == nil {
-			c.CI.Auth.Release = helpers.ToPtr(GithubToken) // set default release mode for github actions
+			c.CI.Auth.Release = helpers.ToPtr(GitHubToken) // set default release mode for github actions
 		}
 
 		// specific gitlab CICD
-		if c.CI.Name == Gitlab {
+		if c.CI.Name == GitLab {
 			c.CI.Auth.Release = nil // release auth isn't available with gitlab CICD
 		}
 	}()

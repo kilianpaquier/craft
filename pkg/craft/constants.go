@@ -23,10 +23,10 @@ const (
 	Bitbucket = "bitbucket"
 	// Gitea is just the gitea constant.
 	Gitea = "gitea"
-	// Github is just the github constant.
-	Github = "github"
-	// Gitlab is just the gitlab constant.
-	Gitlab = "gitlab"
+	// GitHub is just the github constant.
+	GitHub = "github"
+	// GitLab is just the gitlab constant.
+	GitLab = "gitlab"
 )
 
 const (
@@ -55,10 +55,10 @@ const (
 )
 
 const (
-	// GithubApp is the value for github release mode with a github app.
-	GithubApp string = "github-app"
-	// GithubToken is the value for github release mode with a github token.
-	GithubToken string = "github-token"
+	// GitHubApp is the value for github release mode with a github app.
+	GitHubApp string = "github-app"
+	// GitHubToken is the value for github release mode with a github token.
+	GitHubToken string = "github-token"
 	// PersonalToken is the value for github release mode with a personal token (PAT).
 	PersonalToken string = "personal-token"
 )

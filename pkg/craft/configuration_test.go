@@ -118,8 +118,8 @@ func TestEnsureDefaults(t *testing.T) {
 		config := craft.Configuration{
 			Bot: helpers.ToPtr(craft.Dependabot),
 			CI: &craft.CI{
-				Name: craft.Github,
-				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GithubToken)},
+				Name: craft.GitHub,
+				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GitHubToken)},
 			},
 		}
 
@@ -137,9 +137,9 @@ func TestEnsureDefaults(t *testing.T) {
 		config := craft.Configuration{
 			Bot: helpers.ToPtr(craft.Dependabot),
 			CI: &craft.CI{
-				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GithubToken)},
+				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GitHubToken)},
 			},
-			Platform: craft.Gitlab,
+			Platform: craft.GitLab,
 		}
 
 		// Act
@@ -155,7 +155,7 @@ func TestEnsureDefaults(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
 			CI: &craft.CI{
-				Name:    craft.Gitlab,
+				Name:    craft.GitLab,
 				Options: []string{craft.Labeler},
 			},
 		}
@@ -171,7 +171,7 @@ func TestEnsureDefaults(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
 			CI: &craft.CI{
-				Auth: craft.Auth{Release: helpers.ToPtr(craft.GithubApp)},
+				Auth: craft.Auth{Release: helpers.ToPtr(craft.GitHubApp)},
 			},
 		}
 
@@ -186,8 +186,8 @@ func TestEnsureDefaults(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
 			CI: &craft.CI{
-				Name:    craft.Gitlab,
-				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+				Name:    craft.GitLab,
+				Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubToken)},
 				Release: &craft.Release{},
 			},
 		}
@@ -203,7 +203,7 @@ func TestEnsureDefaults(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
 			CI: &craft.CI{
-				Name:    craft.Github,
+				Name:    craft.GitHub,
 				Options: []string{craft.Dependabot},
 			},
 		}
@@ -220,7 +220,7 @@ func TestEnsureDefaults(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
 			CI: &craft.CI{
-				Name:    craft.Github,
+				Name:    craft.GitHub,
 				Options: []string{craft.Renovate},
 			},
 		}
@@ -237,7 +237,7 @@ func TestEnsureDefaults(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
 			CI: &craft.CI{
-				Name:    craft.Github,
+				Name:    craft.GitHub,
 				Options: []string{craft.Netlify},
 			},
 		}
@@ -254,7 +254,7 @@ func TestEnsureDefaults(t *testing.T) {
 		// Arrange
 		config := craft.Configuration{
 			CI: &craft.CI{
-				Name:    craft.Github,
+				Name:    craft.GitHub,
 				Options: []string{craft.Pages},
 			},
 		}

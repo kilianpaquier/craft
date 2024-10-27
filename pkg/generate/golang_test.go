@@ -84,11 +84,11 @@ func TestDetectGolang(t *testing.T) {
 
 		config := generate.Metadata{Languages: map[string]any{}}
 		expected := generate.Metadata{
-			Configuration: craft.Configuration{Platform: craft.Github},
+			Configuration: craft.Configuration{Platform: craft.GitHub},
 			Languages: map[string]any{
 				"golang": generate.Gomod{
 					LangVersion: "1.22",
-					Platform:    craft.Github,
+					Platform:    craft.GitHub,
 					ProjectHost: "github.com",
 					ProjectName: "craft",
 					ProjectPath: "kilianpaquier/craft",
@@ -131,7 +131,7 @@ func TestDetectGolang(t *testing.T) {
 		expected := generate.Metadata{
 			Configuration: craft.Configuration{
 				CI:       &craft.CI{Options: []string{}},
-				Platform: craft.Github,
+				Platform: craft.GitHub,
 			},
 			Languages:   map[string]any{"hugo": nil},
 			ProjectHost: "github.com",
@@ -183,13 +183,13 @@ func TestDetectGolang(t *testing.T) {
 		expected := generate.Metadata{
 			Binaries:      4,
 			Clis:          map[string]struct{}{"cli-name": {}},
-			Configuration: craft.Configuration{Platform: craft.Github},
+			Configuration: craft.Configuration{Platform: craft.GitHub},
 			Crons:         map[string]struct{}{"cron-name": {}},
 			Jobs:          map[string]struct{}{"job-name": {}},
 			Languages: map[string]any{
 				"golang": generate.Gomod{
 					LangVersion: "1.22.2",
-					Platform:    craft.Github,
+					Platform:    craft.GitHub,
 					ProjectHost: "github.com",
 					ProjectName: "craft",
 					ProjectPath: "kilianpaquier/craft",

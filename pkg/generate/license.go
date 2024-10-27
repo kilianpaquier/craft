@@ -16,8 +16,8 @@ import (
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-// GitlabURL is the default gitlab API URL.
-const GitlabURL = "https://gitlab.com/api/v4"
+// GitLabURL is the default GitLab API URL.
+const GitLabURL = "https://gitlab.com/api/v4"
 
 // DetectLicense handles the detection of license option in craft configuration.
 // It also initializes a gitlab client to retrieve the appropriate license in returned slice of GenerateFunc.
@@ -27,7 +27,7 @@ func DetectLicense(ctx context.Context, _ string, metadata *Metadata) ([]ExecFun
 	}
 
 	client, err := gitlab.NewClient(os.Getenv("GITLAB_TOKEN"),
-		gitlab.WithBaseURL(GitlabURL),
+		gitlab.WithBaseURL(GitLabURL),
 		gitlab.WithHTTPClient(cleanhttp.DefaultClient()),
 		gitlab.WithoutRetries(),
 		gitlab.WithRequestOptions(gitlab.WithContext(ctx)))

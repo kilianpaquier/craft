@@ -70,13 +70,13 @@ func TestDownloadLicense(t *testing.T) {
 	t.Cleanup(httpmock.DeactivateAndReset)
 
 	client, err := gitlab.NewClient("",
-		gitlab.WithBaseURL(GitlabURL),
+		gitlab.WithBaseURL(GitLabURL),
 		gitlab.WithHTTPClient(httpClient),
 		gitlab.WithoutRetries(),
 	)
 	require.NoError(t, err)
 
-	url := GitlabURL + "/templates/licenses/mit"
+	url := GitLabURL + "/templates/licenses/mit"
 
 	t.Run("error_get_template", func(t *testing.T) {
 		// Arrange

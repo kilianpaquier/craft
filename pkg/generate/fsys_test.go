@@ -143,12 +143,12 @@ func TestExec_Generic(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Github,
-					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+					Name:    craft.GitHub,
+					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubToken)},
 					Release: &craft.Release{Auto: true, Backmerge: true},
 				},
 				NoMakefile: true,
-				Platform:   craft.Github,
+				Platform:   craft.GitHub,
 			},
 		})
 		destdir := t.TempDir()
@@ -158,7 +158,7 @@ func TestExec_Generic(t *testing.T) {
 	})
 
 	t.Run("success_options", func(t *testing.T) {
-		for _, tc := range []string{craft.Github, craft.Gitlab} {
+		for _, tc := range []string{craft.GitHub, craft.GitLab} {
 			t.Run("success_options_"+tc, func(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
@@ -184,12 +184,12 @@ func TestExec_Generic(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Gitlab,
-					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+					Name:    craft.GitLab,
+					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubToken)},
 					Release: &craft.Release{Auto: true, Backmerge: true},
 				},
 				NoMakefile: true,
-				Platform:   craft.Gitlab,
+				Platform:   craft.GitLab,
 			},
 		})
 		destdir := t.TempDir()
@@ -206,7 +206,7 @@ func TestExec_Generic(t *testing.T) {
 					Configuration: craft.Configuration{
 						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
-						Platform:   craft.Github,
+						Platform:   craft.GitHub,
 					},
 				})
 				destdir := t.TempDir()
@@ -249,12 +249,12 @@ func TestExec_Golang(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Github,
+					Name:    craft.GitHub,
 					Auth:    craft.Auth{Release: helpers.ToPtr(craft.PersonalToken)},
 					Release: &craft.Release{Backmerge: true},
 				},
 				NoMakefile: true,
-				Platform:   craft.Github,
+				Platform:   craft.GitHub,
 			},
 		})
 		destdir := t.TempDir()
@@ -264,7 +264,7 @@ func TestExec_Golang(t *testing.T) {
 	})
 
 	t.Run("success_options", func(t *testing.T) {
-		for _, tc := range []string{craft.Github, craft.Gitlab} {
+		for _, tc := range []string{craft.GitHub, craft.GitLab} {
 			t.Run("success_options_"+tc, func(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
@@ -290,11 +290,11 @@ func TestExec_Golang(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Gitlab,
-					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+					Name:    craft.GitLab,
+					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubToken)},
 					Release: &craft.Release{Backmerge: true},
 				},
-				Platform: craft.Gitlab,
+				Platform: craft.GitLab,
 			},
 		})
 		destdir := t.TempDir()
@@ -311,7 +311,7 @@ func TestExec_Golang(t *testing.T) {
 					Configuration: craft.Configuration{
 						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
-						Platform:   craft.Github,
+						Platform:   craft.GitHub,
 					},
 				})
 				destdir := t.TempDir()
@@ -392,7 +392,7 @@ func TestExec_Golang(t *testing.T) {
 	})
 
 	t.Run("success_binaries", func(t *testing.T) {
-		for _, tc := range []string{craft.Github, craft.Gitlab} {
+		for _, tc := range []string{craft.GitHub, craft.GitLab} {
 			t.Run("success_binary_all_"+tc, func(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
@@ -438,12 +438,12 @@ func TestExec_Hugo(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Github,
-					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubApp)},
+					Name:    craft.GitHub,
+					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubApp)},
 					Release: &craft.Release{},
 				},
 				NoMakefile: true,
-				Platform:   craft.Github,
+				Platform:   craft.GitHub,
 			},
 		})
 		destdir := t.TempDir()
@@ -453,7 +453,7 @@ func TestExec_Hugo(t *testing.T) {
 	})
 
 	t.Run("success_options", func(t *testing.T) {
-		for _, tc := range []string{craft.Github, craft.Gitlab} {
+		for _, tc := range []string{craft.GitHub, craft.GitLab} {
 			t.Run("success_options_"+tc, func(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
@@ -479,11 +479,11 @@ func TestExec_Hugo(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Gitlab,
-					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+					Name:    craft.GitLab,
+					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubToken)},
 					Release: &craft.Release{},
 				},
-				Platform: craft.Gitlab,
+				Platform: craft.GitLab,
 			},
 		})
 		destdir := t.TempDir()
@@ -500,7 +500,7 @@ func TestExec_Hugo(t *testing.T) {
 					Configuration: craft.Configuration{
 						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
-						Platform:   craft.Github,
+						Platform:   craft.GitHub,
 					},
 				})
 				destdir := t.TempDir()
@@ -516,12 +516,12 @@ func TestExec_Hugo(t *testing.T) {
 			CI     string
 			Static craft.Static
 		}{
-			{CI: craft.Github, Static: craft.Static{Name: craft.Netlify}},
-			{CI: craft.Github, Static: craft.Static{Name: craft.Netlify, Auto: true}},
-			{CI: craft.Github, Static: craft.Static{Name: craft.Pages}},
-			{CI: craft.Github, Static: craft.Static{Name: craft.Pages, Auto: true}},
-			{CI: craft.Gitlab, Static: craft.Static{Name: craft.Netlify}},
-			{CI: craft.Gitlab, Static: craft.Static{Name: craft.Pages}},
+			{CI: craft.GitHub, Static: craft.Static{Name: craft.Netlify}},
+			{CI: craft.GitHub, Static: craft.Static{Name: craft.Netlify, Auto: true}},
+			{CI: craft.GitHub, Static: craft.Static{Name: craft.Pages}},
+			{CI: craft.GitHub, Static: craft.Static{Name: craft.Pages, Auto: true}},
+			{CI: craft.GitLab, Static: craft.Static{Name: craft.Netlify}},
+			{CI: craft.GitLab, Static: craft.Static{Name: craft.Pages}},
 		}
 
 		for _, tc := range cases {
@@ -571,12 +571,12 @@ func TestExec_Nodejs(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Github,
-					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+					Name:    craft.GitHub,
+					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubToken)},
 					Release: &craft.Release{},
 				},
 				NoMakefile: true,
-				Platform:   craft.Github,
+				Platform:   craft.GitHub,
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{PackageManager: "bun@1.0.0"},
@@ -589,7 +589,7 @@ func TestExec_Nodejs(t *testing.T) {
 	})
 
 	t.Run("success_options", func(t *testing.T) {
-		for _, tc := range []string{craft.Github, craft.Gitlab} {
+		for _, tc := range []string{craft.GitHub, craft.GitLab} {
 			t.Run("success_options_"+tc, func(t *testing.T) {
 				// Arrange
 				metadata := setup(generate.Metadata{
@@ -618,11 +618,11 @@ func TestExec_Nodejs(t *testing.T) {
 		metadata := setup(generate.Metadata{
 			Configuration: craft.Configuration{
 				CI: &craft.CI{
-					Name:    craft.Gitlab,
-					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GithubToken)},
+					Name:    craft.GitLab,
+					Auth:    craft.Auth{Release: helpers.ToPtr(craft.GitHubToken)},
 					Release: &craft.Release{},
 				},
-				Platform: craft.Gitlab,
+				Platform: craft.GitLab,
 			},
 			Languages: map[string]any{
 				"nodejs": generate.PackageJSON{PackageManager: "pnpm@9.0.0"},
@@ -642,7 +642,7 @@ func TestExec_Nodejs(t *testing.T) {
 					Configuration: craft.Configuration{
 						Bot:        helpers.ToPtr(tc),
 						NoMakefile: true,
-						Platform:   craft.Github,
+						Platform:   craft.GitHub,
 					},
 					Languages: map[string]any{
 						"nodejs": generate.PackageJSON{PackageManager: "yarn@2.4.3"},
@@ -661,10 +661,10 @@ func TestExec_Nodejs(t *testing.T) {
 			CI     string
 			Static string
 		}{
-			{CI: craft.Github, Static: craft.Netlify},
-			{CI: craft.Github, Static: craft.Pages},
-			{CI: craft.Gitlab, Static: craft.Netlify},
-			{CI: craft.Gitlab, Static: craft.Pages},
+			{CI: craft.GitHub, Static: craft.Netlify},
+			{CI: craft.GitHub, Static: craft.Pages},
+			{CI: craft.GitLab, Static: craft.Netlify},
+			{CI: craft.GitLab, Static: craft.Pages},
 		}
 
 		for _, tc := range cases {

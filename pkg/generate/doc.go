@@ -26,7 +26,7 @@ Example:
 
 			// MetaHandlers returns the default slice of MetaHandlers
 			// which is a slice of funcs each taking as input Metadata and returning a func handling a specific file
-			// i.e. the default ones are related to Docker, GitHub actions, Gitlab CI/CD, goreleaser, Makefile and Sonar
+			// i.e. the default ones are related to Docker, GitHub Actions, GitLab CI/CD, goreleaser, Makefile and Sonar
 			generate.WithMetaHandlers(generate.MetaHandlers()...),
 
 			generate.WithForce(force...),

@@ -26,8 +26,8 @@ func MetaHandlers() []MetaHandler {
 	return []MetaHandler{
 		BotsHandler,
 		DockerHandler,
-		GithubHandler,
-		GitlabHandler,
+		GitHubHandler,
+		GitLabHandler,
 		GoreleaserHandler,
 		MkHandler,
 		ReadmeHandler,
@@ -41,7 +41,7 @@ func BotsHandler(metadata Metadata) FileHandler {
 	return func(_, _, name string) (_ bool, _ bool) {
 		switch name {
 		case "dependabot.yml":
-			return true, metadata.Platform == craft.Github && metadata.IsBot(craft.Dependabot)
+			return true, metadata.Platform == craft.GitHub && metadata.IsBot(craft.Dependabot)
 		case "renovate.json5":
 			return true, metadata.IsBot(craft.Renovate)
 		}
@@ -62,15 +62,15 @@ func DockerHandler(metadata Metadata) FileHandler {
 	}
 }
 
-// GithubHandler returns the handler for github option generation matching.
-func GithubHandler(metadata Metadata) FileHandler {
+// GitHubHandler returns the handler for github option generation matching.
+func GitHubHandler(metadata Metadata) FileHandler {
 	ga := githubActionsHandler(metadata)
 	gc := githubConfigHandler(metadata)
 	gw := githubWorkflowsHandler(metadata)
 
 	return func(src, dest, name string) (_ bool, _ bool) {
 		if name == ".codecov.yml" {
-			return true, len(metadata.Languages) > 0 && metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.CodeCov)
+			return true, len(metadata.Languages) > 0 && metadata.IsCI(craft.GitHub) && slices.Contains(metadata.CI.Options, craft.CodeCov)
 		}
 
 		// files related to dir .github/workflows
@@ -103,11 +103,11 @@ func githubConfigHandler(metadata Metadata) FileHandler {
 		switch name {
 		case "release.yml":
 			// useful to sometimes make manual releases (since it's a github configuration and not something specific to an action)
-			return true, metadata.Platform == craft.Github
+			return true, metadata.Platform == craft.GitHub
 		case "labeler.yml":
-			return true, metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.Labeler)
+			return true, metadata.IsCI(craft.GitHub) && slices.Contains(metadata.CI.Options, craft.Labeler)
 		}
-		return true, metadata.Platform == craft.Github
+		return true, metadata.Platform == craft.GitHub
 	}
 }
 
@@ -122,24 +122,24 @@ func githubWorkflowsHandler(metadata Metadata) FileHandler { //nolint:cyclop
 		switch name {
 		case "build.yml":
 			if _, ok := metadata.Languages["golang"]; ok {
-				return true, !metadata.NoGoreleaser && len(metadata.Clis) > 0 && metadata.IsCI(craft.Github)
+				return true, !metadata.NoGoreleaser && len(metadata.Clis) > 0 && metadata.IsCI(craft.GitHub)
 			}
 		case "codeql.yml":
-			return true, len(metadata.Languages) > 0 && metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.CodeQL)
+			return true, len(metadata.Languages) > 0 && metadata.IsCI(craft.GitHub) && slices.Contains(metadata.CI.Options, craft.CodeQL)
 		case "docker.yml":
-			return true, metadata.Docker != nil && metadata.Binaries > 0 && metadata.IsCI(craft.Github)
+			return true, metadata.Docker != nil && metadata.Binaries > 0 && metadata.IsCI(craft.GitHub)
 		case "netlify.yml":
-			return true, metadata.IsCI(craft.Github) && metadata.IsStatic(craft.Netlify)
+			return true, metadata.IsCI(craft.GitHub) && metadata.IsStatic(craft.Netlify)
 		case "pages.yml":
-			return true, metadata.IsCI(craft.Github) && metadata.IsStatic(craft.Pages)
+			return true, metadata.IsCI(craft.GitHub) && metadata.IsStatic(craft.Pages)
 		case "release.yml":
-			return true, metadata.IsCI(craft.Github) && metadata.CI.Release != nil //nolint:revive
+			return true, metadata.IsCI(craft.GitHub) && metadata.CI.Release != nil //nolint:revive
 		case "renovate.yml":
 			return true, metadata.IsBot(craft.Renovate) && metadata.CI != nil && metadata.CI.Auth.Maintenance != nil && *metadata.CI.Auth.Maintenance != craft.Mendio //nolint:revive
 		case "labeler.yml":
-			return true, metadata.IsCI(craft.Github) && slices.Contains(metadata.CI.Options, craft.Labeler)
+			return true, metadata.IsCI(craft.GitHub) && slices.Contains(metadata.CI.Options, craft.Labeler)
 		}
-		return true, metadata.IsCI(craft.Github)
+		return true, metadata.IsCI(craft.GitHub)
 	}
 }
 
@@ -154,31 +154,31 @@ func githubActionsHandler(metadata Metadata) FileHandler {
 		}
 
 		if strings.Contains(src, path.Join(".github", "actions", "version")) {
-			return true, metadata.IsCI(craft.Github) && (metadata.Docker != nil || metadata.HasRelease())
+			return true, metadata.IsCI(craft.GitHub) && (metadata.Docker != nil || metadata.HasRelease())
 		}
-		return true, metadata.IsCI(craft.Github)
+		return true, metadata.IsCI(craft.GitHub)
 	}
 }
 
-// GitlabHandler returns the handler for gitlab option generation matching.
-func GitlabHandler(metadata Metadata) FileHandler {
+// GitLabHandler returns the handler for gitlab option generation matching.
+func GitLabHandler(metadata Metadata) FileHandler {
 	return func(src, _, name string) (_ bool, _ bool) {
 		// files related to dir .gitlab/workflows
 		if strings.Contains(src, path.Join(".gitlab", "workflows", name)) {
-			return true, metadata.IsCI(craft.Gitlab)
+			return true, metadata.IsCI(craft.GitLab)
 		}
 
 		// files related to dir .gitlab
 		if strings.Contains(src, path.Join(".gitlab", name)) {
 			if name == "semrel-plugins.txt" {
-				return true, metadata.IsCI(craft.Gitlab)
+				return true, metadata.IsCI(craft.GitLab)
 			}
-			return true, metadata.Platform == craft.Gitlab // keep early return in case some specify behavior on files occur
+			return true, metadata.Platform == craft.GitLab // keep early return in case some specify behavior on files occur
 		}
 
 		// root files related to gitlab
 		if name == ".gitlab-ci.yml" {
-			return true, metadata.IsCI(craft.Gitlab)
+			return true, metadata.IsCI(craft.GitLab)
 		}
 		return false, false
 	}

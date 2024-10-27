@@ -126,7 +126,7 @@ func TestParsePlatform(t *testing.T) {
 
 		// Assert
 		assert.True(t, ok)
-		assert.Equal(t, craft.Github, platform)
+		assert.Equal(t, craft.GitHub, platform)
 	})
 
 	t.Run("found_gitlab", func(t *testing.T) {
@@ -138,7 +138,7 @@ func TestParsePlatform(t *testing.T) {
 
 		// Assert
 		assert.True(t, ok)
-		assert.Equal(t, craft.Gitlab, platform)
+		assert.Equal(t, craft.GitLab, platform)
 	})
 
 	t.Run("found_gitlab_onpremise", func(t *testing.T) {
@@ -150,6 +150,6 @@ func TestParsePlatform(t *testing.T) {
 
 		// Assert
 		assert.True(t, ok)
-		assert.Equal(t, craft.Gitlab, platform)
+		assert.Equal(t, craft.GitLab, platform)
 	})
 }

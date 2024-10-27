@@ -51,8 +51,8 @@ func ParsePlatform(host string) (string, bool) {
 	matchers := map[string][]string{
 		craft.Bitbucket: {"bb", craft.Bitbucket, "stash"},
 		craft.Gitea:     {craft.Gitea},
-		craft.Github:    {craft.Github, "gh"},
-		craft.Gitlab:    {craft.Gitlab, "gl"},
+		craft.GitHub:    {craft.GitHub, "gh"},
+		craft.GitLab:    {craft.GitLab, "gl"},
 	}
 
 	for platform, candidates := range matchers {

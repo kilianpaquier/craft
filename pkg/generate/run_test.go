@@ -100,7 +100,7 @@ func TestRun(t *testing.T) {
 		input := craft.Configuration{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 
 		// Act
@@ -129,7 +129,7 @@ func TestRun(t *testing.T) {
 		}
 		expected := craft.Configuration{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 
 		// Act
@@ -162,7 +162,7 @@ func TestRun(t *testing.T) {
 		expected := craft.Configuration{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoMakefile:  true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 
 		// Act
@@ -189,13 +189,13 @@ func TestRun(t *testing.T) {
 		input := craft.Configuration{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 		expected := craft.Configuration{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 			NoMakefile:  true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 
 		// Act
