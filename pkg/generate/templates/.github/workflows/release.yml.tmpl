@@ -111,6 +111,7 @@ jobs:
     permissions:
       checks: write
     with:
+      build: true
       version: ${{ needs.version.outputs.version }}
     secrets: inherit
 <<- end >>
@@ -120,6 +121,8 @@ jobs:
   node:
     name: Node
     uses: ./.github/workflows/nodejs.yml
+    with:
+      build: true
     secrets: inherit
 <<- end >>
 

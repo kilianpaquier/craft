@@ -53,6 +53,7 @@ jobs:
     permissions:
       checks: write
     with:
+      build: true
       version: ${{ needs.version.outputs.version }}
     secrets: inherit
 

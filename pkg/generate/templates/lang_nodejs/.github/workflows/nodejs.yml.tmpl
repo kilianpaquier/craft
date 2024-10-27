@@ -30,6 +30,11 @@ on:
       - v[0-9]+.x
 <<- end >>
   workflow_call:
+    inputs:
+      build:
+        description: Whether to run build job or not
+        required: false
+        type: boolean
   workflow_dispatch:
 
 jobs:
@@ -161,7 +166,7 @@ jobs:
   node-build:
     name: Node Build
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_call' }}
+    if: ${{ inputs.build }}
     needs: 
       - run-workflow
       - node-test

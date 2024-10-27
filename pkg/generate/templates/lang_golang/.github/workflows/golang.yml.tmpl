@@ -29,6 +29,10 @@ on:
 <<- end >>
   workflow_call:
     inputs:
+      build:
+        description: Whether to run build job or not
+        required: false
+        type: boolean
       version:
         description: Build version to use in build metadata
         required: true
@@ -130,7 +134,7 @@ jobs:
   go-build:
     name: Go Build
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_call' }}
+    if: ${{ inputs.build }}
     needs: 
       - run-workflow
       - go-test
