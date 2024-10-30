@@ -1,3 +1,16 @@
+## [1.0.0-beta.16](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2024-10-30)
+
+### 🐛 Bug Fixes
+
+* **releaserc:** invalid fail and success comments conditions ([8b2e4d0](https://github.com/kilianpaquier/craft/commit/8b2e4d01ed8f4e86146e7c74db9edcbf6c14ed13))
+* **releaserc:** update conditions for fail and success comments for gitlab ([700633a](https://github.com/kilianpaquier/craft/commit/700633af1176052edad895102789c8363edc338f))
+* **renovate:** ensure patch and minor upgrades are in the same pull requests ([533b6d4](https://github.com/kilianpaquier/craft/commit/533b6d452322e34257af9e453a3333bc2acd9558))
+
+### ⚙️ Chores
+
+* **releaserc:** add some icon to releases section and update semantic-release/github or /gitlab options with new versions ([5c6c026](https://github.com/kilianpaquier/craft/commit/5c6c026d963533566a93541dc2e89017a26bbaa1))
+* **schema:** add default values for CI name with availability to enter anything without a schema error ([33a4045](https://github.com/kilianpaquier/craft/commit/33a4045b0f232597b10bca3d9c6081c8168ac845))
+
 ## [1.0.0-beta.15](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2024-10-27)
 
 ### Features
