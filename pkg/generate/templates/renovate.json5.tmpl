@@ -10,6 +10,11 @@
     "branchPrefix": "renovate/",
     "labels": [ "dependencies" ],
 
+    "branchConcurrentLimit": 0,
+    "prConcurrentLimit": 0,
+    "prCreation": "immediate",
+    "prHourlyLimit": 0,
+
     "ignorePaths": [
       "**/bower_components/**",
       "**/examples/**",
@@ -21,7 +26,7 @@
     ],
 
     "dependencyDashboard": false,
-    "osvVulnerabilityAlerts": true, // https://github.com/renovatebot/renovate/discussions/20542
+    "osvVulnerabilityAlerts": false, // https://github.com/renovatebot/renovate/discussions/20542
     "forkProcessing": "disabled",
 
     "minimumReleaseAge": "7 days",
@@ -71,6 +76,7 @@
         "gomodUpdateImportPaths",
         "helmUpdateSubChartArchives"
     ],
+    "rangeStrategy": "bump",
     "updateLockFiles": true,
     "useBaseBranchConfig": "none",
 
@@ -82,7 +88,18 @@
 
     "packageRules": [
 <<- range $categories >>
-        { "matchCategories": [ "<< . >>" ] },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "<< . >> dependencies (non major)",
+          "matchCategories": [ "<< . >>" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "<< . >> dependencies (major)",
+          "matchCategories": [ "<< . >>" ],
+          "matchUpdateTypes": [ "major" ]
+        },
 <<- end >>
     ],
 }

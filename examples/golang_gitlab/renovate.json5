@@ -8,6 +8,11 @@
     "branchPrefix": "renovate/",
     "labels": [ "dependencies" ],
 
+    "branchConcurrentLimit": 0,
+    "prConcurrentLimit": 0,
+    "prCreation": "immediate",
+    "prHourlyLimit": 0,
+
     "ignorePaths": [
       "**/bower_components/**",
       "**/examples/**",
@@ -19,7 +24,7 @@
     ],
 
     "dependencyDashboard": false,
-    "osvVulnerabilityAlerts": true, // https://github.com/renovatebot/renovate/discussions/20542
+    "osvVulnerabilityAlerts": false, // https://github.com/renovatebot/renovate/discussions/20542
     "forkProcessing": "disabled",
 
     "minimumReleaseAge": "7 days",
@@ -67,6 +72,7 @@
         "gomodUpdateImportPaths",
         "helmUpdateSubChartArchives"
     ],
+    "rangeStrategy": "bump",
     "updateLockFiles": true,
     "useBaseBranchConfig": "none",
 
@@ -77,15 +83,125 @@
     "pin": { "automerge": true },
 
     "packageRules": [
-        { "matchCategories": [ "cd" ] },
-        { "matchCategories": [ "ci" ] },
-        { "matchCategories": [ "docker" ] },
-        { "matchCategories": [ "golang" ] },
-        { "matchCategories": [ "helm" ] },
-        { "matchCategories": [ "java" ] },
-        { "matchCategories": [ "js" ] },
-        { "matchCategories": [ "kubernetes" ] },
-        { "matchCategories": [ "python" ] },
-        { "matchCategories": [ "rust" ] },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "cd dependencies (non major)",
+          "matchCategories": [ "cd" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "cd dependencies (major)",
+          "matchCategories": [ "cd" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "ci dependencies (non major)",
+          "matchCategories": [ "ci" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "ci dependencies (major)",
+          "matchCategories": [ "ci" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "docker dependencies (non major)",
+          "matchCategories": [ "docker" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "docker dependencies (major)",
+          "matchCategories": [ "docker" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "golang dependencies (non major)",
+          "matchCategories": [ "golang" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "golang dependencies (major)",
+          "matchCategories": [ "golang" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "helm dependencies (non major)",
+          "matchCategories": [ "helm" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "helm dependencies (major)",
+          "matchCategories": [ "helm" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "java dependencies (non major)",
+          "matchCategories": [ "java" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "java dependencies (major)",
+          "matchCategories": [ "java" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "js dependencies (non major)",
+          "matchCategories": [ "js" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "js dependencies (major)",
+          "matchCategories": [ "js" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "kubernetes dependencies (non major)",
+          "matchCategories": [ "kubernetes" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "kubernetes dependencies (major)",
+          "matchCategories": [ "kubernetes" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "python dependencies (non major)",
+          "matchCategories": [ "python" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "python dependencies (major)",
+          "matchCategories": [ "python" ],
+          "matchUpdateTypes": [ "major" ]
+        },
+        {
+          "addLabels": [ "non-major" ],
+          "groupName": "rust dependencies (non major)",
+          "matchCategories": [ "rust" ],
+          "matchUpdateTypes": [ "!major" ]
+        },
+        {
+          "addLabels": [ "major" ],
+          "groupName": "rust dependencies (major)",
+          "matchCategories": [ "rust" ],
+          "matchUpdateTypes": [ "major" ]
+        },
     ],
 }
