@@ -7,7 +7,8 @@ run-name: Release
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "golang" >>
 
-<<- $gobuild := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $gocli := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $nodepublish := and $nodejs (not (get .Languages "nodejs").Private) >>
 <<- $docker := and .Docker (gt .Binaries 0) >>
 
 <<- $pages := and (.IsStatic "pages") (or $nodejs $hugo) >>
@@ -19,28 +20,19 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-<<- if eq .CI.Release.Action "semantic-release" >>
-        description: Whether to only make a dry_run, create release / pull request as draft or to make the release completely
-<<- else >>
         description: Whether to only make a dry_run or to make the release completely
-<<- end >>
         type: choice
         default: dry_run
         options:
           - dry_run
-<<- if ne .CI.Release.Action "semantic-release" >>
-          - draft
-<<- end >>
           - release
-<<- if .CI.Release.Auto >>
+<<- if .IsAutoRelease >>
   push:
     branches:
       - main
       - master
-<<- if ne .CI.Release.Action "gh-release" >>
       - v[0-9]+.x
       - v[0-9]+.[0-9]+.x
-<<- end >>
 <<- end >>
 
 jobs:
@@ -48,22 +40,21 @@ jobs:
   version:
     name: Version
     runs-on: ubuntu-latest
-    if: ${{ github.ref_protected }} # skip all jobs since they depend on version job
+    if: ${{ github.ref_protected }}
     environment: release
 <<- if or (eq $auth "github-token") $nodejs >>
     permissions:
 <<- if eq $auth "github-token" >>
       contents: write
-<<- if eq .CI.Release.Action "semantic-release" >>
       issues: write
       pull-requests: write
-<<- end >>
 <<- end >>
 <<- if $nodejs >>
       id-token: write
 <<- end >>
 <<- end >>
     outputs:
+      mode: ${{ steps.mode.outputs.mode }}
       release: ${{ steps.version.outputs.release }}
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -98,20 +89,41 @@ jobs:
 <<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (eq .CI.Release.Action "semantic-release") >>
+<<- if $nodepublish >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
+      - id: mode
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            echo "mode=release" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "mode=${INPUT_MODE}" >> $GITHUB_OUTPUT
+        env:
+          INPUT_MODE: ${{ inputs.mode }}
 
-<<- if or $gobuild $nodejs >>
+<<- if $gocli >>
 
-  build:
-    name: Build
+  golang:
+    name: Golang
     needs: version
-    uses: ./.github/workflows/build.yml
-<<- if $gobuild >>
+    uses: ./.github/workflows/golang.yml
+    permissions:
+      checks: write
     with:
+      build: true
       version: ${{ needs.version.outputs.version }}
+    secrets: inherit
 <<- end >>
+
+<<- if $nodepublish >>
+
+  node:
+    name: Node
+    uses: ./.github/workflows/nodejs.yml
+    with:
+      build: true
+    secrets: inherit
 <<- end >>
 
 <<- if $docker >>
@@ -120,9 +132,17 @@ jobs:
     name: Docker
     needs: version
     uses: ./.github/workflows/docker.yml
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+<<- if $nodejs >>
+      id-token: write
+<<- end >>
+      security-events: write
     with:
-      version: ${{ steps.version.outputs.version }}
-      release: ${{ steps.version.outputs.release }}
+      version: ${{ needs.version.outputs.version }}
+      release: ${{ needs.version.outputs.release == 'true' }}
     secrets: inherit
 <<- end >>
 
@@ -130,8 +150,10 @@ jobs:
 
   netlify:
     name: Netlify
-    needs: build
     uses: ./.github/workflows/netlify.yml
+    permissions:
+      deployments: write
+      pull-requests: write
     secrets: inherit
 <<- end >>
 
@@ -139,10 +161,10 @@ jobs:
 
   pages:
     name: Pages
-    needs: build
     uses: ./.github/workflows/pages.yml
-    with:
-      mode: ${{ inputs.mode }}
+    permissions:
+      pages: write
+      id-token: write
 <<- end >>
 
   release:
@@ -153,10 +175,8 @@ jobs:
     permissions:
 <<- if eq $auth "github-token" >>
       contents: write
-<<- if eq .CI.Release.Action "semantic-release" >>
       issues: write
       pull-requests: write
-<<- end >>
 <<- end >>
 <<- if $nodejs >>
       id-token: write
@@ -164,8 +184,11 @@ jobs:
 <<- end >>
     needs:
       - version
-<<- if or $gobuild $nodejs >>
-      - build
+<<- if $gocli >>
+      - golang
+<<- end >>
+<<- if $nodepublish >>
+      - node
 <<- end >>
 <<- if $docker >>
       - docker
@@ -200,7 +223,7 @@ jobs:
       - uses: ./.github/actions/version
         with:
           download_dist: true
-          mode: ${{ inputs.mode }}
+          mode: ${{ needs.version.outputs.mode }}
 <<- if eq $auth "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
 <<- else if eq $auth "personal-token" >>
@@ -208,14 +231,6 @@ jobs:
 <<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (eq .CI.Release.Action "semantic-release") >>
+<<- if $nodepublish >>
           npm_token: ${{ secrets.NPM_TOKEN }}
-<<- end >>
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (ne .CI.Release.Action "semantic-release") >>
-      # https://github.com/marketplace/actions/npm-publish
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          dry-run: ${{ inputs.mode != 'release' }}
-          tag: ${{ needs.version.outputs.version }}
-          token: ${{ secrets.NPM_TOKEN }}
 <<- end >>

@@ -2,18 +2,19 @@ package craft
 
 // Configuration represents all options configurable in .craft file at root project.
 //
-// yaml tags are for .craft file and json tags for templating.
+// Note that yaml tags are for .craft file property keys and json tags for templating data.
 type Configuration struct {
-	Bot          *string      `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
-	CI           *CI          `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
-	Description  *string      `json:"description,omitempty" yaml:"description,omitempty"`
-	Docker       *Docker      `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
-	License      *string      `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
-	Maintainers  []Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
-	NoChart      bool         `json:"-"                     yaml:"no_chart,omitempty"`
-	NoGoreleaser bool         `json:"-"                     yaml:"no_goreleaser,omitempty"`
-	NoMakefile   bool         `json:"-"                     yaml:"no_makefile,omitempty"`
-	Platform     string       `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
+	Bot          *string       `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
+	CI           *CI           `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
+	Description  *string       `json:"description,omitempty" yaml:"description,omitempty"`
+	Docker       *Docker       `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
+	License      *string       `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
+	Maintainers  []*Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
+	NoChart      bool          `json:"-"                     yaml:"no_chart,omitempty"`
+	NoGoreleaser bool          `json:"-"                     yaml:"no_goreleaser,omitempty"`
+	NoMakefile   bool          `json:"-"                     yaml:"no_makefile,omitempty"`
+	NoReadme     bool          `json:"-"                     yaml:"no_readme,omitempty"`
+	Platform     string        `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
 }
 
 // Auth contains all authentication methods related to CI configuration.
@@ -27,7 +28,7 @@ type CI struct {
 	Auth    Auth     `json:"-" yaml:"auth,omitempty"                     validate:"omitempty,required"`
 	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required"`
 	Options []string `json:"-" yaml:"options,omitempty" builder:"append"`
-	Release *Release `json:"-" yaml:"release"                            validate:"omitempty,required"`
+	Release *Release `json:"-" yaml:"release,omitempty"                  validate:"omitempty,required"`
 	Static  *Static  `json:"-" yaml:"static,omitempty"                   validate:"omitempty,required"`
 }
 
@@ -48,9 +49,8 @@ type Maintainer struct {
 
 // Release is the struct for craft continuous integration release specifics configuration.
 type Release struct {
-	Action    string `json:"-" yaml:"action"              validate:"required,oneof=gh-release release-drafter release-please semantic-release"`
-	Auto      bool   `json:"-" yaml:"auto,omitempty"`
-	Backmerge bool   `json:"-" yaml:"backmerge,omitempty"`
+	Auto      bool `json:"-" yaml:"auto,omitempty"`
+	Backmerge bool `json:"-" yaml:"backmerge,omitempty"`
 }
 
 // Static represents the configuration for static deployment.
@@ -97,11 +97,9 @@ func (c Configuration) HasRelease() bool {
 	return c.CI != nil && c.CI.Release != nil
 }
 
-// IsReleaseAction returns truthy in case the input action is the one specified by the configuration release action.
-//
-// It returns false if there's no CI or Release specified in configuration.
-func (c Configuration) IsReleaseAction(action string) bool {
-	return c.CI != nil && c.CI.Release != nil && c.CI.Release.Action == action
+// IsAutoRelease returns truthy in case the configuration has CI enabled, release enabled and auto actived.
+func (c Configuration) IsAutoRelease() bool {
+	return c.CI != nil && c.CI.Release != nil && c.CI.Release.Auto
 }
 
 // IsStatic returns truthy in case the input static value is the one specified in configuration as static name.

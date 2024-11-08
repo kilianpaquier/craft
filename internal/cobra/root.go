@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	_log = logrus.StandardLogger()
+	log = logrus.StandardLogger()
 
 	logLevel  = "info"
 	logFormat = "text"
@@ -40,14 +40,14 @@ func Execute() {
 func preRun() error {
 	switch logFormat {
 	case "text":
-		_log.SetFormatter(&logrus.TextFormatter{
+		log.SetFormatter(&logrus.TextFormatter{
 			DisableLevelTruncation: true,
 			ForceColors:            true,
 			FullTimestamp:          true,
 			TimestampFormat:        time.RFC3339,
 		})
 	case "json":
-		_log.SetFormatter(&logrus.JSONFormatter{
+		log.SetFormatter(&logrus.JSONFormatter{
 			TimestampFormat: time.RFC3339,
 		})
 	default:
@@ -58,10 +58,10 @@ func preRun() error {
 	if err != nil {
 		level = logrus.InfoLevel
 	}
-	_log.SetLevel(level)
+	log.SetLevel(level)
 	return nil
 }
 
 func fatal(ctx context.Context, err error) {
-	_log.WithContext(ctx).Fatal(err)
+	log.WithContext(ctx).Fatal(err)
 }

@@ -2,8 +2,7 @@
 ---
 ci:
   name: gitlab
-  release:
-    action: semantic-release
+  release: {}
 maintainers:
   - name: kilianpaquier
 no_chart: true

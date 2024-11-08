@@ -1,9 +1,8 @@
-package generate // nolint:testpackage
+package generate //nolint:testpackage
 
 import (
 	"testing"
 
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -14,7 +13,7 @@ func TestOption(t *testing.T) {
 		f := WithDelimiters("{{", "}}")
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		assert.Equal(t, "{{", o.startDelim)
@@ -26,7 +25,7 @@ func TestOption(t *testing.T) {
 		f := WithDestination("dest")
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		require.NotNil(t, o.destdir)
@@ -38,7 +37,7 @@ func TestOption(t *testing.T) {
 		f := WithForce("name")
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		assert.Contains(t, o.force, "name")
@@ -49,21 +48,9 @@ func TestOption(t *testing.T) {
 		f := WithForceAll(true)
 
 		// Act
-		o := f(option{})
+		o := f(runOptions{})
 
 		// Assert
 		assert.True(t, o.forceAll)
-	})
-
-	t.Run("success_logger", func(t *testing.T) {
-		// Arrange
-		log := clog.Noop()
-		f := WithLogger(log)
-
-		// Act
-		o := f(option{})
-
-		// Assert
-		assert.Equal(t, log, o.log)
 	})
 }

@@ -13,13 +13,8 @@ func (c *Configuration) EnsureDefaults() {
 
 	// ensure defaults values are set for maintenance bot
 	if c.Bot != nil {
-		if *c.Bot == Dependabot {
-			c.CI.Auth.Maintenance = nil // dependabot doesn't need any mode
-		}
-
-		if c.Platform == Gitlab {
+		if c.Platform == GitLab {
 			c.Bot = helpers.ToPtr(Renovate) // dependabot is not available on craft for gitlab
-			c.CI.Auth.Maintenance = nil     // renovate on gitlab isn't configurable
 		}
 	}
 
@@ -32,11 +27,14 @@ func (c *Configuration) ensureDefaultCI() {
 	}
 	slices.Sort(c.CI.Options)
 
-	// ensure default values are set for CI
-	// ...
+	if c.Bot != nil {
+		if *c.Bot == Dependabot || c.Platform == GitLab {
+			c.CI.Auth.Maintenance = nil // dependabot and gitlab don't need any mode
+		}
+	}
 
 	// specific gitlab CICD
-	if c.CI.Name == Gitlab {
+	if c.CI.Name == GitLab {
 		c.CI.Options = slices.DeleteFunc(c.CI.Options, func(option string) bool { return option == Labeler }) // labeler isn't available on gitlab CICD
 	}
 
@@ -49,28 +47,13 @@ func (c *Configuration) ensureDefaultCI() {
 		// ensure default values are set for release
 		// ...
 
-		if c.CI.Release.Action == "" {
-			c.CI.Release.Action = GhRelease // set default release action in case it's not provided
-		}
 		if c.CI.Auth.Release == nil {
-			c.CI.Auth.Release = helpers.ToPtr(GithubToken) // set default release mode for github actions
+			c.CI.Auth.Release = helpers.ToPtr(GitHubToken) // set default release mode for github actions
 		}
 
 		// specific gitlab CICD
-		if c.CI.Name == Gitlab {
-			c.CI.Auth.Release = nil               // release auth isn't available with gitlab CICD
-			c.CI.Release.Action = SemanticRelease // only semantic release is available on gitlab CICD
-		}
-
-		if c.CI.Release.Action != SemanticRelease {
-			c.CI.Release.Backmerge = false // backmerge is only available with semantic-release
-		}
-
-		// specific github actions (to put inside its own condition when a third CI name is implemented)
-		if c.CI.Release.Action == ReleaseDrafter || c.CI.Release.Action == GhRelease {
-			if !slices.Contains(c.CI.Options, Labeler) {
-				c.CI.Options = append(c.CI.Options, Labeler) // Labeler is mandatory for gh-release and release-drafter since those releaser are based on pull requests labels
-			}
+		if c.CI.Name == GitLab {
+			c.CI.Auth.Release = nil // release auth isn't available with gitlab CICD
 		}
 	}()
 }

@@ -1,22 +1,30 @@
 package initialize_test
 
 import (
-	"bytes"
 	"context"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/huh"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/initialize"
+)
+
+// Reference: https://www.alanwood.net/demos/ansi.html
+const (
+	// defaultSubmit is appended to all responses to move to the next one. These represent \r\n.
+	defaultSubmit = "\x0D\x0A"
+
+	// selectSubmit is a special case where the defaultSubmit messes up the input in select statements
+	selectSubmit = "\x0D"
 )
 
 func TestRun(t *testing.T) {
@@ -54,121 +62,46 @@ func TestRun(t *testing.T) {
 		// Arrange
 		expected := craft.Configuration{License: helpers.ToPtr("mit")}
 
-		f := func(_ clog.Logger, config craft.Configuration, ask initialize.Ask) craft.Configuration {
-			config.License = ask("Which license would you like to use ?")
-			return config
+		customGroup := func(config *craft.Configuration) *huh.Group {
+			return huh.NewGroup(huh.NewInput().
+				Title("Would you like to specify a license ?").
+				Validate(func(s string) error {
+					if s != "" {
+						config.License = &s
+					}
+					return nil
+				}))
 		}
 
-		inputs := []string{"mit"}
-		reader := strings.NewReader(strings.Join(inputs, "\n"))
-
-		var buf bytes.Buffer
-		log.SetOutput(&buf)
+		inputs := []string{"mit" + defaultSubmit}
+		reader := strings.NewReader(strings.Join(inputs, ""))
 
 		// Act
-		config, err := initialize.Run(ctx, "",
-			initialize.WithLogger(clog.Std()),
-			initialize.WithReader(reader),
-			initialize.WithInputReaders(f))
+		config, err := initialize.Run(ctx, "", initialize.WithFormGroups(customGroup), initialize.WithTeaOptions(tea.WithInput(reader)))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expected, config)
-		assert.Contains(t, buf.String(), "Which license would you like to use ?") // just verify that ask logs as it would be expected
 	})
 
 	t.Run("success_minimal_inputs", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		expected := craft.Configuration{Maintainers: []craft.Maintainer{{Name: "name"}}}
+		expected := craft.Configuration{Maintainers: []*craft.Maintainer{{Name: "name"}}}
 
 		inputs := []string{
-			"name", // maintainer name
-			"",     // no maintainer email
-			"",     // no maintainer url
-			"",     // chart generation
+			"name" + defaultSubmit, // maintainer name
+			defaultSubmit,          // no maintainer email
+			defaultSubmit,          // no maintainer url
+			selectSubmit,           // chart generation
 		}
-		reader := strings.NewReader(strings.Join(inputs, "\n"))
+		reader := strings.NewReader(strings.Join(inputs, ""))
 
 		// Act
-		config, err := initialize.Run(ctx, destdir, initialize.WithReader(reader))
+		config, err := initialize.Run(ctx, destdir, initialize.WithTeaOptions(tea.WithInput(reader)))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, expected, config)
-	})
-
-	t.Run("success_no_chart", func(t *testing.T) {
-		// Arrange
-		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "name"}},
-			NoChart:     true,
-		}
-
-		inputs := []string{
-			"name", // maintainer name
-			"",     // no maintainer email
-			"",     // no maintainer url
-			"f",    // chart generation
-		}
-		reader := strings.NewReader(strings.Join(inputs, "\n"))
-
-		// Act
-		config, err := initialize.Run(ctx, "", initialize.WithReader(reader))
-
-		// Assert
-		assert.NoError(t, err)
-		assert.Equal(t, expected, config)
-	})
-
-	t.Run("success_all_inputs", func(t *testing.T) {
-		// Arrange
-		expected := craft.Configuration{Maintainers: []craft.Maintainer{
-			{Name: "name", Email: helpers.ToPtr("email"), URL: helpers.ToPtr("url")},
-		}}
-
-		inputs := []string{
-			"name",  // maintainer name
-			"email", // email
-			"url",   // url
-			"t",     // chart generation
-		}
-		reader := strings.NewReader(strings.Join(inputs, "\n"))
-
-		// Act
-		config, err := initialize.Run(ctx, "",
-			initialize.WithReader(reader))
-
-		// Assert
-		assert.NoError(t, err)
-		assert.Equal(t, expected, config)
-	})
-
-	t.Run("success_retryable_inputs", func(t *testing.T) {
-		// Arrange
-		expected := craft.Configuration{Maintainers: []craft.Maintainer{{Name: "name"}}}
-
-		inputs := []string{
-			"",                    // empty maintainer first
-			"name",                // maintainer name
-			"",                    // no maintainer email
-			"",                    // no maintainer url
-			"invalid chart value", // invalid chart boolean
-			"t",                   // chart generation
-		}
-		reader := strings.NewReader(strings.Join(inputs, "\n"))
-
-		var buf bytes.Buffer
-		log.SetOutput(&buf)
-
-		// Act
-		config, err := initialize.Run(ctx, "",
-			initialize.WithLogger(clog.Std()),
-			initialize.WithReader(reader))
-
-		// Assert
-		assert.NoError(t, err)
-		assert.Equal(t, expected, config)
-		assert.Contains(t, buf.String(), "invalid chart answer 'invalid chart value', must be a boolean")
 	})
 }

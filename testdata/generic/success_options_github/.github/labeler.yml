@@ -24,9 +24,9 @@ autolabeler:
 
   - label: documentation
     title:
-      - /docs{0,1}\/.+/
+      - /doc(s)?\/.+/
     branch:
-      - /docs{0,1}\/.+/
+      - /doc(s)?\/.+/
     files:
       - "**/*.md"
       - "**/doc.go"
@@ -64,6 +64,7 @@ autolabeler:
   - label: javascript
     files:
       - "**/*.js"
+      - "**/*.ts"
 
   - label: python
     files:
@@ -78,10 +79,6 @@ autolabeler:
       - "**/*.sh"
       - "**/*.zsh"
       - "**/*.bash"
-
-  - label: typescript
-    files:
-      - "**/*.ts"
 
   - label: dependencies
     title:

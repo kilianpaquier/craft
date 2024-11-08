@@ -101,9 +101,9 @@ func TestExecute(t *testing.T) {
 		err = templating.Execute(tmpl, data, dest)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		bytes, err := os.ReadFile(dest)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, "hey ! A name", string(bytes))
 	})
 }

@@ -3,7 +3,6 @@
 # craft <!-- omit in toc -->
 
 <p align="center">
-  <img alt="GitHub Actions" src="https://img.shields.io/github/actions/workflow/status/kilianpaquier/craft/integration.yml?branch=main&style=for-the-badge">
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/kilianpaquier/craft?include_prereleases&sort=semver&style=for-the-badge">
   <img alt="GitHub Issues" src="https://img.shields.io/github/issues-raw/kilianpaquier/craft?style=for-the-badge">
   <img alt="GitHub License" src="https://img.shields.io/github/license/kilianpaquier/craft?style=for-the-badge">
@@ -44,7 +43,7 @@ go install github.com/kilianpaquier/craft/cmd/craft@latest
 ```sh
 if which craft >/dev/null; then
   craft upgrade
-  return $?
+  exit $?
 fi
 
 OS="linux" # change it depending on our case
@@ -151,17 +150,9 @@ ci:
 
   # release specific options
   release:
-    # which action to use for github releasing
-    # only available for github, semantic-release will be automatically set for gitlab
-    # https://github.com/marketplace/actions/action-for-semantic-release
-    # https://github.com/marketplace/actions/gh-release
-    # https://github.com/marketplace/actions/release-drafter
-    # https://github.com/marketplace/actions/release-please-action
-    action: gh-release | release-drafter | release-please | semantic-release
     # whether the release should run automatically
     auto: true | false
     # whether backmerging should be configured for main, staging and develop branches
-    # this feature is only available with semantic-release (no matter the CI)
     backmerge: true | false
     # whether releasing should be disabled
     disable: true | false
@@ -215,6 +206,9 @@ no_goreleaser: true | false
 # whether to generate a Makefile with useful commands (optional)
 # this option is automatically disabled when working with nodejs generation
 no_makefile: true | false
+
+# whether to generate a README.md with initial badges and informations (optional)
+no_readme: true | false
 
 # platform override in case of gitlab on premise, bitbucket on premise, etc.
 # by default, an on premise gitlab will be matched if the host contains "gitlab"

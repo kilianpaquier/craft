@@ -23,7 +23,7 @@ var (
 			ctx := cmd.Context()
 			destdir, _ := os.Getwd()
 
-			config, err := initialize.Run(ctx, destdir, initialize.WithLogger(_log))
+			config, err := initialize.Run(ctx, destdir)
 			if err != nil && !errors.Is(err, initialize.ErrAlreadyInitialized) {
 				fatal(ctx, err)
 			}
@@ -33,16 +33,14 @@ var (
 			if err := validator.New().Struct(config); err != nil {
 				fatal(ctx, err)
 			}
+			generate.SetLogger(log)
 
 			// run generation
 			options := []generate.RunOption{
 				generate.WithDelimiters("<<", ">>"),
 				generate.WithDestination(destdir),
-				generate.WithDetects(generate.Detects()...),
-				generate.WithMetaHandlers(generate.MetaHandlers()...),
 				generate.WithForce(force...),
 				generate.WithForceAll(forceAll),
-				generate.WithLogger(_log),
 				generate.WithTemplates("templates", generate.FS()),
 			}
 			config, err = generate.Run(ctx, config, options...)

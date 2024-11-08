@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -21,11 +20,11 @@ func TestDetectNodejs(t *testing.T) {
 
 	t.Run("no_packagejson", func(t *testing.T) {
 		// Act
-		_, exec, err := generate.DetectNodejs(ctx, clog.Noop(), "", generate.Metadata{})
+		exec, err := generate.DetectNodejs(ctx, "", &generate.Metadata{})
 
 		// Assert
-		assert.NoError(t, err)
-		assert.Len(t, exec, 0)
+		require.NoError(t, err)
+		assert.Empty(t, exec)
 	})
 
 	t.Run("invalid_packagejson", func(t *testing.T) {
@@ -38,11 +37,11 @@ func TestDetectNodejs(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		// Act
-		_, exec, err := generate.DetectNodejs(ctx, clog.Noop(), destdir, generate.Metadata{})
+		exec, err := generate.DetectNodejs(ctx, destdir, &generate.Metadata{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read package.json")
-		assert.Len(t, exec, 0)
+		assert.Empty(t, exec)
 	})
 
 	t.Run("error_validation_packagejson", func(t *testing.T) {
@@ -54,11 +53,11 @@ func TestDetectNodejs(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		_, exec, err := generate.DetectNodejs(ctx, clog.Noop(), destdir, generate.Metadata{})
+		exec, err := generate.DetectNodejs(ctx, destdir, &generate.Metadata{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read package.json")
-		assert.Len(t, exec, 0)
+		assert.Empty(t, exec)
 	})
 
 	t.Run("nodejs_detected_with_options", func(t *testing.T) {
@@ -69,7 +68,7 @@ func TestDetectNodejs(t *testing.T) {
 		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js", "packageManager": "bun@1.1.6", "private": true }`), cfs.RwRR)
 		require.NoError(t, err)
 
-		input := generate.Metadata{Languages: map[string]any{}}
+		config := generate.Metadata{Languages: map[string]any{}}
 		expected := generate.Metadata{
 			Binaries:      1,
 			Configuration: craft.Configuration{NoMakefile: true},
@@ -85,11 +84,11 @@ func TestDetectNodejs(t *testing.T) {
 		}
 
 		// Act
-		output, exec, err := generate.DetectNodejs(ctx, clog.Noop(), destdir, input)
+		exec, err := generate.DetectNodejs(ctx, destdir, &config)
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Len(t, exec, 1)
-		assert.Equal(t, expected, output)
+		assert.Equal(t, expected, config)
 	})
 }

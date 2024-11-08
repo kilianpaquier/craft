@@ -6,28 +6,6 @@
     "type": "object",
     "additionalProperties": false,
     "$defs": {
-        "maintainer": {
-            "description": "Maintainer definition",
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "name": {
-                    "description": "Maintainer name (can be any entity, person name, group name, etc.).",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "Maintainer email.",
-                    "type": "string"
-                },
-                "url": {
-                    "description": "Maintainer URL.",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ]
-        },
         "ci": {
             "description": "CI definition to help generate specific files.",
             "type": "object",
@@ -49,7 +27,7 @@
                             ]
                         },
                         "release": {
-                            "description": "Release auth strategy for semantic-release.",
+                            "description": "Release auth strategy.",
                             "type": "string",
                             "default": "github-token",
                             "enum": [
@@ -62,31 +40,44 @@
                 },
                 "name": {
                     "description": "CI Name.",
-                    "type": "string",
-                    "default": "github"
+                    "default": "github",
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "enum": [
+                                "github",
+                                "gitlab"
+                            ]
+                        },
+                        {
+                            "type": "string"
+                        }
+                    ]
                 },
                 "options": {
                     "description": "CI Options.",
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "codecov",
+                                    "codeql",
+                                    "labeler",
+                                    "sonar"
+                                ]
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
                     }
                 },
                 "release": {
                     "description": "Release specific configuration.",
                     "type": "object",
                     "properties": {
-                        "action": {
-                            "description": "Action to be used for releasing. Only semantic-release can be provided when working with gitlab.",
-                            "type": "string",
-                            "default": "semantic-release",
-                            "enum": [
-                                "gh-release",
-                                "release-drafter",
-                                "release-please",
-                                "semantic-release"
-                            ]
-                        },
                         "auto": {
                             "description": "Whether the release should run automatically.",
                             "type": "boolean"
@@ -101,6 +92,10 @@
                     "description": "Static deployment configuration.",
                     "type": "object",
                     "properties": {
+                        "auto": {
+                            "description": "Whether to automatically deploy static builds or not on main branches for github and on protected branches for gitlab.",
+                            "type": "boolean"
+                        },
                         "name": {
                             "description": "Static deployment name.",
                             "type": "string",
@@ -108,10 +103,6 @@
                                 "netlify",
                                 "pages"
                             ]
-                        },
-                        "auto": {
-                            "description": "Whether to automatically deploy static builds or not on main branches for github and on protected branches for gitlab.",
-                            "type": "boolean"
                         }
                     }
                 }
@@ -125,30 +116,42 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "registry": {
-                    "description": "Docker registry associated to project. It will be used for CI docker build & push alongside chart image pull.",
-                    "type": "string",
-                    "default": "ghcr.io"
-                },
                 "port": {
                     "description": "Container port to override the default one, 3000.",
                     "type": "integer",
                     "default": 3000
+                },
+                "registry": {
+                    "description": "Docker registry associated to project. It will be used for CI docker build & push alongside chart image pull.",
+                    "type": "string",
+                    "default": "ghcr.io"
                 }
             }
+        },
+        "maintainer": {
+            "description": "Maintainer definition",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "email": {
+                    "description": "Maintainer email.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Maintainer name (can be any entity, person name, group name, etc.).",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "Maintainer URL.",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ]
         }
     },
     "properties": {
-        "description": {
-            "description": "Description, only useful when working with docker option and helm generations.",
-            "type": "string"
-        },
-        "maintainers": {
-            "description": "List of maintainers.",
-            "type": "array",
-            "$ref": "#/$defs/maintainer",
-            "minItems": 1
-        },
         "bot": {
             "description": "Bot in charge of keeping dependencies up to date.",
             "type": "string",
@@ -156,6 +159,20 @@
                 "dependabot",
                 "renovate"
             ]
+        },
+        "ci": {
+            "description": "CI definition to help generate specific files.",
+            "type": "object",
+            "$ref": "#/$defs/ci"
+        },
+        "description": {
+            "description": "Description, only useful when working with docker option and helm generations.",
+            "type": "string"
+        },
+        "docker": {
+            "description": "Docker definition.",
+            "type": "object",
+            "$ref": "#/$defs/docker"
         },
         "license": {
             "description": "License name.",
@@ -177,19 +194,11 @@
                 "unlicense"
             ]
         },
-        "ci": {
-            "description": "CI definition to help generate specific files.",
-            "type": "object",
-            "$ref": "#/$defs/ci"
-        },
-        "platform": {
-            "description": "Platform for README.md badges (automatically parsed with git origin URL by default).",
-            "type": "string"
-        },
-        "docker": {
-            "description": "Docker definition.",
-            "type": "object",
-            "$ref": "#/$defs/docker"
+        "maintainers": {
+            "description": "List of maintainers.",
+            "type": "array",
+            "$ref": "#/$defs/maintainer",
+            "minItems": 1
         },
         "no_chart": {
             "description": "Disable and remove chart generation.",
@@ -205,6 +214,15 @@
             "description": "Disable and remove makefile generation.",
             "type": "boolean",
             "default": false
+        },
+        "no_readme": {
+            "description": "Disable and remove README.md generation.",
+            "type": "boolean",
+            "default": false
+        },
+        "platform": {
+            "description": "Platform for README.md badges (automatically parsed with git origin URL by default).",
+            "type": "string"
         }
     },
     "required": [

@@ -10,7 +10,6 @@ import (
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	testfs "github.com/kilianpaquier/cli-sdk/pkg/cfs/tests"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -61,7 +60,7 @@ func TestRun(t *testing.T) {
 		_, err := generate.Run(ctx, input,
 			generate.WithDelimiters("{{", "}}"),
 			generate.WithDestination(t.TempDir()),
-			generate.WithDetects(detectNoop), // avoid testing detections since we only want the generic generation
+			generate.WithDetects(detectNoop, generate.DetectGeneric), // avoid testing detections since we only want the generic generation
 			generate.WithTemplates(templates, cfs.OS()))
 
 		// Assert
@@ -74,16 +73,19 @@ func TestRun(t *testing.T) {
 		input := craft.Configuration{}
 		destdir := t.TempDir()
 
+		readme := filepath.Join(destdir, "README.md")
+		t.Cleanup(func() { assert.NoError(t, os.Remove(readme)) })
+
 		// Act
 		_, err := generate.Run(ctx, input,
 			generate.WithDelimiters("{{", "}}"),
 			generate.WithDestination(destdir),
-			generate.WithDetects(detectNoop), // avoid testing detections since we only want the generic generation
+			generate.WithDetects(detectNoop, generate.DetectGeneric), // avoid testing detections since we only want the generic generation
 			generate.WithTemplates(templates, cfs.OS()))
 
 		// Assert
-		assert.NoError(t, err)
-		bytes, err := os.ReadFile(filepath.Join(destdir, "README.md"))
+		require.NoError(t, err)
+		bytes, err := os.ReadFile(readme)
 		require.NoError(t, err)
 		assert.Equal(t, []byte("# ."), bytes)
 		assert.NoFileExists(t, filepath.Join(destdir, "NOT_GENERATED.md"))
@@ -96,9 +98,9 @@ func TestRun(t *testing.T) {
 		require.NoError(t, os.Mkdir(destdir, cfs.RwxRxRxRx))
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 
 		// Act
@@ -108,7 +110,7 @@ func TestRun(t *testing.T) {
 			generate.WithTemplates("templates", cfs.OS()))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, input, output)
 	})
@@ -123,11 +125,11 @@ func TestRun(t *testing.T) {
 		require.NoError(t, err)
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 		}
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
-			Platform:    craft.Github,
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
+			Platform:    craft.GitHub,
 		}
 
 		// Act
@@ -137,7 +139,7 @@ func TestRun(t *testing.T) {
 			generate.WithTemplates("templates", generate.FS()))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, expected, output)
 	})
@@ -154,13 +156,13 @@ func TestRun(t *testing.T) {
 		require.NoError(t, err)
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoMakefile:  true,
 		}
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoMakefile:  true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 
 		// Act
@@ -170,7 +172,7 @@ func TestRun(t *testing.T) {
 			generate.WithForceAll(true))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, expected, output)
 	})
@@ -185,48 +187,47 @@ func TestRun(t *testing.T) {
 		require.NoError(t, err)
 
 		input := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 		expected := craft.Configuration{
-			Maintainers: []craft.Maintainer{{Name: "maintainer name"}},
+			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 			NoMakefile:  true,
-			Platform:    craft.Github,
+			Platform:    craft.GitHub,
 		}
 
 		// Act
 		output, err := generate.Run(ctx, input,
 			generate.WithDestination(destdir),
-			generate.WithMetaHandlers(generate.MetaHandlers()...),
 			generate.WithForceAll(true))
 
 		// Assert
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.NoError(t, testfs.EqualDirs(assertdir, destdir))
 		assert.Equal(t, expected, output)
 	})
 }
 
-func detectNoop(_ context.Context, _ clog.Logger, _ string, metadata generate.Metadata) (generate.Metadata, []generate.Exec, error) {
-	return metadata, nil, nil
+func detectNoop(_ context.Context, _ string, _ *generate.Metadata) ([]generate.ExecFunc, error) {
+	return nil, nil
 }
 
-var _ generate.Detect = detectNoop // ensure interface is implemented
+var _ generate.DetectFunc = detectNoop // ensure interface is implemented
 
-func detectErr(err error) generate.Detect {
-	return func(_ context.Context, _ clog.Logger, _ string, metadata generate.Metadata) (generate.Metadata, []generate.Exec, error) {
-		return metadata, nil, err
+func detectErr(err error) generate.DetectFunc {
+	return func(_ context.Context, _ string, _ *generate.Metadata) ([]generate.ExecFunc, error) {
+		return nil, err
 	}
 }
 
-var _ generate.Detect = detectErr(nil) // ensure interface is implemented
+var _ generate.DetectFunc = detectErr(nil) // ensure interface is implemented
 
-func detectMulti(_ context.Context, _ clog.Logger, _ string, metadata generate.Metadata) (generate.Metadata, []generate.Exec, error) {
+func detectMulti(_ context.Context, _ string, metadata *generate.Metadata) ([]generate.ExecFunc, error) {
 	metadata.Languages["lang1"] = ""
 	metadata.Languages["lang2"] = ""
-	return metadata, nil, nil
+	return nil, nil
 }
 
-var _ generate.Detect = detectMulti // ensure interface is implemented
+var _ generate.DetectFunc = detectMulti // ensure interface is implemented

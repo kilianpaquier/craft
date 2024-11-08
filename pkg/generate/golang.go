@@ -12,13 +12,17 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"golang.org/x/mod/modfile"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-var _versionRegexp = regexp.MustCompile("^v[0-9]+$")
+var (
+	errMissingModuleStatement = errors.New("invalid go.mod, module statement is missing")
+	errMissingGoStatement     = errors.New("invalid go.mod, go statement is missing")
+)
+
+var versionRegexp = regexp.MustCompile("^v[0-9]+$")
 
 // Gomod represents the parsed struct for go.mod file
 type Gomod struct {
@@ -32,7 +36,7 @@ type Gomod struct {
 // DetectGolang handles the detection of golang at destdir.
 //
 // A valid golang project must have a valid go.mod file.
-func DetectGolang(ctx context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectGolang(ctx context.Context, destdir string, metadata *Metadata) ([]ExecFunc, error) {
 	gomod := filepath.Join(destdir, craft.Gomod)
 	gocmd := filepath.Join(destdir, craft.Gocmd)
 
@@ -40,9 +44,9 @@ func DetectGolang(ctx context.Context, log clog.Logger, destdir string, metadata
 	statements, err := readGomod(gomod)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
-			return metadata, nil, fmt.Errorf("read go.mod: %w", err)
+			return nil, fmt.Errorf("read go.mod: %w", err)
 		}
-		return metadata, nil, nil
+		return nil, nil
 	}
 
 	metadata.Platform = statements.Platform
@@ -51,8 +55,8 @@ func DetectGolang(ctx context.Context, log clog.Logger, destdir string, metadata
 	metadata.ProjectPath = statements.ProjectPath
 
 	// check hugo detection
-	if metadata, exec, _ := detectHugo(ctx, log, destdir, metadata); len(exec) > 0 { // nolint:revive
-		return metadata, exec, nil
+	if execs, _ := detectHugo(ctx, destdir, metadata); len(execs) > 0 {
+		return execs, nil
 	}
 
 	log.Infof("golang detected, a %s is present and valid", craft.Gomod)
@@ -81,13 +85,13 @@ func DetectGolang(ctx context.Context, log clog.Logger, destdir string, metadata
 		}
 	}
 
-	return metadata, []Exec{DefaultExec("lang_golang")}, nil
+	return []ExecFunc{BasicExecFunc("lang_golang")}, nil
 }
 
-var _ Detect = DetectGolang // ensure interface is implemented
+var _ DetectFunc = DetectGolang // ensure interface is implemented
 
 // detectHugo handles the detection of hugo at destdir.
-func detectHugo(_ context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
+func detectHugo(_ context.Context, destdir string, metadata *Metadata) ([]ExecFunc, error) {
 	// detect hugo project
 	configs, _ := filepath.Glob(filepath.Join(destdir, "hugo.*"))
 
@@ -105,12 +109,12 @@ func detectHugo(_ context.Context, log clog.Logger, destdir string, metadata Met
 		}
 
 		metadata.Languages["hugo"] = nil
-		return metadata, []Exec{DefaultExec("lang_hugo")}, nil
+		return []ExecFunc{BasicExecFunc("lang_hugo")}, nil
 	}
-	return metadata, nil, nil
+	return nil, nil
 }
 
-var _ Detect = detectHugo // ensure interface is implemented
+var _ DetectFunc = detectHugo // ensure interface is implemented
 
 // readGomod reads the go.mod file at modpath input and returns its gomod representation.
 func readGomod(modpath string) (Gomod, error) {
@@ -131,11 +135,11 @@ func readGomod(modpath string) (Gomod, error) {
 
 	// parse module statement
 	if file.Module == nil || file.Module.Mod.Path == "" {
-		errs = append(errs, errors.New("invalid go.mod, module statement is missing"))
+		errs = append(errs, errMissingModuleStatement)
 	} else {
 		gomod.ProjectHost, gomod.ProjectPath = func() (host, subpath string) {
 			sections := strings.Split(file.Module.Mod.Path, "/")
-			if _versionRegexp.MatchString(sections[len(sections)-1]) {
+			if versionRegexp.MatchString(sections[len(sections)-1]) {
 				return sections[0], strings.Join(sections[1:len(sections)-1], "/") // retrieve all sections but the last element
 			}
 			return sections[0], strings.Join(sections[1:], "/") // retrieve all sections
@@ -146,7 +150,7 @@ func readGomod(modpath string) (Gomod, error) {
 
 	// parse go statement
 	if file.Go == nil {
-		errs = append(errs, errors.New("invalid go.mod, go statement is missing"))
+		errs = append(errs, errMissingGoStatement)
 	} else {
 		gomod.LangVersion = file.Go.Version
 	}

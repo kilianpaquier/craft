@@ -9,22 +9,26 @@ import (
 )
 
 // OriginURL returns input directory git config --get remote.origin.url.
-func OriginURL(destdir string) (out []byte, err error) {
+func OriginURL(destdir string) (string, error) {
 	cmd := exec.Command("git", "config", "--get", "remote.origin.url")
 	cmd.Dir = destdir
 
-	out, err = cmd.CombinedOutput()
+	out, err := cmd.CombinedOutput()
 	if err != nil {
-		err = fmt.Errorf("retrieve remote url: %w", err)
+		if len(out) > 0 {
+			return "", fmt.Errorf("retrieve remote url with response '%s': %w", string(out), err)
+		}
+		return "", fmt.Errorf("retrieve remote url: %w", err)
 	}
-
-	// we want to return the real output alongside the error if there was one, that's why return properties are named
-	// by doing that we're allowing the potential print of the terminal output in case there was an error, to potentially get more information from git
-	return
+	return string(out), nil
 }
 
 // ParseRemote returns the current repository host and path to repository on the given host's platform.
 func ParseRemote(rawRemote string) (host, path string) {
+	if rawRemote == "" {
+		return "", ""
+	}
+
 	originURL := strings.TrimSuffix(rawRemote, "\n")
 	originURL = strings.TrimSuffix(originURL, ".git")
 
@@ -47,8 +51,8 @@ func ParsePlatform(host string) (string, bool) {
 	matchers := map[string][]string{
 		craft.Bitbucket: {"bb", craft.Bitbucket, "stash"},
 		craft.Gitea:     {craft.Gitea},
-		craft.Github:    {craft.Github, "gh"},
-		craft.Gitlab:    {craft.Gitlab, "gl"},
+		craft.GitHub:    {craft.GitHub, "gh"},
+		craft.GitLab:    {craft.GitLab, "gl"},
 	}
 
 	for platform, candidates := range matchers {

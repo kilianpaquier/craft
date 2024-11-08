@@ -1,3 +1,93 @@
+## [1.0.0-beta.16](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2024-10-30)
+
+### 🐛 Bug Fixes
+
+* **releaserc:** invalid fail and success comments conditions ([8b2e4d0](https://github.com/kilianpaquier/craft/commit/8b2e4d01ed8f4e86146e7c74db9edcbf6c14ed13))
+* **releaserc:** update conditions for fail and success comments for gitlab ([700633a](https://github.com/kilianpaquier/craft/commit/700633af1176052edad895102789c8363edc338f))
+* **renovate:** ensure patch and minor upgrades are in the same pull requests ([533b6d4](https://github.com/kilianpaquier/craft/commit/533b6d452322e34257af9e453a3333bc2acd9558))
+
+### ⚙️ Chores
+
+* **releaserc:** add some icon to releases section and update semantic-release/github or /gitlab options with new versions ([5c6c026](https://github.com/kilianpaquier/craft/commit/5c6c026d963533566a93541dc2e89017a26bbaa1))
+* **schema:** add default values for CI name with availability to enter anything without a schema error ([33a4045](https://github.com/kilianpaquier/craft/commit/33a4045b0f232597b10bca3d9c6081c8168ac845))
+
+## [1.0.0-beta.15](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2024-10-27)
+
+### Features
+
+* prepare mono repositories generation (rename some files that could be conflictual) ([c553a82](https://github.com/kilianpaquier/craft/commit/c553a82f859d02f9f4d6f479bba0125d8601ec71))
+
+### Bug Fixes
+
+* **github actions:** missing run-workflow dependencies in docker actions file ([de0a432](https://github.com/kilianpaquier/craft/commit/de0a43213269fb0c1b681c9b8b7e2a6635bca871))
+* **github actions:** use input to run build job with nodejs and golang since 'workflow_call' isn't available for github.event_name ([60d7da1](https://github.com/kilianpaquier/craft/commit/60d7da10719f2a6fee02492c85d7620e5f0edaee))
+* missing rights in github actions release golang workflow call ([0f40fe7](https://github.com/kilianpaquier/craft/commit/0f40fe77935497a4cf8f5e7e77d41d345873ee85))
+* missing secrets inheritance in github release action ([0a55afd](https://github.com/kilianpaquier/craft/commit/0a55afdb7172b9e0d2cb567ac2bcc8cff75ae235))
+* **nodejs:** ensure build job in release workflow (github) is present only when release publishes on a registry ([1dba0c8](https://github.com/kilianpaquier/craft/commit/1dba0c8b161a08c33fc2d9460d39dcd278fddbe3))
+
+### Chores
+
+* **deps:** bump github.com/charmbracelet/bubbletea ([dfea6c2](https://github.com/kilianpaquier/craft/commit/dfea6c2e4dc81bb254cb77a6ae208f2dd9717f25))
+* **readme:** remove gitlab cicd and github actions badge since pipeline can be seen on last commit ([fced30e](https://github.com/kilianpaquier/craft/commit/fced30e6512e643925424fc41e106089734afa65))
+
+## [1.0.0-beta.14](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2024-10-16)
+
+### Bug Fixes
+
+* **ci:** add required permissions for docker and netlify github jobs when run with workflow_dispatch ([0279970](https://github.com/kilianpaquier/craft/commit/0279970270f66c1abdafd8b17a0b61d7cbc854b5))
+* **ci:** invalid rights on docker jobs in github release action ([506bb7b](https://github.com/kilianpaquier/craft/commit/506bb7b73da84076f65947a685a2b117effa5641))
+* **config defaults:** avoid panic with bot default authentication when no CI is defined ([be67d51](https://github.com/kilianpaquier/craft/commit/be67d510945b6670ee35e78bbcbc7ce2f0e43f2d))
+* **github:** invalid CI configurations for netlify and pages in release workflow with shared build workflow call ([7908dd5](https://github.com/kilianpaquier/craft/commit/7908dd55e84a7f60c17e996adce6f1a00d261ba4))
+* **hugo:** change production directory to dist to be coherent with CICD generation ([7ade0f6](https://github.com/kilianpaquier/craft/commit/7ade0f69be57efc223a5bd8960a943ffc7298f8a))
+* **schema:** add available CI option from craft codebase with extensibility possibilities ([960623e](https://github.com/kilianpaquier/craft/commit/960623e2722379620f6bc26520625fb5dd94fbf7))
+
+### Chores
+
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([3410f37](https://github.com/kilianpaquier/craft/commit/3410f3795802e5aa5252d67f3db3e5f9e2131155))
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([ed34afb](https://github.com/kilianpaquier/craft/commit/ed34afbb8ca43a0e50830a42d630546485238ae2))
+* **deps:** bump github.com/xanzy/go-gitlab in the minor-patch group ([7861c3d](https://github.com/kilianpaquier/craft/commit/7861c3da2596290f416422ae49f45c9b768d28c3))
+
+## [1.0.0-beta.13](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2024-10-05)
+
+### ⚠ BREAKING CHANGES
+
+* **release:** gh-release, release-drafter and release-please aren't available anymore
+
+Signed-off-by: kilianpaquier <kilian@kilianpaquier.com>
+
+### Features
+
+* add no_readme option in .craft ([8b100be](https://github.com/kilianpaquier/craft/commit/8b100be86947b7fcfb20dca7c2f829aacc38ad8d))
+* **github:** implement release please for releasing part - [#65](https://github.com/kilianpaquier/craft/issues/65) ([87a875f](https://github.com/kilianpaquier/craft/commit/87a875f53c691720f495de5583d8e94d14e6e82c))
+* **initialize:** use huh lib for a better project initialization UI ([1aae28a](https://github.com/kilianpaquier/craft/commit/1aae28a933fddb911caedc45ad0a20f97ee74119))
+
+### Bug Fixes
+
+* **github:** inverted description for workflow dispatch in release action ([0191249](https://github.com/kilianpaquier/craft/commit/01912491e637a9e7df7a2fcab29c4891e1d32f23))
+* **go:** add test timeout to all test commands ([7aa3257](https://github.com/kilianpaquier/craft/commit/7aa3257e38216215e0c5230697c474e17eba6ffb))
+* **golangci-lint:** add some exceptions for varnamelen and remove err113 ([1b0166c](https://github.com/kilianpaquier/craft/commit/1b0166cc391f4118b28d7eaf5af9e260f6c56622))
+* **labeler:** add missing branches configuration for autolabeler ([f234291](https://github.com/kilianpaquier/craft/commit/f23429156df44be98c84ae9c9f4af63f1b7becd4))
+* **lint:** rename HandleDir into BasicExecFunc ([471cb44](https://github.com/kilianpaquier/craft/commit/471cb4442bce2ab20a095d6421264c2c6c34bb21))
+* multiple fixes on ci for docker and release and straighten golangci-lint rules with multiple new linters ([c56f1a5](https://github.com/kilianpaquier/craft/commit/c56f1a5775d12caef54579f6bf003e7eccc5af84))
+* **release please:** fix envsubst with release PR title version variable ([c701666](https://github.com/kilianpaquier/craft/commit/c7016664548f230b0868ec1f74f95c0a5d216195))
+* **release please:** invalid config and manifest file name in github CI ([fe160e4](https://github.com/kilianpaquier/craft/commit/fe160e458104a82432ea4317b5403b575c5e127d))
+* **release please:** override computed version in some cases since configuration file can't be edited dynamically ([25389d3](https://github.com/kilianpaquier/craft/commit/25389d33892b89237d1cc8523f22209fd85c3c15))
+* **release please:** use .json config and manifest file ([098ee18](https://github.com/kilianpaquier/craft/commit/098ee189c3f0e5e87e11f9c9d93473188b3edc6a))
+
+### Chores
+
+* **deps:** bump the minor-patch group with 2 updates ([a054222](https://github.com/kilianpaquier/craft/commit/a054222caf45a9ff0250cd2fa9e7536acfa31494))
+* **deps:** bump the minor-patch group with 2 updates ([e57c60e](https://github.com/kilianpaquier/craft/commit/e57c60e96e99ce369bb45add275bb529f3037a44))
+* **deps:** upgrade golang.org/x/mod ([6a202bc](https://github.com/kilianpaquier/craft/commit/6a202bcd7356584f3e7140a651605e6de9deafa8))
+* **generated:** add markdown comment style in regexp for IsGenerated ([087a4d3](https://github.com/kilianpaquier/craft/commit/087a4d3bbc38cdf6bd6c04165be9a47ef9d20e6b))
+
+### Code Refactoring
+
+* **generate:** add suffixes to Detec, Exec types and FileHandlers functions ([1202a0e](https://github.com/kilianpaquier/craft/commit/1202a0e7d55db9a253fb1e1a5298f6067aeac32b))
+* **generate:** simplify logging feature ([6fa1977](https://github.com/kilianpaquier/craft/commit/6fa197793a98dd2e666fe2a1a319ba791aa36f3a))
+* **generate:** use metadata as ptr in Detect function and add Generic in global Detects slice to simplify Run behavior ([bb7f9a3](https://github.com/kilianpaquier/craft/commit/bb7f9a3189186825b6ddfff7b9d88cc734ddaa2d))
+* **release:** keep only semantic-release as available releaser in generation ([6df9b18](https://github.com/kilianpaquier/craft/commit/6df9b18490d1c0a6bb148bc8b59d9c094276c97a))
+
 ## [1.0.0-beta.12](https://github.com/kilianpaquier/craft/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2024-08-25)
 
 ### Features

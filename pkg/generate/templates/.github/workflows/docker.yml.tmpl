@@ -7,7 +7,15 @@ run-name: Docker
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "golang" >>
 
+<<- $nodepublish := and $nodejs (not (get .Languages "nodejs").Private) >>
+
 on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
   workflow_call:
     inputs:
       release:
@@ -22,13 +30,32 @@ on:
 
 jobs:
 
+  run-workflow:
+    name: Run Workflow
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.ref_protected != true) }}
+    outputs:
+      skip: ${{ steps.skip.outputs.skip }}
+    steps:
+      - id: skip
+        run: echo "Running workflow" && echo "skip=false" >> $GITHUB_OUTPUT
+
   version:
     name: Version
     runs-on: ubuntu-latest
     environment: release
+    needs: run-workflow
+    if: ${{ github.event_name != 'pull_request' }}
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+<<- if $nodejs >>
+      id-token: write
+<<- end >>
     outputs:
-      release: ${{ needs.version.outputs.release }}
-      version: ${{ needs.version.outputs.version }}
+      release: ${{ steps.version_merge.outputs.release }}
+      version: ${{ steps.version_merge.outputs.version }}
     steps:
       - uses: actions/checkout@v4
       - id: version
@@ -37,7 +64,7 @@ jobs:
         with:
           mode: dry_run # compute only the version to build
           token: ${{ secrets.GITHUB_TOKEN }}
-<<- if and $nodejs (not (get .Languages "nodejs").Private) (.IsReleaseAction "semantic-release") >>
+<<- if and .HasRelease $nodepublish >>
           npm_token: ${{ secrets.NPM_TOKEN }}
 <<- end >>
       - id: version_merge
@@ -45,21 +72,47 @@ jobs:
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
             echo "release=${RELEASE}" >> $GITHUB_OUTPUT
             echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          else
-            echo "release=${INPUTS_RELEASE}" >> $GITHUB_OUTPUT
-            echo "version=${INPUTS_VERSION}" >> $GITHUB_OUTPUT
+            exit 0
           fi
+          echo "release=${INPUTS_RELEASE}" >> $GITHUB_OUTPUT
+          echo "version=${INPUTS_VERSION}" >> $GITHUB_OUTPUT
         env:
           VERSION: ${{ steps.version.outputs.version }}
           RELEASE: ${{ steps.version.outputs.release }}
           INPUTS_VERSION: ${{ inputs.version }}
           INPUTS_RELEASE: ${{ inputs.release }}
 
+  docker-hadolint:
+    name: Docker Hadolint
+    runs-on: ubuntu-latest
+    needs: run-workflow
+    permissions:
+      pull-requests: write
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          format: sarif
+          output-file: hadolint-results.sarif
+      - if: ${{ ! cancelled() }}
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: hadolint-results.sarif
+          category: docker-hadolint
+      - id: hadolint
+        if: ${{ ! cancelled() }}
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          format: tty
+
   docker-build:
     name: Docker Build
     runs-on: ubuntu-latest
     environment: docker
-    needs: version
+    needs:
+      - run-workflow
+      - version
     outputs:
       image: ${{ steps.image.outputs.image }}
     steps:
@@ -109,6 +162,7 @@ jobs:
     permissions:
       security-events: write
     needs:
+      - run-workflow
       - version
       - docker-build
     steps:

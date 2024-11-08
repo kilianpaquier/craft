@@ -23,14 +23,14 @@ var (
 			options := []upgrade.RunOption{
 				upgrade.WithDestination(dest),
 				upgrade.WithHTTPClient(cleanhttp.DefaultClient()),
-				upgrade.WithLogger(_log),
+				upgrade.WithLogger(log),
 				upgrade.WithMajor(major),
 				upgrade.WithMinor(minor),
 				upgrade.WithPrereleases(prereleases),
 			}
 			if err := upgrade.Run(ctx, "craft", version, upgrade.GithubReleases("kilianpaquier", "craft"), options...); err != nil {
 				if errors.Is(err, upgrade.ErrInvalidOptions) {
-					return err
+					return err //nolint:wrapcheck
 				}
 				fatal(ctx, err) // don't return err since returning an error shows the help
 			}

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
@@ -27,12 +28,21 @@ func TestOriginURL(t *testing.T) {
 		originURL, err := generate.OriginURL(".")
 
 		// Assert
-		assert.NoError(t, err)
-		assert.Contains(t, string(originURL), "kilianpaquier/craft") // contains condition to ensure it's working on github actions too
+		require.NoError(t, err)
+		assert.Contains(t, originURL, "kilianpaquier/craft") // contains condition to ensure it's working on github actions too
 	})
 }
 
 func TestParseRemote(t *testing.T) {
+	t.Run("empty_remote", func(t *testing.T) {
+		// Act
+		host, subpath := generate.ParseRemote("")
+
+		// Assert
+		assert.Empty(t, host)
+		assert.Empty(t, subpath)
+	})
+
 	t.Run("parse_ssh_remote", func(t *testing.T) {
 		// Arrange
 		rawRemote := "git@github.com:kilianpaquier/craft.git"
@@ -116,7 +126,7 @@ func TestParsePlatform(t *testing.T) {
 
 		// Assert
 		assert.True(t, ok)
-		assert.Equal(t, craft.Github, platform)
+		assert.Equal(t, craft.GitHub, platform)
 	})
 
 	t.Run("found_gitlab", func(t *testing.T) {
@@ -128,7 +138,7 @@ func TestParsePlatform(t *testing.T) {
 
 		// Assert
 		assert.True(t, ok)
-		assert.Equal(t, craft.Gitlab, platform)
+		assert.Equal(t, craft.GitLab, platform)
 	})
 
 	t.Run("found_gitlab_onpremise", func(t *testing.T) {
@@ -140,6 +150,6 @@ func TestParsePlatform(t *testing.T) {
 
 		// Assert
 		assert.True(t, ok)
-		assert.Equal(t, craft.Gitlab, platform)
+		assert.Equal(t, craft.GitLab, platform)
 	})
 }

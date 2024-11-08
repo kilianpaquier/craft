@@ -24,9 +24,9 @@ autolabeler:
 
   - label: documentation
     title:
-      - /docs{0,1}\/.+/
+      - /doc(s)?\/.+/
     branch:
-      - /docs{0,1}\/.+/
+      - /doc(s)?\/.+/
     files:
       - "**/*.md"
       - "**/doc.go"
@@ -60,11 +60,10 @@ autolabeler:
 <<- /* create a map of languages for an easier evolution with new languages */ ->>
 <<- $languages := dict
   "go" (list "go")
-  "javascript" (list "js")
+  "javascript" (list "js" "ts")
   "python" (list "py")
   "rust" (list "rs")
   "shell" (list "sh" "zsh" "bash")
-  "typescript" (list "ts")
 ->>
 
 <<- range $label, $exts := $languages >>

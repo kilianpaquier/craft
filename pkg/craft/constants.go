@@ -23,10 +23,10 @@ const (
 	Bitbucket = "bitbucket"
 	// Gitea is just the gitea constant.
 	Gitea = "gitea"
-	// Github is just the github constant.
-	Github = "github"
-	// Gitlab is just the gitlab constant.
-	Gitlab = "gitlab"
+	// GitHub is just the github constant.
+	GitHub = "github"
+	// GitLab is just the gitlab constant.
+	GitLab = "gitlab"
 )
 
 const (
@@ -55,10 +55,10 @@ const (
 )
 
 const (
-	// GithubApp is the value for github release mode with a github app.
-	GithubApp string = "github-app"
-	// GithubToken is the value for github release mode with a github token.
-	GithubToken string = "github-token"
+	// GitHubApp is the value for github release mode with a github app.
+	GitHubApp string = "github-app"
+	// GitHubToken is the value for github release mode with a github token.
+	GitHubToken string = "github-token"
 	// PersonalToken is the value for github release mode with a personal token (PAT).
 	PersonalToken string = "personal-token"
 )
@@ -68,19 +68,8 @@ const (
 	Mendio string = "mend.io"
 )
 
-const (
-	// GhRelease is the value for github release with gh-release, yet another github action to create github releases.
-	GhRelease string = "gh-release"
-
-	// ReleaseDrafter is the value for github release with release-drafter.
-	ReleaseDrafter string = "release-drafter"
-
-	// ReleasePlease is the value for github release with release-please.
-	ReleasePlease string = "release-please"
-
-	// SemanticRelease is the value for github / gitlab release with semantic-release.
-	SemanticRelease string = "semantic-release"
-)
+// SemanticRelease is the value for github / gitlab release with semantic-release.
+const SemanticRelease string = "semantic-release"
 
 // CIOptions returns the slice with all availables CI options.
 func CIOptions() []string {

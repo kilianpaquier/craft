@@ -4,10 +4,9 @@ import (
 	"os"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 )
 
-// ExecOpts represents all options given to Exec functions.
+// ExecOpts represents all options given to ExecFunc functions.
 type ExecOpts struct {
 	FileHandlers []FileHandler
 
@@ -19,15 +18,15 @@ type ExecOpts struct {
 }
 
 // RunOption is the right function to tune Run function with specific behaviors.
-type RunOption func(option) option
+type RunOption func(runOptions) runOptions
 
 // WithMetaHandlers is an option for Run function.
 // It specifies the slice of MetaHandler, which defines the behavior for files and directories generation.
 //
 // When not given, MetaHandlers' function result is used as default slice.
 func WithMetaHandlers(handlers ...MetaHandler) RunOption {
-	return func(o option) option {
-		o.handlers = handlers
+	return func(o runOptions) runOptions {
+		o.metaHandlers = handlers
 		return o
 	}
 }
@@ -36,7 +35,7 @@ func WithMetaHandlers(handlers ...MetaHandler) RunOption {
 //
 // If not given, default delimiters are << and >>.
 func WithDelimiters(startDelim, endDelim string) RunOption {
-	return func(o option) option {
+	return func(o runOptions) runOptions {
 		o.startDelim = startDelim
 		o.endDelim = endDelim
 		return o
@@ -48,7 +47,7 @@ func WithDelimiters(startDelim, endDelim string) RunOption {
 //
 // If not given, default destination is the current directory where Run is executed.
 func WithDestination(destdir string) RunOption {
-	return func(o option) option {
+	return func(o runOptions) runOptions {
 		o.destdir = &destdir
 		return o
 	}
@@ -57,9 +56,9 @@ func WithDestination(destdir string) RunOption {
 // WithDetects is an option for Run function defining the detections (languages) to identify.
 //
 // When not given, Detects is used as default slice.
-func WithDetects(funcs ...Detect) RunOption {
-	return func(o option) option {
-		o.detects = funcs
+func WithDetects(funcs ...DetectFunc) RunOption {
+	return func(o runOptions) runOptions {
+		o.detectFuncs = funcs
 		return o
 	}
 }
@@ -69,7 +68,7 @@ func WithDetects(funcs ...Detect) RunOption {
 //
 // If not given, no files are force'd generated.
 func WithForce(filenames ...string) RunOption {
-	return func(o option) option {
+	return func(o runOptions) runOptions {
 		o.force = filenames
 		return o
 	}
@@ -81,16 +80,8 @@ func WithForce(filenames ...string) RunOption {
 //
 // If not given, this option is false.
 func WithForceAll(forceAll bool) RunOption {
-	return func(o option) option {
+	return func(o runOptions) runOptions {
 		o.forceAll = forceAll
-		return o
-	}
-}
-
-// WithLogger defines the logger implementation for Run function.
-func WithLogger(log clog.Logger) RunOption {
-	return func(o option) option {
-		o.log = log
 		return o
 	}
 }
@@ -102,17 +93,17 @@ func WithLogger(log clog.Logger) RunOption {
 //
 // If not given, default filesystem is the embedded one FS.
 func WithTemplates(dir string, fs cfs.FS) RunOption {
-	return func(o option) option {
+	return func(o runOptions) runOptions {
 		o.tmplDir = dir
 		o.fs = fs
 		return o
 	}
 }
 
-// option is the struct related to Option function(s) defining all optional properties.
-type option struct {
-	detects  []Detect
-	handlers []MetaHandler
+// runOptions is the struct related to Option function(s) defining all optional properties.
+type runOptions struct {
+	detectFuncs  []DetectFunc
+	metaHandlers []MetaHandler
 
 	destdir *string
 
@@ -122,60 +113,38 @@ type option struct {
 	fs      cfs.FS
 	tmplDir string
 
-	log clog.Logger
-
 	endDelim   string
 	startDelim string
 }
 
-// newOpt creates a new option struct with all input Option functions
+// newRunOpt creates a new option struct with all input Option functions
 // while taking care of default values.
-func newOpt(opts ...RunOption) option {
-	o := option{}
+func newRunOpt(opts ...RunOption) runOptions {
+	var ro runOptions
 	for _, opt := range opts {
 		if opt != nil {
-			o = opt(o)
+			ro = opt(ro)
 		}
 	}
 
-	if o.startDelim == "" || o.endDelim == "" {
-		o.startDelim = "<<"
-		o.endDelim = ">>"
+	if ro.startDelim == "" || ro.endDelim == "" {
+		ro.startDelim = "<<"
+		ro.endDelim = ">>"
 	}
-	if o.destdir == nil {
+	if ro.destdir == nil {
 		dir, _ := os.Getwd()
-		o.destdir = &dir
+		ro.destdir = &dir
 	}
-	if o.fs == nil {
-		o.fs = FS()
-		o.tmplDir = "templates"
+	if ro.fs == nil {
+		ro.fs = FS()
+		ro.tmplDir = "templates"
 	}
-	if o.log == nil {
-		o.log = clog.Noop()
+	if len(ro.detectFuncs) == 0 {
+		ro.detectFuncs = DetectFuncs()
 	}
-	if len(o.detects) == 0 {
-		o.detects = Detects()
-	}
-	if len(o.handlers) == 0 {
-		o.handlers = MetaHandlers()
+	if len(ro.metaHandlers) == 0 {
+		ro.metaHandlers = MetaHandlers()
 	}
 
-	return o
-}
-
-// toExecOptions transforms the option struct into exported type ExecOpts.
-func (o option) toExecOptions(metadata Metadata) ExecOpts {
-	return ExecOpts{
-		EndDelim: o.endDelim,
-		FileHandlers: func() []FileHandler {
-			result := make([]FileHandler, 0, len(o.handlers))
-			for _, handler := range o.handlers {
-				result = append(result, handler(metadata))
-			}
-			return result
-		}(),
-		Force:      o.force,
-		ForceAll:   o.forceAll,
-		StartDelim: o.startDelim,
-	}
+	return ro
 }

@@ -11,12 +11,13 @@ import (
 	"regexp"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-var _packageManagerRegexp = regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\d+(-.+)?$`)
+var errMissingPackageManager = errors.New("package.json packageManager isn't valid")
+
+var packageManagerRegexp = regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\d+(-.+)?$`)
 
 // PackageJSON represents the node package json descriptor.
 type PackageJSON struct {
@@ -47,9 +48,9 @@ type PackageJSON struct {
 func (p *PackageJSON) Validate() error {
 	var errs []error
 
-	if p.PackageManager != "" && !_packageManagerRegexp.MatchString(p.PackageManager) {
+	if p.PackageManager != "" && !packageManagerRegexp.MatchString(p.PackageManager) {
 		// json schema takes care of saying which regexp must be validated
-		errs = append(errs, errors.New("package.json packageManager isn't valid"))
+		errs = append(errs, errMissingPackageManager)
 	}
 
 	if err := validator.New().Struct(p); err != nil {
@@ -60,14 +61,14 @@ func (p *PackageJSON) Validate() error {
 
 // DetectNodejs handles nodejs detection at destdir.
 // It scans the project for a package.json and validates it.
-func DetectNodejs(_ context.Context, log clog.Logger, destdir string, metadata Metadata) (Metadata, []Exec, error) {
+func DetectNodejs(_ context.Context, destdir string, metadata *Metadata) ([]ExecFunc, error) {
 	jsonpath := filepath.Join(destdir, craft.PackageJSON)
 	pkg, err := readPackageJSON(jsonpath)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
-			return metadata, nil, fmt.Errorf("read package.json: %w", err)
+			return nil, fmt.Errorf("read package.json: %w", err)
 		}
-		return metadata, nil, nil
+		return nil, nil
 	}
 
 	log.Infof("nodejs detected, a '%s' is present and valid", craft.PackageJSON)
@@ -84,10 +85,10 @@ func DetectNodejs(_ context.Context, log clog.Logger, destdir string, metadata M
 		metadata.NoMakefile = true
 	}
 
-	return metadata, []Exec{DefaultExec("lang_nodejs")}, nil
+	return []ExecFunc{BasicExecFunc("lang_nodejs")}, nil
 }
 
-var _ Detect = DetectNodejs // ensure interface is implemented
+var _ DetectFunc = DetectNodejs // ensure interface is implemented
 
 // readPackageJSON reads the package.json provided at input jsonpath. It returns any error encountered.
 func readPackageJSON(jsonpath string) (PackageJSON, error) {
