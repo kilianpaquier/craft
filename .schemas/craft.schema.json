@@ -161,8 +161,6 @@
             ]
         },
         "ci": {
-            "description": "CI definition to help generate specific files.",
-            "type": "object",
             "$ref": "#/$defs/ci"
         },
         "description": {
@@ -170,8 +168,6 @@
             "type": "string"
         },
         "docker": {
-            "description": "Docker definition.",
-            "type": "object",
             "$ref": "#/$defs/docker"
         },
         "license": {
@@ -197,7 +193,9 @@
         "maintainers": {
             "description": "List of maintainers.",
             "type": "array",
-            "$ref": "#/$defs/maintainer",
+            "items": {
+                "$ref": "#/$defs/maintainer"
+            },
             "minItems": 1
         },
         "no_chart": {
