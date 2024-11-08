@@ -35,7 +35,6 @@ var _ DetectFunc = DetectHelm // ensure interface is implemented
 // a marshal is applied on input config and on {{destdir}}/chart/.craft.
 func generateHelm(_ context.Context, fsys cfs.FS, srcdir, destdir string, metadata Metadata, opts ExecOpts) error {
 	helmdir := path.Join(srcdir, "lang_helm")
-	chartdir := filepath.Join(destdir, "chart")
 
 	// transform craft configuration into generic chart configuration (easier to maintain)
 	var chart map[string]any
@@ -44,7 +43,7 @@ func generateHelm(_ context.Context, fsys cfs.FS, srcdir, destdir string, metada
 
 	// read overrides values
 	var overrides map[string]any
-	if err := craft.Read(chartdir, &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := craft.Read(filepath.Join(destdir, "chart"), &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("read helm chart overrides: %w", err)
 	}
 
@@ -53,7 +52,7 @@ func generateHelm(_ context.Context, fsys cfs.FS, srcdir, destdir string, metada
 		return fmt.Errorf("merge helm chart overrides with craft configuration: %w", err)
 	}
 
-	return handleDir(fsys, helmdir, chartdir, chart, "helm", opts)
+	return handleDir(fsys, helmdir, destdir, chart, "helm", opts)
 }
 
 // removeHelm deletes the chart folder inside destdir.
