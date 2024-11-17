@@ -98,7 +98,7 @@ jobs:
           node-version: lts/*
       - run: mkdir -p reports/
       - run: pnpm install-test --frozen-lockfile
-      - if: ${{ ! startsWith(github.head_ref, 'dependabot') }} # ignore codecov on dependabot branches
+      - if: ${{ ! startsWith(github.head_ref, 'dependabot') && ! startsWith(github.head_ref, 'renovate') }}
         uses: codecov/codecov-action@v5
         with:
           codecov_yml_path: .codecov.yml

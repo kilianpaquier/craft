@@ -144,7 +144,7 @@ jobs:
       - run: << $manager >> run test
 <<- end >>
 <<- if has "codecov" .CI.Options >>
-      - if: ${{ ! startsWith(github.head_ref, 'dependabot') }} # ignore codecov on dependabot branches
+      - if: ${{ ! startsWith(github.head_ref, 'dependabot') && ! startsWith(github.head_ref, 'renovate') }}
         uses: codecov/codecov-action@v5
         with:
           codecov_yml_path: .codecov.yml
