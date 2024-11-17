@@ -112,3 +112,19 @@ semantic-release-info:
 
 go-build:
   when: never
+
+.renovate-rules: &renovate-rules
+  rules:
+    # see https://gitlab.com/to-be-continuous/renovate/-/blob/master/templates/gitlab-ci-renovate.yml?ref_type=heads#L348
+    # update mode only with schedule triggering
+    - if: $CI_PIPELINE_SOURCE == 'schedule'
+      variables:
+        RENOVATE_DRY_RUN: "false"
+    # dry run with web triggering
+    - if: $CI_PIPELINE_SOURCE == 'web'
+
+renovate-validator:
+  <<: *renovate-rules
+
+renovate-depcheck:
+  <<: *renovate-rules

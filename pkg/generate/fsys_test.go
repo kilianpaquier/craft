@@ -217,6 +217,22 @@ func TestExec_Generic(t *testing.T) {
 		}
 	})
 
+	t.Run("success_bot_gitlab_renovate", func(t *testing.T) {
+		// Arrange
+		metadata := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				Bot:        helpers.ToPtr(craft.Renovate),
+				CI:         &craft.CI{Name: craft.GitLab},
+				NoMakefile: true,
+				Platform:   craft.GitLab,
+			},
+		})
+		destdir := t.TempDir()
+
+		// Act & Asset
+		verify(t, destdir, metadata)
+	})
+
 	t.Run("success_makefile", func(t *testing.T) {
 		// Arrange
 		metadata := setup(generate.Metadata{
