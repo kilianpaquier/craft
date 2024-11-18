@@ -9,7 +9,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/charmbracelet/bubbletea v1.2.2
 	github.com/charmbracelet/huh v0.6.0
-	github.com/go-playground/validator/v10 v10.22.1
+	github.com/go-playground/validator/v10 v10.23.0
 	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/jarcoal/httpmock v1.3.1
