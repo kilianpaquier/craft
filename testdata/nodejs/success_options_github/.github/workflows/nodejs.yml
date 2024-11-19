@@ -99,7 +99,7 @@ jobs:
       - run: mkdir -p reports/
       - run: pnpm install-test --frozen-lockfile
       - if: ${{ ! startsWith(github.head_ref, 'dependabot') && ! startsWith(github.head_ref, 'renovate') }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
           codecov_yml_path: .codecov.yml
           disable_search: true
