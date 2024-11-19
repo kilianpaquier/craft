@@ -104,7 +104,7 @@ jobs:
           codecov_yml_path: .codecov.yml
           disable_search: true
           env_vars: OS
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           files: reports/lcov.info
           slug: ${{ github.repository }}
           token: ${{ secrets.CODECOV_TOKEN }}
