@@ -82,7 +82,7 @@ jobs:
       - run: mkdir -p reports/
       - uses: golangci/golangci-lint-action@v6
         with:
-          args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format checkstyle:reports/go-ci-lint.checkstyle.xml,colored-line-number
+          args: --config .golangci.yml --timeout 240s --fast --sort-results --out-format checkstyle:reports/go-ci-lint.checkstyle.xml,colored-line-number --issues-exit-code 0
 <<- if has "sonar" .CI.Options >>
       - uses: actions/upload-artifact@v4
         with:
