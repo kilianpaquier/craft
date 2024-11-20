@@ -7,7 +7,7 @@ toolchain go1.23.2
 require (
 	dario.cat/mergo v1.0.1
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/charmbracelet/bubbletea v1.2.2
+	github.com/charmbracelet/bubbletea v1.2.3
 	github.com/charmbracelet/huh v0.6.0
 	github.com/go-playground/validator/v10 v10.23.0
 	github.com/go-viper/mapstructure/v2 v2.2.1
