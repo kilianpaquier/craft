@@ -3,6 +3,7 @@
 name: Golang
 run-name: Golang
 
+<<- $gocli := and (gt (len .Clis) 0) (not .NoGoreleaser) >>
 <<- $docker := and .Docker (gt .Binaries 0) >>
 
 on:
@@ -29,10 +30,12 @@ on:
 <<- end >>
   workflow_call:
     inputs:
+<<- if $gocli >>
       build:
         description: Whether to run build job or not
         required: false
         type: boolean
+<<- end >>
       version:
         description: Build version to use in build metadata
         required: true
@@ -131,6 +134,8 @@ jobs:
           retention-days: 1
 <<- end >>
 
+<<- if $gocli >>
+
   go-build:
     name: Go Build
     runs-on: ubuntu-latest
@@ -161,6 +166,7 @@ jobs:
             !dist/*.yaml
             !dist/*/
           retention-days: 1
+<<- end >>
 
 <<- if has "sonar" .CI.Options >>
 

@@ -44,7 +44,7 @@ func TestDetectNodejs(t *testing.T) {
 		assert.Empty(t, exec)
 	})
 
-	t.Run("error_validation_packagejson", func(t *testing.T) {
+	t.Run("error_validation_packageManager", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
@@ -56,7 +56,30 @@ func TestDetectNodejs(t *testing.T) {
 		exec, err := generate.DetectNodejs(ctx, destdir, &generate.Metadata{})
 
 		// Assert
-		assert.ErrorContains(t, err, "read package.json")
+		assert.ErrorIs(t, err, generate.ErrMissingPackageManager)
+		assert.Empty(t, exec)
+	})
+
+	t.Run("error_invalid_static_option", func(t *testing.T) {
+		// Arrange
+		destdir := t.TempDir()
+
+		packagejson := filepath.Join(destdir, craft.PackageJSON)
+		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "packageManager": "bun@1.1.6", "private": true }`), cfs.RwRR)
+		require.NoError(t, err)
+
+		config := generate.Metadata{
+			Configuration: craft.Configuration{
+				CI: &craft.CI{Static: &craft.Static{}},
+			},
+			Languages: map[string]any{},
+		}
+
+		// Act
+		exec, err := generate.DetectNodejs(ctx, destdir, &config)
+
+		// Assert
+		assert.ErrorIs(t, err, generate.ErrInvalidStaticDeployment)
 		assert.Empty(t, exec)
 	})
 

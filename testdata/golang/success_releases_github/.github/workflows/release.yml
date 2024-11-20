@@ -45,12 +45,23 @@ jobs:
         env:
           INPUT_MODE: ${{ inputs.mode }}
 
+  golang:
+    name: Golang
+    needs: version
+    uses: ./.github/workflows/golang.yml
+    permissions:
+      checks: write
+    with:
+      version: ${{ needs.version.outputs.version }}
+    secrets: inherit
+
   release:
     name: Release
     runs-on: ubuntu-latest
     environment: release
     needs:
       - version
+      - golang
     steps:
       - uses: actions/checkout@v4
         with:

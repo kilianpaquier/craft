@@ -8,6 +8,7 @@ run-name: Release
 <<- $golang := hasKey .Languages "golang" >>
 
 <<- $gocli := and $golang (gt (len .Clis) 0) (not .NoGoreleaser) >>
+<<- $nodebuild := and $nodejs ((get .Languages "nodejs").Main) >> 
 <<- $nodepublish := and $nodejs (not (get .Languages "nodejs").Private) >>
 <<- $docker := and .Docker (gt .Binaries 0) >>
 
@@ -102,7 +103,7 @@ jobs:
         env:
           INPUT_MODE: ${{ inputs.mode }}
 
-<<- if $gocli >>
+<<- if $golang >>
 
   golang:
     name: Golang
@@ -111,18 +112,22 @@ jobs:
     permissions:
       checks: write
     with:
+<<- if $gocli >>
       build: true
+<<- end >>
       version: ${{ needs.version.outputs.version }}
     secrets: inherit
 <<- end >>
 
-<<- if $nodepublish >>
+<<- if $nodejs >>
 
   node:
     name: Node
     uses: ./.github/workflows/nodejs.yml
+<<- if $nodebuild >>
     with:
       build: true
+<<- end >>
     secrets: inherit
 <<- end >>
 
@@ -184,10 +189,10 @@ jobs:
 <<- end >>
     needs:
       - version
-<<- if $gocli >>
+<<- if $golang >>
       - golang
 <<- end >>
-<<- if $nodepublish >>
+<<- if $nodejs >>
       - node
 <<- end >>
 <<- if $docker >>

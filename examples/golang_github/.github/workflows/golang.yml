@@ -25,10 +25,6 @@ on:
       - v[0-9]+.x
   workflow_call:
     inputs:
-      build:
-        description: Whether to run build job or not
-        required: false
-        type: boolean
       version:
         description: Build version to use in build metadata
         required: true
@@ -119,37 +115,6 @@ jobs:
         with:
           name: coverage
           path: reports
-          retention-days: 1
-
-  go-build:
-    name: Go Build
-    runs-on: ubuntu-latest
-    if: ${{ inputs.build }}
-    needs:
-      - run-workflow
-      - go-test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          check-latest: true
-          go-version-file: go.mod
-          token: ${{ secrets.GITHUB_TOKEN }}
-      # https://github.com/marketplace/actions/goreleaser-action
-      - uses: goreleaser/goreleaser-action@v6
-        with:
-          args: release --clean --config .goreleaser.yml --skip=validate --skip=announce --skip=publish --snapshot
-        env:
-          VERSION: ${{ inputs.version }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build
-          # order is important to filter unwanted globs after the filter or desired globs
-          path: |
-            dist/*
-            !dist/*.json
-            !dist/*.yaml
-            !dist/*/
           retention-days: 1
 
   sonar-analysis:

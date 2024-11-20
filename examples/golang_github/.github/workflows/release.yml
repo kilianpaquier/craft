@@ -46,6 +46,16 @@ jobs:
         env:
           INPUT_MODE: ${{ inputs.mode }}
 
+  golang:
+    name: Golang
+    needs: version
+    uses: ./.github/workflows/golang.yml
+    permissions:
+      checks: write
+    with:
+      version: ${{ needs.version.outputs.version }}
+    secrets: inherit
+
   docker:
     name: Docker
     needs: version
@@ -70,6 +80,7 @@ jobs:
       pull-requests: write
     needs:
       - version
+      - golang
       - docker
     steps:
       - uses: actions/checkout@v4

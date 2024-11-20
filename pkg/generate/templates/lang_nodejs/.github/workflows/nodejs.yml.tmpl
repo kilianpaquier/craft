@@ -4,6 +4,7 @@ name: Node
 run-name: Node
 
 <<- $specifics := get .Languages "nodejs" >>
+<<- $nodebuild := $specifics.Main >>
 <<- $docker := and .Docker (gt .Binaries 0) >>
 <<- $manager := cutAfter $specifics.PackageManager "@" >>
 
@@ -23,18 +24,20 @@ on:
       - development
       - next
       - staging
-<<- if not .IsAutoRelease >>
+<<- if and (not .IsAutoRelease) (or (not .CI.Static) (not .CI.Static.Auto)) >>
       - main
       - master
       - v[0-9]+.[0-9]+.x
       - v[0-9]+.x
 <<- end >>
   workflow_call:
+<<- if $nodebuild >>
     inputs:
       build:
         description: Whether to run build job or not
         required: false
         type: boolean
+<<- end >>
   workflow_dispatch:
 
 jobs:
@@ -163,6 +166,8 @@ jobs:
           retention-days: 1
 <<- end >>
 
+<<- if $nodebuild >>
+
   node-build:
     name: Node Build
     runs-on: ubuntu-latest
@@ -203,6 +208,7 @@ jobs:
           name: build
           path: dist
           retention-days: 1
+<<- end >>
 
 <<- if has "sonar" .CI.Options >>
 

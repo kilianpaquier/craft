@@ -12,6 +12,8 @@ jobs:
   node:
     name: Node
     uses: ./.github/workflows/nodejs.yml
+    with:
+      build: true
 
   netlify:
     name: Netlify

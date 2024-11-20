@@ -418,7 +418,7 @@ func TestExec_Golang(t *testing.T) {
 						CI:           &craft.CI{Name: tc},
 						Docker:       &craft.Docker{Port: helpers.ToPtr(uint16(5000)), Registry: helpers.ToPtr("example.com")},
 						License:      helpers.ToPtr("mit"),
-						NoGoreleaser: true,
+						NoGoreleaser: false,
 						Platform:     tc,
 					},
 					Crons:   map[string]struct{}{"cron-name": {}},
@@ -695,7 +695,7 @@ func TestExec_Nodejs(t *testing.T) {
 						Platform: tc.CI,
 					},
 					Languages: map[string]any{
-						"nodejs": generate.PackageJSON{PackageManager: "bun@1.0.0"},
+						"nodejs": generate.PackageJSON{Main: helpers.ToPtr("index.js"), PackageManager: "bun@1.0.0"},
 					},
 				})
 				destdir := t.TempDir()

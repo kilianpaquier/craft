@@ -15,7 +15,10 @@ import (
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-var errMissingPackageManager = errors.New("package.json packageManager isn't valid")
+var (
+	ErrInvalidStaticDeployment = errors.New("package.json 'main' isn't provided but a static deployment is configured")
+	ErrMissingPackageManager   = errors.New("package.json 'packageManager' isn't valid")
+)
 
 var packageManagerRegexp = regexp.MustCompile(`^(npm|pnpm|yarn|bun)@\d+\.\d+\.\d+(-.+)?$`)
 
@@ -50,7 +53,7 @@ func (p *PackageJSON) Validate() error {
 
 	if p.PackageManager != "" && !packageManagerRegexp.MatchString(p.PackageManager) {
 		// json schema takes care of saying which regexp must be validated
-		errs = append(errs, errMissingPackageManager)
+		errs = append(errs, ErrMissingPackageManager)
 	}
 
 	if err := validator.New().Struct(p); err != nil {
@@ -77,6 +80,8 @@ func DetectNodejs(_ context.Context, destdir string, metadata *Metadata) ([]Exec
 	metadata.ProjectName = pkg.Name
 	if pkg.Main != nil {
 		metadata.Binaries++
+	} else if metadata.CI != nil && metadata.CI.Static != nil {
+		return nil, ErrInvalidStaticDeployment
 	}
 
 	// deactivate makefile because commands are facilitated by package.json scripts
