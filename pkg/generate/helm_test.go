@@ -49,7 +49,11 @@ func TestGenerateHelm(t *testing.T) {
 
 	t.Run("success_empty_values", func(t *testing.T) {
 		// Arrange
-		metadata := setup(generate.Metadata{})
+		metadata := setup(generate.Metadata{
+			Configuration: craft.Configuration{
+				CI: &craft.CI{},
+			},
+		})
 		destdir := t.TempDir()
 
 		// Act & Assert
