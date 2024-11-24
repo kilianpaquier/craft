@@ -19,7 +19,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: /home/runner/.cache/hugo_cache
-          key: hugo-${{ hashFiles('**/go.sum') }}
+          key: hugo-${{ hashFiles('go.sum') }}
           restore-keys: |
             hugo-
       # https://github.com/marketplace/actions/hugo-setup
@@ -34,9 +34,10 @@ jobs:
           name: github-pages
           path: dist
           retention-days: 1
-<<- end >>
+<<- else >>
       - uses: actions/upload-artifact@v4
         with:
           name: build
           path: dist
           retention-days: 1
+<<- end >>

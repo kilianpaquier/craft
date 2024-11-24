@@ -95,4 +95,3 @@ plugins:
           to: ^(dev|develop|development)$
         - from: staging
           to: ^(dev|develop|development)$
-  - "@semantic-release/exec"

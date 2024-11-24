@@ -90,4 +90,3 @@ plugins:
       assets:
         - label: CHANGELOG.md
           path: CHANGELOG.md
-  - "@semantic-release/exec"

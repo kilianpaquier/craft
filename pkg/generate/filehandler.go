@@ -120,20 +120,10 @@ func githubWorkflowsHandler(metadata Metadata) FileHandler { //nolint:cyclop
 		}
 
 		switch name {
-		case "build.yml":
-			if _, ok := metadata.Languages["golang"]; ok {
-				return true, !metadata.NoGoreleaser && len(metadata.Clis) > 0 && metadata.IsCI(craft.GitHub)
-			}
 		case "codeql.yml":
 			return true, len(metadata.Languages) > 0 && metadata.IsCI(craft.GitHub) && slices.Contains(metadata.CI.Options, craft.CodeQL)
-		case "docker.yml":
-			return true, metadata.Docker != nil && metadata.Binaries > 0 && metadata.IsCI(craft.GitHub)
-		case "netlify.yml":
-			return true, metadata.IsCI(craft.GitHub) && metadata.IsStatic(craft.Netlify)
-		case "pages.yml":
-			return true, metadata.IsCI(craft.GitHub) && metadata.IsStatic(craft.Pages)
 		case "release.yml":
-			return true, metadata.IsCI(craft.GitHub) && metadata.CI.Release != nil //nolint:revive
+			return true, metadata.IsCI(craft.GitHub)
 		case "renovate.yml":
 			return true, metadata.IsBot(craft.Renovate) && metadata.CI != nil && metadata.CI.Auth.Maintenance != nil && *metadata.CI.Auth.Maintenance != craft.Mendio //nolint:revive
 		case "labeler.yml":
@@ -153,8 +143,8 @@ func githubActionsHandler(metadata Metadata) FileHandler {
 			return false, false
 		}
 
-		if strings.Contains(src, path.Join(".github", "actions", "version")) {
-			return true, metadata.IsCI(craft.GitHub) && (metadata.Docker != nil || metadata.HasRelease())
+		if strings.Contains(src, path.Join(".github", "actions", "docker")) {
+			return true, metadata.IsCI(craft.GitHub) && metadata.Docker != nil
 		}
 		return true, metadata.IsCI(craft.GitHub)
 	}

@@ -4,53 +4,17 @@ name: Node
 run-name: Node
 
 <<- $specifics := get .Languages "nodejs" >>
-<<- $nodebuild := $specifics.Main >>
-<<- $docker := and .Docker (gt .Binaries 0) >>
 <<- $manager := cutAfter $specifics.PackageManager "@" >>
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
-  push:
-    branches:
-      - alpha
-      - beta
-      - dev
-      - develop
-      - development
-      - next
-      - staging
-<<- if and (not .IsAutoRelease) (or (not .CI.Static) (not .CI.Static.Auto)) >>
-      - main
-      - master
-      - v[0-9]+.[0-9]+.x
-      - v[0-9]+.x
-<<- end >>
   workflow_call:
-<<- if $nodebuild >>
     inputs:
-      build:
-        description: Whether to run build job or not
-        required: false
-        type: boolean
-<<- end >>
-  workflow_dispatch:
+      event_name:
+        description: GitHub Actions real event_name since it will always 'workflow_dispatch' by default.
+        required: true
+        type: string
 
 jobs:
-
-  run-workflow:
-    name: Run Workflow
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.ref_protected != true) }}
-    outputs:
-      skip: ${{ steps.skip.outputs.skip }}
-    steps:
-      - id: skip
-        run: echo "Running workflow" && echo "skip=false" >> $GITHUB_OUTPUT
 
 <<- /* bun doesn't support audit yet: https://github.com/oven-sh/bun/issues/5359 */ ->>
 <<- if ne $manager "bun" >>
@@ -58,11 +22,13 @@ jobs:
   node-audit:
     name: Node Audit
     runs-on: ubuntu-latest
-    needs: run-workflow
     steps:
       - uses: actions/checkout@v4
-<<- if eq $manager "pnpm" >>
-      - uses: pnpm/action-setup@v4
+      << if eq $manager "pnpm" ->>- uses: pnpm/action-setup@v4<< end >>
+<<- if eq $manager "bun" >>
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 <<- end >>
       - uses: actions/setup-node@v4
         with:
@@ -74,7 +40,6 @@ jobs:
   node-lint:
     name: Node Lint
     runs-on: ubuntu-latest
-    needs: run-workflow
     steps:
       - uses: actions/checkout@v4
 <<- if eq $manager "pnpm" >>
@@ -108,7 +73,6 @@ jobs:
   node-test:
     name: Node Test
     runs-on: ${{ matrix.os }}
-    needs: run-workflow
     strategy:
       fail-fast: false
       matrix:
@@ -138,17 +102,18 @@ jobs:
       - run: << $manager >> ci
 <<- end >>
 <<- if eq $manager "bun" >>
-      - run: << $manager >> install --frozen-lockfile
-      - run: << $manager >> test --rerun-each 10 --coverage --coverage-reporter=lcov --coverage-dir=reports
+      - run: |
+          << $manager >> install --frozen-lockfile
+          << $manager >> test --rerun-each 10 --coverage --coverage-reporter=lcov --coverage-dir=reports
 <<- else if eq $manager "pnpm" >>
       - run: << $manager >> install-test --frozen-lockfile
 <<- else >>
-      - run: << $manager >> install --frozen-lockfile
-      - run: << $manager >> run test
+      - run: |
+          << $manager >> install --frozen-lockfile
+          << $manager >> run test
 <<- end >>
 <<- if has "codecov" .CI.Options >>
-      - if: ${{ ! startsWith(github.head_ref, 'dependabot') && ! startsWith(github.head_ref, 'renovate') }}
-        uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v4
         with:
           codecov_yml_path: .codecov.yml
           disable_search: true
@@ -166,14 +131,12 @@ jobs:
           retention-days: 1
 <<- end >>
 
-<<- if $nodebuild >>
+<<- if $specifics.Main >>
 
   node-build:
     name: Node Build
     runs-on: ubuntu-latest
-    if: ${{ inputs.build }}
     needs:
-      - run-workflow
       - node-test
     steps:
       - uses: actions/checkout@v4
@@ -216,7 +179,6 @@ jobs:
     name: Sonar Analysis
     runs-on: ubuntu-latest
     needs:
-      - run-workflow
       - node-lint
       - node-test
     env:
@@ -230,24 +192,24 @@ jobs:
         with:
           path: ${{ env.SONAR_USER_HOME }}
           key: sonar-cache
-      - if: ${{ github.event_name == 'pull_request' }}
+      - if: ${{ inputs.event_name == 'pull_request' }}
         uses: sonarsource/sonarcloud-github-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: |
             -Dproject.settings=sonar.properties
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.pullrequest.branch=${{ github.head_ref }}
             -Dsonar.pullrequest.key=${{ github.event.issue.number }}
-      - if: ${{ github.event_name == 'push' }}
-        uses: sonarsource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - if: ${{ inputs.event_name == 'push' }}
+        uses: sonarsource/sonarcloud-github-action@master
         with:
           args: |
             -Dproject.settings=sonar.properties
             -Dsonar.branch.name=${{ github.ref_name }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - uses: actions/cache/save@v4
         with:
           path: ${{ env.SONAR_USER_HOME }}
