@@ -113,12 +113,12 @@ jobs:
           << $manager >> run test
 <<- end >>
 <<- if has "codecov" .CI.Options >>
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           codecov_yml_path: .codecov.yml
           disable_search: true
           env_vars: OS
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           files: reports/lcov.info
           slug: ${{ github.repository }}
           token: ${{ secrets.CODECOV_TOKEN }}
