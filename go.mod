@@ -16,7 +16,7 @@ require (
 	github.com/kilianpaquier/cli-sdk v0.0.0-20240824154846-992810f57804
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/xanzy/go-gitlab v0.114.0
 	golang.org/x/mod v0.22.0
 	gopkg.in/yaml.v3 v3.0.1
