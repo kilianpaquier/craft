@@ -20,6 +20,9 @@ docs/
 reports/
 dist/
 
+# vendor dependencies
+vendor/
+
 # binaries
 cron-*
 !cron-*/
@@ -29,6 +32,3 @@ worker-*
 # test files
 **/*_test.go
 **/*.test
-
-# vendor dependencies
-vendor/

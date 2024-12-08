@@ -1,0 +1,7 @@
+@semantic-release/changelog
+@semantic-release/commit-analyzer
+@semantic-release/exec
+@semantic-release/git
+@semantic-release/gitlab
+@semantic-release/npm
+@kilianpaquier/semantic-release-backmerge

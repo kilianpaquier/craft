@@ -1,56 +1,96 @@
 package generate //nolint:testpackage
 
 import (
+	"context"
+	"os"
 	"testing"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestOption(t *testing.T) {
-	t.Run("success_delimiters", func(t *testing.T) {
-		// Arrange
-		f := WithDelimiters("{{", "}}")
+func ParserNoop(context.Context, string, *Metadata) error {
+	return nil
+}
 
-		// Act
-		o := f(runOptions{})
+var _ Parser = ParserNoop // ensure interface is implemented
 
-		// Assert
-		assert.Equal(t, "{{", o.startDelim)
-		assert.Equal(t, "}}", o.endDelim)
-	})
+func HandlerNoop(string, string, string) (HandlerResult, bool) {
+	return HandlerResult{}, false
+}
 
+var _ Handler = HandlerNoop // ensure interface is implemented
+
+func TestRunOption(t *testing.T) {
 	t.Run("success_destination", func(t *testing.T) {
 		// Arrange
 		f := WithDestination("dest")
 
 		// Act
-		o := f(runOptions{})
+		ro := f(runOptions{})
 
 		// Assert
-		require.NotNil(t, o.destdir)
-		assert.Equal(t, "dest", *o.destdir)
+		require.NotNil(t, ro.destdir)
+		assert.Equal(t, "dest", *ro.destdir)
 	})
 
-	t.Run("success_force", func(t *testing.T) {
+	t.Run("success_logger", func(t *testing.T) {
 		// Arrange
-		f := WithForce("name")
+		logger := clog.Std()
+		f := WithLogger(logger)
 
 		// Act
-		o := f(runOptions{})
+		ro := f(runOptions{})
 
 		// Assert
-		assert.Contains(t, o.force, "name")
+		assert.Equal(t, logger, ro.logger)
 	})
 
-	t.Run("success_forceall", func(t *testing.T) {
+	t.Run("success_parsers", func(t *testing.T) {
 		// Arrange
-		f := WithForceAll(true)
+		f := WithParsers(func(_ context.Context, _ string, _ *Metadata) error {
+			return nil
+		})
 
 		// Act
-		o := f(runOptions{})
+		ro := f(runOptions{})
 
 		// Assert
-		assert.True(t, o.forceAll)
+		assert.Len(t, ro.parsers, 1)
+	})
+
+	t.Run("success_templates", func(t *testing.T) {
+		// Arrange
+		f := WithTemplates("dir", cfs.OS())
+
+		// Act
+		ro := f(runOptions{})
+
+		// Assert
+		assert.Equal(t, "dir", ro.tmplDir)
+		assert.Equal(t, cfs.OS(), ro.fs)
+	})
+
+	t.Run("success_defaults", func(t *testing.T) {
+		// Arrange
+		pwd, _ := os.Getwd()
+		expected := runOptions{
+			destdir: &pwd,
+			fs:      FS(),
+			logger:  clog.Noop(),
+			tmplDir: "_templates",
+		}
+
+		// Act
+		ro, err := newRunOpt(WithHandlers(HandlerNoop), WithParsers(ParserNoop))
+
+		// Assert
+		require.NoError(t, err)
+		assert.Equal(t, *expected.destdir, *ro.destdir)
+		assert.Equal(t, expected.fs, ro.fs)
+		assert.Equal(t, expected.logger, ro.logger)
+		assert.Equal(t, expected.tmplDir, ro.tmplDir)
 	})
 }
