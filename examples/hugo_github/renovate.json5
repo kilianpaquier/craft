@@ -109,18 +109,6 @@
         },
         {
           "addLabels": [ "non-major" ],
-          "groupName": "docker dependencies (non major)",
-          "matchCategories": [ "docker" ],
-          "matchUpdateTypes": [ "!major" ]
-        },
-        {
-          "addLabels": [ "major" ],
-          "groupName": "docker dependencies (major)",
-          "matchCategories": [ "docker" ],
-          "matchUpdateTypes": [ "major" ]
-        },
-        {
-          "addLabels": [ "non-major" ],
           "groupName": "golang dependencies (non major)",
           "matchCategories": [ "golang" ],
           "matchUpdateTypes": [ "!major" ]
@@ -129,78 +117,6 @@
           "addLabels": [ "major" ],
           "groupName": "golang dependencies (major)",
           "matchCategories": [ "golang" ],
-          "matchUpdateTypes": [ "major" ]
-        },
-        {
-          "addLabels": [ "non-major" ],
-          "groupName": "helm dependencies (non major)",
-          "matchCategories": [ "helm" ],
-          "matchUpdateTypes": [ "!major" ]
-        },
-        {
-          "addLabels": [ "major" ],
-          "groupName": "helm dependencies (major)",
-          "matchCategories": [ "helm" ],
-          "matchUpdateTypes": [ "major" ]
-        },
-        {
-          "addLabels": [ "non-major" ],
-          "groupName": "java dependencies (non major)",
-          "matchCategories": [ "java" ],
-          "matchUpdateTypes": [ "!major" ]
-        },
-        {
-          "addLabels": [ "major" ],
-          "groupName": "java dependencies (major)",
-          "matchCategories": [ "java" ],
-          "matchUpdateTypes": [ "major" ]
-        },
-        {
-          "addLabels": [ "non-major" ],
-          "groupName": "js dependencies (non major)",
-          "matchCategories": [ "js" ],
-          "matchUpdateTypes": [ "!major" ]
-        },
-        {
-          "addLabels": [ "major" ],
-          "groupName": "js dependencies (major)",
-          "matchCategories": [ "js" ],
-          "matchUpdateTypes": [ "major" ]
-        },
-        {
-          "addLabels": [ "non-major" ],
-          "groupName": "kubernetes dependencies (non major)",
-          "matchCategories": [ "kubernetes" ],
-          "matchUpdateTypes": [ "!major" ]
-        },
-        {
-          "addLabels": [ "major" ],
-          "groupName": "kubernetes dependencies (major)",
-          "matchCategories": [ "kubernetes" ],
-          "matchUpdateTypes": [ "major" ]
-        },
-        {
-          "addLabels": [ "non-major" ],
-          "groupName": "python dependencies (non major)",
-          "matchCategories": [ "python" ],
-          "matchUpdateTypes": [ "!major" ]
-        },
-        {
-          "addLabels": [ "major" ],
-          "groupName": "python dependencies (major)",
-          "matchCategories": [ "python" ],
-          "matchUpdateTypes": [ "major" ]
-        },
-        {
-          "addLabels": [ "non-major" ],
-          "groupName": "rust dependencies (non major)",
-          "matchCategories": [ "rust" ],
-          "matchUpdateTypes": [ "!major" ]
-        },
-        {
-          "addLabels": [ "major" ],
-          "groupName": "rust dependencies (major)",
-          "matchCategories": [ "rust" ],
           "matchUpdateTypes": [ "major" ]
         },
     ],

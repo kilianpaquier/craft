@@ -14,7 +14,7 @@ func (c *Configuration) EnsureDefaults() {
 	// ensure defaults values are set for maintenance bot
 	if c.Bot != nil {
 		if c.Platform == GitLab {
-			c.Bot = helpers.ToPtr(Renovate) // dependabot is not available on craft for gitlab
+			c.Bot = helpers.ToPtr(Renovate) // dependabot is not available on craft for GitLab
 		}
 	}
 
@@ -30,12 +30,14 @@ func (c *Configuration) ensureDefaultCI() {
 	if c.Bot != nil {
 		if *c.Bot == Dependabot || c.Platform == GitLab {
 			c.CI.Auth.Maintenance = nil // dependabot and gitlab don't need any mode
+		} else if *c.Bot == Renovate && c.CI.Auth.Maintenance == nil {
+			c.CI.Auth.Maintenance = helpers.ToPtr(GitHubToken)
 		}
 	}
 
-	// specific gitlab CICD
-	if c.CI.Name == GitLab {
-		c.CI.Options = slices.DeleteFunc(c.CI.Options, func(option string) bool { return option == Labeler }) // labeler isn't available on gitlab CICD
+	// labeler is only available on GitHub Actions
+	if c.CI.Name != GitHub {
+		c.CI.Options = slices.DeleteFunc(c.CI.Options, func(option string) bool { return option == Labeler })
 	}
 
 	func() {
@@ -51,40 +53,13 @@ func (c *Configuration) ensureDefaultCI() {
 			c.CI.Auth.Release = helpers.ToPtr(GitHubToken) // set default release mode for github actions
 		}
 
-		// specific gitlab CICD
+		// specific GitLab CICD
 		if c.CI.Name == GitLab {
-			c.CI.Auth.Release = nil // release auth isn't available with gitlab CICD
+			c.CI.Auth.Release = nil // release auth isn't available with GitLab CICD
 		}
 	}()
 }
 
-func (c *Configuration) retroCompatibility() {
-	if c.CI != nil {
-		// generic function to match an option included in a slice of options
-		del := func(options ...string) func(option string) bool {
-			return func(option string) bool {
-				return slices.Contains(options, option)
-			}
-		}
-
-		// migrate old renovate / dependabot option
-		switch {
-		case slices.Contains(c.CI.Options, Dependabot):
-			c.Bot = helpers.ToPtr(Dependabot)
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, del(Dependabot))
-		case slices.Contains(c.CI.Options, Renovate):
-			c.Bot = helpers.ToPtr(Renovate)
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, del(Renovate))
-		}
-
-		// migrate old netlify / pages option
-		switch {
-		case slices.Contains(c.CI.Options, Netlify):
-			c.CI.Static = &Static{Name: Netlify}
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, del(Netlify))
-		case slices.Contains(c.CI.Options, Pages):
-			c.CI.Static = &Static{Name: Pages}
-			c.CI.Options = slices.DeleteFunc(c.CI.Options, del(Pages))
-		}
-	}
+func (*Configuration) retroCompatibility() {
+	// TBD in case a migration is needed
 }

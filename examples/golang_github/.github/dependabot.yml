@@ -25,6 +25,7 @@ updates:
       prefix: ci
     reviewers:
       - kilianpaquier
+
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -41,6 +42,7 @@ updates:
       prefix: chore
     reviewers:
       - kilianpaquier
+
   - package-ecosystem: gomod
     directory: /
     schedule:
