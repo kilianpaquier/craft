@@ -1,0 +1,23 @@
+{{- define "hugo" }}
+
+.PHONY: build
+build:
+	@hugo --gc --minify --destination dist
+
+.PHONY: serve
+serve:
+	@hugo server --disableFastRender
+
+.PHONY: production
+{{- if .IsStatic "netlify" }}
+production:
+	@netlify dev -c "make serve" \
+		--target-port 1313 --port 8888
+		--dir dist
+		--framework hugo
+		--context production
+{{- else }}
+production: build
+	@python3 -m http.server --directory dist
+{{- end }}
+{{- end }}

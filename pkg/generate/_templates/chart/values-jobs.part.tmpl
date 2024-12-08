@@ -1,0 +1,160 @@
+{{- define "jobs" }}
+
+{{- $kubeVersion := "v1.30" }}
+
+{{- with .jobs }}
+jobs:
+{{- range $name, $config := . }}
+  {{ $name }}:
+    suspend: true
+    completionMode: {{ $config.completionMode | default "NonIndexed" }}
+    completions: {{ $config.completions | default 1 }}
+    parallelism: {{ $config.parallelism | default 1 }}
+    {{- with $config.ttlSecondsAfterFinished }}
+    ttlSecondsAfterFinished: {{ . }}
+    {{- end }}
+    image:
+      registry: {{ $config.image.registry | default $.docker.registry | default ("" | quote) }}
+      repository: {{ $config.image.repository | default $.projectPath }}
+      pullPolicy: {{ $config.image.pullPolicy | default ("" | quote) }}
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: {{ $config.image.tag | default "" | quote }}
+    env:
+      {{- $env := merge (dict "BINARY_NAME" $name) (dict "BINARY_PORT" ($.docker.port | default 3000)) $config.env }}
+      {{- toYaml $env | nindent 6 }}
+    {{- with $config.envFrom }}
+    envFrom:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    envFrom: []
+      # - prefix: ""
+      #   configMapRef:
+      #     name: ""
+      #   secretRef:
+      #     name: ""
+    {{- end }}
+    resources:
+      limits:
+        cpu: {{ $config.resources.limits.cpu | default "250m" }}
+        memory: {{ $config.resources.limits.memory | default "256Mi" }}
+        storage: {{ $config.resources.limits.storage | default "10Gi" }}
+      requests:
+        cpu: {{ $config.resources.requests.cpu | default "50m" }}
+        memory: {{ $config.resources.requests.memory | default "128Mi" }}
+        storage: {{ $config.resources.requests.storage | default "5Gi" }}
+    restartPolicy: {{ $config.RestartPolicy | default "OnFailure" }}
+    {{- with $config.configMap }}
+    configMap:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    configMap: {}
+      # mountPath: /etc/config/
+      # tpl_folders: # folders to be included in configmap with tpl
+      #   - folder_name
+      # include_folders: # folders to be included in configmap without tpl
+      #   - folder_name
+      # data:
+      #   name: value
+    {{- end }}
+
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/{{ $kubeVersion }}/#volume-v1-core
+    {{- with $config.volumes }}
+    volumes:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    volumes: []
+      # - name: ""
+      #   configMap:
+      #     name: configMapName
+      # - name: ""
+      #   emptyDir:
+      #     medium: ""
+      #     sizeLimit: 1Gi
+      # - name: ""
+      #   persistentVolumeClaim:
+      #     claimName: ""
+      #     readOnly: false
+      # - name: ""
+      #   secret:
+      #     secretName: ""
+    {{- end }}
+    {{- with $config.volumeMounts }}
+    volumeMounts:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    volumeMounts: []
+      # - mountPath: /etc/config/
+      #   name: volume[*].name
+      #   readOnly: true
+    {{- end }}
+
+    {{ with $config.podAnnotations -}}
+    podAnnotations:
+      {{- toYaml . | nindent 6 }}
+    {{ else -}}
+    podAnnotations: {}
+    {{- end }}
+
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/{{ $kubeVersion }}/#podsecuritycontext-v1-core
+    {{- with $config.podSecurityContext }}
+    podSecurityContext:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    podSecurityContext: {}
+    {{- end }}
+      # fsGroup: 2
+      # fsGroupChangePolicy: Always | OnRootMismatch
+      # runAsGroup: 1001
+      # runAsNonRoot: true
+      # runAsUser: 1001
+
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/{{ $kubeVersion }}/#securitycontext-v1-core
+    {{- with $config.securityContext }}
+    securityContext:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    securityContext: {}
+      # allowPrivilegeEscalation: false
+      # capabilities:
+      #   add: []
+      #   drop: []
+      # privileged: false
+      # readOnlyRootFilesystem: true
+      # runAsGroup: 1001
+      # runAsNonRoot: true
+      # runAsUser: 1001
+    {{- end }}
+
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/{{ $kubeVersion }}/#nodeselector-v1-core
+    {{ with $config.nodeSelector -}}
+    nodeSelector:
+      {{- toYaml . | nindent 6 }}
+    {{ else -}}
+    nodeSelector: {}
+    {{- end }}
+
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/{{ $kubeVersion }}/#toleration-v1-core
+    {{- with $config.tolerations }}
+    tolerations:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    tolerations: []
+      # - effect: NoSchedule | PreferNoSchedule | NoExecute
+      #   key: ""
+      #   operator: Exists | Equal
+      #   tolerationSeconds: 600
+      #   value: ""
+    {{- end }}
+
+    # https://kubernetes.io/docs/reference/generated/kubernetes-api/{{ $kubeVersion }}/#affinity-v1-core
+    {{- with $config.affinity }}
+    affinity:
+      {{- toYaml . | nindent 6 }}
+    {{- else }}
+    affinity: {}
+    {{- end }}
+{{ end }}
+{{- else }}
+jobs: {}
+{{- end }}
+{{- end }}

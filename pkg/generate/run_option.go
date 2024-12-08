@@ -1,125 +1,104 @@
 package generate
 
 import (
+	"context"
+	"errors"
 	"os"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
+	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 )
 
-// ExecOpts represents all options given to ExecFunc functions.
-type ExecOpts struct {
-	FileHandlers []FileHandler
+var (
+	// ErrMissingHandlers is returned when WithHandlers isn't used
+	// or the input slice of handlers is empty.
+	//
+	// The error is specified since it could be ignored in case of dynamic handlers.
+	//
+	// It's still an error since not giving handlers as input would
+	// mean that the generation would do nothing since templates are only generated if an handler is associated to.
+	ErrMissingHandlers = errors.New("missing handlers, nothing would be generated")
 
-	Force    []string
-	ForceAll bool
-
-	EndDelim   string
-	StartDelim string
-}
+	// ErrMissingParsers is returned when WithParsers isn't used
+	// or the input slice of parsers is empty.
+	//
+	// The error is specified since it could be ignored in case of dynamic parsers.
+	ErrMissingParsers = errors.New("missing parsers")
+)
 
 // RunOption is the right function to tune Run function with specific behaviors.
 type RunOption func(runOptions) runOptions
 
-// WithMetaHandlers is an option for Run function.
-// It specifies the slice of MetaHandler, which defines the behavior for files and directories generation.
+// WithParsers specifies the slice of parsers.
 //
-// When not given, MetaHandlers' function result is used as default slice.
-func WithMetaHandlers(handlers ...MetaHandler) RunOption {
-	return func(o runOptions) runOptions {
-		o.metaHandlers = handlers
-		return o
+// To know more about parsers, please check Parser type documentation.
+func WithParsers(parsers ...Parser) RunOption {
+	return func(ro runOptions) runOptions {
+		ro.parsers = parsers
+		return ro
 	}
 }
 
-// WithDelimiters is an option for Run function to use specific go template delimiters.
+// WithHandlers defines the slice of handlers to use during generation.
 //
-// If not given, default delimiters are << and >>.
-func WithDelimiters(startDelim, endDelim string) RunOption {
-	return func(o runOptions) runOptions {
-		o.startDelim = startDelim
-		o.endDelim = endDelim
-		return o
+// To know more about handlers, please check Handler type documentation.
+func WithHandlers(handlers ...Handler) RunOption {
+	return func(ro runOptions) runOptions {
+		ro.handlers = handlers
+		return ro
 	}
 }
 
-// WithDestination is an option for Run function to specify
-// the destination directory of generation.
+// WithDestination specifies destination directory of generation.
 //
 // If not given, default destination is the current directory where Run is executed.
 func WithDestination(destdir string) RunOption {
-	return func(o runOptions) runOptions {
-		o.destdir = &destdir
-		return o
+	return func(ro runOptions) runOptions {
+		ro.destdir = &destdir
+		return ro
 	}
 }
 
-// WithDetects is an option for Run function defining the detections (languages) to identify.
-//
-// When not given, Detects is used as default slice.
-func WithDetects(funcs ...DetectFunc) RunOption {
-	return func(o runOptions) runOptions {
-		o.detectFuncs = funcs
-		return o
-	}
-}
-
-// WithForce is an option for Run function to specify which
-// files must be generated even if the top notice is not present anymore (see IsGenerated).
-//
-// If not given, no files are force'd generated.
-func WithForce(filenames ...string) RunOption {
-	return func(o runOptions) runOptions {
-		o.force = filenames
-		return o
-	}
-}
-
-// WithForceAll is an option for Run function to specify
-// whether to force the generation of all files or not.
-// When given, WithForce isn't used.
-//
-// If not given, this option is false.
-func WithForceAll(forceAll bool) RunOption {
-	return func(o runOptions) runOptions {
-		o.forceAll = forceAll
-		return o
-	}
-}
-
-// WithTemplates is an option for Run function to specify the templates directory and filesystem.
+// WithTemplates specifies templates directory and filesystem.
 //
 // Please not that the input dir path separator must be the one used with path.Join
 // and not the one OS specific from filepath.Join.
 //
 // If not given, default filesystem is the embedded one FS.
 func WithTemplates(dir string, fs cfs.FS) RunOption {
-	return func(o runOptions) runOptions {
-		o.tmplDir = dir
-		o.fs = fs
-		return o
+	return func(ro runOptions) runOptions {
+		ro.tmplDir = dir
+		ro.fs = fs
+		return ro
+	}
+}
+
+// WithLogger specifies the logger to use during generation.
+//
+// If not given, default logger is clog.Noop.
+func WithLogger(log clog.Logger) RunOption {
+	return func(ro runOptions) runOptions {
+		ro.logger = log
+		return ro
 	}
 }
 
 // runOptions is the struct related to Option function(s) defining all optional properties.
 type runOptions struct {
-	detectFuncs  []DetectFunc
-	metaHandlers []MetaHandler
+	handlers []Handler
+	parsers  []Parser
 
 	destdir *string
-
-	force    []string
-	forceAll bool
 
 	fs      cfs.FS
 	tmplDir string
 
-	endDelim   string
-	startDelim string
+	logger clog.Logger
 }
 
 // newRunOpt creates a new option struct with all input Option functions
 // while taking care of default values.
-func newRunOpt(opts ...RunOption) runOptions {
+func newRunOpt(opts ...RunOption) (runOptions, error) {
 	var ro runOptions
 	for _, opt := range opts {
 		if opt != nil {
@@ -127,24 +106,42 @@ func newRunOpt(opts ...RunOption) runOptions {
 		}
 	}
 
-	if ro.startDelim == "" || ro.endDelim == "" {
-		ro.startDelim = "<<"
-		ro.endDelim = ">>"
+	errs := make([]error, 0, 2)
+	if len(ro.parsers) == 0 {
+		errs = append(errs, ErrMissingParsers)
 	}
+	if len(ro.handlers) == 0 {
+		errs = append(errs, ErrMissingHandlers)
+	}
+	if err := errors.Join(errs...); err != nil {
+		return runOptions{}, err
+	}
+
 	if ro.destdir == nil {
 		dir, _ := os.Getwd()
 		ro.destdir = &dir
 	}
 	if ro.fs == nil {
 		ro.fs = FS()
-		ro.tmplDir = "templates"
+		ro.tmplDir = "_templates"
 	}
-	if len(ro.detectFuncs) == 0 {
-		ro.detectFuncs = DetectFuncs()
+	if ro.logger == nil {
+		ro.logger = clog.Noop()
 	}
-	if len(ro.metaHandlers) == 0 {
-		ro.metaHandlers = MetaHandlers()
-	}
+	return ro, nil
+}
 
-	return ro
+type loggerKeyType string
+
+const loggerKey loggerKeyType = "logger"
+
+// GetLogger returns the context logger.
+//
+// By default it will be clog.Noop, but it can be set with WithLogger.
+func GetLogger(ctx context.Context) clog.Logger {
+	log, ok := ctx.Value(loggerKey).(clog.Logger)
+	if !ok {
+		return clog.Noop()
+	}
+	return log
 }
