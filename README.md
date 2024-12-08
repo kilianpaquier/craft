@@ -1,5 +1,3 @@
-<!-- This file is safe to edit. Once it exists it will not be overwritten. -->
-
 # craft <!-- omit in toc -->
 
 <p align="center">
@@ -22,12 +20,7 @@
 - [Craft file](#craft-file)
   - [VSCode association and schema](#vscode-association-and-schema)
 - [Generations](#generations)
-  - [Generic](#generic)
-  - [Golang](#golang)
-  - [Hugo](#hugo)
-  - [Helm](#helm)
-  - [License](#license)
-  - [Nodejs](#nodejs)
+- [Who is using craft ?](#who-is-using-craft-)
 - [Craft as an SDK](#craft-as-an-sdk)
 
 ## How to use ?
@@ -89,8 +82,6 @@ Usage:
   craft generate [flags]
 
 Flags:
-  -f, --force strings   force regenerating a list of templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
-      --force-all       force regenerating all templates (.gitlab-ci.yml, sonar.properties, Dockerfile, etc.)
   -h, --help            help for generate
 
 Global Flags:
@@ -240,45 +231,28 @@ When working on vscode, feel free to use craft's schemas to help setup your proj
 
 ## Generations
 
-Craft generation is based on separated detections. Each detection checks from `.craft` configuration and project's files if it needs to generate its part (or not).
+Craft generation is based on separated parsers.
+Each parser checks from `.craft` configuration and project's files to add specific behaviors in a shared structure.
+Once all parsers are executed, generation iterates over all templates files and generates the right one needed depending on shared structure information.
 
-Multiple detections are implemented, and generates various files (please consult the [`examples`](./examples/) folder for more information):
+Multiple examples:
+- A `go.mod` is detected with `Golang` parser, combined with `ci` configuration, then the appropriate CI will be generated.
+- A `go.mod` is detected with `Golang` parser and a `hugo.(toml|yaml|...)` or `theme.(toml|yaml|...)` is detected too, combined with the `ci` and `static` options, 
+  then the appropriate **Netlify** or **Pages** (it can be **GitLab** or **GitHub**) deployment will be generated in CI files.
+- If `no_chart` is not given, a custom craft helm chart will be generated. 
+  This helm chart can deploy cronjobs, jobs and workers easily from `values.yaml` file.
+- A `package.json` is detected with `Node` parser, combined with `ci` configuration, then the appropriate CI will be generated
+  (codecov analysis, sonar analysis, lint, tests, build if needed)
 
-### Generic
+## Who is using craft ?
 
-When no primary generation is detected (golang, nodejs or hugo), then this generation is automatically used.
-
-It doesn't generate much, just some CI files (in case CI option is provided) for versioning (semantic release), a README.md and makefiles (to easily generate again and clean the git repository).
-
-Feel free to check either [`generic_github`](./examples/generic_github/) or [`generic_gitlab`](./examples/generic_gitlab/) to see what this generation specifically does.
-
-### Golang
-
-When golang generation is detected (a `go.mod` is present at root and is valid), it will generate the appropriate files around golang testing, makefiles, CI integration (in case CI option is given), etc.
-
-Feel free to check either [`golang_github`](./examples/golang_github/) or [`golang_gitlab`](./examples/golang_gitlab/) to see what this generation specifically does.
-
-### Hugo
-
-When hugo generation is detected (a `go.mod` is present at root, is valid and either a `hugo.(toml|yaml|...)` or `theme.(toml|yaml|...)` are present), it will generate the appropriate files around hugo static web build, CI integration (in case CI option is given), etc.
-
-Feel free to check either [`hugo_github`](./examples/hugo_github/) or [`hugo_gitlab`](./examples/hugo_gitlab/) to see what this generation specifically does.
-
-### Helm
-
-When helm generation is detected (`no_chart` is either not provided or false), it will generate a specific helm chart capable of easily deploying cronjobs, jobs, workers or even chart dependencies.
-
-Feel free to check [`helm`](./examples/helm/) to see what this generation specifically does.
-
-### License
-
-When license generation is detected (`license` is provided in `.craft` root file and is valid), it will generate the appropriate license file.
-
-### Nodejs
-
-When nodejs generation is detected (a `package.json` is present at root and is valid), it will the appropriate files around nodejs testing, integration, etc.
-
-Feel free to check either [`nodejs_github`](./examples/nodejs_github/) or [`nodejs_gitlab`](./examples/nodejs_gitlab/) to see what this generation specifically does.
+- https://github.com/kilianpaquier/craft (Golang CLI with executables as artifacts in releases)
+- https://github.com/kilianpaquier/gitlab-storage-cleaner (Golang CLI with Docker deployment and executables as artifacts in releases)
+- https://github.com/kilianpaquier/go-builder-generator (Golang CLI with executables as artifacts in releases)
+- https://github.com/kilianpaquier/kilianpaquier.github.io (Hugo static website deployed with **Netlify**)
+- https://github.com/kilianpaquier/pooling (Golang library)
+- https://github.com/kilianpaquier/semantic-release-backmerge (**semantic-release** plugin with static build deployed in npmjs.org)
+- https://gitlab.com/nath7098/personal-website (Node static website deployed with Docker)
 
 ## Craft as an SDK
 

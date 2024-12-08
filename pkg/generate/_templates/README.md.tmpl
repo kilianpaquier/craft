@@ -1,0 +1,42 @@
+# {{ .ProjectName }} <!-- omit in toc -->
+
+<p align="center">
+{{- $style := "for-the-badge" }}
+{{- $branch := "main" }}
+
+{{- if eq .Platform "github" }}
+  <img alt="GitHub Release" src="https://img.shields.io/github/v/release/{{ .ProjectPath }}?include_prereleases&sort=semver&style={{ $style }}">
+  <img alt="GitHub Issues" src="https://img.shields.io/github/issues-raw/{{ .ProjectPath }}?style={{ $style }}">
+{{- if .License }}
+  <img alt="GitHub License" src="https://img.shields.io/github/license/{{ .ProjectPath }}?style={{ $style }}">
+{{- end }}
+{{- end }}
+
+{{- if eq .Platform "gitlab" }}
+{{- $url := toQuery (print "https://" .ProjectHost) }}
+  <img alt="GitLab Release" src="https://img.shields.io/gitlab/v/release/{{ toQuery .ProjectPath }}?gitlab_url={{ $url }}&include_prereleases&sort=semver&style={{ $style }}">
+  <img alt="GitLab Issues" src="https://img.shields.io/gitlab/issues/open/{{ toQuery .ProjectPath }}?gitlab_url={{ $url }}&style={{ $style }}">
+{{- if .License }}
+  <img alt="GitLab License" src="https://img.shields.io/gitlab/license/{{ toQuery .ProjectPath }}?gitlab_url={{ $url }}&style={{ $style }}">
+{{- end }}
+{{- end }}
+
+{{- if and .CI (has "codecov" .CI.Options) }}
+  <img alt="Coverage" src="https://img.shields.io/codecov/c/{{ .Platform }}/{{ .ProjectPath }}/{{ $branch }}?style={{ $style }}">
+{{- end }}
+
+{{- if and .CI (has "sonar" .CI.Options) }}
+{{- $url := toQuery "https://sonarcloud.io" }}
+  <img alt="Coverage" src="https://img.shields.io/sonar/coverage/{{ .ProjectPath | replace "/" "_" }}/{{ $branch }}?server={{ $url }}&style={{ $style }}">
+{{- end }}
+
+{{- if or (hasKey .Languages "golang") (hasKey .Languages "hugo") }}
+  <img alt="Go Version" src="https://img.shields.io/{{ .Platform }}/go-mod/go-version/{{ .ProjectPath }}/{{ $branch }}?style={{ $style }}&label={{ toQuery "Go Version" }}">
+{{- end }}
+
+{{- if hasKey .Languages "golang" }}
+  <img alt="Go Report Card" src="https://goreportcard.com/badge/{{ print .ProjectHost "/" .ProjectPath }}?style={{ $style }}">
+{{- end }}
+</p>
+
+---
