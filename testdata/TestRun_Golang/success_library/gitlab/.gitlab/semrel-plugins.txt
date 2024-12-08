@@ -1,0 +1,5 @@
+@semantic-release/changelog
+@semantic-release/commit-analyzer
+@semantic-release/exec
+@semantic-release/git
+@semantic-release/gitlab

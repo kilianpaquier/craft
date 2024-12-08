@@ -4,49 +4,22 @@ name: Golang
 run-name: Golang
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - ready_for_review
-  push:
-    branches:
-      - alpha
-      - beta
-      - dev
-      - develop
-      - development
-      - next
-      - staging
-      - main
-      - master
-      - v[0-9]+.[0-9]+.x
-      - v[0-9]+.x
   workflow_call:
     inputs:
       version:
-        description: Build version to use in build metadata
+        description: Build version to use in build metadata.
         required: true
         type: string
-  workflow_dispatch:
+      event_name:
+        description: GitHub Actions real event_name since it will always 'workflow_dispatch' by default.
+        required: true
+        type: string
 
 jobs:
-
-  run-workflow:
-    name: Run Workflow
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.ref_protected != true) }}
-    outputs:
-      skip: ${{ steps.skip.outputs.skip }}
-    steps:
-      - id: skip
-        run: echo "Running workflow" && echo "skip=false" >> $GITHUB_OUTPUT
 
   go-vulncheck:
     name: Go Vulnerability Check
     runs-on: ubuntu-latest
-    needs: run-workflow
     steps:
       - uses: golang/govulncheck-action@v1
         with:
@@ -57,7 +30,6 @@ jobs:
   go-lint:
     name: Go Lint
     runs-on: ubuntu-latest
-    needs: run-workflow
     permissions:
       checks: write
     steps:
@@ -81,7 +53,6 @@ jobs:
   go-test:
     name: Go Test
     runs-on: ${{ matrix.os }}
-    needs: run-workflow
     strategy:
       fail-fast: false
       matrix:
@@ -100,8 +71,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
       - run: go test ./... -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out" -timeout=15s
-      - if: ${{ ! startsWith(github.head_ref, 'dependabot') && ! startsWith(github.head_ref, 'renovate') }}
-        uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v4
         with:
           codecov_yml_path: .codecov.yml
           disable_search: true
@@ -117,11 +87,40 @@ jobs:
           path: reports
           retention-days: 1
 
+  go-build:
+    name: Go Build
+    runs-on: ubuntu-latest
+    needs:
+      - go-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          check-latest: true
+          go-version-file: go.mod
+          token: ${{ secrets.GITHUB_TOKEN }}
+      # https://github.com/marketplace/actions/goreleaser-action
+      - if: ${{ hashFiles('.goreleaser.yml') != '' }}
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          args: release --clean --config .goreleaser.yml --skip=validate --skip=announce --skip=publish --snapshot
+        env:
+          VERSION: ${{ inputs.version }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          # order is important to filter unwanted globs after the filter or desired globs
+          path: |
+            dist/*
+            !dist/*.json
+            !dist/*.yaml
+            !dist/*/
+          retention-days: 1
+
   sonar-analysis:
     name: Sonar Analysis
     runs-on: ubuntu-latest
     needs:
-      - run-workflow
       - go-lint
       - go-test
     env:
@@ -138,21 +137,21 @@ jobs:
         with:
           path: ${{ env.SONAR_USER_HOME }}
           key: sonar-cache
-      - uses: sonarsource/sonarcloud-github-action@master
-        if: ${{ github.event_name == 'pull_request' }}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - if: ${{ inputs.event_name == 'pull_request' }}
+        uses: sonarsource/sonarcloud-github-action@master
         with:
           args: |
             -Dproject.settings=sonar.properties
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.pullrequest.branch=${{ github.head_ref }}
             -Dsonar.pullrequest.key=${{ github.event.issue.number }}
-      - uses: sonarsource/sonarcloud-github-action@master
-        if: ${{ github.event_name == 'push' }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - if: ${{ inputs.event_name == 'push' }}
+        uses: sonarsource/sonarcloud-github-action@master
         with:
           args: |
             -Dproject.settings=sonar.properties
             -Dsonar.branch.name=${{ github.ref_name }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
