@@ -20,6 +20,9 @@ docs/
 reports/
 dist/
 
+# vendor dependencies
+vendor/
+
 # binaries
 worker-*
 !worker-*/
@@ -27,6 +30,3 @@ worker-*
 # test files
 **/*_test.go
 **/*.test
-
-# vendor dependencies
-vendor/

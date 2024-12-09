@@ -1,0 +1,12 @@
+{{- $plugins := list -}}
+{{- if hasKey .Languages "node" -}}{{- $plugins = append $plugins "@semantic-release/npm" -}}{{- end -}}
+{{- if .License -}}{{- $plugins = append $plugins "semantic-release-license" -}}{{- end -}}
+{{- if .CI.Release.Backmerge -}}{{- $plugins = append $plugins "@kilianpaquier/semantic-release-backmerge" -}}{{- end -}}
+@semantic-release/changelog
+@semantic-release/commit-analyzer
+@semantic-release/exec
+@semantic-release/git
+@semantic-release/gitlab
+{{- range $plugins }}
+{{ . }}
+{{- end }}
