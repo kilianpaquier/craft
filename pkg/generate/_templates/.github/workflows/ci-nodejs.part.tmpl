@@ -104,7 +104,7 @@ jobs:
           << $manager >> run test
 <<- end >>
 <<- if has "codecov" .CI.Options >>
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           codecov_yml_path: .codecov.yml
           disable_search: true

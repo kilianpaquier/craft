@@ -81,8 +81,3 @@ const (
 
 // SemanticRelease is the value for github / gitlab release with semantic-release.
 const SemanticRelease string = "semantic-release"
-
-// CIOptions returns the slice with all availables CI options.
-func CIOptions() []string {
-	return []string{CodeCov, CodeQL, Labeler, Sonar}
-}

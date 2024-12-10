@@ -25,8 +25,8 @@ on:
       - v[0-9]+.[0-9]+.x
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: Whether to run all impacting jobs in dry run or preview mode.
+      release:
+        description: Run release job by checking this box.
         type: boolean
 
 concurrency:
@@ -45,10 +45,10 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' && github.ref_protected == 'true' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref_protected }}
     environment:
       name: release
-      url: ${{ github.server_url }}/${{ github.repository_owner }}/${{ github.repository }}/releases/tag/${{ steps.semrel_version.outputs.new_release_version }}
+      url: ${{ steps.environment_url.outputs.environment_url }}
     needs: run-workflow
     permissions:
       id-token: none
@@ -61,7 +61,7 @@ jobs:
       - id: semrel_version
         uses: cycjimmy/semantic-release-action@v4
         with:
-          dry_run: ${{ inputs.dry_run == 'true' }}
+          dry_run: ${{ inputs.release == 'false' }}
           semantic_version: 24
           extra_plugins: |
             @semantic-release/changelog
@@ -73,3 +73,10 @@ jobs:
             conventional-changelog-conventionalcommits
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - id: environment_url
+        run: |
+          if [ "${VERSION}" != "" ]; then
+            echo "environment_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/v${VERSION#v}" >> $GITHUB_OUTPUT
+          fi
+        env:
+          VERSION: ${{ steps.semrel_version.outputs.new_release_version }}

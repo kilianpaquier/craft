@@ -19,9 +19,6 @@ jobs:
   renovate:
     name: Renovate
     runs-on: ubuntu-latest
-<<- if eq $auth "personal-token" >>
-    environment: renovate
-<<- end >>
 <<- if eq $auth "github-token" >>
     permissions:
       contents: write
