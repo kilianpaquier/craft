@@ -11,7 +11,7 @@ import (
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"

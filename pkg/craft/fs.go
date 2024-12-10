@@ -2,9 +2,7 @@ package craft
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 
@@ -18,9 +16,6 @@ func Read(srcdir string, out any) error {
 
 	content, err := os.ReadFile(src)
 	if err != nil {
-		if errors.Is(err, fs.ErrNotExist) {
-			return fs.ErrNotExist
-		}
 		return fmt.Errorf("read file: %w", err)
 	}
 

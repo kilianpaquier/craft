@@ -1,11 +1,11 @@
 package templating
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
-	"strings"
 	"text/template"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
@@ -20,12 +20,12 @@ func Execute(tmpl *template.Template, data any, dest string) error {
 		return fmt.Errorf("create directory: %w", err)
 	}
 
-	var result strings.Builder
+	var result bytes.Buffer
 	if err := tmpl.Execute(&result, data); err != nil {
 		return fmt.Errorf("template execution: %w", err)
 	}
 
-	if err := os.WriteFile(dest, []byte(result.String()), cfs.RwRR); err != nil {
+	if err := os.WriteFile(dest, result.Bytes(), cfs.RwRR); err != nil {
 		return fmt.Errorf("write file: %w", err)
 	}
 
