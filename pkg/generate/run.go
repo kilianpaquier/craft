@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -99,7 +98,7 @@ func (ro *runOptions) handleFile(ctx context.Context, src, dest string, metadata
 
 	// remove file in case result is asking it
 	if result.ShouldRemove != nil && result.ShouldRemove(metadata) {
-		if err := os.RemoveAll(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
+		if err := os.RemoveAll(dest); err != nil && !os.IsNotExist(err) {
 			GetLogger(ctx).Warnf("failed to delete '%s': %s", name, err.Error())
 		}
 		return nil

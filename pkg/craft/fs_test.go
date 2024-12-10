@@ -24,7 +24,7 @@ func TestReadCraft(t *testing.T) {
 		err := craft.Read(invalid, &config)
 
 		// Assert
-		assert.Equal(t, fs.ErrNotExist, err)
+		assert.ErrorIs(t, err, fs.ErrNotExist)
 	})
 
 	t.Run("error_read", func(t *testing.T) {
