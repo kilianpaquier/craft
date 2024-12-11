@@ -1,0 +1,6 @@
+# Craft configuration file (https://github.com/kilianpaquier/craft)
+---
+bot: renovate
+maintainers:
+  - name: kilianpaquier
+platform: gitlab

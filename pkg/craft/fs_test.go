@@ -16,12 +16,11 @@ import (
 func TestReadCraft(t *testing.T) {
 	t.Run("error_not_found", func(t *testing.T) {
 		// Arrange
-		srcdir := t.TempDir()
-		invalid := filepath.Join(srcdir, "invalid")
+		src := filepath.Join(t.TempDir(), ".craft")
 
 		// Act
 		var config craft.Configuration
-		err := craft.Read(invalid, &config)
+		err := craft.Read(src, &config)
 
 		// Assert
 		assert.ErrorIs(t, err, fs.ErrNotExist)
@@ -29,13 +28,12 @@ func TestReadCraft(t *testing.T) {
 
 	t.Run("error_read", func(t *testing.T) {
 		// Arrange
-		srcdir := t.TempDir()
-		file := filepath.Join(srcdir, craft.File)
-		require.NoError(t, os.Mkdir(file, cfs.RwxRxRxRx))
+		src := filepath.Join(t.TempDir(), craft.File)
+		require.NoError(t, os.Mkdir(src, cfs.RwxRxRxRx))
 
 		// Act
 		var config craft.Configuration
-		err := craft.Read(filepath.Dir(file), &config)
+		err := craft.Read(filepath.Dir(src), &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "read file")
@@ -43,13 +41,12 @@ func TestReadCraft(t *testing.T) {
 
 	t.Run("error_unmarshal", func(t *testing.T) {
 		// Arrange
-		srcdir := t.TempDir()
-		err := os.WriteFile(filepath.Join(srcdir, craft.File), []byte(`{ "key":: "value" }`), cfs.RwRR)
-		require.NoError(t, err)
+		src := filepath.Join(t.TempDir(), craft.File)
+		require.NoError(t, os.WriteFile(src, []byte(`{ "key":: "value" }`), cfs.RwRR))
 
 		// Act
 		var config craft.Configuration
-		err = craft.Read(srcdir, &config)
+		err := craft.Read(src, &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "unmarshal")
@@ -58,18 +55,16 @@ func TestReadCraft(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		// Arrange
-		srcdir := t.TempDir()
+		src := filepath.Join(t.TempDir(), craft.File)
 		expected := craft.Configuration{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 		}
-
-		err := craft.Write(srcdir, expected)
-		require.NoError(t, err)
+		require.NoError(t, craft.Write(src, expected))
 
 		// Act
 		var actual craft.Configuration
-		err = craft.Read(srcdir, &actual)
+		err := craft.Read(src, &actual)
 
 		// Assert
 		require.NoError(t, err)
@@ -80,12 +75,11 @@ func TestReadCraft(t *testing.T) {
 func TestWriteCraft(t *testing.T) {
 	t.Run("error_open_craft", func(t *testing.T) {
 		// Arrange
-		srcdir := t.TempDir()
-		file := filepath.Join(srcdir, craft.File)
-		require.NoError(t, os.Mkdir(file, cfs.RwxRxRxRx))
+		src := filepath.Join(t.TempDir(), craft.File)
+		require.NoError(t, os.Mkdir(src, cfs.RwxRxRxRx))
 
 		// Act
-		err := craft.Write(srcdir, craft.Configuration{})
+		err := craft.Write(src, craft.Configuration{})
 
 		// Assert
 		assert.ErrorContains(t, err, "write file")
@@ -93,19 +87,18 @@ func TestWriteCraft(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		// Arrange
-		tmp := t.TempDir()
+		src := filepath.Join(t.TempDir(), craft.File)
 		expected := craft.Configuration{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 		}
 
 		// Act
-		err := craft.Write(tmp, expected)
-		require.NoError(t, err)
+		require.NoError(t, craft.Write(src, expected))
 
 		// Assert
 		var actual craft.Configuration
-		err = craft.Read(tmp, &actual)
+		err := craft.Read(src, &actual)
 		require.NoError(t, err)
 		assert.Equal(t, expected, actual)
 	})

@@ -1,0 +1,6 @@
+# Craft configuration file (https://github.com/kilianpaquier/craft)
+---
+bot: dependabot
+maintainers:
+  - name: kilianpaquier
+platform: gitlab

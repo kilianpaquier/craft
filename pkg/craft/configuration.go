@@ -1,35 +1,39 @@
 package craft
 
+import (
+	"slices"
+)
+
 // Configuration represents all options configurable in .craft file at root project.
 //
 // Note that yaml tags are for .craft file property keys and json tags for templating data.
 type Configuration struct {
-	Bot          *string       `json:"-"                     yaml:"bot,omitempty"                            validate:"omitempty,oneof=dependabot renovate"`
-	CI           *CI           `json:"-"                     yaml:"ci,omitempty"                             validate:"omitempty,required"`
+	Bot          *string       `json:"-"                     yaml:"bot,omitempty"`
+	CI           *CI           `json:"-"                     yaml:"ci,omitempty"`
 	Description  *string       `json:"description,omitempty" yaml:"description,omitempty"`
-	Docker       *Docker       `json:"docker,omitempty"      yaml:"docker,omitempty"                         validate:"omitempty,required"`
-	License      *string       `json:"-"                     yaml:"license,omitempty"                        validate:"omitempty,oneof=agpl-3.0 apache-2.0 bsd-2-clause bsd-3-clause bsl-1.0 cc0-1.0 epl-2.0 gpl-2.0 gpl-3.0 lgpl-2.1 mit mpl-2.0 unlicense"`
-	Maintainers  []*Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"   builder:"append" validate:"required,dive,required"`
+	Docker       *Docker       `json:"docker,omitempty"      yaml:"docker,omitempty"`
+	License      *string       `json:"-"                     yaml:"license,omitempty"`
+	Maintainers  []*Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"`
 	NoChart      bool          `json:"-"                     yaml:"no_chart,omitempty"`
 	NoGoreleaser bool          `json:"-"                     yaml:"no_goreleaser,omitempty"`
 	NoMakefile   bool          `json:"-"                     yaml:"no_makefile,omitempty"`
 	NoReadme     bool          `json:"-"                     yaml:"no_readme,omitempty"`
-	Platform     string        `json:"-"                     yaml:"platform,omitempty"                       validate:"omitempty,oneof=bitbucket gitea github gitlab"`
+	Platform     string        `json:"-"                     yaml:"platform,omitempty"`
 }
 
 // Auth contains all authentication methods related to CI configuration.
 type Auth struct {
-	Maintenance *string `json:"-" yaml:"maintenance,omitempty" validate:"omitempty,oneof=github-app github-token mend.io personal-token"`
-	Release     *string `json:"-" yaml:"release,omitempty"     validate:"omitempty,oneof=github-app github-token personal-token"`
+	Maintenance *string `json:"-" yaml:"maintenance,omitempty"`
+	Release     *string `json:"-" yaml:"release,omitempty"`
 }
 
 // CI is the struct for craft continuous integration tuning.
 type CI struct {
-	Auth    Auth     `json:"-" yaml:"auth,omitempty"                     validate:"omitempty,required"`
-	Name    string   `json:"-" yaml:"name,omitempty"                     validate:"required"`
-	Options []string `json:"-" yaml:"options,omitempty" builder:"append"`
-	Release *Release `json:"-" yaml:"release,omitempty"                  validate:"omitempty,required"`
-	Static  *Static  `json:"-" yaml:"static,omitempty"                   validate:"omitempty,required"`
+	Auth    Auth     `json:"-" yaml:"auth,omitempty"    validate:"omitempty,required"`
+	Name    string   `json:"-" yaml:"name,omitempty"    validate:"required"`
+	Options []string `json:"-" yaml:"options,omitempty"`
+	Release *Release `json:"-" yaml:"release,omitempty" validate:"omitempty,required"`
+	Static  *Static  `json:"-" yaml:"static,omitempty"  validate:"omitempty,required"`
 }
 
 // Docker is the struct for craft docker tuning.
@@ -43,7 +47,7 @@ type Docker struct {
 // The only difference are the present tags and the pointers on both email and url properties.
 type Maintainer struct {
 	Email *string `json:"email,omitempty" yaml:"email,omitempty"`
-	Name  string  `json:"name,omitempty"  yaml:"name,omitempty"  validate:"required"`
+	Name  string  `json:"name,omitempty"  yaml:"name,omitempty"`
 	URL   *string `json:"url,omitempty"   yaml:"url,omitempty"`
 }
 
@@ -56,7 +60,7 @@ type Release struct {
 // Static represents the configuration for static deployment.
 type Static struct {
 	Auto bool   `json:"-" yaml:"auto,omitempty"`
-	Name string `json:"-" yaml:"name,omitempty" validate:"required,oneof=netlify pages"`
+	Name string `json:"-" yaml:"name,omitempty"`
 }
 
 // IsBot returns truthy in case the input bot is the one specified in configuration.
@@ -107,4 +111,21 @@ func (c Configuration) IsAutoRelease() bool {
 // It returns false in case there's no CI or no Static configuration.
 func (c Configuration) IsStatic(static string) bool {
 	return c.CI != nil && c.CI.Static != nil && c.CI.Static.Name == static
+}
+
+// EnsureDefaults migrates old properties into new fields and ensures default properties are always sets.
+func (c *Configuration) EnsureDefaults() {
+	c.retroCompatibility()
+
+	// small sanitization for CI configuration part
+	func() {
+		if c.CI == nil {
+			return
+		}
+		slices.Sort(c.CI.Options)
+	}()
+}
+
+func (*Configuration) retroCompatibility() {
+	// TBD in case a migration is needed
 }

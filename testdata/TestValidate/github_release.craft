@@ -1,0 +1,12 @@
+# Craft configuration file (https://github.com/kilianpaquier/craft)
+---
+ci:
+  auth:
+    release: github-token
+  name: github
+  release:
+    auto: true
+    backmerge: true
+maintainers:
+  - name: kilianpaquier
+platform: gitlab

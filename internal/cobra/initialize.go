@@ -2,7 +2,9 @@ package cobra
 
 import (
 	"errors"
+	"io/fs"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
@@ -16,17 +18,21 @@ var initializeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
 		destdir, _ := os.Getwd()
+		dest := filepath.Join(destdir, craft.File)
 
-		config, err := initialize.Run(ctx, destdir)
-		if err != nil {
-			if !errors.Is(err, initialize.ErrAlreadyInitialized) {
-				fatal(ctx, err)
-			}
+		var config craft.Configuration
+		err := craft.Read(dest, &config)
+		if err == nil {
 			log.Info("project already initialized")
 			return
 		}
-
-		if err := craft.Write(destdir, config); err != nil {
+		if !errors.Is(err, fs.ErrNotExist) {
+			fatal(ctx, err)
+		}
+		if config, err = initialize.Run(ctx); err != nil {
+			fatal(ctx, err)
+		}
+		if err := craft.Write(dest, config); err != nil {
 			fatal(ctx, err)
 		}
 	},

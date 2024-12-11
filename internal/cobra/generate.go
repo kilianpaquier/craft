@@ -2,9 +2,10 @@ package cobra
 
 import (
 	"errors"
+	"io/fs"
 	"os"
+	"path/filepath"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -20,16 +21,22 @@ var generateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
 		destdir, _ := os.Getwd()
+		dest := filepath.Join(destdir, craft.File)
 
-		config, err := initialize.Run(ctx, destdir)
-		if err != nil && !errors.Is(err, initialize.ErrAlreadyInitialized) {
+		// validate configuration
+		if err := craft.Validate(dest); err != nil {
 			fatal(ctx, err)
 		}
-		config.EnsureDefaults()
 
-		// validate craft struct
-		if err := validator.New().Struct(config); err != nil {
-			fatal(ctx, err)
+		// read or initialize configuration
+		var config craft.Configuration
+		if err := craft.Read(dest, &config); err != nil {
+			if !errors.Is(err, fs.ErrNotExist) {
+				fatal(ctx, err)
+			}
+			if config, err = initialize.Run(ctx); err != nil {
+				fatal(ctx, err)
+			}
 		}
 
 		// run generation
@@ -40,13 +47,13 @@ var generateCmd = &cobra.Command{
 			generate.WithParsers(parser.Defaults()...),
 			generate.WithTemplates("_templates", generate.FS()),
 		}
-		config, err = generate.Run(ctx, config, options...)
+		config, err := generate.Run(ctx, config, options...)
 		if err != nil {
 			fatal(ctx, err)
 		}
 
-		// save craft configuration
-		if err := craft.Write(destdir, config); err != nil {
+		// save configuration
+		if err := craft.Write(dest, config); err != nil {
 			fatal(ctx, err)
 		}
 	},
