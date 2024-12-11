@@ -20,7 +20,7 @@ serviceAccount:
 crons:
   cron-name:
     suspend: true
-    schedule: "*/1 * * * *"
+    schedule: "0 0 */1 * *"
     concurrencyPolicy: Forbid
     completionMode: NonIndexed
     completions: 1

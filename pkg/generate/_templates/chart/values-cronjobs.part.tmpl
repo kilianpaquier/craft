@@ -7,7 +7,7 @@ crons:
 {{- range $name, $config := . }}
   {{ $name }}:
     suspend: true
-    schedule: {{ $config.schedule | default "*/1 * * * *" | quote }}
+    schedule: {{ $config.schedule | default "0 0 */1 * *" | quote }}
     concurrencyPolicy: {{ $config.concurrencyPolicy | default "Forbid" }}
     completionMode: {{ $config.completionMode | default "NonIndexed" }}
     completions: {{ $config.completions | default 1 }}
