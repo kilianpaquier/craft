@@ -242,7 +242,7 @@ Multiple examples:
 - If `no_chart` is not given, a custom craft helm chart will be generated. 
   This helm chart can deploy cronjobs, jobs and workers easily from `values.yaml` file.
 - A `package.json` is detected with `Node` parser, combined with `ci` configuration, then the appropriate CI will be generated
-  (codecov analysis, sonar analysis, lint, tests, build if needed)
+  (codecov analysis, sonar analysis, lint, tests, build if needed).
 
 ## Who is using craft ?
 
