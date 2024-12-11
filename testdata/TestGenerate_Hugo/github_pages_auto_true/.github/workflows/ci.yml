@@ -33,6 +33,7 @@ jobs:
   run-workflow:
     name: Run Workflow
     runs-on: ubuntu-latest
+    # run on branches or pull request not being draft and associated with branches not protected
     if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.ref_protected != true) }}
     steps:
       - id: skip
@@ -65,7 +66,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: version
-        run: |
+        run: |-
           DESCRIBE=$(git describe --tags || echo "v0.0.0")
           echo "version=v${DESCRIBE#v}" >> $GITHUB_OUTPUT
       - run: echo ${VERSION}
@@ -92,7 +93,7 @@ jobs:
         with:
           hugo-version: latest
           extended: true
-      - run: |
+      - run: |-
           hugo --gc --enableGitInfo --minify --destination "${GITHUB_WORKSPACE}/dist" --logLevel debug
         env:
           VERSION: ${{ needs.version.outputs.version }}

@@ -24,20 +24,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - id: log_level
-        run: |-
-          if [ "${RENOVATE_LOG_LEVEL}" != "" ]; then
-            echo "log_level=${RENOVATE_LOG_LEVEL}" >> $GITHUB_OUTPUT
-          else
-            echo "log_level=info" >> $GITHUB_OUTPUT
-          fi
-        env:
-          RENOVATE_LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL }}
       - uses: renovatebot/github-action@v41.0.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
-          LOG_LEVEL: ${{ steps.log_level.outputs.log_level }}
+          LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL || 'info' }}
           RENOVATE_AUTODISCOVER: "true"
           RENOVATE_AUTODISCOVER_FILTER: ${{ github.repository_owner }}
           RENOVATE_DRY_RUN: ${{ inputs.dry_run }}

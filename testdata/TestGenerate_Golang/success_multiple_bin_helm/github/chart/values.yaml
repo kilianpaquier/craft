@@ -2,6 +2,7 @@
 
 imagePullSecrets: []
 
+appVersion: $""
 nameOverride: ""
 fullnameOverride: ""
 
@@ -26,8 +27,8 @@ crons:
     completions: 1
     parallelism: 1
     image:
-      registry: ""
-      repository: kilianpaquier/craft
+      registry: registry.example.com
+      repository: path/to/registry
       pullPolicy: ""
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
@@ -127,8 +128,8 @@ jobs:
     completions: 1
     parallelism: 1
     image:
-      registry: ""
-      repository: kilianpaquier/craft
+      registry: registry.example.com
+      repository: path/to/registry
       pullPolicy: ""
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""
@@ -224,8 +225,8 @@ workers:
     paused: true
     replicaCount: 1
     image:
-      registry: ""
-      repository: kilianpaquier/craft
+      registry: registry.example.com
+      repository: path/to/registry
       pullPolicy: ""
       # Overrides the image tag whose default is the chart appVersion.
       tag: ""

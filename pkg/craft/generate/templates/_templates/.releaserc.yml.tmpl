@@ -2,9 +2,9 @@
 
 # https://semantic-release.gitbook.io/semantic-release/usage/configuration
 
-{{- $node := hasKey .Languages "node" }}
-{{- $hugo := hasKey .Languages "hugo" }}
 {{- $golang := hasKey .Languages "go" }}
+{{- $hugo := hasKey .Languages "hugo" }}
+{{- $node := hasKey .Languages "node" }}
 
 branches:
   - (master|main)

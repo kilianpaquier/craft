@@ -58,6 +58,7 @@ func TestHelmTemplate(t *testing.T) {
 			// generate chart files
 			destdir := t.TempDir()
 			require.NoError(t, generate(ctx, destdir, craft.Config{
+				CI:        &craft.CI{Helm: &craft.Helm{}},
 				Languages: map[string]any{"helm": map[string]any{"projectName": "craft"}},
 			}))
 			chartdir := filepath.Join(destdir, "chart")

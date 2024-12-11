@@ -9,6 +9,7 @@ imagePullSecrets:
 imagePullSecrets: []
 {{- end }}
 
+appVersion: ${{ $chart.appVersion | default "" | quote }}
 nameOverride: {{ $chart.nameOverride | default ("" | quote) }}
 fullnameOverride: {{ $chart.fullnameOverride | default ("" | quote) }}
 

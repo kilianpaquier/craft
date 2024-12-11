@@ -12,13 +12,17 @@ func Docker() []engine.Template[craft.Config] {
 			Delimiters: engine.DelimitersBracket(),
 			Globs:      engine.GlobsWithPart("Dockerfile"),
 			Out:        "Dockerfile",
-			Remove:     func(config craft.Config) bool { return config.Docker == nil || config.Binaries() == 0 },
+			Remove: func(config craft.Config) bool {
+				return config.CI == nil || config.CI.Docker == nil || config.Binaries() == 0
+			},
 		},
 		{
 			Delimiters: engine.DelimitersBracket(),
 			Globs:      []string{".dockerignore" + engine.TmplExtension},
 			Out:        ".dockerignore",
-			Remove:     func(config craft.Config) bool { return config.Docker == nil || config.Binaries() == 0 },
+			Remove: func(config craft.Config) bool {
+				return config.CI == nil || config.CI.Docker == nil || config.Binaries() == 0
+			},
 		},
 		{
 			Delimiters: engine.DelimitersBracket(),
@@ -28,7 +32,7 @@ func Docker() []engine.Template[craft.Config] {
 			// however, it may change in the future with python (or rust or others ?) depending on flexibility in repositories layout
 			Remove: func(config craft.Config) bool {
 				_, ok := config.Languages["go"]
-				return !ok || config.Docker == nil || config.Binaries() <= 1
+				return !ok || config.CI == nil || config.CI.Docker == nil || config.Binaries() <= 1
 			},
 		},
 	}

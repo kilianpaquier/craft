@@ -6,7 +6,8 @@ include: .gitlab/workflows/.gitlab-ci.yml
 # secret variables
 # (define the variables below in your GitLab group/project variables)
 
-# don't forget to setup a scheduled pipeline every once in a while to run Renovate updates checks.
+# https://gitlab.com/to-be-continuous/renovate
+# Don't forget to setup a scheduled pipeline every once in a while to run Renovate updates checks.
 # RENOVATE_TOKEN: A GitLab access token to allow Renovate crawl your projects. [See doc](https://docs.renovatebot.com/modules/platform/gitlab/#authentication)
 # GITHUB_COM_TOKEN: A GitHub access token to allow Renovate fetch changelogs. [See doc](https://docs.renovatebot.com/getting-started/running/#githubcom-token-for-changelogs)
 

@@ -4,13 +4,6 @@ package craft
 const File = ".craft"
 
 const (
-	// Chart can be given in craft exclusions ('exclude' key) to avoid generating an Helm chart.
-	//
-	// By default, a Helm chart is generated since a project could satisfies one of the following possibilities:
-	//	- the project is just an Helm chart for another product
-	// 	- the project is a product with an Helm chart (with one or multiple resources, cronjobs, job, worker, etc)
-	Chart string = "chart"
-
 	// Goreleaser can be given in craft exclusions ('exclude' key) to avoid generating a .goreleaser.yml file.
 	//
 	// By default, if a given project is a Go project,
@@ -47,9 +40,12 @@ const (
 )
 
 const (
-	// Netlify is the static name to deploy on netlify (only available on github actions).
+	// Kubernetes is the deployment name for kubernetes
+	// (doesn't matter the provider, kubernetes has its own communication interface - i.e. kubectl and/or helm).
+	Kubernetes string = "kubernetes"
+	// Netlify is the deployment name for netlify.
 	Netlify string = "netlify"
-	// Pages is the static name for pages deployment.
+	// Pages is the deployment name for pages (GitLab or GitHub depending on CI name).
 	Pages string = "pages"
 )
 
@@ -70,6 +66,10 @@ const (
 )
 
 const (
-	// Mendio is the value for maintenance mode with renovate and mend.io (meaning no self-hosted renovate).
-	Mendio string = "mend.io"
+	// HelmAuto is the constant indicating that Helm chart publication should be made automatically.
+	HelmAuto string = "auto"
+	// HelmAuto is the constant indicating that Helm chart publication should be made manually.
+	HelmManual string = "manual"
+	// HelmAuto is the constant indicating that Helm chart publication should not be made.
+	HelmNone string = "none"
 )

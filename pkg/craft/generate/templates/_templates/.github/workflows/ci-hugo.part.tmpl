@@ -22,14 +22,14 @@ jobs:
         with:
           hugo-version: latest
           extended: true
-      - run: |
+      - run: |-
 <<- if $specifics.IsTheme >>
-          if [ -d exampleSite ]; then cd exampleSite; fi
+          [ ! -d exampleSite ] || cd exampleSite
 <<- end >>
           hugo --gc --enableGitInfo --minify --destination "${GITHUB_WORKSPACE}/dist" --logLevel debug
         env:
           VERSION: ${{ needs.version.outputs.version }}
-<<- if .IsStatic "pages" >>
+<<- if .IsDeployment "pages" >>
       - uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages

@@ -203,14 +203,14 @@ func ReadGoCmd(destdir string) (Executables, error) {
 
 			switch {
 			case strings.HasPrefix(entry.Name(), "cron-"):
-				executables.SetCron(entry.Name())
+				executables.AddCron(entry.Name())
 			case strings.HasPrefix(entry.Name(), "job-"):
-				executables.SetJob(entry.Name())
+				executables.AddJob(entry.Name())
 			case strings.HasPrefix(entry.Name(), "worker-"):
-				executables.SetWorker(entry.Name())
+				executables.AddWorker(entry.Name())
 			default:
 				// by default, executables in cmd folder are CLI
-				executables.SetCLI(entry.Name())
+				executables.AddCLI(entry.Name())
 			}
 		}
 	}

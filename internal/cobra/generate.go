@@ -50,7 +50,7 @@ func gen(generators ...engine.Generator[craft.Config]) func(cmd *cobra.Command, 
 			generate.ParserNode,
 			generate.ParserShell,
 			// must be kept last since it marshals config and merges it with chart overrides
-			generate.ParserChart,
+			generate.ParserHelm,
 		}
 		config, err := engine.Generate(ctx, wd, config, parsers, generators)
 		if err != nil {

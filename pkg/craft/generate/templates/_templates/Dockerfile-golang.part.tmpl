@@ -79,7 +79,7 @@ COPY --from=build \
 COPY launcher.sh launcher.sh
 {{- end }}
 
-EXPOSE {{ .Docker.Port | default 3000 }}
+EXPOSE {{ .CI.Docker.Port | default 3000 }}
 
 ENTRYPOINT [ "/app/{{ $entrypoint }}" ]
 {{- end }}

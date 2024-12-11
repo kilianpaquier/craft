@@ -5,13 +5,15 @@
 <<- /* add all categories in case the current repository is an "empty" one, meaning not language associated */ ->>
 <<- $all := le (len .Languages) 0 >>
 
-<<- $categories := list "cd" "ci" >>
+<<- $categories := list >>
+<<- if or $all .CI >><<- $categories = concat $categories (list "cd" "ci") >><<- end >>
+<<- if or $all (and .CI .CI.Docker) >><<- $categories = append $categories "docker" >><<- end >>
+<<- if or $all (and .CI .CI.Helm) (.IsDeployment "kubernetes") >><<- $categories = append $categories "kubernetes" >><<- end >>
+<<- if or $all (and .CI .CI.Helm) >><<- $categories = append $categories "helm" >><<- end >>
 <<- if or $all (hasKey .Languages "go") (hasKey .Languages "hugo") >><<- $categories = append $categories "golang" >><<- end >>
 <<- if or $all (hasKey .Languages "node") >><<- $categories = append $categories "js" >><<- end >>
 <<- if or $all (hasKey .Languages "python") >><<- $categories = append $categories "python" >><<- end >>
 <<- if or $all (hasKey .Languages "rust") >><<- $categories = append $categories "rust" >><<- end >>
-<<- if or $all (not (has "chart" .Exclude)) >><<- $categories = concat $categories (list "helm" "kubernetes") >><<- end >>
-<<- if or $all .Docker >><<- $categories = append $categories "docker" >><<- end >>
 
 {
     "extends": [ ":gitSignOff" ],

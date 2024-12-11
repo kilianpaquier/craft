@@ -28,13 +28,27 @@ func TestGenerate_NoLang(t *testing.T) {
 
 	t.Run("success_chart", func(t *testing.T) {
 		// Arrange
-		for _, ci := range []string{parser.GitLab, parser.GitHub} {
-			t.Run(ci, func(t *testing.T) {
+		cases := []craft.CI{
+			{Name: parser.GitHub, Helm: &craft.Helm{}},
+			{Name: parser.GitHub, Helm: &craft.Helm{Publish: craft.HelmAuto}},
+			{Name: parser.GitHub, Helm: &craft.Helm{Path: "path/to/craft", Publish: craft.HelmManual, Registry: "chartmuseum.example.com"}},
+			{Name: parser.GitHub, Helm: &craft.Helm{Publish: craft.HelmNone}},
+
+			{Name: parser.GitLab, Helm: &craft.Helm{}},
+			{Name: parser.GitLab, Helm: &craft.Helm{Publish: craft.HelmAuto}},
+			{Name: parser.GitLab, Helm: &craft.Helm{Path: "path/to/craft", Publish: craft.HelmManual, Registry: "chartmuseum.example.com"}},
+			{Name: parser.GitLab, Helm: &craft.Helm{Publish: craft.HelmNone}},
+		}
+
+		for _, ci := range cases {
+			publish := helpers.Coalesce(ci.Helm.Publish, "nil")
+			name := fmt.Sprint(ci.Name, "_publish_", publish)
+			t.Run(name, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					CI:      &craft.CI{Name: ci},
+					CI:      &ci,
 					Exclude: []string{craft.Makefile},
-					VCS:     parser.VCS{Platform: ci},
+					VCS:     parser.VCS{Platform: ci.Name},
 				}
 
 				// Act & Assert
@@ -48,9 +62,9 @@ func TestGenerate_NoLang(t *testing.T) {
 			t.Run(ci, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					Bot:     helpers.ToPtr(craft.Renovate),
+					Bot:     craft.Renovate,
 					CI:      &craft.CI{Name: ci},
-					Exclude: []string{craft.Chart, craft.Makefile},
+					Exclude: []string{craft.Makefile},
 					VCS:     parser.VCS{Platform: ci},
 				}
 
@@ -66,7 +80,7 @@ func TestGenerate_NoLang(t *testing.T) {
 				// Arrange
 				config := craft.Config{
 					CI:      &craft.CI{Name: parser.GitHub},
-					Exclude: []string{craft.Chart, craft.Makefile},
+					Exclude: []string{craft.Makefile},
 				}
 				if !precommit {
 					config.Exclude = append(config.Exclude, craft.PreCommit)
@@ -93,7 +107,7 @@ func TestGenerate_NoLang(t *testing.T) {
 				// Arrange
 				config := craft.Config{
 					CI:      &ci,
-					Exclude: []string{craft.Chart, craft.Makefile},
+					Exclude: []string{craft.Makefile},
 					VCS:     parser.VCS{Platform: ci.Name},
 				}
 
@@ -118,7 +132,7 @@ func TestGenerate_Shell(t *testing.T) {
 				// Arrange
 				config := craft.Config{
 					CI:      &craft.CI{Name: ci},
-					Exclude: []string{craft.Chart, craft.Makefile},
+					Exclude: []string{craft.Makefile},
 				}
 
 				// Act & Assert
@@ -131,7 +145,7 @@ func TestGenerate_Shell(t *testing.T) {
 		for _, precommit := range []bool{true, false} {
 			t.Run(strconv.FormatBool(precommit), func(t *testing.T) {
 				// Arrange
-				config := craft.Config{Exclude: []string{craft.Chart, craft.Makefile}}
+				config := craft.Config{Exclude: []string{craft.Makefile}}
 				if !precommit {
 					config.Exclude = append(config.Exclude, craft.PreCommit)
 				}
@@ -151,13 +165,12 @@ func TestGenerate_Golang(t *testing.T) {
 			t.Run(ci, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					Bot:     helpers.ToPtr(craft.Dependabot),
-					CI:      &craft.CI{Name: ci, Release: &craft.Release{}},
-					Exclude: []string{craft.Chart},
-					VCS:     parser.VCS{Platform: ci},
+					Bot: craft.Dependabot,
+					CI:  &craft.CI{Name: ci, Release: &craft.Release{}},
+					VCS: parser.VCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
-					config.SetCLI("name")
+					config.AddCLI("name")
 
 					gomod := parser.Gomod{
 						Go:     "1.23",
@@ -184,7 +197,7 @@ func TestGenerate_Golang(t *testing.T) {
 						Options: []string{craft.Sonar, craft.CodeQL, craft.Labeler},
 						Release: &craft.Release{},
 					},
-					Exclude: []string{craft.Chart, craft.Makefile},
+					Exclude: []string{craft.Makefile},
 					VCS:     parser.VCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
@@ -209,18 +222,20 @@ func TestGenerate_Golang(t *testing.T) {
 				// Arrange
 				config := craft.Config{
 					CI: &craft.CI{
-						Name:    ci,
-						Options: []string{craft.CodeCov, craft.CodeQL, craft.Labeler},
+						Name:       ci,
+						Deployment: &craft.Deployment{Platform: craft.Kubernetes},
+						Docker:     &craft.Docker{Path: "path/to/registry", Registry: "registry.example.com"},
+						Helm:       &craft.Helm{Path: "path/to/repository", Publish: craft.HelmManual, Registry: "chartmuseum.example.com"},
+						Options:    []string{craft.CodeCov, craft.CodeQL, craft.Labeler},
 					},
-					Description: helpers.ToPtr("A useful project description"),
-					Docker:      &craft.Docker{},
+					Description: "A useful project description",
 					Exclude:     []string{craft.Shell},
 					VCS:         parser.VCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
-					config.SetJob("job-name")
-					config.SetCron("cron-name")
-					config.SetWorker("worker-name")
+					config.AddJob("job-name")
+					config.AddCron("cron-name")
+					config.AddWorker("worker-name")
 
 					gomod := parser.Gomod{
 						Go:     "1.23",
@@ -242,23 +257,23 @@ func TestGenerate_Hugo(t *testing.T) {
 	ctx := t.Context()
 
 	cases := []craft.CI{
-		{Name: parser.GitHub, Static: &craft.Static{Name: craft.Netlify, Auto: true}},
-		{Name: parser.GitHub, Static: &craft.Static{Name: craft.Netlify}},
-		{Name: parser.GitHub, Static: &craft.Static{Name: craft.Pages, Auto: true}},
-		{Name: parser.GitHub, Static: &craft.Static{Name: craft.Pages}},
-		{Name: parser.GitLab, Static: &craft.Static{Name: craft.Netlify, Auto: true}},
-		{Name: parser.GitLab, Static: &craft.Static{Name: craft.Netlify}},
-		{Name: parser.GitLab, Static: &craft.Static{Name: craft.Pages, Auto: true}},
-		{Name: parser.GitLab, Static: &craft.Static{Name: craft.Pages}},
+		{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Netlify, Auto: true}},
+		{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Netlify}},
+		{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Pages, Auto: true}},
+		{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Pages}},
+
+		{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Netlify, Auto: true}},
+		{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Netlify}},
+		{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Pages, Auto: true}},
+		{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Pages}},
 	}
 	for _, ci := range cases {
-		name := fmt.Sprint(ci.Name, "_", ci.Static.Name, "_auto_", ci.Static.Auto)
+		name := fmt.Sprint(ci.Name, "_", ci.Deployment.Platform, "_auto_", ci.Deployment.Auto)
 		t.Run(name, func(t *testing.T) {
 			// Arrange
 			config := craft.Config{
-				CI:      &ci,
-				Exclude: []string{craft.Chart},
-				VCS:     parser.VCS{Platform: ci.Name},
+				CI:  &ci,
+				VCS: parser.VCS{Platform: ci.Name},
 			}
 			hugo := func(_ context.Context, _ string, config *craft.Config) error {
 				config.SetLanguage("hugo", nil)
@@ -279,12 +294,11 @@ func TestGenerate_Node(t *testing.T) {
 			t.Run(tc, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					CI:      &craft.CI{Name: parser.GitHub},
-					Exclude: []string{craft.Chart},
-					VCS:     parser.VCS{Platform: parser.GitHub},
+					CI:  &craft.CI{Name: parser.GitHub},
+					VCS: parser.VCS{Platform: parser.GitHub},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
-					config.SetWorker("index.js")
+					config.AddWorker("index.js")
 					config.SetLanguage("node", parser.PackageJSON{Name: "craft", PackageManager: tc})
 					return nil
 				}
@@ -318,14 +332,13 @@ func TestGenerate_Node(t *testing.T) {
 			t.Run(name, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					Bot: helpers.ToPtr(tc.Bot),
+					Bot: tc.Bot,
 					CI: &craft.CI{
 						Name:    tc.CI,
-						Auth:    craft.Auth{Maintenance: helpers.ToPtr(craft.PersonalToken)},
+						Auth:    craft.Auth{Maintenance: craft.PersonalToken},
 						Release: &craft.Release{Backmerge: true},
 					},
-					Exclude: []string{craft.Chart},
-					VCS:     parser.VCS{Platform: tc.CI},
+					VCS: parser.VCS{Platform: tc.CI},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetLanguage("node", parser.PackageJSON{Name: "craft", PackageManager: tc.PackageManager})
@@ -338,28 +351,61 @@ func TestGenerate_Node(t *testing.T) {
 		}
 	})
 
-	t.Run("success_static", func(t *testing.T) {
-		cases := []craft.CI{
-			{Name: parser.GitHub, Static: &craft.Static{Name: craft.Netlify, Auto: true}},
-			{Name: parser.GitHub, Static: &craft.Static{Name: craft.Netlify}},
-			{Name: parser.GitHub, Static: &craft.Static{Name: craft.Pages, Auto: true}},
-			{Name: parser.GitHub, Static: &craft.Static{Name: craft.Pages}},
-			{Name: parser.GitLab, Static: &craft.Static{Name: craft.Netlify, Auto: true}},
-			{Name: parser.GitLab, Static: &craft.Static{Name: craft.Netlify}},
-			{Name: parser.GitLab, Static: &craft.Static{Name: craft.Pages, Auto: true}},
-			{Name: parser.GitLab, Static: &craft.Static{Name: craft.Pages}},
+	t.Run("success_deployment", func(t *testing.T) {
+		statics := []craft.CI{
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Kubernetes, Auto: true}},
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Kubernetes}},
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Netlify, Auto: true}},
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Netlify}},
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Pages, Auto: true}},
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Pages}},
+
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Kubernetes, Auto: true}},
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Kubernetes}},
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Netlify, Auto: true}},
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Netlify}},
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Pages, Auto: true}},
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Pages}},
 		}
-		for _, ci := range cases {
-			name := fmt.Sprint(ci.Name, "_", ci.Static.Name, "_auto_", ci.Static.Auto)
+		for _, ci := range statics {
+			name := fmt.Sprint(ci.Name, "_", ci.Deployment.Platform, "_auto_", ci.Deployment.Auto)
 			t.Run(name, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
 					CI:      &ci,
-					Exclude: []string{craft.Chart, craft.Makefile},
+					Exclude: []string{craft.Makefile},
 					VCS:     parser.VCS{Platform: ci.Name},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
-					config.SetWorker("index.js")
+					config.AddWorker("index.js")
+					config.SetLanguage("node", parser.PackageJSON{Name: "craft", PackageManager: "bun@1.1.6"})
+					return nil
+				}
+
+				// Act & Assert
+				test(ctx, t, config, node)
+			})
+		}
+
+		cases := []craft.CI{
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Kubernetes}, Helm: &craft.Helm{}},
+			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Kubernetes}, Helm: &craft.Helm{Publish: craft.HelmManual}},
+
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Kubernetes}, Helm: &craft.Helm{}},
+			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Kubernetes}, Helm: &craft.Helm{Publish: craft.HelmManual}},
+		}
+		for _, ci := range cases {
+			publish := helpers.Or(ci.Helm != nil && ci.Helm.Publish != "", ci.Helm.Publish, craft.HelmNone)
+			name := fmt.Sprint(ci.Name, "_", ci.Deployment.Platform, "_helm_", ci.Helm != nil, "_publish_", publish)
+			t.Run(name, func(t *testing.T) {
+				// Arrange
+				config := craft.Config{
+					CI:      &ci,
+					Exclude: []string{craft.Makefile},
+					VCS:     parser.VCS{Platform: ci.Name},
+				}
+				node := func(_ context.Context, _ string, config *craft.Config) error {
+					config.AddWorker("index.js")
 					config.SetLanguage("node", parser.PackageJSON{Name: "craft", PackageManager: "bun@1.1.6"})
 					return nil
 				}
@@ -393,7 +439,7 @@ func test(ctx context.Context, t *testing.T, config craft.Config, parsers ...eng
 
 	// Act
 	_, err := engine.Generate(ctx, destdir, config,
-		slices.Concat(parsers, []engine.Parser[craft.Config]{ParserInfo, generate.ParserGolang, generate.ParserNode, generate.ParserShell, generate.ParserChart}),
+		slices.Concat(parsers, []engine.Parser[craft.Config]{ParserInfo, generate.ParserGolang, generate.ParserNode, generate.ParserShell, generate.ParserHelm}),
 		[]engine.Generator[craft.Config]{
 			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.Dependabot(), templates.Renovate())),
 			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.CodeCov(), templates.Sonar())),

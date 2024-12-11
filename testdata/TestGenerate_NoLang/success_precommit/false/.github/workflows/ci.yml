@@ -33,6 +33,7 @@ jobs:
   run-workflow:
     name: Run Workflow
     runs-on: ubuntu-latest
+    # run on branches or pull request not being draft and associated with branches not protected
     if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.ref_protected != true) }}
     steps:
       - id: skip

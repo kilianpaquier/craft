@@ -48,9 +48,9 @@ spec:
               securityContext:
                 {{- toYaml $config.securityContext | nindent 16 }}
               {{- if $config.image.registry }}
-              image: "{{ $config.image.registry }}/{{ $config.image.repository }}:{{ $config.image.tag | default $.Chart.AppVersion }}"
+              image: "{{ $config.image.registry }}/{{ $config.image.repository }}:{{ $config.image.tag | default $.Values.appVersion | default $.Chart.AppVersion }}"
               {{- else }}
-              image: "{{ $config.image.repository }}:{{ $config.image.tag | default $.Chart.AppVersion }}"
+              image: "{{ $config.image.repository }}:{{ $config.image.tag | default $.Values.appVersion | default $.Chart.AppVersion }}"
               {{- end }}
               {{- with $config.image.pullPolicy }}
               imagePullPolicy: {{ . }}

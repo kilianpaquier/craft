@@ -12,7 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 	gitlab "gitlab.com/gitlab-org/api/client-go"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/craft/generate"
 	"github.com/kilianpaquier/craft/pkg/engine/files"
@@ -86,7 +85,7 @@ func TestGeneratorLicense_Download(t *testing.T) {
 			httpmock.NewStringResponder(http.StatusInternalServerError, "error message"))
 
 		// Act
-		err := gen(ctx, t.TempDir(), craft.Config{License: helpers.ToPtr("mit")})
+		err := gen(ctx, t.TempDir(), craft.Config{License: "mit"})
 
 		// Assert
 		assert.ErrorContains(t, err, "download license")
@@ -101,7 +100,7 @@ func TestGeneratorLicense_Download(t *testing.T) {
 		require.NoError(t, license.Close())
 
 		// Act
-		err = gen(ctx, destdir, craft.Config{License: helpers.ToPtr("mit")})
+		err = gen(ctx, destdir, craft.Config{License: "mit"})
 
 		// Assert
 		require.NoError(t, err)
@@ -116,7 +115,7 @@ func TestGeneratorLicense_Download(t *testing.T) {
 			httpmock.NewJsonResponderOrPanic(http.StatusOK, gitlab.LicenseTemplate{Content: "some content"}))
 
 		config := craft.Config{
-			License:     helpers.ToPtr("mit"),
+			License:     "mit",
 			Maintainers: []*craft.Maintainer{{Name: "name"}},
 			VCS:         parser.VCS{ProjectName: "craft"},
 		}

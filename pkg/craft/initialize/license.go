@@ -39,12 +39,7 @@ func License(config *craft.Config) *huh.Group {
 				}
 				return huh.NewOptions(licenses...)
 			}, &license).
-			Validate(func(s string) error {
-				if s != "" {
-					config.License = &s
-				}
-				return nil
-			}),
+			Value(&config.License),
 	)
 }
 

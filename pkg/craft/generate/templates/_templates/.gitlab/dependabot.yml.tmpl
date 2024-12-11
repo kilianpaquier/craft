@@ -5,13 +5,13 @@
 # Please see the documentation for all configuration options:
 # https://dependabot-gitlab.gitlab.io/dependabot/config/configuration.html#configuration
 
-{{- $node := hasKey .Languages "node" }}
-{{- $hugo := hasKey .Languages "hugo" }}
 {{- $golang := hasKey .Languages "go" }}
+{{- $hugo := hasKey .Languages "hugo" }}
+{{- $node := hasKey .Languages "node" }}
 
 version: 2
 updates:
-{{- if .Docker }}
+{{- if .CI.Docker }}
 
   - package-ecosystem: docker
     directory: /
@@ -47,7 +47,7 @@ updates:
 {{- $specifics := get .Languages "node" }}
 {{- $manager := cutAfter $specifics.PackageManager "@" }}
 
-  - package-ecosystem: {{ ternary "bun" "npm" (eq $manager "bun") }}
+  - package-ecosystem: {{ eq $manager "bun" | ternary "bun" "npm" }}
     auto-merge:
       allow:
         - dependency-name: "*"

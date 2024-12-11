@@ -1,0 +1,66 @@
+jobs:
+  needs:
+    needs:
+<<- define "needs" >>
+
+<<- $golang := hasKey .Languages "go" >>
+<<- $hugo := hasKey .Languages "hugo" >>
+<<- $node := hasKey .Languages "node" >>
+
+<<- $needs := list >>
+
+<<- if $golang >>
+<<- if gt .Binaries 0 >><<- $needs = append $needs "go-build" >>
+<<- else >><<- $needs = append $needs "go-test" >><<- end >>
+<<- end >>
+
+<<- if $hugo >><<- $needs = append $needs "hugo-build" >><<- end >>
+
+<<- if $node >>
+<<- if gt .Binaries 0 >><<- $needs = append $needs "node-build" >>
+<<- else >><<- $needs = append $needs "node-test" >><<- end >>
+<<- end >>
+
+<<- if eq (len $needs) 0 >> run-workflow<< end >>
+<<- range $needs >>
+      - << . >>
+<<- end >>
+<<- end >>
+
+  release:
+    steps:
+      - id: semantic-release
+        with:
+<<- define "release-args" >>
+<<- $node := hasKey .Languages "node" >>
+<<- $nodebuild := and $node (gt .Binaries 0) >>
+<<- $nodepublish := and $node (not (get .Languages "node").Private) >>
+          extra_plugins: |-
+            @semantic-release/changelog
+            @semantic-release/commit-analyzer
+            @semantic-release/exec
+            @semantic-release/git
+            @semantic-release/github
+            @semantic-release/release-notes-generator
+            conventional-changelog-conventionalcommits
+<<- if hasKey .Languages "node" >>
+            @semantic-release/npm
+<<- end >>
+<<- if .License >>
+            semantic-release-license
+<<- end >>
+<<- if .CI.Release.Backmerge >>
+            @kilianpaquier/semantic-release-backmerge
+<<- end >>
+        env:
+<<- if eq .CI.Auth.Release "github-app" >>
+          GITHUB_TOKEN: ${{ steps.app_token.outputs.token }}
+<<- else if eq .CI.Auth.Release "personal-token" >>
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+<<- else >>
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+<<- end >>
+<<- if $nodepublish >>
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+<<- end >>
+<<- end >>

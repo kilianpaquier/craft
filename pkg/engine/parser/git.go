@@ -71,8 +71,8 @@ func gitParseRemote(rawRemote string) (_, _ string) {
 	originURL = strings.TrimSuffix(originURL, ".git")
 
 	// handle ssh remotes
-	if strings.HasPrefix(originURL, "git@") {
-		originURL := strings.TrimPrefix(originURL, "git@")
+	if after, ok := strings.CutPrefix(originURL, "git@"); ok {
+		originURL := after
 		host, subpath, _ := strings.Cut(originURL, ":")
 		return host, subpath
 	}

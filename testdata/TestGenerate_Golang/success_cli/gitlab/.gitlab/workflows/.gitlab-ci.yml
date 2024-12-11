@@ -55,7 +55,7 @@ semantic-release-info:
     - >
       echo "BRANCH_SHA=$(echo "$CI_COMMIT_REF_NAME" | sha256sum | cut -c -8)" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
 
-      if [ "$SEMREL_INFO_NEXT_VERSION" != "" ]; then
+      if [ -n "$SEMREL_INFO_NEXT_VERSION" ]; then
         echo "SEMREL_INFO_LAST_VERSION=v${SEMREL_INFO_LAST_VERSION#v}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
         echo "SEMREL_INFO_NEXT_VERSION=v${SEMREL_INFO_NEXT_VERSION#v}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
         echo "SEMREL_INFO_NEXT_VERSION_TYPE=${SEMREL_INFO_NEXT_VERSION_TYPE}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"

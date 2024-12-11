@@ -9,7 +9,7 @@ serve:
 	@hugo server --disableFastRender --destination dist --logLevel debug
 
 .PHONY: production
-{{- if .IsStatic "netlify" }}
+{{- if .IsDeployment "netlify" }}
 production:
 	@netlify dev -c "make serve" \
 		--target-port 1313 --port 8888

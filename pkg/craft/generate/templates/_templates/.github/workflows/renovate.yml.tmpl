@@ -3,8 +3,6 @@
 name: Renovate
 run-name: Renovate
 
-<<- $auth := fromPtr .CI.Auth.Maintenance >>
-
 on:
   workflow_dispatch:
     inputs:
@@ -24,14 +22,14 @@ jobs:
   renovate:
     name: Renovate
     runs-on: ubuntu-latest
-<<- if eq $auth "github-token" >>
+<<- if eq .CI.Auth.Maintenance "github-token" >>
     permissions:
       contents: write
       pull-requests: write
       statuses: write
 <<- end >>
     steps:
-<<- if eq $auth "github-app" >>
+<<- if eq .CI.Auth.Maintenance "github-app" >>
       - id: app_token
         uses: actions/create-github-app-token@v1
         with:
@@ -39,30 +37,21 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 <<- end >>
       - uses: actions/checkout@v4
-<<- if eq $auth "github-app" >>
+<<- if eq .CI.Auth.Maintenance "github-app" >>
         with:
           token: ${{ steps.app_token.outputs.token }}
 <<- end >>
-      - id: log_level
-        run: |-
-          if [ "${RENOVATE_LOG_LEVEL}" != "" ]; then
-            echo "log_level=${RENOVATE_LOG_LEVEL}" >> $GITHUB_OUTPUT
-          else
-            echo "log_level=info" >> $GITHUB_OUTPUT
-          fi
-        env:
-          RENOVATE_LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL }}
       - uses: renovatebot/github-action@v41.0.6
         with:
-<<- if eq $auth "github-app" >>
+<<- if eq .CI.Auth.Maintenance "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
-<<- else if eq $auth "personal-token" >>
+<<- else if eq .CI.Auth.Maintenance "personal-token" >>
           token: ${{ secrets.RENOVATE_TOKEN }}
 <<- else >>
           token: ${{ secrets.GITHUB_TOKEN }}
 <<- end >>
         env:
-          LOG_LEVEL: ${{ steps.log_level.outputs.log_level }}
+          LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL || 'info' }}
           RENOVATE_AUTODISCOVER: "true"
-          RENOVATE_AUTODISCOVER_FILTER: << if eq (len .Languages) 0 >>${{ github.repository_owner }}<< else >>${{ github.repository }}<< end >>
+          RENOVATE_AUTODISCOVER_FILTER: << eq (len .Languages) 0 | ternary "${{ github.repository_owner }}" "${{ github.repository }}" >>
           RENOVATE_DRY_RUN: ${{ inputs.dry_run }}

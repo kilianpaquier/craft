@@ -1,8 +1,3 @@
-{{- $plugins := list -}}
-{{- if hasKey .Languages "node" -}}{{- $plugins = append $plugins "@semantic-release/npm" -}}{{- end -}}
-{{- if .License -}}{{- $plugins = append $plugins "semantic-release-license" -}}{{- end -}}
-{{- if .CI.Release.Backmerge -}}{{- $plugins = append $plugins "@kilianpaquier/semantic-release-backmerge" -}}{{- end -}}
-
 @semantic-release/changelog
 @semantic-release/commit-analyzer
 @semantic-release/exec
@@ -11,6 +6,14 @@
 @semantic-release/release-notes-generator
 conventional-changelog-conventionalcommits
 
-{{- range $plugins }}
-{{ . }}
+{{- if hasKey .Languages "node" }}
+@semantic-release/npm
+{{- end }}
+
+{{- if .License }}
+semantic-release-license
+{{- end }}
+
+{{- if .CI.Release.Backmerge }}
+@kilianpaquier/semantic-release-backmerge
 {{- end }}

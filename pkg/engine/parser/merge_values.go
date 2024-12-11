@@ -30,7 +30,7 @@ import (
 //
 //	func ParserChart(ctx context.Context, destdir string, c *config) error {
 //		chartdir := filepath.Join(destdir, "chart")
-//		if slices.Contains(config.Exclude, craft.Chart) {
+//		if config.CI != nil && config.CI.Deployment != nil && config.CI.Deployment.Helm {
 //			engine.GetLogger().Infof("skipping helm chart, configuration has 'exclude' key with 'chart' in it")
 //			if err := os.RemoveAll(chartdir); err != nil {
 //				return fmt.Errorf("remove chart dir: %w", err)

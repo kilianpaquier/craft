@@ -35,7 +35,7 @@ func ParserNode(_ context.Context, destdir string, config *craft.Config) error {
 
 	config.SetLanguage("node", jsonfile)
 	if jsonfile.Main != nil {
-		config.SetWorker("main")
+		config.AddWorker("main")
 	}
 	return nil
 }

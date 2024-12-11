@@ -33,6 +33,7 @@ jobs:
   run-workflow:
     name: Run Workflow
     runs-on: ubuntu-latest
+    # run on branches or pull request not being draft and associated with branches not protected
     if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false && github.ref_protected != true) }}
     steps:
       - id: skip
@@ -65,7 +66,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - id: version
-        run: |
+        run: |-
           DESCRIBE=$(git describe --tags || echo "v0.0.0")
           echo "version=v${DESCRIBE#v}" >> $GITHUB_OUTPUT
       - run: echo ${VERSION}
@@ -119,7 +120,7 @@ jobs:
           cache: pnpm
           node-version: lts/*
       - run: mkdir -p reports/
-      - run: |
+      - run: |-
           pnpm install --frozen-lockfile
           pnpm run test -- --coverage --coverageDirectory=reports --reporters="jest-junit" --reporters="jest-sonar"
 
@@ -127,8 +128,8 @@ jobs:
     name: Node Build
     runs-on: ubuntu-latest
     needs:
-      - version
       - node-test
+      - version
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

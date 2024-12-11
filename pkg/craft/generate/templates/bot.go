@@ -16,7 +16,7 @@ func Dependabot() []engine.Template[craft.Config] {
 			Globs:      []string{path.Join(".github", "dependabot.yml") + engine.TmplExtension},
 			Out:        path.Join(".github", "dependabot.yml"),
 			Remove: func(config craft.Config) bool {
-				return config.Platform != parser.GitHub || !config.IsBot(craft.Dependabot)
+				return config.Bot != craft.Dependabot || config.Platform != parser.GitHub
 			},
 		},
 		{
@@ -24,7 +24,7 @@ func Dependabot() []engine.Template[craft.Config] {
 			Globs:      []string{path.Join(".gitlab", "dependabot.yml") + engine.TmplExtension},
 			Out:        path.Join(".gitlab", "dependabot.yml"),
 			Remove: func(config craft.Config) bool {
-				return !config.IsCI(parser.GitLab) || !config.IsBot(craft.Dependabot)
+				return config.Bot != craft.Dependabot || !config.IsCI(parser.GitLab)
 			},
 		},
 	}
@@ -38,14 +38,14 @@ func Renovate() []engine.Template[craft.Config] {
 			Globs:      []string{path.Join(".github", "workflows", "renovate.yml") + engine.TmplExtension},
 			Out:        path.Join(".github", "workflows", "renovate.yml"),
 			Remove: func(config craft.Config) bool {
-				return !config.IsBot(craft.Renovate) || !config.IsCI(parser.GitHub) || (config.CI.Auth.Maintenance != nil && *config.CI.Auth.Maintenance == craft.Mendio) //nolint:revive
+				return config.Bot != craft.Renovate || !config.IsCI(parser.GitHub)
 			},
 		},
 		{
 			Delimiters: engine.DelimitersChevron(),
 			Globs:      []string{"renovate.json5" + engine.TmplExtension},
 			Out:        "renovate.json5",
-			Remove:     func(config craft.Config) bool { return !config.IsBot(craft.Renovate) },
+			Remove:     func(config craft.Config) bool { return config.Bot != craft.Renovate },
 		},
 	}
 }

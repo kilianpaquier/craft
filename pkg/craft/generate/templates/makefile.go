@@ -29,14 +29,5 @@ func Makefile() []engine.Template[craft.Config] {
 				return ok || slices.Contains(config.Exclude, craft.Makefile)
 			},
 		},
-		{
-			Delimiters: engine.DelimitersBracket(),
-			Globs:      []string{path.Join("scripts", "mk", "craft.mk") + engine.TmplExtension},
-			Out:        path.Join("scripts", "mk", "craft.mk"),
-			Remove: func(config craft.Config) bool {
-				_, ok := config.Languages["node"] // don't generate makefiles with node
-				return ok || slices.Contains(config.Exclude, craft.Makefile)
-			},
-		},
 	}
 }

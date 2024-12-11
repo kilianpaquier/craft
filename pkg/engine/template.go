@@ -21,7 +21,6 @@ import (
 	"github.com/go-viper/mapstructure/v2"
 	"github.com/goccy/go-yaml"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/engine/files"
 )
 
@@ -192,7 +191,6 @@ func ExecuteTemplate(tmpl *template.Template, data any, out string) error {
 func FuncMap() template.FuncMap {
 	return template.FuncMap{
 		"cutAfter": cutAfter,
-		"fromPtr":  helpers.FromPtr[string],
 		"map":      mergeMaps,
 		"toQuery":  toQuery,
 		"toYaml":   toYAML,

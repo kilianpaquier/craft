@@ -4,7 +4,7 @@ Package initialize exposes pre-defined groups for craft configuration initializa
 Example:
 
 	func main() {
-		config, err := engine.Initialize(ctx, engine.WithFormGroups(initialize.Maintainer, initialize.Chart, initialize.License))
+		config, err := engine.Initialize(ctx, engine.WithFormGroups(initialize.Maintainer, initialize.License))
 		// handle err
 	}
 */

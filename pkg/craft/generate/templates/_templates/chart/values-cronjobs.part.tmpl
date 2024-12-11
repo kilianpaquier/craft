@@ -13,13 +13,13 @@ crons:
     completions: {{ $config.completions | default 1 }}
     parallelism: {{ $config.parallelism | default 1 }}
     image:
-      registry: {{ $config.image.registry | default $.docker.registry | default ("" | quote) }}
-      repository: {{ $config.image.repository | default $.projectPath }}
+      registry: {{ $config.image.registry | default $.ci.docker.registry | default ("" | quote) }}
+      repository: {{ $config.image.repository | default $.ci.docker.path | default $.projectPath }}
       pullPolicy: {{ $config.image.pullPolicy | default ("" | quote) }}
       # Overrides the image tag whose default is the chart appVersion.
       tag: {{ $config.image.tag | default "" | quote }}
     env:
-      {{- $env := merge (dict "BINARY_NAME" $name) (dict "BINARY_PORT" ($.docker.port | default 3000)) $config.env }}
+      {{- $env := merge (dict "BINARY_NAME" $name) (dict "BINARY_PORT" ($.ci.docker.port | default 3000)) $config.env }}
       {{- toYaml $env | nindent 6 }}
     {{- with $config.envFrom }}
     envFrom:

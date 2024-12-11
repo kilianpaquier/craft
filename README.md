@@ -121,11 +121,42 @@ ci:
   # auth configurations for various features in CI
   auth:
     # maintenance auth strategy for the specified maintenance bot (just above)
-    maintenance: github-app | github-token | mend.io | personal-token
+    maintenance: github-app | github-token | personal-token
 
     # release auth for github only (how should the release token be retrieved)
     # will stay empty when using gitlab CICD
     release: github-app | github-token | personal-token
+
+  docker:
+    # target path for docker push (i.e. kilianpaquier/craft)
+    # (optional, by default will be provisionned with <owner>/<repository>)
+    path: kilianpaquier/craft
+    # specific docker registry to push images on
+    # (optional, by default the CI platform decides, both GitHub and GitLab CI/CD points to their own registry)
+    # used in various places like helm values.yml images registry
+    # github release workflow to push images
+    registry: ghcr.io
+    # specific exposed port (optional, default is 3000)
+    # used in various places like helm values.yml service port
+    # Dockerfile exposed port
+    port: 3000
+
+  deployment:
+    # deployment automatisation on default branch
+    auto: true | false
+    # deployment platform name
+    platform: kubernetes | netlify | pages
+
+  helm:
+    # target path for helm cm-push (i.e. kilianpaquier/craft)
+    # (optional, by default will be provisionned with <owner>/<repository>)
+    path: kilianpaquier/craft
+    # whether to push the project helm chart on an helm repository or not
+    publish: auto | manual | none
+    # specific helm repository to push the generated chart on
+    # (optional, by default the CI platform decides, both GitHub and GitLab CI/CD points to their own registry)
+    # OCI based repositories can be used
+    registry: (oci://)?ghcr.io
 
   # ci name - self-explaining what each value will generate - (required when ci section is given)
   name: github | gitlab
@@ -143,30 +174,11 @@ ci:
     auto: true | false
     # whether backmerging should be configured for main, staging and develop branches
     backmerge: true | false
-    # whether releasing should be disabled
-    disable: true | false
-
-  # static deployment configuration
-  static:
-    # static deployment name
-    auto: true | false
-    # static deployment automatisation (on main branches for github and on protected branches for gitlab)
-    name: netlify | pages
 
 # project's description (optional)
 # used in various places like helm Chart.yml description
 # Dockerfile description label
 description: some useful description
-
-docker:
-  # specific docker registry to push images on (optional, default is none - docker.io)
-  # used in various places like helm values.yml images registry
-  # github release workflow to push images
-  registry: ghcr.io
-  # specific exposed port (optional, default is 3000)
-  # used in various places like helm values.yml service port
-  # Dockerfile exposed port
-  port: 3000
 
 # project's license (optional)
 # providing it will download the appropriate license
@@ -188,7 +200,6 @@ maintainers:
 
 # list of parts to not generate.
 exclude:
-  - chart
   - goreleaser
   - makefile
   - pre-commit
@@ -231,7 +242,7 @@ Generation process first runs over all parsers to make sure a project is fully k
 
 Multiple examples:
 - A `go.mod` is detected with `Golang` parser, combined with `ci` configuration, then the appropriate CI will be generated.
-- A `go.mod` is detected with `Golang` parser and a `hugo.(toml|yaml|...)` or `theme.(toml|yaml|...)` is detected too, combined with the `ci` and `static` options,
+- A `go.mod` is detected with `Golang` parser and a `hugo.(toml|yaml|...)` or `theme.(toml|yaml|...)` is detected too, combined with the `ci` and `deployment` options,
   then the appropriate **Netlify** or **Pages** (it can be **GitLab** or **GitHub**) deployment will be generated in CI files.
 - If `exclude: [chart]` is not given, a custom craft helm chart will be generated.
   This helm chart can deploy cronjobs, jobs and workers easily from `values.yaml` file.

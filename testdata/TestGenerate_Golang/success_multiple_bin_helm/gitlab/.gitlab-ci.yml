@@ -6,6 +6,32 @@ include: .gitlab/workflows/.gitlab-ci.yml
 # secret variables
 # (define the variables below in your GitLab group/project variables)
 
+# https://gitlab.com/to-be-continuous/docker
+# In case a mirror is needed
+# DOCKER_REGISTRY_MIRROR: The mirror registry URL
+# DOCKER_REGISTRY_MIRROR_USER: The username with read access to registry mirror
+# DOCKER_REGISTRY_MIRROR_PASSWORD: The user password / token with read access to registry mirror
+
+# DOCKER_REGISTRY_SNAPSHOT_USER: The username with write access to registry.example.com (snapshot) to push docker images (default is $CI_REGISTRY_USER)
+# DOCKER_REGISTRY_SNAPSHOT_PASSWORD: The user password / token with write access to registry.example.com (snapshot) to push docker images (default is $CI_REGISTRY_PASSWORD)
+# DOCKER_REGISTRY_RELEASE_USER: The username with write access to registry.example.com to push docker images (default is $CI_REGISTRY_USER)
+# DOCKER_REGISTRY_RELEASE_PASSWORD: The user password / token with write access to registry.example.com to push docker images (default is $CI_REGISTRY_PASSWORD)
+
+# https://gitlab.com/to-be-continuous/helm
+# For a flawless integration with GitLab environments, those variables may be defined in this file or in project / group variables.
+# HELM_ENVIRONMENT_URL: "https://%{environment_name}.nonprod.acme.domain" # global url for all environments
+# HELM_PROD_ENVIRONMENT_URL: "https://$HELM_BASE_APP_NAME.acme.domain" # override for prod (late expansion of $HELM_BASE_APP_NAME not needed here)
+# HELM_REVIEW_ENVIRONMENT_URL: "https://wonderapp-review.nonprod.acme.domain/%{environment_name}" override for review (using separate resource paths)
+
+# https://gitlab.com/to-be-continuous/helm
+# In case a private helm repository must be used, those variables may be defined in this file (except the password) or in project / group variables
+# HELM_REPOS: "stable@https://charts.helm.sh/stable bitnami@https://charts.bitnami.com/bitnami other-proj@$CI_API_V4_URL/projects/1234/packages/helm/release"
+# HELM_REPO_OTHER_PROJ_USER: "gitlab-token"
+# HELM_REPO_OTHER_PROJ_PASSWORD: Helm password / token with read (and/or write) access to 'other-proj' repository (see above)
+
+# HELM_PUBLISH_USER: Helm repository username (default is $CI_REGISTRY_USER)
+# HELM_PUBLISH_PASSWORD: Helm repository password (default is $CI_REGISTRY_PASSWORD)
+
 variables:
   PROD_REF: /^(master|main)$/
   INTEG_REF: /^(staging|dev|develop|development)$/

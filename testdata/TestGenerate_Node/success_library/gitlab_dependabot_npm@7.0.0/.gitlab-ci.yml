@@ -6,10 +6,11 @@ include: .gitlab/workflows/.gitlab-ci.yml
 # secret variables
 # (define the variables below in your GitLab group/project variables)
 
+# https://gitlab.com/to-be-continuous/semantic-release
 # GITLAB_TOKEN: A GitLab 'project access token' or 'personal access token' with `api`, `read_repository` and `write_repository` scopes.
 # SEMREL_GPG_SIGNKEY: Path to the GPG signkey exported with `gpg --armor --export-secret-key` (optional).
 
-# don't forget to setup a scheduled pipeline every once in a while to run Dependabot updates checks.
+# Don't forget to setup a scheduled pipeline every once in a while to run Dependabot updates checks.
 # SETTINGS__GITLAB_ACCESS_TOKEN: A GitLab access token to allow Dependabot creating merge requests. [See doc](https://dependabot-gitlab.gitlab.io/dependabot/config/environment.html#access)
 # SETTINGS__GITHUB_ACCESS_TOKEN: A GitHub access token to allow Dependabot fetch changelogs. [See doc](https://dependabot-gitlab.gitlab.io/dependabot/config/environment.html#access)
 

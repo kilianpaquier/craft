@@ -14,6 +14,7 @@
                 "auth": {
                     "description": "Auth configurations for various features in CI.",
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "maintenance": {
                             "description": "Maintenance auth strategy for the specified bot in maintenance option.",
@@ -21,7 +22,6 @@
                             "enum": [
                                 "github-app",
                                 "github-token",
-                                "mend.io",
                                 "personal-token"
                             ]
                         },
@@ -35,6 +35,84 @@
                             ]
                         }
                     }
+                },
+                "docker": {
+                    "description": "Docker definition.",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "port": {
+                            "description": "Container port to override the default one, 3000.",
+                            "type": "integer"
+                        },
+                        "registry": {
+                            "description": "Docker registry associated to project. It will be used for CI docker build & push alongside chart image pull.",
+                            "type": "string"
+                        }
+                    }
+                },
+                "deployment": {
+                    "description": "deployment configuration.",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "auto": {
+                            "description": "Whether to automatically deployment builds or not on default branch.",
+                            "type": "boolean"
+                        },
+                        "platform": {
+                            "description": "Deployment platform name.",
+                            "type": "string",
+                            "enum": [
+                                "kubernetes",
+                                "netlify",
+                                "pages"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "platform"
+                    ]
+                },
+                "helm": {
+                    "description": "Helm definition.",
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "path": {
+                            "description": "Helm chart path (where to push the chart).",
+                            "type": "string"
+                        },
+                        "publish": {
+                            "description": "Publish configuration, whether to push the project helm chart on an helm repository or not.",
+                            "type": "string",
+                            "enum": [
+                                "auto",
+                                "manual",
+                                "none"
+                            ]
+                        },
+                        "registry": {
+                            "description": "Helm registry associated to project. It will be used for CI helm push.",
+                            "type": "string"
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "if": {
+                                "required": [
+                                    "registry"
+                                ]
+                            },
+                            "then": {
+                                "properties": {
+                                    "publish": {
+                                        "pattern": "^(auto|manual)$"
+                                    }
+                                }
+                            }
+                        }
+                    ]
                 },
                 "name": {
                     "description": "CI Name.",
@@ -75,6 +153,7 @@
                 "release": {
                     "description": "Release specific configuration.",
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "auto": {
                             "description": "Whether the release should run automatically.",
@@ -85,27 +164,6 @@
                             "type": "boolean"
                         }
                     }
-                },
-                "static": {
-                    "description": "Static deployment configuration.",
-                    "type": "object",
-                    "properties": {
-                        "auto": {
-                            "description": "Whether to automatically deploy static builds or not on main branches for github and on protected branches for gitlab.",
-                            "type": "boolean"
-                        },
-                        "name": {
-                            "description": "Static deployment name.",
-                            "type": "string",
-                            "enum": [
-                                "netlify",
-                                "pages"
-                            ]
-                        }
-                    },
-                    "required": [
-                        "name"
-                    ]
                 }
             },
             "required": [
@@ -172,21 +230,6 @@
                 }
             ]
         },
-        "docker": {
-            "description": "Docker definition.",
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-                "port": {
-                    "description": "Container port to override the default one, 3000.",
-                    "type": "integer"
-                },
-                "registry": {
-                    "description": "Docker registry associated to project. It will be used for CI docker build & push alongside chart image pull.",
-                    "type": "string"
-                }
-            }
-        },
         "maintainer": {
             "description": "Maintainer definition",
             "type": "object",
@@ -226,9 +269,6 @@
             "description": "Description, only useful when working with docker option and helm generations.",
             "type": "string"
         },
-        "docker": {
-            "$ref": "#/$defs/docker"
-        },
         "exclude": {
             "description": "List of parts to not generate during craft generation.",
             "type": "array",
@@ -237,7 +277,6 @@
                     {
                         "type": "string",
                         "enum": [
-                            "chart",
                             "goreleaser",
                             "makefile",
                             "pre-commit",
@@ -270,7 +309,6 @@
         "license": {
             "description": "License name.",
             "type": "string",
-            "default": "mit",
             "enum": [
                 "agpl-3.0",
                 "apache-2.0",

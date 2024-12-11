@@ -20,32 +20,36 @@ func (g Executables) Binaries() int {
 	return len(g.Clis) + len(g.Crons) + len(g.Jobs) + len(g.Workers)
 }
 
-// SetCLI sets a CLI with its name.
-func (g *Executables) SetCLI(name string) {
+// AddCLI sets a CLI with its name.
+// In case a CLI with the name same already exists, it is replaced.
+func (g *Executables) AddCLI(name string) {
 	if g.Clis == nil {
 		g.Clis = map[string]struct{}{}
 	}
 	g.Clis[name] = struct{}{}
 }
 
-// SetCron sets a cronjob with its name.
-func (g *Executables) SetCron(name string) {
+// AddCron sets a cronjob with its name.
+// In case a cronjob with the name same already exists, it is replaced.
+func (g *Executables) AddCron(name string) {
 	if g.Crons == nil {
 		g.Crons = map[string]struct{}{}
 	}
 	g.Crons[name] = struct{}{}
 }
 
-// SetJob sets a job with its name.
-func (g *Executables) SetJob(name string) {
+// AddJob sets a job with its name.
+// In case a job with the name same already exists, it is replaced.
+func (g *Executables) AddJob(name string) {
 	if g.Jobs == nil {
 		g.Jobs = map[string]struct{}{}
 	}
 	g.Jobs[name] = struct{}{}
 }
 
-// SetWorker sets a worker with its name.
-func (g *Executables) SetWorker(name string) {
+// AddWorker sets a worker with its name.
+// In case a worker with the name same already exists, it is replaced.
+func (g *Executables) AddWorker(name string) {
 	if g.Workers == nil {
 		g.Workers = map[string]struct{}{}
 	}

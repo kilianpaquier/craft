@@ -36,7 +36,7 @@ func GeneratorLicense(httpClient *http.Client) func(ctx context.Context, destdir
 		}
 
 		dest := filepath.Join(destdir, generator.FileLicense)
-		if config.License == nil {
+		if config.License == "" {
 			engine.GetLogger().Infof("skipping license generation, configuration doesn't have 'license' key")
 			if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
 				return fmt.Errorf("remove '%s': %w", generator.FileLicense, err)
@@ -52,7 +52,7 @@ func GeneratorLicense(httpClient *http.Client) func(ctx context.Context, destdir
 
 		opts := generator.LicenseOptions{
 			Client:  client,
-			License: *config.License,
+			License: config.License,
 			Maintainer: func() *string {
 				var zero string
 				if len(config.Maintainers) == 0 {

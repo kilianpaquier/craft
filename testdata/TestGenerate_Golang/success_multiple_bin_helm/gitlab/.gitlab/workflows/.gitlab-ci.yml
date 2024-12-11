@@ -18,6 +18,11 @@ include:
     ref: "5"
     file: "templates/gitlab-ci-docker.yml"
 
+  # Helm template
+  - project: "to-be-continuous/helm"
+    ref: "8"
+    file: "templates/gitlab-ci-helm.yml"
+
   # Go template
   - project: "to-be-continuous/golang"
     ref: "4"
@@ -37,6 +42,9 @@ variables:
 
   PRE_COMMIT_FILE: .pre-commit-config.yaml
 
+  DOCKER_RELEASE_IMAGE: "registry.example.com/path/to/registry:$SEMREL_INFO_NEXT_VERSION"
+  DOCKER_SNAPSHOT_IMAGE: "registry.example.com/path/to/registry/snapshot:$SEMREL_INFO_NEXT_VERSION"
+
   DOCKER_HEALTHCHECK_DISABLED: "true" # https://docs.docker.com/reference/dockerfile/#healthcheck
   DOCKER_KANIKO_IMAGE: "gcr.io/kaniko-project/executor:debug"
   DOCKER_METADATA: |
@@ -48,12 +56,34 @@ variables:
     --label org.opencontainers.image.revision=$CI_COMMIT_SHA
     --label org.opencontainers.image.version=$SEMREL_INFO_NEXT_VERSION
   DOCKER_RELEASE_EXTRA_TAGS: "latest \\g<major>.\\g<minor> \\g<major"
-  DOCKER_RELEASE_IMAGE: "$CI_REGISTRY_IMAGE:$SEMREL_INFO_NEXT_VERSION"
   DOCKER_SBOM_DISABLED: "true" # https://github.com/anchore/syft
   DOCKER_SEMREL_RELEASE_DISABLED: "true" # handled by docker build and push jobs to avoid too much dependency on semantic-release
-  DOCKER_SNAPSHOT_IMAGE: "$CI_REGISTRY_IMAGE:$SEMREL_INFO_NEXT_VERSION"
   DOCKER_TRIVY_ARGS: "--ignore-unfixed --exit-code 1 --exit-on-eol 1"
   DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: "MEDIUM,HIGH,CRITICAL"
+
+  HELM_CHART_DIR: chart/
+  HELM_SCRIPTS_DIR: chart/hooks/
+  HELM_SEMREL_RELEASE_DISABLED: "true" # version is handled manually
+  HELM_TEST_ENABLED: "false"
+
+  HELM_PACKAGE_ARGS: package --version "$SEMREL_INFO_NEXT_VERSION" --app-version "$SEMREL_INFO_NEXT_VERSION" --dependency-update
+  HELM_PUBLISH_METHOD: push
+  HELM_PUBLISH_ON: all
+  HELM_PUBLISH_SNAPSHOT_ENABLED: "false"
+  HELM_PUBLISH_STRATEGY: manual
+  HELM_PUBLISH_URL: chartmuseum.example.com/path/to/repository
+
+  HELM_REVIEW_ENABLED: "true"
+  HELM_INTEG_ENABLED: "true"
+  HELM_STAGING_ENABLED: "true"
+  HELM_PROD_ENABLED: "true"
+
+  HELM_DEPLOY_ARGS: upgrade --install --version "$SEMREL_INFO_NEXT_VERSION" -f "$HELM_CHART_DIR/values.yaml" --set "appVersion=$SEMREL_INFO_NEXT_VERSION"
+  HELM_PROD_DEPLOY_STRATEGY: manual
+
+  HELM_INTEG_APP_NAME: $HELM_BASE_APP_NAME
+  HELM_REVIEW_APP_NAME: $HELM_BASE_APP_NAME-$SEMREL_INFO_NEXT_VERSION
+  HELM_STAGING_APP_NAME: $HELM_BASE_APP_NAME
 
   GO_CI_LINT_ARGS: "--config .golangci.yml --timeout 240s --allow-parallel-runners --output.checkstyle.path reports/go-ci-lint.checkstyle.xml --output.text.path stdout"
   GO_CI_LINT_IMAGE: "registry.hub.docker.com/golangci/golangci-lint:latest-alpine"
@@ -71,7 +101,7 @@ semantic-release-info:
     - >
       echo "BRANCH_SHA=$(echo "$CI_COMMIT_REF_NAME" | sha256sum | cut -c -8)" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
 
-      if [ "$SEMREL_INFO_NEXT_VERSION" != "" ]; then
+      if [ -n "$SEMREL_INFO_NEXT_VERSION" ]; then
         echo "SEMREL_INFO_LAST_VERSION=v${SEMREL_INFO_LAST_VERSION#v}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
         echo "SEMREL_INFO_NEXT_VERSION=v${SEMREL_INFO_NEXT_VERSION#v}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
         echo "SEMREL_INFO_NEXT_VERSION_TYPE=${SEMREL_INFO_NEXT_VERSION_TYPE}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
