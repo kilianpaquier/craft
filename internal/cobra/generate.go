@@ -4,7 +4,6 @@ import (
 	"errors"
 	"os"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/spf13/cobra"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -25,12 +24,7 @@ var generateCmd = &cobra.Command{
 		if err != nil && !errors.Is(err, initialize.ErrAlreadyInitialized) {
 			fatal(ctx, err)
 		}
-		config.EnsureDefaults()
-
-		// validate craft struct
-		if err := validator.New().Struct(config); err != nil {
-			fatal(ctx, err)
-		}
+		config.Validate()
 
 		// run generation
 		options := []generate.RunOption{
