@@ -23,17 +23,27 @@ var (
 			options := []upgrade.RunOption{
 				upgrade.WithDestination(dest),
 				upgrade.WithHTTPClient(cleanhttp.DefaultClient()),
-				upgrade.WithLogger(log),
 				upgrade.WithMajor(major),
 				upgrade.WithMinor(minor),
 				upgrade.WithPrereleases(prereleases),
 			}
-			if err := upgrade.Run(ctx, "craft", version, upgrade.GithubReleases("kilianpaquier", "craft"), options...); err != nil {
-				if errors.Is(err, upgrade.ErrInvalidOptions) {
+
+			version, err := upgrade.Run(ctx, "craft", version, upgrade.GithubReleases("kilianpaquier", "craft"), options...)
+			if err != nil {
+				switch {
+				case errors.Is(err, upgrade.ErrInvalidOptions):
 					return err //nolint:wrapcheck
+				case errors.Is(err, upgrade.ErrNoNewVersion):
+					logger.Info(err)
+					return nil
+				case errors.Is(err, upgrade.ErrAlreadyInstalled):
+					logger.Infof("version '%s' is already installed", version)
+					return nil
+				default:
+					fatal(ctx, err) // don't return err since returning an error shows the help
 				}
-				fatal(ctx, err) // don't return err since returning an error shows the help
 			}
+			logger.Infof("successfully installed version '%s'", version)
 			return nil
 		},
 	}

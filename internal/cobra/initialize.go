@@ -23,7 +23,7 @@ var initializeCmd = &cobra.Command{
 		var config craft.Configuration
 		err := craft.Read(dest, &config)
 		if err == nil {
-			log.Info("project already initialized")
+			logger.Infof("project already initialized")
 			return
 		}
 		if !errors.Is(err, fs.ErrNotExist) {

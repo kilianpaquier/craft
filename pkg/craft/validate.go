@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"path"
 
-	schemas "github.com/kilianpaquier/craft/.schemas"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/santhosh-tekuri/jsonschema/v6/kind"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
+
+	schemas "github.com/kilianpaquier/craft/.schemas"
 )
 
 var defaultPrinter = message.NewPrinter(language.English)

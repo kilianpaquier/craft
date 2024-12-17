@@ -43,9 +43,9 @@ var generateCmd = &cobra.Command{
 		options := []generate.RunOption{
 			generate.WithDestination(destdir),
 			generate.WithHandlers(handler.Defaults()...),
-			generate.WithLogger(log),
+			generate.WithLogger(logger),
 			generate.WithParsers(parser.Defaults()...),
-			generate.WithTemplates("_templates", generate.FS()),
+			generate.WithTemplates(generate.TmplDir, generate.FS()),
 		}
 		config, err := generate.Run(ctx, config, options...)
 		if err != nil {
