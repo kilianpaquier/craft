@@ -1,9 +1,6 @@
 module github.com/kilianpaquier/craft
 
 go 1.23
-
-toolchain go1.23.2
-
 require (
 	dario.cat/mergo v1.0.1
 	github.com/Masterminds/sprig/v3 v3.3.0
@@ -17,7 +14,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
-	gitlab.com/gitlab-org/api/client-go v0.116.0
+	gitlab.com/gitlab-org/api/client-go v0.117.0
 	golang.org/x/mod v0.22.0
 	gopkg.in/yaml.v3 v3.0.1
 )
