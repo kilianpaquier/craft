@@ -17,7 +17,7 @@ var (
 	upgradeCmd = &cobra.Command{
 		Use:   "upgrade",
 		Short: "Upgrade or install craft",
-		RunE: func(cmd *cobra.Command, _ []string) error {
+		Run: func(cmd *cobra.Command, _ []string) {
 			ctx := cmd.Context()
 
 			options := []upgrade.RunOption{
@@ -32,19 +32,18 @@ var (
 			if err != nil {
 				switch {
 				case errors.Is(err, upgrade.ErrInvalidOptions):
-					return err //nolint:wrapcheck
+					logger.Fatal(err)
 				case errors.Is(err, upgrade.ErrNoNewVersion):
 					logger.Info(err)
-					return nil
+					return
 				case errors.Is(err, upgrade.ErrAlreadyInstalled):
 					logger.Infof("version '%s' is already installed", version)
-					return nil
+					return
 				default:
-					fatal(ctx, err) // don't return err since returning an error shows the help
+					logger.Fatal(err)
 				}
 			}
 			logger.Infof("successfully installed version '%s'", version)
-			return nil
 		},
 	}
 )

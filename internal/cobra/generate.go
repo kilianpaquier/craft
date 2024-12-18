@@ -1,11 +1,10 @@
 package cobra
 
 import (
-	"errors"
-	"io/fs"
 	"os"
 	"path/filepath"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/spf13/cobra"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -23,20 +22,24 @@ var generateCmd = &cobra.Command{
 		destdir, _ := os.Getwd()
 		dest := filepath.Join(destdir, craft.File)
 
-		// validate configuration
-		if err := craft.Validate(dest); err != nil {
-			fatal(ctx, err)
-		}
+		config, err := func() (craft.Configuration, error) {
+			// initialize configuration if it does not exist
+			if !cfs.Exists(dest) {
+				return initialize.Run(ctx)
+			}
 
-		// read or initialize configuration
-		var config craft.Configuration
-		if err := craft.Read(dest, &config); err != nil {
-			if !errors.Is(err, fs.ErrNotExist) {
-				fatal(ctx, err)
+			// validate configuration
+			if err := craft.Validate(dest); err != nil {
+				return craft.Configuration{}, err
 			}
-			if config, err = initialize.Run(ctx); err != nil {
-				fatal(ctx, err)
-			}
+
+			// read configuration
+			var config craft.Configuration
+			err := craft.Read(dest, &config)
+			return config, err
+		}()
+		if err != nil {
+			logger.Fatal(err)
 		}
 
 		// run generation
@@ -47,14 +50,13 @@ var generateCmd = &cobra.Command{
 			generate.WithParsers(parser.Defaults()...),
 			generate.WithTemplates(generate.TmplDir, generate.FS()),
 		}
-		config, err := generate.Run(ctx, config, options...)
-		if err != nil {
-			fatal(ctx, err)
+		if config, err = generate.Run(ctx, config, options...); err != nil {
+			logger.Fatal(err)
 		}
 
 		// save configuration
 		if err := craft.Write(dest, config); err != nil {
-			fatal(ctx, err)
+			logger.Fatal(err)
 		}
 	},
 }
