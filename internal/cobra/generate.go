@@ -1,42 +1,40 @@
 package cobra
 
 import (
-	"errors"
-	"io/fs"
 	"os"
 	"path/filepath"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/spf13/cobra"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 	"github.com/kilianpaquier/craft/pkg/generate/handler"
 	"github.com/kilianpaquier/craft/pkg/generate/parser"
-	"github.com/kilianpaquier/craft/pkg/initialize"
 )
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate the project layout",
-	Run: func(cmd *cobra.Command, _ []string) {
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx := cmd.Context()
 		destdir, _ := os.Getwd()
 		dest := filepath.Join(destdir, craft.File)
 
-		// validate configuration
-		if err := craft.Validate(dest); err != nil {
-			fatal(ctx, err)
+		// initialize configuration if it does not exist
+		if !cfs.Exists(dest) {
+			initializeCmd.Run(cmd, args) // will fatal if initialization fails
 		}
 
-		// read or initialize configuration
+		// validate configuration
+		if err := craft.Validate(dest); err != nil {
+			logger.Fatal(err)
+		}
+
+		// read configuration
 		var config craft.Configuration
 		if err := craft.Read(dest, &config); err != nil {
-			if !errors.Is(err, fs.ErrNotExist) {
-				fatal(ctx, err)
-			}
-			if config, err = initialize.Run(ctx); err != nil {
-				fatal(ctx, err)
-			}
+			logger.Fatal(err)
 		}
 
 		// run generation
@@ -49,12 +47,12 @@ var generateCmd = &cobra.Command{
 		}
 		config, err := generate.Run(ctx, config, options...)
 		if err != nil {
-			fatal(ctx, err)
+			logger.Fatal(err)
 		}
 
-		// save configuration
+		// save configuration again in case it was modified during generation
 		if err := craft.Write(dest, config); err != nil {
-			fatal(ctx, err)
+			logger.Fatal(err)
 		}
 	},
 }

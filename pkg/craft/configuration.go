@@ -29,11 +29,11 @@ type Auth struct {
 
 // CI is the struct for craft continuous integration tuning.
 type CI struct {
-	Auth    Auth     `json:"-" yaml:"auth,omitempty"    validate:"omitempty,required"`
-	Name    string   `json:"-" yaml:"name,omitempty"    validate:"required"`
+	Auth    Auth     `json:"-" yaml:"auth,omitempty"`
+	Name    string   `json:"-" yaml:"name,omitempty"`
 	Options []string `json:"-" yaml:"options,omitempty"`
-	Release *Release `json:"-" yaml:"release,omitempty" validate:"omitempty,required"`
-	Static  *Static  `json:"-" yaml:"static,omitempty"  validate:"omitempty,required"`
+	Release *Release `json:"-" yaml:"release,omitempty"`
+	Static  *Static  `json:"-" yaml:"static,omitempty"`
 }
 
 // Docker is the struct for craft docker tuning.

@@ -47,17 +47,17 @@ type runOptions struct {
 
 // newRunOpt creates a new option struct with all input Option functions while taking care of default values.
 func newRunOpt(opts ...RunOption) runOptions {
-	var o runOptions
+	var ro runOptions
 	for _, opt := range opts {
 		if opt != nil {
-			o = opt(o)
+			ro = opt(ro)
 		}
 	}
 
-	if len(o.formGroups) == 0 {
-		o.formGroups = []FormGroup{ReadMaintainer, ReadChart} // order is important since they will be executed in the same order
+	if len(ro.formGroups) == 0 {
+		ro.formGroups = []FormGroup{ReadMaintainer, ReadChart} // order is important since they will be executed in the same order
 	}
-	return o
+	return ro
 }
 
 // Run initializes a new craft project an returns resulting craft configuration.
