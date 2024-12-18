@@ -1,12 +1,10 @@
 package generate
 
 import (
-	"context"
 	"errors"
 	"os"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 )
 
 var (
@@ -75,8 +73,8 @@ func WithTemplates(dir string, fs cfs.FS) RunOption {
 
 // WithLogger specifies the logger to use during generation.
 //
-// If not given, default logger is clog.Noop.
-func WithLogger(log clog.Logger) RunOption {
+// If not given, default logger will be a noop one.
+func WithLogger(log Logger) RunOption {
 	return func(ro runOptions) runOptions {
 		ro.logger = log
 		return ro
@@ -93,7 +91,7 @@ type runOptions struct {
 	fs      cfs.FS
 	tmplDir string
 
-	logger clog.Logger
+	logger Logger
 }
 
 // newRunOpt creates a new option struct with all input Option functions
@@ -123,25 +121,10 @@ func newRunOpt(opts ...RunOption) (runOptions, error) {
 	}
 	if ro.fs == nil {
 		ro.fs = FS()
-		ro.tmplDir = "_templates"
+		ro.tmplDir = TmplDir
 	}
 	if ro.logger == nil {
-		ro.logger = clog.Noop()
+		ro.logger = _noopLogger
 	}
 	return ro, nil
-}
-
-type loggerKeyType string
-
-const loggerKey loggerKeyType = "logger"
-
-// GetLogger returns the context logger.
-//
-// By default it will be clog.Noop, but it can be set with WithLogger.
-func GetLogger(ctx context.Context) clog.Logger {
-	log, ok := ctx.Value(loggerKey).(clog.Logger)
-	if !ok {
-		return clog.Noop()
-	}
-	return log
 }

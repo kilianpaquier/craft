@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/fs"
 	"net/mail"
 	"net/url"
 
@@ -14,13 +13,8 @@ import (
 	"github.com/kilianpaquier/craft/pkg/craft"
 )
 
-var (
-	// ErrAlreadyInitialized is the error returned (wrapped) when Run function is called but the project is already initialized.
-	ErrAlreadyInitialized = errors.New("project already initialized")
-
-	// ErrRequiredField is the error that can be used with huh.Validate(f func(string) error) to specify to the user that the field is required.
-	ErrRequiredField = errors.New("required field")
-)
+// ErrRequiredField is the error that can be used with huh.Validate(f func(string) error) to specify to the user that the field is required.
+var ErrRequiredField = errors.New("required field")
 
 // RunOption represents an option to be given to Run function.
 type RunOption func(runOptions) runOptions
@@ -51,8 +45,8 @@ type runOptions struct {
 	options    []tea.ProgramOption
 }
 
-// newOpt creates a new option struct with all input Option functions while taking care of default values.
-func newOpt(opts ...RunOption) runOptions {
+// newRunOpt creates a new option struct with all input Option functions while taking care of default values.
+func newRunOpt(opts ...RunOption) runOptions {
 	var o runOptions
 	for _, opt := range opts {
 		if opt != nil {
@@ -66,27 +60,14 @@ func newOpt(opts ...RunOption) runOptions {
 	return o
 }
 
-// Run initializes a new craft project in case a craft.CraftFile doesn't exist in destdir.
-// All user inputs must be configured through WithFormGroups option, by default the main maintainer and chart generation will be asked.
+// Run initializes a new craft project an returns resulting craft configuration.
 //
-// Multiple options can be given like saving craft configuration file at the end (default is false),
-// the logger used to ask question to the end user
-// or the reader from where retrieve the end user answers (but as provided in WithReader doc it should be used with caution - you should know what you're doing).
-//
-// In case craft.CraftFile already exists, it's read and returned alongside ErrAlreadyInitialized (should be handled in caller).
-func Run(ctx context.Context, destdir string, opts ...RunOption) (craft.Configuration, error) {
-	ro := newOpt(opts...)
+// All user inputs are configured through WithFormGroups option, by default the main maintainer
+// and chart generation will be asked.
+func Run(ctx context.Context, opts ...RunOption) (craft.Configuration, error) {
+	ro := newRunOpt(opts...)
 
-	// read config configuration
 	var config craft.Configuration
-	err := craft.Read(destdir, &config)
-	if err == nil {
-		return config, ErrAlreadyInitialized
-	}
-	if !errors.Is(err, fs.ErrNotExist) {
-		return craft.Configuration{}, fmt.Errorf("%s exists but is not readable: %w", craft.File, err)
-	}
-
 	groups := make([]*huh.Group, 0, len(ro.formGroups))
 	for _, formGroup := range ro.formGroups {
 		if group := formGroup(&config); group != nil {

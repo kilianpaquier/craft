@@ -1,0 +1,9 @@
+# Craft configuration file (https://github.com/kilianpaquier/craft)
+---
+bot: renovate
+ci:
+  name: github
+  auth: {}
+maintainers:
+  - name: kilianpaquier
+platform: github

@@ -4,16 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"gopkg.in/yaml.v3"
 )
 
 // Read reads the .craft file in srcdir input into the out input.
-func Read(srcdir string, out any) error {
-	src := filepath.Join(srcdir, File)
-
+func Read(src string, out any) error {
 	content, err := os.ReadFile(src)
 	if err != nil {
 		return fmt.Errorf("read file: %w", err)
@@ -26,9 +23,7 @@ func Read(srcdir string, out any) error {
 }
 
 // Write writes the input craft into the input destdir in .craft file.
-func Write(destdir string, config Configuration) error {
-	dest := filepath.Join(destdir, File)
-
+func Write(dest string, config Configuration) error {
 	// create a buffer with craft notice
 	buffer := bytes.NewBufferString("# Craft configuration file (https://github.com/kilianpaquier/craft)\n---\n")
 

@@ -1,9 +1,10 @@
 package cobra
 
 import (
-	"errors"
 	"os"
+	"path/filepath"
 
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/spf13/cobra"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -16,18 +17,19 @@ var initializeCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
 		destdir, _ := os.Getwd()
+		dest := filepath.Join(destdir, craft.File)
 
-		config, err := initialize.Run(ctx, destdir)
-		if err != nil {
-			if !errors.Is(err, initialize.ErrAlreadyInitialized) {
-				fatal(ctx, err)
-			}
-			log.Info("project already initialized")
+		if cfs.Exists(dest) {
+			logger.Infof("project already initialized")
 			return
 		}
 
-		if err := craft.Write(destdir, config); err != nil {
-			fatal(ctx, err)
+		config, err := initialize.Run(ctx)
+		if err != nil {
+			logger.Fatal(err)
+		}
+		if err := craft.Write(dest, config); err != nil {
+			logger.Fatal(err)
 		}
 	},
 }

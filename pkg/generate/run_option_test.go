@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/cli-sdk/pkg/clog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -34,18 +33,6 @@ func TestRunOption(t *testing.T) {
 		// Assert
 		require.NotNil(t, ro.destdir)
 		assert.Equal(t, "dest", *ro.destdir)
-	})
-
-	t.Run("success_logger", func(t *testing.T) {
-		// Arrange
-		logger := clog.Std()
-		f := WithLogger(logger)
-
-		// Act
-		ro := f(runOptions{})
-
-		// Assert
-		assert.Equal(t, logger, ro.logger)
 	})
 
 	t.Run("success_parsers", func(t *testing.T) {
@@ -79,8 +66,7 @@ func TestRunOption(t *testing.T) {
 		expected := runOptions{
 			destdir: &pwd,
 			fs:      FS(),
-			logger:  clog.Noop(),
-			tmplDir: "_templates",
+			tmplDir: TmplDir,
 		}
 
 		// Act
@@ -90,7 +76,6 @@ func TestRunOption(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, *expected.destdir, *ro.destdir)
 		assert.Equal(t, expected.fs, ro.fs)
-		assert.Equal(t, expected.logger, ro.logger)
 		assert.Equal(t, expected.tmplDir, ro.tmplDir)
 	})
 }

@@ -1,10 +1,10 @@
 package cobra
 
 import (
-	"errors"
 	"os"
+	"path/filepath"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/spf13/cobra"
 
 	"github.com/kilianpaquier/craft/pkg/craft"
@@ -20,34 +20,43 @@ var generateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, _ []string) {
 		ctx := cmd.Context()
 		destdir, _ := os.Getwd()
+		dest := filepath.Join(destdir, craft.File)
 
-		config, err := initialize.Run(ctx, destdir)
-		if err != nil && !errors.Is(err, initialize.ErrAlreadyInitialized) {
-			fatal(ctx, err)
-		}
-		config.EnsureDefaults()
+		config, err := func() (craft.Configuration, error) {
+			// initialize configuration if it does not exist
+			if !cfs.Exists(dest) {
+				return initialize.Run(ctx)
+			}
 
-		// validate craft struct
-		if err := validator.New().Struct(config); err != nil {
-			fatal(ctx, err)
+			// validate configuration
+			if err := craft.Validate(dest); err != nil {
+				return craft.Configuration{}, err
+			}
+
+			// read configuration
+			var config craft.Configuration
+			err := craft.Read(dest, &config)
+			return config, err
+		}()
+		if err != nil {
+			logger.Fatal(err)
 		}
 
 		// run generation
 		options := []generate.RunOption{
 			generate.WithDestination(destdir),
 			generate.WithHandlers(handler.Defaults()...),
-			generate.WithLogger(log),
+			generate.WithLogger(logger),
 			generate.WithParsers(parser.Defaults()...),
-			generate.WithTemplates("_templates", generate.FS()),
+			generate.WithTemplates(generate.TmplDir, generate.FS()),
 		}
-		config, err = generate.Run(ctx, config, options...)
-		if err != nil {
-			fatal(ctx, err)
+		if config, err = generate.Run(ctx, config, options...); err != nil {
+			logger.Fatal(err)
 		}
 
-		// save craft configuration
-		if err := craft.Write(destdir, config); err != nil {
-			fatal(ctx, err)
+		// save configuration
+		if err := craft.Write(dest, config); err != nil {
+			logger.Fatal(err)
 		}
 	},
 }

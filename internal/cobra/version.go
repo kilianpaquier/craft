@@ -11,7 +11,7 @@ var (
 	versionCmd = &cobra.Command{
 		Use:   "version",
 		Short: "Show current craft version",
-		Run:   func(_ *cobra.Command, _ []string) { log.Info(version) },
+		Run:   func(_ *cobra.Command, _ []string) { logger.Info(version) },
 	}
 )
 

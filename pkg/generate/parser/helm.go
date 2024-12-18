@@ -33,7 +33,7 @@ func Helm(ctx context.Context, destdir string, metadata *generate.Metadata) erro
 
 	// read overrides values
 	var overrides map[string]any
-	if err := craft.Read(chartdir, &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
+	if err := craft.Read(filepath.Join(chartdir, craft.File), &overrides); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return fmt.Errorf("read helm chart overrides: %w", err)
 	}
 

@@ -1,0 +1,9 @@
+# Craft configuration file (https://github.com/kilianpaquier/craft)
+---
+ci:
+  auth:
+    release: github-token
+  name: github
+maintainers:
+  - name: kilianpaquier
+platform: github

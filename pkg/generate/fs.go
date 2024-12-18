@@ -6,6 +6,9 @@ import (
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 )
 
+// TmplDir is the default directory where templates are stored.
+const TmplDir = "_templates"
+
 //go:embed all:_templates
 var tmpl embed.FS
 

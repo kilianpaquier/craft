@@ -1,0 +1,10 @@
+# Craft configuration file (https://github.com/kilianpaquier/craft)
+---
+bot: dependabot
+ci:
+  auth:
+    maintenance: personal-token
+  name: github
+maintainers:
+  - name: kilianpaquier
+platform: github
