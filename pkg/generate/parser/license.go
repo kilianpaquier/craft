@@ -13,7 +13,7 @@ import (
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	gitlab "gitlab.com/gitlab-org/api/client-go"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
 
@@ -25,12 +25,15 @@ const (
 	GitHubURL = "https://api.github.com"
 )
 
+// FileLicense represents the target filename for the generated project LICENSE.
+const FileLicense = "LICENSE"
+
 // License generates the LICENSE file in case input configuration asks for a LICENSE file.
-func License(ctx context.Context, destdir string, metadata *generate.Metadata) error {
-	dest := filepath.Join(destdir, craft.License)
-	if metadata.License == nil {
+func License(ctx context.Context, destdir string, config *craft.Config) error {
+	dest := filepath.Join(destdir, FileLicense)
+	if config.License == nil {
 		if err := os.Remove(dest); err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return fmt.Errorf("remove '%s': %w", craft.License, err)
+			return fmt.Errorf("remove '%s': %w", FileLicense, err)
 		}
 		return nil
 	}
@@ -58,12 +61,12 @@ func License(ctx context.Context, destdir string, metadata *generate.Metadata) e
 
 	// fetch license template
 	options := &gitlab.GetLicenseTemplateOptions{
-		Fullname: &metadata.Maintainers[0].Name,
-		Project:  &metadata.ProjectName,
+		Fullname: &config.Maintainers[0].Name,
+		Project:  &config.ProjectName,
 	}
-	license, _, err := client.LicenseTemplates.GetLicenseTemplate(*metadata.License, options, gitlab.WithContext(ctx))
+	license, _, err := client.LicenseTemplates.GetLicenseTemplate(*config.License, options, gitlab.WithContext(ctx))
 	if err != nil {
-		return fmt.Errorf("get license template '%s': %w", *metadata.License, err)
+		return fmt.Errorf("get license template '%s': %w", *config.License, err)
 	}
 
 	// write license template
@@ -73,7 +76,7 @@ func License(ctx context.Context, destdir string, metadata *generate.Metadata) e
 	return nil
 }
 
-var _ generate.Parser = License // ensure interface is implemented
+var _ generate.Parser[craft.Config] = License // ensure interface is implemented
 
 type httpClientKeyType string
 

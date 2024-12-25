@@ -58,6 +58,6 @@ func TestToYAML(t *testing.T) {
 		s := f("{}")
 
 		// Assert
-		assert.Equal(t, "'{}'", s)
+		assert.Equal(t, `"{}"`, s)
 	})
 }

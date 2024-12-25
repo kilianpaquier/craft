@@ -1,4 +1,4 @@
-package craft_test
+package configuration_test
 
 import (
 	"io/fs"
@@ -10,17 +10,18 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 )
 
-func TestReadCraft(t *testing.T) {
+func TestReadYAML(t *testing.T) {
 	t.Run("error_not_found", func(t *testing.T) {
 		// Arrange
 		src := filepath.Join(t.TempDir(), ".craft")
 
 		// Act
-		var config craft.Configuration
-		err := craft.Read(src, &config)
+		var config craft.Config
+		err := configuration.ReadYAML(src, &config)
 
 		// Assert
 		assert.ErrorIs(t, err, fs.ErrNotExist)
@@ -32,8 +33,8 @@ func TestReadCraft(t *testing.T) {
 		require.NoError(t, os.Mkdir(src, cfs.RwxRxRxRx))
 
 		// Act
-		var config craft.Configuration
-		err := craft.Read(filepath.Dir(src), &config)
+		var config craft.Config
+		err := configuration.ReadYAML(filepath.Dir(src), &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "read file")
@@ -45,26 +46,25 @@ func TestReadCraft(t *testing.T) {
 		require.NoError(t, os.WriteFile(src, []byte(`{ "key":: "value" }`), cfs.RwRR))
 
 		// Act
-		var config craft.Configuration
-		err := craft.Read(src, &config)
+		var config craft.Config
+		err := configuration.ReadYAML(src, &config)
 
 		// Assert
 		assert.ErrorContains(t, err, "unmarshal")
-		assert.ErrorContains(t, err, "did not find expected node content")
 	})
 
 	t.Run("success", func(t *testing.T) {
 		// Arrange
 		src := filepath.Join(t.TempDir(), craft.File)
-		expected := craft.Configuration{
+		expected := craft.Config{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 		}
-		require.NoError(t, craft.Write(src, expected))
+		require.NoError(t, configuration.WriteYAML(src, expected))
 
 		// Act
-		var actual craft.Configuration
-		err := craft.Read(src, &actual)
+		var actual craft.Config
+		err := configuration.ReadYAML(src, &actual)
 
 		// Assert
 		require.NoError(t, err)
@@ -72,14 +72,14 @@ func TestReadCraft(t *testing.T) {
 	})
 }
 
-func TestWriteCraft(t *testing.T) {
+func TestWriteYAML(t *testing.T) {
 	t.Run("error_open_craft", func(t *testing.T) {
 		// Arrange
 		src := filepath.Join(t.TempDir(), craft.File)
 		require.NoError(t, os.Mkdir(src, cfs.RwxRxRxRx))
 
 		// Act
-		err := craft.Write(src, craft.Configuration{})
+		err := configuration.WriteYAML(src, craft.Config{})
 
 		// Assert
 		assert.ErrorContains(t, err, "write file")
@@ -88,17 +88,17 @@ func TestWriteCraft(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		// Arrange
 		src := filepath.Join(t.TempDir(), craft.File)
-		expected := craft.Configuration{
+		expected := craft.Config{
 			Maintainers: []*craft.Maintainer{{Name: "maintainer name"}},
 			NoChart:     true,
 		}
 
 		// Act
-		require.NoError(t, craft.Write(src, expected))
+		require.NoError(t, configuration.WriteYAML(src, expected))
 
 		// Assert
-		var actual craft.Configuration
-		err := craft.Read(src, &actual)
+		var actual craft.Config
+		err := configuration.ReadYAML(src, &actual)
 		require.NoError(t, err)
 		assert.Equal(t, expected, actual)
 	})

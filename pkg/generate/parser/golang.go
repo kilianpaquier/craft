@@ -13,8 +13,15 @@ import (
 
 	"golang.org/x/mod/modfile"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
+)
+
+const (
+	// FolderCMD represents the cmd folder where go main.go should be placed according to go layout.
+	FolderCMD = "cmd"
+	// FileGomod represents the go.mod filename.
+	FileGomod = "go.mod"
 )
 
 var (
@@ -39,31 +46,31 @@ type Gomod struct {
 // Golang handles the parsing of a golang repository at destdir.
 //
 // A valid golang project must have a valid go.mod file.
-func Golang(ctx context.Context, destdir string, metadata *generate.Metadata) error {
-	gomod := filepath.Join(destdir, craft.Gomod)
-	gocmd := filepath.Join(destdir, craft.Gocmd)
+func Golang(ctx context.Context, destdir string, config *craft.Config) error {
+	gomod := filepath.Join(destdir, FileGomod)
+	gocmd := filepath.Join(destdir, FolderCMD)
 
 	// retrieve module from go.mod
 	statements, err := readGomod(gomod)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
-			return fmt.Errorf("read %s: %w", craft.Gomod, err)
+			return fmt.Errorf("read %s: %w", FileGomod, err)
 		}
 		return nil
 	}
 
-	metadata.Platform = statements.Platform
-	metadata.ProjectHost = statements.ProjectHost
-	metadata.ProjectName = statements.ProjectName
-	metadata.ProjectPath = statements.ProjectPath
+	config.Platform = statements.Platform
+	config.ProjectHost = statements.ProjectHost
+	config.ProjectName = statements.ProjectName
+	config.ProjectPath = statements.ProjectPath
 
 	// check hugo repository
-	if ok := isHugo(ctx, destdir, metadata); ok {
+	if ok := isHugo(ctx, destdir, config); ok {
 		return nil
 	}
 
-	generate.GetLogger(ctx).Infof("golang detected, file '%s' is present and valid", craft.Gomod)
-	metadata.Languages["golang"] = statements
+	generate.GetLogger(ctx).Infof("golang detected, file '%s' is present and valid", FileGomod)
+	config.SetLanguage("golang", statements)
 
 	entries, err := os.ReadDir(gocmd)
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
@@ -75,24 +82,23 @@ func Golang(ctx context.Context, destdir string, metadata *generate.Metadata) er
 		if entry.IsDir() {
 			switch {
 			case strings.HasPrefix(entry.Name(), "cron-"):
-				metadata.Crons[entry.Name()] = struct{}{}
+				config.SetCron(entry.Name())
 			case strings.HasPrefix(entry.Name(), "job-"):
-				metadata.Jobs[entry.Name()] = struct{}{}
+				config.SetJob(entry.Name())
 			case strings.HasPrefix(entry.Name(), "worker-"):
-				metadata.Workers[entry.Name()] = struct{}{}
+				config.SetWorker(entry.Name())
 			default:
 				// by default, executables in cmd folder are CLI
-				metadata.Clis[entry.Name()] = struct{}{}
+				config.SetCLI(entry.Name())
 			}
-			metadata.Binaries++
 		}
 	}
 	return nil
 }
 
-var _ generate.Parser = Golang // ensure interface is implemented
+var _ generate.Parser[craft.Config] = Golang // ensure interface is implemented
 
-func isHugo(ctx context.Context, destdir string, metadata *generate.Metadata) bool {
+func isHugo(ctx context.Context, destdir string, config *craft.Config) bool {
 	// detect hugo project
 	configs, _ := filepath.Glob(filepath.Join(destdir, "hugo.*"))
 
@@ -100,8 +106,8 @@ func isHugo(ctx context.Context, destdir string, metadata *generate.Metadata) bo
 	themes, _ := filepath.Glob(filepath.Join(destdir, "theme.*"))
 
 	if len(configs) > 0 || len(themes) > 0 {
+		config.SetLanguage("hugo", nil)
 		generate.GetLogger(ctx).Infof("hugo detected, a hugo configuration file or hugo theme file is present")
-		metadata.Languages["hugo"] = nil
 		return true
 	}
 	return false

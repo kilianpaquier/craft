@@ -1,4 +1,4 @@
-package handler_test
+package generate_test
 
 import (
 	"os"
@@ -6,21 +6,22 @@ import (
 	"testing"
 
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-	"github.com/kilianpaquier/craft/pkg/generate/handler"
+	"github.com/kilianpaquier/craft/pkg/generate"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestIsGenerated(t *testing.T) {
+func TestShouldGenerate(t *testing.T) {
 	t.Run("generated_doesnt_exist", func(t *testing.T) {
 		// Arrange
 		dest := filepath.Join(t.TempDir(), "invalid.txt")
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		ok, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.True(t, generated)
+		require.NoError(t, err)
+		assert.True(t, ok)
 	})
 
 	t.Run("not_generated_file", func(t *testing.T) {
@@ -30,10 +31,11 @@ func TestIsGenerated(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		ok, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.False(t, generated)
+		require.NoError(t, err)
+		assert.False(t, ok)
 	})
 
 	t.Run("generated_folder", func(t *testing.T) {
@@ -42,10 +44,10 @@ func TestIsGenerated(t *testing.T) {
 		require.NoError(t, os.Mkdir(dest, cfs.RwxRxRxRx))
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		_, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.True(t, generated)
+		assert.Error(t, err)
 	})
 
 	t.Run("generated_no_lines", func(t *testing.T) {
@@ -56,10 +58,11 @@ func TestIsGenerated(t *testing.T) {
 		t.Cleanup(func() { assert.NoError(t, file.Close()) })
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		ok, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.True(t, generated)
+		require.NoError(t, err)
+		assert.True(t, ok)
 	})
 
 	t.Run("generated_first_line", func(t *testing.T) {
@@ -69,10 +72,11 @@ func TestIsGenerated(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		ok, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.True(t, generated)
+		require.NoError(t, err)
+		assert.True(t, ok)
 	})
 
 	t.Run("generated_md_comment", func(t *testing.T) {
@@ -82,10 +86,11 @@ func TestIsGenerated(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		ok, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.True(t, generated)
+		require.NoError(t, err)
+		assert.True(t, ok)
 	})
 
 	t.Run("generated_second_line", func(t *testing.T) {
@@ -95,10 +100,11 @@ func TestIsGenerated(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		ok, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.True(t, generated)
+		require.NoError(t, err)
+		assert.True(t, ok)
 	})
 
 	t.Run("generated_json", func(t *testing.T) {
@@ -110,9 +116,10 @@ func TestIsGenerated(t *testing.T) {
 		require.NoError(t, err)
 
 		// Act
-		generated := handler.IsGenerated(dest)
+		ok, err := generate.ShouldGenerate(dest, generate.PolicyNone)
 
 		// Assert
-		assert.True(t, generated)
+		require.NoError(t, err)
+		assert.True(t, ok)
 	})
 }

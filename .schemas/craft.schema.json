@@ -269,10 +269,6 @@
             "description": "Disable and remove makefile generation.",
             "type": "boolean"
         },
-        "no_readme": {
-            "description": "Disable and remove README.md generation.",
-            "type": "boolean"
-        },
         "platform": {
             "description": "Platform for README.md badges (automatically parsed with git origin URL by default).",
             "type": "string",

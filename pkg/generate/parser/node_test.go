@@ -11,8 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/helpers"
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/parser"
 )
 
@@ -21,7 +20,7 @@ func TestNode(t *testing.T) {
 
 	t.Run("no_packagejson", func(t *testing.T) {
 		// Act
-		err := parser.Node(ctx, "", &generate.Metadata{})
+		err := parser.Node(ctx, "", &craft.Config{})
 
 		// Assert
 		require.NoError(t, err)
@@ -31,13 +30,13 @@ func TestNode(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		packagejson := filepath.Join(destdir, craft.PackageJSON)
+		packagejson := filepath.Join(destdir, parser.FilePackageJSON)
 		file, err := os.Create(packagejson)
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
 		// Act
-		err = parser.Node(ctx, destdir, &generate.Metadata{})
+		err = parser.Node(ctx, destdir, &craft.Config{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read package.json")
@@ -47,12 +46,12 @@ func TestNode(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		packagejson := filepath.Join(destdir, craft.PackageJSON)
+		packagejson := filepath.Join(destdir, parser.FilePackageJSON)
 		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "packageManager": "bun@1" }`), cfs.RwRR)
 		require.NoError(t, err)
 
 		// Act
-		err = parser.Node(ctx, destdir, &generate.Metadata{})
+		err = parser.Node(ctx, destdir, &craft.Config{})
 
 		// Assert
 		assert.ErrorIs(t, err, parser.ErrInvalidPackageManager)
@@ -62,22 +61,24 @@ func TestNode(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		packagejson := filepath.Join(destdir, craft.PackageJSON)
+		packagejson := filepath.Join(destdir, parser.FilePackageJSON)
 		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js", "packageManager": "bun@1.1.6", "private": true }`), cfs.RwRR)
 		require.NoError(t, err)
 
-		config := generate.Metadata{Languages: map[string]any{}}
-		expected := generate.Metadata{
-			Binaries: 1,
-			Languages: map[string]any{
-				"node": parser.PackageJSON{
-					Main:           helpers.ToPtr("index.js"),
-					Name:           "craft",
-					PackageManager: "bun@1.1.6",
-					Private:        true,
+		config := craft.Config{FilesConfig: craft.FilesConfig{Languages: map[string]any{}}}
+		expected := craft.Config{
+			FilesConfig: craft.FilesConfig{
+				Workers: map[string]struct{}{"main": {}},
+				Languages: map[string]any{
+					"node": parser.PackageJSON{
+						Main:           helpers.ToPtr("index.js"),
+						Name:           "craft",
+						PackageManager: "bun@1.1.6",
+						Private:        true,
+					},
 				},
 			},
-			ProjectName: "craft",
+			GitConfig: craft.GitConfig{ProjectName: "craft"},
 		}
 
 		// Act

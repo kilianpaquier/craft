@@ -12,9 +12,12 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
+
+// FilePackageJSON represents package.json filename.
+const FilePackageJSON = "package.json"
 
 var (
 	// ErrInvalidStaticDeployment represents the returned error when static deployment is provided in craft configuration
@@ -70,26 +73,26 @@ func (p *PackageJSON) Validate() error {
 // Node handles node repository parsing at destdir.
 //
 // It scans the project for a package.json and validates it.
-func Node(ctx context.Context, destdir string, metadata *generate.Metadata) error {
-	jsonpath := filepath.Join(destdir, craft.PackageJSON)
-	pkg, err := readPackageJSON(jsonpath)
+func Node(ctx context.Context, destdir string, config *craft.Config) error {
+	jsonpath := filepath.Join(destdir, FilePackageJSON)
+	file, err := readPackageJSON(jsonpath)
 	if err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
 			return fmt.Errorf("read package.json: %w", err)
 		}
 		return nil
 	}
-	generate.GetLogger(ctx).Infof("node detected, a '%s' is present and valid", craft.PackageJSON)
+	generate.GetLogger(ctx).Infof("node detected, a '%s' is present and valid", FilePackageJSON)
 
-	metadata.Languages["node"] = pkg
-	metadata.ProjectName = pkg.Name
-	if pkg.Main != nil {
-		metadata.Binaries++
+	config.SetLanguage("node", file)
+	config.ProjectName = file.Name
+	if file.Main != nil {
+		config.SetWorker("main")
 	}
 	return nil
 }
 
-var _ generate.Parser = Node // ensure interface is implemented
+var _ generate.Parser[craft.Config] = Node // ensure interface is implemented
 
 // readPackageJSON reads package.json provided at input jsonpath.
 // It returns any error encountered.
@@ -99,9 +102,9 @@ func readPackageJSON(jsonpath string) (PackageJSON, error) {
 		return PackageJSON{}, fmt.Errorf("read file: %w", err)
 	}
 
-	var pkg PackageJSON
-	if err := json.Unmarshal(bytes, &pkg); err != nil {
+	var file PackageJSON
+	if err := json.Unmarshal(bytes, &file); err != nil {
 		return PackageJSON{}, fmt.Errorf("unmarshal: %w", err)
 	}
-	return pkg, pkg.Validate()
+	return file, file.Validate()
 }

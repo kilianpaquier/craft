@@ -9,7 +9,7 @@ import (
 
 	"dario.cat/mergo"
 	"github.com/go-viper/mapstructure/v2"
-	"gopkg.in/yaml.v3"
+	"github.com/goccy/go-yaml"
 
 	"github.com/kilianpaquier/craft/internal/helpers"
 )
@@ -60,12 +60,10 @@ func ToQuery(in string) string {
 //
 // This is designed to be called from a go template.
 func ToYAML(v any) string {
-	var buf bytes.Buffer
-	encoder := yaml.NewEncoder(&buf)
-	encoder.SetIndent(2)
-	if err := encoder.Encode(v); err != nil {
+	b, err := yaml.MarshalWithOptions(v, yaml.Indent(2))
+	if err != nil {
 		// Swallow errors inside of a template.
 		return ""
 	}
-	return strings.TrimSuffix(buf.String(), "\n")
+	return string(bytes.TrimSuffix(b, []byte("\n")))
 }

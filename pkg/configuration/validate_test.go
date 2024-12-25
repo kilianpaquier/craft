@@ -1,4 +1,4 @@
-package craft_test
+package configuration_test
 
 import (
 	"path/filepath"
@@ -6,7 +6,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	schemas "github.com/kilianpaquier/craft/.schemas"
+	"github.com/kilianpaquier/craft/pkg/configuration"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 )
 
 func TestValidate(t *testing.T) {
@@ -14,10 +16,11 @@ func TestValidate(t *testing.T) {
 		t.Helper()
 		return filepath.Join("..", "..", "testdata", t.Name()+craft.File)
 	}
+	read := func() ([]byte, error) { return schemas.ReadFile(schemas.Craft) }
 
 	t.Run("invalid_bot", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.Equal(t, `validate schema:
@@ -26,7 +29,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("dependabot_no_auth", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.Equal(t, `validate schema:
@@ -35,7 +38,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("renovate_auth_required", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.Equal(t, `validate schema:
@@ -44,7 +47,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("auth_release_no_auth", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.Equal(t, `validate schema:
@@ -53,7 +56,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("release_auth_required", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.Equal(t, `validate schema:
@@ -62,7 +65,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("release_gitlab_no_auth", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.Equal(t, `validate schema:
@@ -71,7 +74,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("empty", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.NoError(t, err)
@@ -79,7 +82,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("gitlab_no_bot", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.NoError(t, err)
@@ -87,7 +90,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("gitlab_renovate", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.NoError(t, err)
@@ -95,7 +98,7 @@ func TestValidate(t *testing.T) {
 
 	t.Run("github_release", func(t *testing.T) {
 		// Act
-		err := craft.Validate(src(t))
+		err := configuration.Validate(src(t), read)
 
 		// Assert
 		assert.NoError(t, err)

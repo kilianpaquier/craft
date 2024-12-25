@@ -1,6 +1,8 @@
 package schemas
 
-import "embed"
+import (
+	"embed"
+)
 
 const (
 	Chart = "chart.schema.json"
@@ -10,7 +12,6 @@ const (
 //go:embed *.json
 var fs embed.FS
 
-// FS returns the embed.FS that contains schema files.
-func FS() embed.FS {
-	return fs
+func ReadFile(name string) ([]byte, error) {
+	return fs.ReadFile(name)
 }

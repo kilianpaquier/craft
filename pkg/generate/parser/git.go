@@ -7,12 +7,12 @@ import (
 	"path"
 	"strings"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
 
 // Git reads the input destdir directory remote.origin.url to retrieve various project information (git host, project name, etc.).
-func Git(ctx context.Context, destdir string, metadata *generate.Metadata) error {
+func Git(ctx context.Context, destdir string, config *craft.Config) error {
 	rawRemote, err := originURL(destdir)
 	if err != nil {
 		generate.GetLogger(ctx).Warnf("failed to retrieve git remote.origin.url: %s", err.Error())
@@ -21,17 +21,17 @@ func Git(ctx context.Context, destdir string, metadata *generate.Metadata) error
 	generate.GetLogger(ctx).Infof("git repository detected")
 
 	host, subpath := parseRemote(rawRemote)
-	if metadata.Platform == "" {
-		metadata.Platform, _ = parsePlatform(host)
+	if config.Platform == "" {
+		config.Platform, _ = parsePlatform(host)
 	}
 
-	metadata.ProjectHost = host
-	metadata.ProjectName = path.Base(subpath)
-	metadata.ProjectPath = subpath
+	config.ProjectHost = host
+	config.ProjectName = path.Base(subpath)
+	config.ProjectPath = subpath
 	return nil
 }
 
-var _ generate.Parser = Git // ensure interface is implemented
+var _ generate.Parser[craft.Config] = Git // ensure interface is implemented
 
 // originURL returns input directory git config --get remote.origin.url.
 func originURL(destdir string) (string, error) {

@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 )
 
 func TestGit(t *testing.T) {
@@ -16,12 +15,14 @@ func TestGit(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		// Arrange
-		config := &generate.Metadata{}
-		expected := &generate.Metadata{
-			Configuration: craft.Configuration{Platform: "github"},
-			ProjectHost:   "github.com",
-			ProjectName:   "craft",
-			ProjectPath:   "kilianpaquier/craft",
+		config := &craft.Config{}
+		expected := &craft.Config{
+			GitConfig: craft.GitConfig{
+				ProjectHost: "github.com",
+				ProjectName: "craft",
+				ProjectPath: "kilianpaquier/craft",
+				Platform:    craft.GitHub,
+			},
 		}
 
 		// Act

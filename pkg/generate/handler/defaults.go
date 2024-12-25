@@ -7,14 +7,14 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
 
 // Defaults returns the full slice of handlers implemented in handler package.
-func Defaults(handlers ...generate.Handler) []generate.Handler {
+func Defaults(handlers ...generate.Handler[craft.Config]) []generate.Handler[craft.Config] {
 	return slices.Concat(
-		[]generate.Handler{
+		[]generate.Handler[craft.Config]{
 			CodeCov,
 			Dependabot,
 			Docker,
@@ -45,6 +45,6 @@ func PartGlob(src, name string) string {
 	if n == "" {
 		n = name
 	}
-	glob := fmt.Sprint(n, "-*", craft.PartExtension, craft.TmplExtension)
+	glob := fmt.Sprint(n, "-*", generate.PartExtension, generate.TmplExtension)
 	return path.Join(path.Dir(src), glob)
 }

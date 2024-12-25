@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/handler"
 )
 
@@ -30,7 +29,7 @@ func TestGitLab(t *testing.T) {
 				require.True(t, ok)
 
 				// Act
-				ok = result.ShouldRemove(generate.Metadata{})
+				ok = result.ShouldRemove(craft.Config{})
 
 				// Assert
 				assert.True(t, ok)
@@ -45,10 +44,8 @@ func TestGitLab(t *testing.T) {
 				result, ok := handler.GitLab(src, "", path.Base(src))
 				require.True(t, ok)
 
-				config := generate.Metadata{
-					Configuration: craft.Configuration{
-						CI: &craft.CI{Name: craft.GitLab},
-					},
+				config := craft.Config{
+					CI: &craft.CI{Name: craft.GitLab},
 				}
 
 				// Act
@@ -65,7 +62,7 @@ func TestGitLab(t *testing.T) {
 		result, ok := handler.GitLab(".gitlab/config.yml", "", "config.yml")
 		require.True(t, ok)
 
-		config := generate.Metadata{Configuration: craft.Configuration{Platform: craft.GitLab}}
+		config := craft.Config{GitConfig: craft.GitConfig{Platform: craft.GitLab}}
 
 		// Act
 		ok = result.ShouldRemove(config)

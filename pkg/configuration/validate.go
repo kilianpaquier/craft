@@ -1,4 +1,4 @@
-package craft
+package configuration
 
 import (
 	"encoding/json"
@@ -10,15 +10,13 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v6/kind"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
-
-	schemas "github.com/kilianpaquier/craft/.schemas"
 )
 
 var defaultPrinter = message.NewPrinter(language.English)
 
-// Validate validates .craft file from srcdir following craft schema.
-func Validate(src string) error {
-	bytes, err := schemas.FS().ReadFile(schemas.Craft)
+// Validate validates input src following the input schema (read during execution).
+func Validate(src string, readSchema func() ([]byte, error)) error {
+	bytes, err := readSchema()
 	if err != nil {
 		return fmt.Errorf("read schema: %w", err)
 	}
@@ -28,15 +26,15 @@ func Validate(src string) error {
 		return fmt.Errorf("unmarshal schema: %w", err)
 	}
 	compiler := jsonschema.NewCompiler()
-	_ = compiler.AddResource(schemas.Craft, schema)
+	_ = compiler.AddResource("schema.json", schema)
 
-	sch, err := compiler.Compile(schemas.Craft)
+	sch, err := compiler.Compile("schema.json")
 	if err != nil {
 		return fmt.Errorf("compile schema: %w", err)
 	}
 
 	var doc any
-	if err := Read(src, &doc); err != nil {
+	if err := ReadYAML(src, &doc); err != nil {
 		return err // error is already wrapped
 	}
 

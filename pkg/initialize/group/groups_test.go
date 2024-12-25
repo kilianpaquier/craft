@@ -1,4 +1,4 @@
-package initialize_test
+package group_test
 
 import (
 	"context"
@@ -11,8 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/helpers"
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/initialize"
+	"github.com/kilianpaquier/craft/pkg/initialize/group"
 )
 
 // Reference: https://www.alanwood.net/demos/ansi.html
@@ -29,9 +30,9 @@ func TestRun(t *testing.T) {
 
 	t.Run("success_custom_input", func(t *testing.T) {
 		// Arrange
-		expected := craft.Configuration{License: helpers.ToPtr("mit")}
+		expected := craft.Config{License: helpers.ToPtr("mit")}
 
-		customGroup := func(config *craft.Configuration) *huh.Group {
+		customGroup := func(config *craft.Config) *huh.Group {
 			return huh.NewGroup(huh.NewInput().
 				Title("Would you like to specify a license ?").
 				Validate(func(s string) error {
@@ -46,7 +47,9 @@ func TestRun(t *testing.T) {
 		reader := strings.NewReader(strings.Join(inputs, ""))
 
 		// Act
-		config, err := initialize.Run(ctx, initialize.WithFormGroups(customGroup), initialize.WithTeaOptions(tea.WithInput(reader)))
+		config, err := initialize.Run(ctx,
+			initialize.WithFormGroups(customGroup),
+			initialize.WithTeaOptions[craft.Config](tea.WithInput(reader)))
 
 		// Assert
 		require.NoError(t, err)
@@ -55,7 +58,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("success_minimal_inputs", func(t *testing.T) {
 		// Arrange
-		expected := craft.Configuration{Maintainers: []*craft.Maintainer{{Name: "name"}}}
+		expected := craft.Config{Maintainers: []*craft.Maintainer{{Name: "name"}}}
 
 		inputs := []string{
 			"name" + defaultSubmit, // maintainer name
@@ -66,7 +69,9 @@ func TestRun(t *testing.T) {
 		reader := strings.NewReader(strings.Join(inputs, ""))
 
 		// Act
-		config, err := initialize.Run(ctx, initialize.WithTeaOptions(tea.WithInput(reader)))
+		config, err := initialize.Run(ctx,
+			initialize.WithFormGroups(group.Maintainer, group.Chart),
+			initialize.WithTeaOptions[craft.Config](tea.WithInput(reader)))
 
 		// Assert
 		require.NoError(t, err)

@@ -1,33 +1,7 @@
 package craft
 
-const (
-	// File is the craft configuration file name.
-	File = ".craft"
-
-	// TmplExtension is the extension for templates file.
-	TmplExtension = ".tmpl"
-
-	// PartExtension is the extension for templates files' subparts.
-	//
-	// It must be used with TmplExtension
-	// and as such files with only templates parts (define) can be created.
-	PartExtension = ".part"
-
-	// PatchExtension is the extension for templates files patches.
-	//
-	// It will be used in the future to patch altered files by users to follow updates with less generation issues.
-	PatchExtension = ".patch"
-
-	// Gocmd represents the cmd folder where go main.go should be placed according to go layout.
-	Gocmd = "cmd"
-	// Gomod represents the go.mod filename.
-	Gomod = "go.mod"
-	// PackageJSON represents package.json filename.
-	PackageJSON = "package.json"
-
-	// License represents the target filename for the generated project LICENSE.
-	License = "LICENSE"
-)
+// File is the craft configuration file name.
+const File = ".craft"
 
 const (
 	// Bitbucket is just the bitbucket constant.

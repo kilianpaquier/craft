@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/handler"
 )
 
@@ -26,7 +25,7 @@ func TestGolang(t *testing.T) {
 		result, ok := handler.Golang("", "", ".goreleaser.yml")
 		require.True(t, ok)
 
-		config := generate.Metadata{Configuration: craft.Configuration{NoGoreleaser: true}}
+		config := craft.Config{NoGoreleaser: true}
 
 		// Act
 		ok = result.ShouldRemove(config)
@@ -41,7 +40,7 @@ func TestGolang(t *testing.T) {
 		require.True(t, ok)
 
 		// Act
-		ok = result.ShouldRemove(generate.Metadata{})
+		ok = result.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.True(t, ok)
@@ -52,7 +51,7 @@ func TestGolang(t *testing.T) {
 		result, ok := handler.Golang("", "", ".goreleaser.yml")
 		require.True(t, ok)
 
-		config := generate.Metadata{Clis: map[string]struct{}{"name": {}}}
+		config := craft.Config{FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"name": {}}}}
 
 		// Act
 		ok = result.ShouldRemove(config)
@@ -68,9 +67,11 @@ func TestGolang(t *testing.T) {
 				result, ok := handler.Golang(src, "", path.Base(src))
 				require.True(t, ok)
 
-				config := generate.Metadata{
-					Clis:      map[string]struct{}{"name": {}},
-					Languages: map[string]any{"golang": nil},
+				config := craft.Config{
+					FilesConfig: craft.FilesConfig{
+						Clis:      map[string]struct{}{"name": {}},
+						Languages: map[string]any{"golang": nil},
+					},
 				}
 
 				// Act

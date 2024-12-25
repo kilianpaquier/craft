@@ -10,6 +10,7 @@ require (
 	github.com/charmbracelet/log v0.4.0
 	github.com/go-playground/validator/v10 v10.23.0
 	github.com/go-viper/mapstructure/v2 v2.2.1
+	github.com/goccy/go-yaml v1.15.13
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/kilianpaquier/cli-sdk v0.0.0-20241218182647-fcba645bf333
@@ -19,7 +20,6 @@ require (
 	gitlab.com/gitlab-org/api/client-go v0.118.0
 	golang.org/x/mod v0.22.0
 	golang.org/x/text v0.21.0
-	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -80,4 +80,5 @@ require (
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

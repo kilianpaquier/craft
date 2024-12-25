@@ -10,8 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/parser"
 )
 
@@ -20,7 +19,7 @@ func TestGolang(t *testing.T) {
 
 	t.Run("no_gomod", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{}
+		config := craft.Config{}
 
 		// Act
 		err := parser.Golang(ctx, "", &config)
@@ -34,11 +33,11 @@ func TestGolang(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		gomod := filepath.Join(destdir, craft.Gomod)
+		gomod := filepath.Join(destdir, parser.FileGomod)
 		err := os.WriteFile(gomod, []byte("an invalid go.mod file"), cfs.RwRR)
 		require.NoError(t, err)
 
-		config := generate.Metadata{}
+		config := craft.Config{}
 
 		// Act
 		err = parser.Golang(ctx, destdir, &config)
@@ -52,11 +51,11 @@ func TestGolang(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		gomod, err := os.Create(filepath.Join(destdir, craft.Gomod))
+		gomod, err := os.Create(filepath.Join(destdir, parser.FileGomod))
 		require.NoError(t, err)
 		require.NoError(t, gomod.Close())
 
-		config := generate.Metadata{}
+		config := craft.Config{}
 
 		// Act
 		err = parser.Golang(ctx, destdir, &config)
@@ -71,7 +70,7 @@ func TestGolang(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		gomod := filepath.Join(destdir, craft.Gomod)
+		gomod := filepath.Join(destdir, parser.FileGomod)
 		err := os.WriteFile(gomod, []byte(
 			`module github.com/kilianpaquier/craft
 			
@@ -79,21 +78,25 @@ func TestGolang(t *testing.T) {
 		), cfs.RwRR)
 		require.NoError(t, err)
 
-		config := generate.Metadata{Languages: map[string]any{}}
-		expected := generate.Metadata{
-			Configuration: craft.Configuration{Platform: craft.GitHub},
-			Languages: map[string]any{
-				"golang": parser.Gomod{
-					LangVersion: "1.22",
-					Platform:    craft.GitHub,
-					ProjectHost: "github.com",
-					ProjectName: "craft",
-					ProjectPath: "kilianpaquier/craft",
+		config := craft.Config{FilesConfig: craft.FilesConfig{Languages: map[string]any{}}}
+		expected := craft.Config{
+			FilesConfig: craft.FilesConfig{
+				Languages: map[string]any{
+					"golang": parser.Gomod{
+						LangVersion: "1.22",
+						Platform:    craft.GitHub,
+						ProjectHost: "github.com",
+						ProjectName: "craft",
+						ProjectPath: "kilianpaquier/craft",
+					},
 				},
 			},
-			ProjectHost: "github.com",
-			ProjectName: "craft",
-			ProjectPath: "kilianpaquier/craft",
+			GitConfig: craft.GitConfig{
+				ProjectHost: "github.com",
+				ProjectName: "craft",
+				ProjectPath: "kilianpaquier/craft",
+				Platform:    craft.GitHub,
+			},
 		}
 
 		// Act
@@ -108,7 +111,7 @@ func TestGolang(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		gomod := filepath.Join(destdir, craft.Gomod)
+		gomod := filepath.Join(destdir, parser.FileGomod)
 		err := os.WriteFile(gomod, []byte(
 			`module github.com/kilianpaquier/craft
 	
@@ -120,17 +123,17 @@ func TestGolang(t *testing.T) {
 		require.NoError(t, err)
 		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
-		config := generate.Metadata{
-			Languages: map[string]any{},
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{Languages: map[string]any{}},
 		}
-		expected := generate.Metadata{
-			Configuration: craft.Configuration{
-				Platform: craft.GitHub,
+		expected := craft.Config{
+			FilesConfig: craft.FilesConfig{Languages: map[string]any{"hugo": nil}},
+			GitConfig: craft.GitConfig{
+				ProjectHost: "github.com",
+				ProjectName: "craft",
+				ProjectPath: "kilianpaquier/craft",
+				Platform:    craft.GitHub,
 			},
-			Languages:   map[string]any{"hugo": nil},
-			ProjectHost: "github.com",
-			ProjectName: "craft",
-			ProjectPath: "kilianpaquier/craft",
 		}
 
 		// Act
@@ -145,7 +148,7 @@ func TestGolang(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
 
-		gomod := filepath.Join(destdir, craft.Gomod)
+		gomod := filepath.Join(destdir, parser.FileGomod)
 		err := os.WriteFile(gomod, []byte(
 			`module github.com/kilianpaquier/craft/v2
 			
@@ -155,7 +158,7 @@ func TestGolang(t *testing.T) {
 		), cfs.RwRR)
 		require.NoError(t, err)
 
-		gocmd := filepath.Join(destdir, craft.Gocmd)
+		gocmd := filepath.Join(destdir, parser.FolderCMD)
 		for _, dir := range []string{
 			gocmd,
 			filepath.Join(gocmd, "cli-name"),
@@ -166,32 +169,37 @@ func TestGolang(t *testing.T) {
 			require.NoError(t, os.Mkdir(dir, cfs.RwxRxRxRx))
 		}
 
-		config := generate.Metadata{
-			Clis:      map[string]struct{}{},
-			Crons:     map[string]struct{}{},
-			Jobs:      map[string]struct{}{},
-			Languages: map[string]any{},
-			Workers:   map[string]struct{}{},
-		}
-		expected := generate.Metadata{
-			Binaries:      4,
-			Clis:          map[string]struct{}{"cli-name": {}},
-			Configuration: craft.Configuration{Platform: craft.GitHub},
-			Crons:         map[string]struct{}{"cron-name": {}},
-			Jobs:          map[string]struct{}{"job-name": {}},
-			Languages: map[string]any{
-				"golang": parser.Gomod{
-					LangVersion: "1.22.2",
-					Platform:    craft.GitHub,
-					ProjectHost: "github.com",
-					ProjectName: "craft",
-					ProjectPath: "kilianpaquier/craft",
-				},
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{
+				Languages: map[string]any{},
+				Clis:      map[string]struct{}{},
+				Crons:     map[string]struct{}{},
+				Jobs:      map[string]struct{}{},
+				Workers:   map[string]struct{}{},
 			},
-			ProjectHost: "github.com",
-			ProjectName: "craft",
-			ProjectPath: "kilianpaquier/craft",
-			Workers:     map[string]struct{}{"worker-name": {}},
+		}
+		expected := craft.Config{
+			FilesConfig: craft.FilesConfig{
+				Clis:  map[string]struct{}{"cli-name": {}},
+				Crons: map[string]struct{}{"cron-name": {}},
+				Jobs:  map[string]struct{}{"job-name": {}},
+				Languages: map[string]any{
+					"golang": parser.Gomod{
+						LangVersion: "1.22.2",
+						Platform:    craft.GitHub,
+						ProjectHost: "github.com",
+						ProjectName: "craft",
+						ProjectPath: "kilianpaquier/craft",
+					},
+				},
+				Workers: map[string]struct{}{"worker-name": {}},
+			},
+			GitConfig: craft.GitConfig{
+				ProjectHost: "github.com",
+				ProjectName: "craft",
+				ProjectPath: "kilianpaquier/craft",
+				Platform:    craft.GitHub,
+			},
 		}
 
 		// Act

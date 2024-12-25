@@ -7,7 +7,9 @@ import (
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/spf13/cobra"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	schemas "github.com/kilianpaquier/craft/.schemas"
+	"github.com/kilianpaquier/craft/pkg/configuration"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 	"github.com/kilianpaquier/craft/pkg/generate/handler"
 	"github.com/kilianpaquier/craft/pkg/generate/parser"
@@ -27,23 +29,24 @@ var generateCmd = &cobra.Command{
 		}
 
 		// validate configuration
-		if err := craft.Validate(dest); err != nil {
+		read := func() ([]byte, error) { return schemas.ReadFile(schemas.Craft) }
+		if err := configuration.Validate(dest, read); err != nil {
 			logger.Fatal(err)
 		}
 
 		// read configuration
-		var config craft.Configuration
-		if err := craft.Read(dest, &config); err != nil {
+		var config craft.Config
+		if err := configuration.ReadYAML(dest, &config); err != nil {
 			logger.Fatal(err)
 		}
 
 		// run generation
-		options := []generate.RunOption{
-			generate.WithDestination(destdir),
+		options := []generate.RunOption[craft.Config]{
+			generate.WithDestination[craft.Config](destdir),
 			generate.WithHandlers(handler.Defaults()...),
-			generate.WithLogger(logger),
+			generate.WithLogger[craft.Config](logger),
 			generate.WithParsers(parser.Defaults()...),
-			generate.WithTemplates(generate.TmplDir, generate.FS()),
+			generate.WithTemplates[craft.Config](generate.TmplDir, generate.FS()),
 		}
 		config, err := generate.Run(ctx, config, options...)
 		if err != nil {
@@ -51,7 +54,7 @@ var generateCmd = &cobra.Command{
 		}
 
 		// save configuration again in case it was modified during generation
-		if err := craft.Write(dest, config); err != nil {
+		if err := configuration.WriteYAML(dest, config, craft.EncodeOpts()...); err != nil {
 			logger.Fatal(err)
 		}
 	},

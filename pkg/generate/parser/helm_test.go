@@ -11,15 +11,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/helpers"
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/parser"
 )
 
 func TestHelm(t *testing.T) {
 	ctx := context.Background()
-
-	noChart := &generate.Metadata{Configuration: craft.Configuration{NoChart: true}}
 
 	t.Run("success_remove_no_chart_dir", func(t *testing.T) {
 		// Arrange
@@ -27,7 +24,7 @@ func TestHelm(t *testing.T) {
 		chart := filepath.Join(destdir, "chart")
 
 		// Act
-		err := parser.Helm(ctx, destdir, noChart)
+		err := parser.Helm(ctx, destdir, &craft.Config{NoChart: true})
 
 		// Assert
 		require.NoError(t, err)
@@ -41,7 +38,7 @@ func TestHelm(t *testing.T) {
 		require.NoError(t, os.Mkdir(chart, cfs.RwxRxRxRx))
 
 		// Act
-		err := parser.Helm(ctx, destdir, noChart)
+		err := parser.Helm(ctx, destdir, &craft.Config{NoChart: true})
 
 		// Assert
 		require.NoError(t, err)
@@ -55,7 +52,7 @@ func TestHelm(t *testing.T) {
 		require.NoError(t, os.MkdirAll(overrides, cfs.RwxRxRxRx))
 
 		// Act
-		err := parser.Helm(ctx, destdir, &generate.Metadata{})
+		err := parser.Helm(ctx, destdir, &craft.Config{})
 
 		// Assert
 		assert.ErrorContains(t, err, "read helm chart overrides")
@@ -69,15 +66,15 @@ func TestHelm(t *testing.T) {
 		err := os.WriteFile(filepath.Join(chartdir, craft.File), []byte("description: some description for testing purposes"), cfs.RwRR)
 		require.NoError(t, err)
 
-		config := generate.Metadata{
-			Languages: map[string]any{},
-			Clis:      map[string]struct{}{"cli-name": {}},
-			Configuration: craft.Configuration{
-				Docker: &craft.Docker{Port: helpers.ToPtr(uint16(5000))},
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{
+				Languages: map[string]any{},
+				Clis:      map[string]struct{}{"cli-name": {}},
+				Crons:     map[string]struct{}{"cron-name": {}},
+				Jobs:      map[string]struct{}{"job-name": {}},
+				Workers:   map[string]struct{}{"worker-name": {}},
 			},
-			Crons:   map[string]struct{}{"cron-name": {}},
-			Jobs:    map[string]struct{}{"job-name": {}},
-			Workers: map[string]struct{}{"worker-name": {}},
+			Docker: &craft.Docker{Port: helpers.ToPtr(uint16(5000))},
 		}
 		expected := map[string]any{
 			"crons":       map[string]any{"cron-name": map[string]any{}},

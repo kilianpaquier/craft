@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/kilianpaquier/craft/internal/helpers"
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 	"github.com/kilianpaquier/craft/pkg/generate/handler"
 )
@@ -28,10 +28,8 @@ func TestCodeCov(t *testing.T) {
 
 	t.Run("success_codecov_remove_github_actions", func(t *testing.T) {
 		// Assert
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{Options: []string{craft.CodeCov}},
-			},
+		config := craft.Config{
+			CI: &craft.CI{Options: []string{craft.CodeCov}},
 		}
 
 		// Act
@@ -43,10 +41,8 @@ func TestCodeCov(t *testing.T) {
 
 	t.Run("success_codecov_remove_option", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{Name: craft.GitHub},
-			},
+		config := craft.Config{
+			CI: &craft.CI{Name: craft.GitHub},
 		}
 
 		// Act
@@ -58,12 +54,10 @@ func TestCodeCov(t *testing.T) {
 
 	t.Run("success_codecov_no_remove", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{
-					Name:    craft.GitHub,
-					Options: []string{craft.CodeCov},
-				},
+		config := craft.Config{
+			CI: &craft.CI{
+				Name:    craft.GitHub,
+				Options: []string{craft.CodeCov},
 			},
 		}
 
@@ -89,10 +83,8 @@ func TestDependabot(t *testing.T) {
 
 	t.Run("success_dependabot_remove_github_actions", func(t *testing.T) {
 		// Assert
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				Bot: helpers.ToPtr(craft.Dependabot),
-			},
+		config := craft.Config{
+			Bot: helpers.ToPtr(craft.Dependabot),
 		}
 
 		// Act
@@ -104,7 +96,7 @@ func TestDependabot(t *testing.T) {
 
 	t.Run("success_dependabot_remove_option", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{Configuration: craft.Configuration{Platform: craft.GitHub}}
+		config := craft.Config{GitConfig: craft.GitConfig{Platform: craft.GitHub}}
 
 		// Act
 		ok := result.ShouldRemove(config)
@@ -115,11 +107,9 @@ func TestDependabot(t *testing.T) {
 
 	t.Run("success_dependabot_no_remove", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				Bot:      helpers.ToPtr(craft.Dependabot),
-				Platform: craft.GitHub,
-			},
+		config := craft.Config{
+			Bot:       helpers.ToPtr(craft.Dependabot),
+			GitConfig: craft.GitConfig{Platform: craft.GitHub},
 		}
 
 		// Act
@@ -145,7 +135,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		// Act
-		ok = result.ShouldRemove(generate.Metadata{})
+		ok = result.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.True(t, ok)
@@ -157,7 +147,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		globs := []string{"path/to/Dockerfile.tmpl", "path/to/Dockerfile-*.part.tmpl"}
-		config := generate.Metadata{Configuration: craft.Configuration{Docker: &craft.Docker{}}}
+		config := craft.Config{Docker: &craft.Docker{}}
 
 		// Act & Assert
 		assert.False(t, result.ShouldRemove(config))
@@ -170,7 +160,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		// Act
-		ok = result.ShouldRemove(generate.Metadata{})
+		ok = result.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.True(t, ok)
@@ -181,7 +171,7 @@ func TestDocker(t *testing.T) {
 		result, ok := handler.Docker("", "", ".dockerignore")
 		require.True(t, ok)
 
-		config := generate.Metadata{Configuration: craft.Configuration{Docker: &craft.Docker{}}}
+		config := craft.Config{Docker: &craft.Docker{}}
 
 		// Act
 		ok = result.ShouldRemove(config)
@@ -196,7 +186,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		// Act
-		ok = result.ShouldRemove(generate.Metadata{})
+		ok = result.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.True(t, ok)
@@ -207,9 +197,9 @@ func TestDocker(t *testing.T) {
 		result, ok := handler.Docker("", "", "launcher.sh")
 		require.True(t, ok)
 
-		config := generate.Metadata{
-			Binaries:      1,
-			Configuration: craft.Configuration{Docker: &craft.Docker{}},
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{Workers: map[string]struct{}{"worker": {}}},
+			Docker:      &craft.Docker{},
 		}
 
 		// Act
@@ -224,9 +214,12 @@ func TestDocker(t *testing.T) {
 		result, ok := handler.Docker("", "", "launcher.sh")
 		require.True(t, ok)
 
-		config := generate.Metadata{
-			Binaries:      2,
-			Configuration: craft.Configuration{Docker: &craft.Docker{}},
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{
+				Crons:   map[string]struct{}{"cron": {}},
+				Workers: map[string]struct{}{"worker": {}},
+			},
+			Docker: &craft.Docker{},
 		}
 
 		// Act
@@ -241,10 +234,13 @@ func TestDocker(t *testing.T) {
 		result, ok := handler.Docker("", "", "launcher.sh")
 		require.True(t, ok)
 
-		config := generate.Metadata{
-			Binaries:      2,
-			Configuration: craft.Configuration{Docker: &craft.Docker{}},
-			Languages:     map[string]any{"golang": nil},
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{
+				Clis:      map[string]struct{}{"cli": {}},
+				Jobs:      map[string]struct{}{"job": {}},
+				Languages: map[string]any{"golang": nil},
+			},
+			Docker: &craft.Docker{},
 		}
 
 		// Act
@@ -288,7 +284,7 @@ func TestMakefile(t *testing.T) {
 		result, ok := handler.Makefile("Makefile", "", "Makefile")
 		require.True(t, ok)
 
-		config := generate.Metadata{Configuration: craft.Configuration{NoMakefile: true}}
+		config := craft.Config{NoMakefile: true}
 
 		// Act
 		ok = result.ShouldRemove(config)
@@ -302,7 +298,7 @@ func TestMakefile(t *testing.T) {
 		result, ok := handler.Makefile("Makefile", "", "Makefile")
 		require.True(t, ok)
 
-		config := generate.Metadata{Languages: map[string]any{"node": nil}}
+		config := craft.Config{FilesConfig: craft.FilesConfig{Languages: map[string]any{"node": nil}}}
 
 		// Act
 		ok = result.ShouldRemove(config)
@@ -317,7 +313,7 @@ func TestMakefile(t *testing.T) {
 		require.True(t, ok)
 
 		// Act
-		ok = result.ShouldRemove(generate.Metadata{})
+		ok = result.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.False(t, ok)
@@ -333,7 +329,7 @@ func TestMakefile(t *testing.T) {
 				globs := []string{src, handler.PartGlob(src, path.Base(src))}
 
 				// Act & Assert
-				assert.False(t, result.ShouldRemove(generate.Metadata{}))
+				assert.False(t, result.ShouldRemove(craft.Config{}))
 				assert.Equal(t, globs, result.Globs)
 			})
 		}
@@ -376,7 +372,7 @@ func TestSemanticRelease(t *testing.T) {
 
 	t.Run("success_releaserc_remove_no_release", func(t *testing.T) {
 		// Act
-		ok := releaserc.ShouldRemove(generate.Metadata{})
+		ok := releaserc.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.True(t, ok)
@@ -384,10 +380,8 @@ func TestSemanticRelease(t *testing.T) {
 
 	t.Run("success_releaserc_no_remove", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{Release: &craft.Release{}},
-			},
+		config := craft.Config{
+			CI: &craft.CI{Release: &craft.Release{}},
 		}
 
 		// Act
@@ -398,7 +392,7 @@ func TestSemanticRelease(t *testing.T) {
 	})
 
 	t.Run("success_semrel_plugins_remove", func(t *testing.T) {
-		cases := []craft.Configuration{
+		cases := []craft.Config{
 			{CI: &craft.CI{}},
 			{CI: &craft.CI{Name: craft.GitLab}},
 			{CI: &craft.CI{Release: &craft.Release{}}},
@@ -406,7 +400,7 @@ func TestSemanticRelease(t *testing.T) {
 		for i, config := range cases {
 			t.Run(strconv.Itoa(i), func(t *testing.T) {
 				// Act
-				ok := plugins.ShouldRemove(generate.Metadata{Configuration: config})
+				ok := plugins.ShouldRemove(config)
 
 				// Assert
 				assert.True(t, ok)
@@ -416,18 +410,16 @@ func TestSemanticRelease(t *testing.T) {
 
 	t.Run("success_semrel_plugins_no_remove", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{
-					Name:    craft.GitLab,
-					Release: &craft.Release{},
-				},
+		config := craft.Config{
+			CI: &craft.CI{
+				Name:    craft.GitLab,
+				Release: &craft.Release{},
 			},
 		}
 
 		// Act & Assert
 		assert.False(t, plugins.ShouldRemove(config))
-		assert.True(t, plugins.ShouldGenerate(config))
+		assert.Equal(t, generate.PolicyAlways, plugins.GeneratePolicy)
 	})
 }
 
@@ -448,13 +440,11 @@ func TestRenovate(t *testing.T) {
 
 	t.Run("success_renovate_yml_remove_mendio", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				Bot: helpers.ToPtr(craft.Renovate),
-				CI: &craft.CI{
-					Name: craft.GitHub,
-					Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.Mendio)},
-				},
+		config := craft.Config{
+			Bot: helpers.ToPtr(craft.Renovate),
+			CI: &craft.CI{
+				Name: craft.GitHub,
+				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.Mendio)},
 			},
 		}
 
@@ -467,7 +457,7 @@ func TestRenovate(t *testing.T) {
 
 	t.Run("success_renovate_json5_remove", func(t *testing.T) {
 		// Act
-		ok := json5.ShouldRemove(generate.Metadata{})
+		ok := json5.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.True(t, ok)
@@ -475,10 +465,8 @@ func TestRenovate(t *testing.T) {
 
 	t.Run("success_renovate_yml_remove_no_github_actions", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				Bot: helpers.ToPtr(craft.Renovate),
-			},
+		config := craft.Config{
+			Bot: helpers.ToPtr(craft.Renovate),
 		}
 
 		// Act
@@ -490,7 +478,7 @@ func TestRenovate(t *testing.T) {
 
 	t.Run("success_renovate_yml_remove_no_bot", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{Configuration: craft.Configuration{CI: &craft.CI{Name: craft.GitHub}}}
+		config := craft.Config{CI: &craft.CI{Name: craft.GitHub}}
 
 		// Act
 		ok := yml.ShouldRemove(config)
@@ -501,13 +489,11 @@ func TestRenovate(t *testing.T) {
 
 	t.Run("success_renovate_yml_no_remove", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				Bot: helpers.ToPtr(craft.Renovate),
-				CI: &craft.CI{
-					Name: craft.GitHub,
-					Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GitHubToken)},
-				},
+		config := craft.Config{
+			Bot: helpers.ToPtr(craft.Renovate),
+			CI: &craft.CI{
+				Name: craft.GitHub,
+				Auth: craft.Auth{Maintenance: helpers.ToPtr(craft.GitHubToken)},
 			},
 		}
 
@@ -520,7 +506,7 @@ func TestRenovate(t *testing.T) {
 
 	t.Run("success_renovate_json5_no_remove", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{Configuration: craft.Configuration{Bot: helpers.ToPtr(craft.Renovate)}}
+		config := craft.Config{Bot: helpers.ToPtr(craft.Renovate)}
 
 		// Act
 		ok := json5.ShouldRemove(config)
@@ -544,7 +530,7 @@ func TestSonar(t *testing.T) {
 
 	t.Run("success_sonar_remove_ci", func(t *testing.T) {
 		// Act
-		ok := result.ShouldRemove(generate.Metadata{})
+		ok := result.ShouldRemove(craft.Config{})
 
 		// Assert
 		assert.True(t, ok)
@@ -552,7 +538,7 @@ func TestSonar(t *testing.T) {
 
 	t.Run("success_sonar_remove_option", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{Configuration: craft.Configuration{CI: &craft.CI{}}}
+		config := craft.Config{CI: &craft.CI{}}
 
 		// Act
 		ok := result.ShouldRemove(config)
@@ -563,10 +549,8 @@ func TestSonar(t *testing.T) {
 
 	t.Run("success_sonar_no_remove", func(t *testing.T) {
 		// Arrange
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{Options: []string{craft.Sonar}},
-			},
+		config := craft.Config{
+			CI: &craft.CI{Options: []string{craft.Sonar}},
 		}
 
 		// Act

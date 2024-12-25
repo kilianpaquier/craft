@@ -7,8 +7,10 @@ import (
 	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
 	"github.com/spf13/cobra"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/initialize"
+	"github.com/kilianpaquier/craft/pkg/initialize/group"
 )
 
 var initializeCmd = &cobra.Command{
@@ -24,11 +26,12 @@ var initializeCmd = &cobra.Command{
 			return
 		}
 
-		config, err := initialize.Run(ctx)
+		config, err := initialize.Run(ctx, initialize.WithFormGroups(group.Maintainer, group.Chart))
 		if err != nil {
 			logger.Fatal(err)
 		}
-		if err := craft.Write(dest, config); err != nil {
+
+		if err := configuration.WriteYAML(dest, config, craft.EncodeOpts()...); err != nil {
 			logger.Fatal(err)
 		}
 	},

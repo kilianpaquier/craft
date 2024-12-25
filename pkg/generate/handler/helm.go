@@ -4,15 +4,13 @@ import (
 	"path"
 	"strings"
 
-	"github.com/kilianpaquier/cli-sdk/pkg/cfs"
-
-	"github.com/kilianpaquier/craft/pkg/craft"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate"
 )
 
 // Helm is the handler for chart folder generation.
-func Helm(src, dest, name string) (generate.HandlerResult, bool) {
-	handlers := []generate.Handler{
+func Helm(src, dest, name string) (generate.HandlerResult[craft.Config], bool) {
+	handlers := []generate.Handler[craft.Config]{
 		// files related to dir chart/templates
 		helmTemplates,
 		// files related to dir chart/charts
@@ -25,56 +23,50 @@ func Helm(src, dest, name string) (generate.HandlerResult, bool) {
 			return result, ok
 		}
 	}
-	return generate.HandlerResult{}, false
+	return generate.HandlerResult[craft.Config]{}, false
 }
 
-func helmTemplates(src, dest, name string) (generate.HandlerResult, bool) {
+func helmTemplates(src, _, name string) (generate.HandlerResult[craft.Config], bool) {
 	// files related to dir chart/templates
 	if !strings.Contains(src, path.Join("chart", "templates", name)) {
-		return generate.HandlerResult{}, false
+		return generate.HandlerResult[craft.Config]{}, false
 	}
 
-	result := generate.HandlerResult{
-		Delimiter:      generate.DelimiterChevron(),
-		Globs:          []string{src},
-		ShouldGenerate: func(generate.Metadata) bool { return IsGenerated(dest) },
-		ShouldRemove:   func(metadata generate.Metadata) bool { return metadata.NoChart },
+	result := generate.HandlerResult[craft.Config]{
+		Delimiter:    generate.DelimiterChevron(),
+		Globs:        []string{src},
+		ShouldRemove: func(config craft.Config) bool { return config.NoChart },
 	}
 	return result, true
 }
 
-func helmCharts(src, dest, name string) (generate.HandlerResult, bool) {
+func helmCharts(src, _, name string) (generate.HandlerResult[craft.Config], bool) {
 	// files related to dir chart/charts
 	if !strings.Contains(src, path.Join("chart", "charts", name)) {
-		return generate.HandlerResult{}, false
+		return generate.HandlerResult[craft.Config]{}, false
 	}
 
-	result := generate.HandlerResult{
-		Delimiter:      generate.DelimiterChevron(),
-		Globs:          []string{src},
-		ShouldGenerate: func(generate.Metadata) bool { return IsGenerated(dest) },
-		ShouldRemove:   func(metadata generate.Metadata) bool { return metadata.NoChart },
+	result := generate.HandlerResult[craft.Config]{
+		Delimiter:    generate.DelimiterChevron(),
+		Globs:        []string{src},
+		ShouldRemove: func(config craft.Config) bool { return config.NoChart },
 	}
 	return result, true
 }
 
-func helmConfig(src, dest, name string) (generate.HandlerResult, bool) {
+func helmConfig(src, _, name string) (generate.HandlerResult[craft.Config], bool) {
 	// files related to dir chart
 	if !strings.Contains(src, path.Join("chart", name)) {
-		return generate.HandlerResult{}, false
+		return generate.HandlerResult[craft.Config]{}, false
 	}
 
-	result := generate.HandlerResult{
-		Delimiter:      generate.DelimiterBracket(),
-		Globs:          []string{src},
-		ShouldGenerate: func(generate.Metadata) bool { return IsGenerated(dest) },
-		ShouldRemove:   func(metadata generate.Metadata) bool { return metadata.NoChart },
+	result := generate.HandlerResult[craft.Config]{
+		Delimiter:    generate.DelimiterBracket(),
+		Globs:        []string{src},
+		ShouldRemove: func(config craft.Config) bool { return config.NoChart },
 	}
 
-	switch name {
-	case craft.File:
-		result.ShouldGenerate = func(generate.Metadata) bool { return !cfs.Exists(dest) }
-	case "values.yaml":
+	if name == "values.yaml" {
 		result.Globs = append(result.Globs, PartGlob(src, name))
 	}
 	return result, true

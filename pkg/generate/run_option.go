@@ -25,13 +25,13 @@ var (
 )
 
 // RunOption is the right function to tune Run function with specific behaviors.
-type RunOption func(runOptions) runOptions
+type RunOption[T any] func(runOptions[T]) runOptions[T]
 
 // WithParsers specifies the slice of parsers.
 //
 // To know more about parsers, please check Parser type documentation.
-func WithParsers(parsers ...Parser) RunOption {
-	return func(ro runOptions) runOptions {
+func WithParsers[T any](parsers ...Parser[T]) RunOption[T] {
+	return func(ro runOptions[T]) runOptions[T] {
 		ro.parsers = parsers
 		return ro
 	}
@@ -40,8 +40,8 @@ func WithParsers(parsers ...Parser) RunOption {
 // WithHandlers defines the slice of handlers to use during generation.
 //
 // To know more about handlers, please check Handler type documentation.
-func WithHandlers(handlers ...Handler) RunOption {
-	return func(ro runOptions) runOptions {
+func WithHandlers[T any](handlers ...Handler[T]) RunOption[T] {
+	return func(ro runOptions[T]) runOptions[T] {
 		ro.handlers = handlers
 		return ro
 	}
@@ -50,8 +50,8 @@ func WithHandlers(handlers ...Handler) RunOption {
 // WithDestination specifies destination directory of generation.
 //
 // If not given, default destination is the current directory where Run is executed.
-func WithDestination(destdir string) RunOption {
-	return func(ro runOptions) runOptions {
+func WithDestination[T any](destdir string) RunOption[T] {
+	return func(ro runOptions[T]) runOptions[T] {
 		ro.destdir = &destdir
 		return ro
 	}
@@ -63,8 +63,8 @@ func WithDestination(destdir string) RunOption {
 // and not the one OS specific from filepath.Join.
 //
 // If not given, default filesystem is the embedded one FS.
-func WithTemplates(dir string, fs cfs.FS) RunOption {
-	return func(ro runOptions) runOptions {
+func WithTemplates[T any](dir string, fs cfs.FS) RunOption[T] {
+	return func(ro runOptions[T]) runOptions[T] {
 		ro.tmplDir = dir
 		ro.fs = fs
 		return ro
@@ -74,17 +74,17 @@ func WithTemplates(dir string, fs cfs.FS) RunOption {
 // WithLogger specifies the logger to use during generation.
 //
 // If not given, default logger will be a noop one.
-func WithLogger(log Logger) RunOption {
-	return func(ro runOptions) runOptions {
+func WithLogger[T any](log Logger) RunOption[T] {
+	return func(ro runOptions[T]) runOptions[T] {
 		ro.logger = log
 		return ro
 	}
 }
 
 // runOptions is the struct related to Option function(s) defining all optional properties.
-type runOptions struct {
-	handlers []Handler
-	parsers  []Parser
+type runOptions[T any] struct {
+	handlers []Handler[T]
+	parsers  []Parser[T]
 
 	destdir *string
 
@@ -96,8 +96,8 @@ type runOptions struct {
 
 // newRunOpt creates a new option struct with all input Option functions
 // while taking care of default values.
-func newRunOpt(opts ...RunOption) (runOptions, error) {
-	var ro runOptions
+func newRunOpt[T any](opts ...RunOption[T]) (runOptions[T], error) {
+	var ro runOptions[T]
 	for _, opt := range opts {
 		if opt != nil {
 			ro = opt(ro)
@@ -112,7 +112,7 @@ func newRunOpt(opts ...RunOption) (runOptions, error) {
 		errs = append(errs, ErrMissingHandlers)
 	}
 	if err := errors.Join(errs...); err != nil {
-		return runOptions{}, err
+		return ro, err
 	}
 
 	if ro.destdir == nil {

@@ -8,8 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/handler"
 )
 
@@ -41,7 +40,7 @@ func TestGitHub(t *testing.T) {
 				require.True(t, ok)
 
 				// Act
-				ok = result.ShouldRemove(generate.Metadata{})
+				ok = result.ShouldRemove(craft.Config{})
 
 				// Assert
 				assert.True(t, ok)
@@ -63,10 +62,8 @@ func TestGitHub(t *testing.T) {
 				result, ok := handler.GitHub(src, "", path.Base(src))
 				require.True(t, ok)
 
-				config := generate.Metadata{
-					Configuration: craft.Configuration{
-						CI: &craft.CI{Name: craft.GitHub},
-					},
+				config := craft.Config{
+					CI: &craft.CI{Name: craft.GitHub},
 				}
 
 				// Act
@@ -83,11 +80,9 @@ func TestGitHub(t *testing.T) {
 		result, ok := handler.GitHub(".github/workflows/dependencies.yml", "", "dependencies.yml")
 		require.True(t, ok)
 
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{Name: craft.GitHub},
-			},
-			Languages: map[string]any{"golang": nil},
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{Languages: map[string]any{"golang": nil}},
+			CI:          &craft.CI{Name: craft.GitHub},
 		}
 
 		// Act
@@ -98,11 +93,11 @@ func TestGitHub(t *testing.T) {
 	})
 
 	t.Run("success_github_ci_no_remove", func(t *testing.T) {
-		configs := []generate.Metadata{
-			{Configuration: craft.Configuration{CI: &craft.CI{Name: craft.GitHub, Release: &craft.Release{}}}},
+		configs := []craft.Config{
+			{CI: &craft.CI{Name: craft.GitHub, Release: &craft.Release{}}},
 			{
-				Configuration: craft.Configuration{CI: &craft.CI{Name: craft.GitHub}},
-				Languages:     map[string]any{"go": nil},
+				CI:          &craft.CI{Name: craft.GitHub},
+				FilesConfig: craft.FilesConfig{Languages: map[string]any{"go": nil}},
 			},
 		}
 		for i, config := range configs {
@@ -125,7 +120,7 @@ func TestGitHub(t *testing.T) {
 		result, ok := handler.GitHub(".github/file.yml", "", "file.yml")
 		require.True(t, ok)
 
-		config := generate.Metadata{Configuration: craft.Configuration{Platform: craft.GitHub}}
+		config := craft.Config{GitConfig: craft.GitConfig{Platform: craft.GitHub}}
 
 		// Act
 		ok = result.ShouldRemove(config)
@@ -139,12 +134,10 @@ func TestGitHub(t *testing.T) {
 		result, ok := handler.GitHub(".github/workflows/codeql.yml", "", "codeql.yml")
 		require.True(t, ok)
 
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				CI: &craft.CI{
-					Name:    craft.GitHub,
-					Options: []string{craft.CodeQL},
-				},
+		config := craft.Config{
+			CI: &craft.CI{
+				Name:    craft.GitHub,
+				Options: []string{craft.CodeQL},
 			},
 		}
 
@@ -162,12 +155,10 @@ func TestGitHub(t *testing.T) {
 				result, ok := handler.GitHub(src, "", path.Base(src))
 				require.True(t, ok)
 
-				config := generate.Metadata{
-					Configuration: craft.Configuration{
-						CI: &craft.CI{
-							Name:    craft.GitHub,
-							Options: []string{craft.Labeler},
-						},
+				config := craft.Config{
+					CI: &craft.CI{
+						Name:    craft.GitHub,
+						Options: []string{craft.Labeler},
 					},
 				}
 

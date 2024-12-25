@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/handler"
 )
 
@@ -24,7 +23,7 @@ func TestHelm(t *testing.T) {
 	t.Run("success_chart_remove", func(t *testing.T) {
 		// Arrange
 		cases := []string{"chart/templates/deployment.yml", "chart/charts/.gitkeep", "chart/values.yaml"}
-		config := generate.Metadata{Configuration: craft.Configuration{NoChart: true}}
+		config := craft.Config{NoChart: true}
 		for _, src := range cases {
 			t.Run(path.Base(src), func(t *testing.T) {
 				// Arrange
@@ -50,7 +49,7 @@ func TestHelm(t *testing.T) {
 				require.True(t, ok)
 
 				// Act
-				ok = result.ShouldRemove(generate.Metadata{})
+				ok = result.ShouldRemove(craft.Config{})
 
 				// Assert
 				assert.False(t, ok)
@@ -65,7 +64,7 @@ func TestHelm(t *testing.T) {
 		globs := []string{"chart/values.yaml", "chart/values-*.part.tmpl"}
 
 		// Act & Assert
-		assert.False(t, result.ShouldRemove(generate.Metadata{}))
+		assert.False(t, result.ShouldRemove(craft.Config{}))
 		assert.Equal(t, globs, result.Globs)
 	})
 }

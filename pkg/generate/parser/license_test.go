@@ -15,8 +15,7 @@ import (
 	gitlab "gitlab.com/gitlab-org/api/client-go"
 
 	"github.com/kilianpaquier/craft/internal/helpers"
-	"github.com/kilianpaquier/craft/pkg/craft"
-	"github.com/kilianpaquier/craft/pkg/generate"
+	"github.com/kilianpaquier/craft/pkg/configuration/craft"
 	"github.com/kilianpaquier/craft/pkg/generate/parser"
 )
 
@@ -31,11 +30,11 @@ func TestLicense(t *testing.T) {
 	t.Run("error_remove_license", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		dest := filepath.Join(destdir, craft.License)
+		dest := filepath.Join(destdir, parser.FileLicense)
 		require.NoError(t, os.MkdirAll(filepath.Join(dest, "file.txt"), cfs.RwxRxRxRx))
 
 		// Act
-		err := parser.License(ctx, destdir, &generate.Metadata{})
+		err := parser.License(ctx, destdir, &craft.Config{})
 
 		// Assert
 		assert.ErrorContains(t, err, "remove 'LICENSE'")
@@ -44,10 +43,10 @@ func TestLicense(t *testing.T) {
 	t.Run("success_remove_no_license", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		dest := filepath.Join(destdir, craft.License)
+		dest := filepath.Join(destdir, parser.FileLicense)
 
 		// Act
-		err := parser.License(ctx, destdir, &generate.Metadata{})
+		err := parser.License(ctx, destdir, &craft.Config{})
 
 		// Assert
 		require.NoError(t, err)
@@ -57,13 +56,13 @@ func TestLicense(t *testing.T) {
 	t.Run("success_remove_license", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		dest := filepath.Join(destdir, craft.License)
+		dest := filepath.Join(destdir, parser.FileLicense)
 		file, err := os.Create(dest)
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
 		// Act
-		err = parser.License(ctx, destdir, &generate.Metadata{})
+		err = parser.License(ctx, destdir, &craft.Config{})
 
 		// Assert
 		require.NoError(t, err)
@@ -77,12 +76,10 @@ func TestLicense(t *testing.T) {
 			httpmock.NewStringResponder(http.StatusInternalServerError, "error message"))
 
 		destdir := t.TempDir()
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				License:     helpers.ToPtr("mit"),
-				Maintainers: []*craft.Maintainer{{Name: "name"}},
-			},
-			ProjectName: "craft",
+		config := craft.Config{
+			GitConfig:   craft.GitConfig{ProjectName: "craft"},
+			License:     helpers.ToPtr("mit"),
+			Maintainers: []*craft.Maintainer{{Name: "name"}},
 		}
 
 		// Act
@@ -100,14 +97,12 @@ func TestLicense(t *testing.T) {
 			httpmock.NewJsonResponderOrPanic(http.StatusOK, gitlab.LicenseTemplate{Content: "some content to appear in assert"}))
 
 		destdir := t.TempDir()
-		dest := filepath.Join(destdir, craft.License)
+		dest := filepath.Join(destdir, parser.FileLicense)
 
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				License:     helpers.ToPtr("mit"),
-				Maintainers: []*craft.Maintainer{{Name: "name"}},
-			},
-			ProjectName: "craft",
+		config := craft.Config{
+			GitConfig:   craft.GitConfig{ProjectName: "craft"},
+			License:     helpers.ToPtr("mit"),
+			Maintainers: []*craft.Maintainer{{Name: "name"}},
 		}
 
 		// Act
@@ -124,17 +119,15 @@ func TestLicense(t *testing.T) {
 	t.Run("success_license_already_exists", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()
-		dest := filepath.Join(destdir, craft.License)
+		dest := filepath.Join(destdir, parser.FileLicense)
 		file, err := os.Create(dest)
 		require.NoError(t, err)
 		require.NoError(t, file.Close())
 
-		config := generate.Metadata{
-			Configuration: craft.Configuration{
-				License:     helpers.ToPtr("mit"),
-				Maintainers: []*craft.Maintainer{{Name: "name"}},
-			},
-			ProjectName: "craft",
+		config := craft.Config{
+			GitConfig:   craft.GitConfig{ProjectName: "craft"},
+			License:     helpers.ToPtr("mit"),
+			Maintainers: []*craft.Maintainer{{Name: "name"}},
 		}
 
 		// Act
