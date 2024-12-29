@@ -5,18 +5,40 @@
 #############################
 FROM golang:1.23 AS build
 
+ARG CGO_ENABLED=0
+ARG GIT_BRANCH
+ARG GIT_COMMIT
+ARG VERSION=v0.0.0
+
 WORKDIR /app
 
 COPY . .
 
-# hadolint ignore=DL3059
-RUN go mod download
-# hadolint ignore=DL3059
-RUN CGO_ENABLED=0 go build -o cron-name cmd/cron-name/main.go
-# hadolint ignore=DL3059
-RUN CGO_ENABLED=0 go build -o job-name cmd/job-name/main.go
-# hadolint ignore=DL3059
-RUN CGO_ENABLED=0 go build -o worker-name cmd/worker-name/main.go
+RUN go mod download && \
+    CGO_ENABLED=$CGO_ENABLED go build \
+        -ldflags "\
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.branch=$GIT_BRANCH' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.commit=$GIT_COMMIT' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.version=$VERSION' \
+        " \
+        -o cron-name cmd/cron-name/main.go && \
+    CGO_ENABLED=$CGO_ENABLED go build \
+        -ldflags "\
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.branch=$GIT_BRANCH' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.commit=$GIT_COMMIT' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.version=$VERSION' \
+        " \
+        -o job-name cmd/job-name/main.go && \
+    CGO_ENABLED=$CGO_ENABLED go build \
+        -ldflags "\
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.branch=$GIT_BRANCH' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.commit=$GIT_COMMIT' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+            -X 'gitlab.com/kilianpaquier/craft/internal/build.version=$VERSION' \
+        " \
+        -o worker-name cmd/worker-name/main.go
 
 #############################
 #         STAGE RUN         #
@@ -28,9 +50,9 @@ LABEL org.opencontainers.image.vendor="kilianpaquier"
 
 LABEL org.opencontainers.image.title="craft"
 LABEL org.opencontainers.image.description="A useful project description"
-LABEL org.opencontainers.image.url="github.com/kilianpaquier/craft"
-LABEL org.opencontainers.image.source="github.com/kilianpaquier/craft"
-LABEL org.opencontainers.image.documentation="github.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.url="gitlab.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.source="gitlab.com/kilianpaquier/craft"
+LABEL org.opencontainers.image.documentation="gitlab.com/kilianpaquier/craft"
 
 WORKDIR /app
 

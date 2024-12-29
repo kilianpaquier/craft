@@ -1,6 +1,8 @@
 {{- define "golang" }}
+{{- $specifics := get .Languages "golang" }}
 
-GCI_CONFIG_PATH := .golangci.yml
+VERSION         ?= v0.0.0
+GOCI_LINT_PATH  ?= .golangci.yml
 
 .PHONY: reports
 reports:
@@ -8,7 +10,7 @@ reports:
 
 .PHONY: lint
 lint: reports
-	@golangci-lint run -c ${GCI_CONFIG_PATH} --timeout 240s --fast --sort-results \
+	@golangci-lint run -c ${GOCI_LINT_PATH} --timeout 240s --fast --sort-results \
 		--out-format checkstyle:reports/go-ci-lint.checkstyle.xml,colored-line-number $(ARGS) || \
 		echo "golangci-lint failed, running 'make lint-fix' may fix some issues"
 
@@ -38,10 +40,19 @@ buildall:{{ range $name, $config := $binaries }} build-{{ $name }}{{ end }}
 
 .PHONY:{{ range $name, $config := $binaries }} {{ $name }}{{ end }}
 build-%:
-	@CGO_ENABLED=0 go build -o $* cmd/$*/main.go
+	@[ -f "cmd/$*/main.go" ] || (echo "cmd/$*/main.go does not exist" && exit 1)
+	@CGO_ENABLED=0 go build \
+		-ldflags "\
+			-X '{{ $specifics.ModulePath }}/internal/build.branch=$(shell git rev-parse --abbrev-ref HEAD)' \
+			-X '{{ $specifics.ModulePath }}/internal/build.commit=$(shell git rev-parse HEAD)' \
+			-X '{{ $specifics.ModulePath }}/internal/build.date=$(shell TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+			-X '{{ $specifics.ModulePath }}/internal/build.version=${VERSION}' \
+		" \
+		-o $* cmd/$*/main.go
 
 .PHONY:{{ range $name, $config := $binaries }} {{ $name }}{{ end }}
 local-%:
+	@[ -f "cmd/$*/main.go" ] || (echo "cmd/$*/main.go does not exist" && exit 1)
 	@go run cmd/$*/main.go
 {{- end }}
 
@@ -49,6 +60,11 @@ local-%:
 
 .PHONY: build-docker
 build-docker:
-	@docker build -t {{ .ProjectName }} .
+	@docker build . \
+		-f Dockerfile \
+		-t {{ .ProjectName }}:${VERSION} \
+		--build-arg GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD) \
+		--build-arg GIT_COMMIT=$(shell git rev-parse HEAD) \
+		--build-arg VERSION=${VERSION}
 {{- end }}
 {{- end }}

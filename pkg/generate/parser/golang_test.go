@@ -84,10 +84,7 @@ func TestGolang(t *testing.T) {
 				Languages: map[string]any{
 					"golang": parser.Gomod{
 						LangVersion: "1.22",
-						Platform:    craft.GitHub,
-						ProjectHost: "github.com",
-						ProjectName: "craft",
-						ProjectPath: "kilianpaquier/craft",
+						ModulePath:  "github.com/kilianpaquier/craft",
 					},
 				},
 			},
@@ -186,10 +183,7 @@ func TestGolang(t *testing.T) {
 				Languages: map[string]any{
 					"golang": parser.Gomod{
 						LangVersion: "1.22.2",
-						Platform:    craft.GitHub,
-						ProjectHost: "github.com",
-						ProjectName: "craft",
-						ProjectPath: "kilianpaquier/craft",
+						ModulePath:  "github.com/kilianpaquier/craft/v2",
 					},
 				},
 				Workers: map[string]struct{}{"worker-name": {}},

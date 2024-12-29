@@ -10,8 +10,8 @@ include:
 
 variables:
 
-  GIT_AUTHOR_EMAIL: ${GITLAB_USER_EMAIL}
-  GIT_COMMITTER_EMAIL: ${GITLAB_USER_EMAIL}
+  GIT_AUTHOR_EMAIL: $GITLAB_USER_EMAIL
+  GIT_COMMITTER_EMAIL: $GITLAB_USER_EMAIL
 
   SEMREL_AUTO_RELEASE_ENABLED: $CI_COMMIT_REF_PROTECTED
   SEMREL_BRANCHES_REF: /^(master|main|v[0-9]+\.x|v[0-9]+\.[0-9]+\.x|next|alpha|beta|staging|dev|develop|development)$/
@@ -25,20 +25,20 @@ semantic-release-info:
   variables:
     GIT_DEPTH: "0"
   after_script:
-    - source "${SEMREL_CONFIG_DIR}/semrel.out.env" && rm "${SEMREL_CONFIG_DIR}/semrel.out.env"
+    - source "$SEMREL_CONFIG_DIR/semrel.out.env" && rm "$SEMREL_CONFIG_DIR/semrel.out.env"
     - >
-      echo "BRANCH_SHA=$(echo "$CI_COMMIT_REF_NAME" | sha256sum | cut -c -8)" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
+      echo "BRANCH_SHA=$(echo "$CI_COMMIT_REF_NAME" | sha256sum | cut -c -8)" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
 
       if [ "$SEMREL_INFO_NEXT_VERSION" != "" ]; then
-        echo "SEMREL_INFO_LAST_VERSION=v${SEMREL_INFO_LAST_VERSION#v}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
-        echo "SEMREL_INFO_NEXT_VERSION=v${SEMREL_INFO_NEXT_VERSION#v}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
-        echo "SEMREL_INFO_NEXT_VERSION_TYPE=${SEMREL_INFO_NEXT_VERSION_TYPE}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
+        echo "SEMREL_INFO_LAST_VERSION=v${SEMREL_INFO_LAST_VERSION#v}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
+        echo "SEMREL_INFO_NEXT_VERSION=v${SEMREL_INFO_NEXT_VERSION#v}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
+        echo "SEMREL_INFO_NEXT_VERSION_TYPE=${SEMREL_INFO_NEXT_VERSION_TYPE}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
       else
         DESCRIBE=$(git describe --tags || echo "v1.0.0")
-        echo "SEMREL_INFO_NEXT_VERSION=v${DESCRIBE#v}" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
-        echo "SEMREL_INFO_NEXT_VERSION_TYPE=build" >> "${SEMREL_CONFIG_DIR}/semrel.out.env"
+        echo "SEMREL_INFO_NEXT_VERSION=v${DESCRIBE#v}" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
+        echo "SEMREL_INFO_NEXT_VERSION_TYPE=build" >> "$SEMREL_CONFIG_DIR/semrel.out.env"
       fi
-    - cat "${SEMREL_CONFIG_DIR}/semrel.out.env"
+    - cat "$SEMREL_CONFIG_DIR/semrel.out.env"
 
 semantic-release:
   variables:

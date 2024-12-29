@@ -6,6 +6,8 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/kilianpaquier/cli-sdk/pkg/upgrade"
 	"github.com/spf13/cobra"
+
+	"github.com/kilianpaquier/craft/internal/build"
 )
 
 var (
@@ -26,7 +28,7 @@ var (
 				upgrade.WithPrereleases(prereleases),
 			}
 
-			version, err := upgrade.Run(cmd.Context(), "craft", version, upgrade.GithubReleases("kilianpaquier", "craft"), options...)
+			version, err := upgrade.Run(cmd.Context(), "craft", build.GetInfo().Version, upgrade.GithubReleases("kilianpaquier", "craft"), options...)
 			if err != nil {
 				switch {
 				case errors.Is(err, upgrade.ErrNoNewVersion):

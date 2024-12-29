@@ -39,16 +39,14 @@ if which craft >/dev/null; then
   exit $?
 fi
 
-OS="linux" # change it depending on our case
-ARCH="amd64" # change it depending on our case
+OS="linux" # change it depending on your case
+ARCH="amd64" # change it depending on your case
+INSTALL_DIR="$HOME/.local/bin" # change it depending on your case
 
-echo "installing craft"
 new_version=$(curl -fsSL "https://api.github.com/repos/kilianpaquier/craft/releases/latest" | jq -r '.tag_name')
-url="https://github.com/kilianpaquier/craft/releases/download/${new_version}/craft_${OS}_${ARCH}.tar.gz"
-curl -fsSL "$url" -o "/tmp/craft_${OS}_${ARCH}.tar.gz"
-mkdir -p "/tmp/craft/${new_version}"
-tar -xzf "/tmp/craft_${OS}_${ARCH}.tar.gz" -C "/tmp/craft/${new_version}"
-cp "/tmp/craft/${new_version}/craft" "${HOME}/.local/bin/craft"
+url="https://github.com/kilianpaquier/craft/releases/download/$new_version/craft_${OS}_${ARCH}.tar.gz"
+curl -fsSL "$url" | (mkdir -p "/tmp/craft/$new_version" && cd "/tmp/craft/$new_version" && tar -xz)
+cp "/tmp/craft/$new_version/craft" "$INSTALL_DIR/craft"
 ```
 
 ## Commands
@@ -210,24 +208,18 @@ platform: bitbucket | gitea | github | gitlab
 
 ### VSCode association and schema
 
-When working on vscode, feel free to use craft's schemas to help setup your project:
+When working on **vscode**, feel free to use craft's schemas to help setup your project:
 
 ```json
 {
     "files.associations": {
         ".craft": "yaml"
-    },
-    "yaml.schemas": {
-        "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/craft.schema.json": [
-            "**/.craft",
-            "!**/chart/.craft"
-        ],
-        "https://raw.githubusercontent.com/kilianpaquier/craft/main/.schemas/chart.schema.json": [
-            "**/chart/.craft"
-        ]
     }
 }
 ```
+
+It's only creating the association between yaml files and `.craft`, however combined with **vscode** extension **redhat.vscode-yaml**, 
+it will load the schema fine since a header is added in all `.craft` when written.
 
 ## Generations
 

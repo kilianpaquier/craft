@@ -34,15 +34,6 @@ var (
 
 var versionRegexp = regexp.MustCompile("^v[0-9]+$")
 
-// Gomod represents the parsed struct for go.mod file
-type Gomod struct {
-	LangVersion string
-	Platform    string
-	ProjectHost string
-	ProjectName string
-	ProjectPath string
-}
-
 // Golang handles the parsing of a golang repository at destdir.
 //
 // A valid golang project must have a valid go.mod file.
@@ -58,11 +49,7 @@ func Golang(ctx context.Context, destdir string, config *craft.Config) error {
 		}
 		return nil
 	}
-
-	config.Platform = statements.Platform
-	config.ProjectHost = statements.ProjectHost
-	config.ProjectName = statements.ProjectName
-	config.ProjectPath = statements.ProjectPath
+	config.GitConfig = statements.GitConfig() // replace all git properties with golang parsed ones
 
 	// check hugo repository
 	if ok := isHugo(ctx, destdir, config); ok {
@@ -113,6 +100,30 @@ func isHugo(ctx context.Context, destdir string, config *craft.Config) bool {
 	return false
 }
 
+// Gomod represents the parsed struct for go.mod file
+type Gomod struct {
+	LangVersion string
+	ModulePath  string
+}
+
+// GitConfig returns the git configuration associated to module statement in go.mod.
+func (g Gomod) GitConfig() craft.GitConfig {
+	sections := strings.Split(g.ModulePath, "/")
+	projectPath := func() string {
+		if versionRegexp.MatchString(sections[len(sections)-1]) {
+			return strings.Join(sections[1:len(sections)-1], "/") // retrieve all sections but the last element
+		}
+		return strings.Join(sections[1:], "/") // retrieve all sections
+	}()
+
+	return craft.GitConfig{
+		Platform:    func() string { p, _ := parsePlatform(sections[0]); return p }(),
+		ProjectHost: sections[0],
+		ProjectPath: projectPath,
+		ProjectName: path.Base(projectPath),
+	}
+}
+
 // readGomod reads the go.mod file at modpath input and returns its gomod representation.
 func readGomod(modpath string) (Gomod, error) {
 	// read go.mod at modpath
@@ -134,15 +145,7 @@ func readGomod(modpath string) (Gomod, error) {
 	if file.Module == nil || file.Module.Mod.Path == "" {
 		errs = append(errs, ErrMissingModuleStatement)
 	} else {
-		gomod.ProjectHost, gomod.ProjectPath = func() (host, subpath string) {
-			sections := strings.Split(file.Module.Mod.Path, "/")
-			if versionRegexp.MatchString(sections[len(sections)-1]) {
-				return sections[0], strings.Join(sections[1:len(sections)-1], "/") // retrieve all sections but the last element
-			}
-			return sections[0], strings.Join(sections[1:], "/") // retrieve all sections
-		}()
-		gomod.Platform, _ = parsePlatform(gomod.ProjectHost)
-		gomod.ProjectName = path.Base(gomod.ProjectPath)
+		gomod.ModulePath = file.Module.Mod.Path
 	}
 
 	// parse go statement

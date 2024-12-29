@@ -44,7 +44,7 @@ linters-settings:
     sections:
       - standard # Standard section: captures all standard packages.
       - default # Default section: contains all imports that could not be matched to another section type.
-      - prefix(github.com/kilianpaquier/craft) # Custom section: groups all imports with the specified Prefix.
+      - prefix(gitlab.com/kilianpaquier/craft) # Custom section: groups all imports with the specified Prefix.
 
   gocognit:
     # Minimal code complexity to report.

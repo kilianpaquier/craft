@@ -2,18 +2,15 @@ package cobra
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/kilianpaquier/craft/internal/build"
 )
 
-var (
-	// version is substituted with -ldflags
-	version = "v0.0.0"
-
-	versionCmd = &cobra.Command{
-		Use:   "version",
-		Short: "Show current craft version",
-		Run:   func(_ *cobra.Command, _ []string) { logger.Info(version) },
-	}
-)
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Show current craft version",
+	Run:   func(_ *cobra.Command, _ []string) { logger.Info(build.GetInfo()) },
+}
 
 func init() {
 	rootCmd.AddCommand(versionCmd)

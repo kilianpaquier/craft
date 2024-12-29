@@ -42,17 +42,19 @@ func Dependabot(src, _, name string) (generate.HandlerResult[craft.Config], bool
 
 // Docker is the handler for Docker files generation.
 func Docker(src, _, name string) (generate.HandlerResult[craft.Config], bool) {
+	if !slices.Contains([]string{"Dockerfile", ".dockerignore", "launcher.sh"}, name) {
+		return generate.HandlerResult[craft.Config]{}, false
+	}
+
 	result := generate.HandlerResult[craft.Config]{
-		Delimiter: generate.DelimiterBracket(),
-		Globs:     []string{src},
+		Delimiter:    generate.DelimiterBracket(),
+		Globs:        []string{src},
+		ShouldRemove: func(config craft.Config) bool { return config.Docker == nil || config.Binaries() == 0 },
 	}
 
 	switch name {
 	case "Dockerfile":
 		result.Globs = append(result.Globs, PartGlob(src, name))
-		result.ShouldRemove = func(config craft.Config) bool { return config.Docker == nil }
-	case ".dockerignore":
-		result.ShouldRemove = func(config craft.Config) bool { return config.Docker == nil }
 	case "launcher.sh":
 		// launcher.sh is a specific thing to golang being able to have multiple binaries inside a simple project (cmd folder)
 		// however, it may change in the future with python (or rust or others ?) depending on flexibility in repositories layout
@@ -60,8 +62,6 @@ func Docker(src, _, name string) (generate.HandlerResult[craft.Config], bool) {
 			_, ok := config.Languages["golang"]
 			return !ok || config.Docker == nil || config.Binaries() <= 1
 		}
-	default:
-		return generate.HandlerResult[craft.Config]{}, false
 	}
 	return result, true
 }

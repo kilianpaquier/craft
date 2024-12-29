@@ -129,16 +129,20 @@ func TestDocker(t *testing.T) {
 		assert.False(t, ok)
 	})
 
-	t.Run("success_dockerfile_remove", func(t *testing.T) {
-		// Arrange
-		result, ok := handler.Docker("", "", "Dockerfile")
-		require.True(t, ok)
+	t.Run("success_remove", func(t *testing.T) {
+		for _, src := range []string{"path/to/Dockerfile", "path/to/.dockerignore", "path/to/launcher.sh"} {
+			t.Run(path.Base(src), func(t *testing.T) {
+				// Arrange
+				result, ok := handler.Docker(src, "", path.Base(src))
+				require.True(t, ok)
 
-		// Act
-		ok = result.ShouldRemove(craft.Config{})
+				// Act
+				ok = result.ShouldRemove(craft.Config{})
 
-		// Assert
-		assert.True(t, ok)
+				// Assert
+				assert.True(t, ok)
+			})
+		}
 	})
 
 	t.Run("success_dockerfile_no_remove", func(t *testing.T) {
@@ -147,23 +151,14 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		globs := []string{"path/to/Dockerfile.tmpl", "path/to/Dockerfile-*.part.tmpl"}
-		config := craft.Config{Docker: &craft.Docker{}}
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"cli": {}}},
+			Docker:      &craft.Docker{},
+		}
 
 		// Act & Assert
 		assert.False(t, result.ShouldRemove(config))
 		assert.Equal(t, globs, result.Globs)
-	})
-
-	t.Run("success_dockerignore_remove", func(t *testing.T) {
-		// Arrange
-		result, ok := handler.Docker("", "", ".dockerignore")
-		require.True(t, ok)
-
-		// Act
-		ok = result.ShouldRemove(craft.Config{})
-
-		// Assert
-		assert.True(t, ok)
 	})
 
 	t.Run("success_dockerignore_no_remove", func(t *testing.T) {
@@ -171,25 +166,16 @@ func TestDocker(t *testing.T) {
 		result, ok := handler.Docker("", "", ".dockerignore")
 		require.True(t, ok)
 
-		config := craft.Config{Docker: &craft.Docker{}}
+		config := craft.Config{
+			FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"cli": {}}},
+			Docker:      &craft.Docker{},
+		}
 
 		// Act
 		ok = result.ShouldRemove(config)
 
 		// Assert
 		assert.False(t, ok)
-	})
-
-	t.Run("success_launcher_remove_no_docker", func(t *testing.T) {
-		// Arrange
-		result, ok := handler.Docker("", "", "launcher.sh")
-		require.True(t, ok)
-
-		// Act
-		ok = result.ShouldRemove(craft.Config{})
-
-		// Assert
-		assert.True(t, ok)
 	})
 
 	t.Run("success_launcher_remove_one_binary", func(t *testing.T) {

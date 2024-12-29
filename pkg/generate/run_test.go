@@ -152,7 +152,13 @@ func TestRun_Golang(t *testing.T) {
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetCLI("name")
-					config.SetLanguage("golang", nil)
+
+					gomod := parser.Gomod{
+						LangVersion: "1.23",
+						ModulePath:  ci + ".com/kilianpaquier/craft",
+					}
+					config.GitConfig = gomod.GitConfig()
+					config.SetLanguage("golang", gomod)
 					return nil
 				}
 
@@ -172,11 +178,17 @@ func TestRun_Golang(t *testing.T) {
 						Options: []string{craft.Sonar, craft.CodeQL, craft.Labeler},
 						Release: &craft.Release{},
 					},
-					NoChart:   true,
-					GitConfig: craft.GitConfig{Platform: ci},
+					NoChart:    true,
+					NoMakefile: true,
+					GitConfig:  craft.GitConfig{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
-					config.SetLanguage("golang", nil)
+					gomod := parser.Gomod{
+						LangVersion: "1.23",
+						ModulePath:  ci + ".com/kilianpaquier/craft",
+					}
+					config.GitConfig = gomod.GitConfig()
+					config.SetLanguage("golang", gomod)
 					return nil
 				}
 
@@ -197,14 +209,19 @@ func TestRun_Golang(t *testing.T) {
 					},
 					Description: helpers.ToPtr("A useful project description"),
 					Docker:      &craft.Docker{},
-					NoMakefile:  true,
 					GitConfig:   craft.GitConfig{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetJob("job-name")
 					config.SetCron("cron-name")
 					config.SetWorker("worker-name")
-					config.SetLanguage("golang", parser.Gomod{LangVersion: "1.23"})
+
+					gomod := parser.Gomod{
+						LangVersion: "1.23",
+						ModulePath:  ci + ".com/kilianpaquier/craft",
+					}
+					config.GitConfig = gomod.GitConfig()
+					config.SetLanguage("golang", gomod)
 					return nil
 				}
 

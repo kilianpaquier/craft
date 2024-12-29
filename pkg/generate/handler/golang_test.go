@@ -20,48 +20,49 @@ func TestGolang(t *testing.T) {
 		assert.False(t, ok)
 	})
 
-	t.Run("success_golang_goreleaser_remove_option", func(t *testing.T) {
-		// Arrange
-		result, ok := handler.Golang("", "", ".goreleaser.yml")
-		require.True(t, ok)
+	t.Run("success_golang_goreleaser_remove", func(t *testing.T) {
+		cases := []craft.Config{
+			{},
+			{NoGoreleaser: true},
+			{FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"name": {}}}},
+		}
+		for _, config := range cases {
+			t.Run("", func(t *testing.T) {
+				// Arrange
+				result, ok := handler.Golang("", "", ".goreleaser.yml")
+				require.True(t, ok)
 
-		config := craft.Config{NoGoreleaser: true}
+				// Act
+				ok = result.ShouldRemove(config)
 
-		// Act
-		ok = result.ShouldRemove(config)
-
-		// Assert
-		assert.True(t, ok)
+				// Assert
+				assert.True(t, ok)
+			})
+		}
 	})
 
-	t.Run("success_golang_goreleaser_remove_no_cli", func(t *testing.T) {
-		// Arrange
-		result, ok := handler.Golang("", "", ".goreleaser.yml")
-		require.True(t, ok)
+	t.Run("success_golang_gobuild_remove", func(t *testing.T) {
+		cases := []craft.Config{
+			{},
+			{FilesConfig: craft.FilesConfig{Languages: map[string]any{"golang": nil}}},
+		}
+		for _, config := range cases {
+			t.Run("", func(t *testing.T) {
+				// Arrange
+				result, ok := handler.Golang("", "", "build.go")
+				require.True(t, ok)
 
-		// Act
-		ok = result.ShouldRemove(craft.Config{})
+				// Act
+				ok = result.ShouldRemove(config)
 
-		// Assert
-		assert.True(t, ok)
-	})
-
-	t.Run("success_golang_goreleaser_remove_no_go", func(t *testing.T) {
-		// Arrange
-		result, ok := handler.Golang("", "", ".goreleaser.yml")
-		require.True(t, ok)
-
-		config := craft.Config{FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"name": {}}}}
-
-		// Act
-		ok = result.ShouldRemove(config)
-
-		// Assert
-		assert.True(t, ok)
+				// Assert
+				assert.True(t, ok)
+			})
+		}
 	})
 
 	t.Run("success_golang_files_no_remove", func(t *testing.T) {
-		for _, src := range []string{".golangci.yml", ".goreleaser.yml"} {
+		for _, src := range []string{".golangci.yml", ".goreleaser.yml", "build.go"} {
 			t.Run(path.Base(src), func(t *testing.T) {
 				// Arrange
 				result, ok := handler.Golang(src, "", path.Base(src))

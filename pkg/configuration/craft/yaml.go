@@ -1,6 +1,8 @@
 package craft
 
-import "github.com/goccy/go-yaml"
+import (
+	"github.com/goccy/go-yaml"
+)
 
 // EncodeOpts returns the options related to YAML encoding with goccy/go-yaml.
 func EncodeOpts() []yaml.EncodeOption {
@@ -9,7 +11,10 @@ func EncodeOpts() []yaml.EncodeOption {
 		yaml.IndentSequence(true),
 		yaml.WithComment(yaml.CommentMap{
 			"$": []*yaml.Comment{
-				yaml.HeadComment(" Craft configuration file (https://github.com/kilianpaquier/craft)\n---"),
+				yaml.HeadComment(
+					" Craft configuration file (https://github.com/kilianpaquier/craft)",
+					" yaml-language-server: $schema=https://raw.githubusercontent.com/kilianpaquier/craft/beta/.schemas/craft.schema.json",
+				),
 			},
 		}),
 	}
