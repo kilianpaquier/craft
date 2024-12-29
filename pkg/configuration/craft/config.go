@@ -6,7 +6,7 @@ import "slices"
 //
 // Note that yaml tags are for .craft file property keys and json tags for templating data.
 type Config struct {
-	FilesConfig `yaml:",inline"`
+	ConfigFiles `yaml:",inline"`
 
 	// Bot represents the name of the maintenance bot (renovate, dependabot, etc).
 	//
@@ -52,7 +52,7 @@ type Config struct {
 	// It's because Node projects contain all their scripts in package.json.
 	NoMakefile bool `json:"-" yaml:"no_makefile,omitempty"`
 
-	GitConfig `yaml:",inline"` // put at the end to get sorted properties (Platform especially) in written yaml file.
+	ConfigVCS `yaml:",inline"` // put at the end to get sorted properties (Platform especially) in written yaml file.
 }
 
 // Auth contains all authentication methods related to CI configuration.

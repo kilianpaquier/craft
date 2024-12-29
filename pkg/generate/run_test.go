@@ -78,7 +78,7 @@ func TestRun_NoLang(t *testing.T) {
 					CI:         &craft.CI{Name: ci},
 					License:    helpers.ToPtr("mit"),
 					NoMakefile: true,
-					GitConfig:  craft.GitConfig{Platform: ci},
+					ConfigVCS:  craft.ConfigVCS{Platform: ci},
 				}
 
 				// Act & Assert
@@ -96,7 +96,7 @@ func TestRun_NoLang(t *testing.T) {
 					CI:         &craft.CI{Name: ci},
 					NoChart:    true,
 					NoMakefile: true,
-					GitConfig:  craft.GitConfig{Platform: ci},
+					ConfigVCS:  craft.ConfigVCS{Platform: ci},
 				}
 
 				// Act & Assert
@@ -120,7 +120,7 @@ func TestRun_NoLang(t *testing.T) {
 					CI:         &ci,
 					NoChart:    true,
 					NoMakefile: true,
-					GitConfig:  craft.GitConfig{Platform: ci.Name},
+					ConfigVCS:  craft.ConfigVCS{Platform: ci.Name},
 				}
 
 				// Act & Assert
@@ -148,7 +148,7 @@ func TestRun_Golang(t *testing.T) {
 					Bot:       helpers.ToPtr(craft.Dependabot),
 					CI:        &craft.CI{Name: ci, Release: &craft.Release{}},
 					NoChart:   true,
-					GitConfig: craft.GitConfig{Platform: ci},
+					ConfigVCS: craft.ConfigVCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetCLI("name")
@@ -157,7 +157,7 @@ func TestRun_Golang(t *testing.T) {
 						LangVersion: "1.23",
 						ModulePath:  ci + ".com/kilianpaquier/craft",
 					}
-					config.GitConfig = gomod.GitConfig()
+					config.ConfigVCS = gomod.ConfigVCS()
 					config.SetLanguage("golang", gomod)
 					return nil
 				}
@@ -180,14 +180,14 @@ func TestRun_Golang(t *testing.T) {
 					},
 					NoChart:    true,
 					NoMakefile: true,
-					GitConfig:  craft.GitConfig{Platform: ci},
+					ConfigVCS:  craft.ConfigVCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
 					gomod := parser.Gomod{
 						LangVersion: "1.23",
 						ModulePath:  ci + ".com/kilianpaquier/craft",
 					}
-					config.GitConfig = gomod.GitConfig()
+					config.ConfigVCS = gomod.ConfigVCS()
 					config.SetLanguage("golang", gomod)
 					return nil
 				}
@@ -209,7 +209,7 @@ func TestRun_Golang(t *testing.T) {
 					},
 					Description: helpers.ToPtr("A useful project description"),
 					Docker:      &craft.Docker{},
-					GitConfig:   craft.GitConfig{Platform: ci},
+					ConfigVCS:   craft.ConfigVCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetJob("job-name")
@@ -220,7 +220,7 @@ func TestRun_Golang(t *testing.T) {
 						LangVersion: "1.23",
 						ModulePath:  ci + ".com/kilianpaquier/craft",
 					}
-					config.GitConfig = gomod.GitConfig()
+					config.ConfigVCS = gomod.ConfigVCS()
 					config.SetLanguage("golang", gomod)
 					return nil
 				}
@@ -260,7 +260,7 @@ func TestRun_Hugo(t *testing.T) {
 				CI:         &ci,
 				NoChart:    true,
 				NoMakefile: true,
-				GitConfig:  craft.GitConfig{Platform: ci.Name},
+				ConfigVCS:  craft.ConfigVCS{Platform: ci.Name},
 			}
 			hugo := func(_ context.Context, _ string, config *craft.Config) error {
 				config.SetLanguage("hugo", nil)
@@ -290,7 +290,7 @@ func TestRun_Node(t *testing.T) {
 				config := craft.Config{
 					CI:        &craft.CI{Name: craft.GitHub},
 					NoChart:   true,
-					GitConfig: craft.GitConfig{Platform: craft.GitHub},
+					ConfigVCS: craft.ConfigVCS{Platform: craft.GitHub},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetWorker("index.js")
@@ -316,7 +316,7 @@ func TestRun_Node(t *testing.T) {
 						Release: &craft.Release{Backmerge: true},
 					},
 					NoChart:   true,
-					GitConfig: craft.GitConfig{Platform: ci},
+					ConfigVCS: craft.ConfigVCS{Platform: ci},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetLanguage("node", parser.PackageJSON{Name: "craft", PackageManager: "bun@1.1.6"})
@@ -348,7 +348,7 @@ func TestRun_Node(t *testing.T) {
 					CI:         &ci,
 					NoChart:    true,
 					NoMakefile: true,
-					GitConfig:  craft.GitConfig{Platform: ci.Name},
+					ConfigVCS:  craft.ConfigVCS{Platform: ci.Name},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetWorker("index.js")

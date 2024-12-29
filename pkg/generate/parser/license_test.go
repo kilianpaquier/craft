@@ -77,7 +77,7 @@ func TestLicense(t *testing.T) {
 
 		destdir := t.TempDir()
 		config := craft.Config{
-			GitConfig:   craft.GitConfig{ProjectName: "craft"},
+			ConfigVCS:   craft.ConfigVCS{ProjectName: "craft"},
 			License:     helpers.ToPtr("mit"),
 			Maintainers: []*craft.Maintainer{{Name: "name"}},
 		}
@@ -100,7 +100,7 @@ func TestLicense(t *testing.T) {
 		dest := filepath.Join(destdir, parser.FileLicense)
 
 		config := craft.Config{
-			GitConfig:   craft.GitConfig{ProjectName: "craft"},
+			ConfigVCS:   craft.ConfigVCS{ProjectName: "craft"},
 			License:     helpers.ToPtr("mit"),
 			Maintainers: []*craft.Maintainer{{Name: "name"}},
 		}
@@ -125,7 +125,7 @@ func TestLicense(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		config := craft.Config{
-			GitConfig:   craft.GitConfig{ProjectName: "craft"},
+			ConfigVCS:   craft.ConfigVCS{ProjectName: "craft"},
 			License:     helpers.ToPtr("mit"),
 			Maintainers: []*craft.Maintainer{{Name: "name"}},
 		}

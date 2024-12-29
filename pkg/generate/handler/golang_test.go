@@ -24,7 +24,7 @@ func TestGolang(t *testing.T) {
 		cases := []craft.Config{
 			{},
 			{NoGoreleaser: true},
-			{FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"name": {}}}},
+			{ConfigFiles: craft.ConfigFiles{Clis: map[string]struct{}{"name": {}}}},
 		}
 		for _, config := range cases {
 			t.Run("", func(t *testing.T) {
@@ -44,7 +44,7 @@ func TestGolang(t *testing.T) {
 	t.Run("success_golang_gobuild_remove", func(t *testing.T) {
 		cases := []craft.Config{
 			{},
-			{FilesConfig: craft.FilesConfig{Languages: map[string]any{"golang": nil}}},
+			{ConfigFiles: craft.ConfigFiles{Languages: map[string]any{"golang": nil}}},
 		}
 		for _, config := range cases {
 			t.Run("", func(t *testing.T) {
@@ -69,7 +69,7 @@ func TestGolang(t *testing.T) {
 				require.True(t, ok)
 
 				config := craft.Config{
-					FilesConfig: craft.FilesConfig{
+					ConfigFiles: craft.ConfigFiles{
 						Clis:      map[string]struct{}{"name": {}},
 						Languages: map[string]any{"golang": nil},
 					},

@@ -96,7 +96,7 @@ func TestDependabot(t *testing.T) {
 
 	t.Run("success_dependabot_remove_option", func(t *testing.T) {
 		// Arrange
-		config := craft.Config{GitConfig: craft.GitConfig{Platform: craft.GitHub}}
+		config := craft.Config{ConfigVCS: craft.ConfigVCS{Platform: craft.GitHub}}
 
 		// Act
 		ok := result.ShouldRemove(config)
@@ -109,7 +109,7 @@ func TestDependabot(t *testing.T) {
 		// Arrange
 		config := craft.Config{
 			Bot:       helpers.ToPtr(craft.Dependabot),
-			GitConfig: craft.GitConfig{Platform: craft.GitHub},
+			ConfigVCS: craft.ConfigVCS{Platform: craft.GitHub},
 		}
 
 		// Act
@@ -152,7 +152,7 @@ func TestDocker(t *testing.T) {
 
 		globs := []string{"path/to/Dockerfile.tmpl", "path/to/Dockerfile-*.part.tmpl"}
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"cli": {}}},
+			ConfigFiles: craft.ConfigFiles{Clis: map[string]struct{}{"cli": {}}},
 			Docker:      &craft.Docker{},
 		}
 
@@ -167,7 +167,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{Clis: map[string]struct{}{"cli": {}}},
+			ConfigFiles: craft.ConfigFiles{Clis: map[string]struct{}{"cli": {}}},
 			Docker:      &craft.Docker{},
 		}
 
@@ -184,7 +184,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{Workers: map[string]struct{}{"worker": {}}},
+			ConfigFiles: craft.ConfigFiles{Workers: map[string]struct{}{"worker": {}}},
 			Docker:      &craft.Docker{},
 		}
 
@@ -201,7 +201,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{
+			ConfigFiles: craft.ConfigFiles{
 				Crons:   map[string]struct{}{"cron": {}},
 				Workers: map[string]struct{}{"worker": {}},
 			},
@@ -221,7 +221,7 @@ func TestDocker(t *testing.T) {
 		require.True(t, ok)
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{
+			ConfigFiles: craft.ConfigFiles{
 				Clis:      map[string]struct{}{"cli": {}},
 				Jobs:      map[string]struct{}{"job": {}},
 				Languages: map[string]any{"golang": nil},
@@ -284,7 +284,7 @@ func TestMakefile(t *testing.T) {
 		result, ok := handler.Makefile("Makefile", "", "Makefile")
 		require.True(t, ok)
 
-		config := craft.Config{FilesConfig: craft.FilesConfig{Languages: map[string]any{"node": nil}}}
+		config := craft.Config{ConfigFiles: craft.ConfigFiles{Languages: map[string]any{"node": nil}}}
 
 		// Act
 		ok = result.ShouldRemove(config)

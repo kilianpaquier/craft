@@ -17,7 +17,7 @@ func TestGit(t *testing.T) {
 		// Arrange
 		config := &craft.Config{}
 		expected := &craft.Config{
-			GitConfig: craft.GitConfig{
+			ConfigVCS: craft.ConfigVCS{
 				ProjectHost: "github.com",
 				ProjectName: "craft",
 				ProjectPath: "kilianpaquier/craft",

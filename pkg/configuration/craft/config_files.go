@@ -1,13 +1,13 @@
 package craft
 
-// FilesConfig structure contains all properties related
+// ConfigFiles structure contains all properties related
 // to files layout in a given project (languages, clis, cronjobs, jobs, workers, etc.).
 //
 // It's used in a composition with craft.Configuration.
 //
 // However, in case of a custom configuration (since generate and initialize packages can handle this),
-// FilesConfig can be reused in another composition.
-type FilesConfig struct {
+// ConfigFiles can be reused in another composition.
+type ConfigFiles struct {
 	// Languages is a map of languages name with its specificities.
 	Languages map[string]any `json:"-" yaml:"-"`
 
@@ -25,12 +25,12 @@ type FilesConfig struct {
 }
 
 // Binaries returns the sum of all executables (clis, cronjobs, jobs, workers).
-func (g FilesConfig) Binaries() int {
+func (g ConfigFiles) Binaries() int {
 	return len(g.Clis) + len(g.Crons) + len(g.Jobs) + len(g.Workers)
 }
 
 // SetLanguage sets a language with its specificities.
-func (g *FilesConfig) SetLanguage(name string, value any) {
+func (g *ConfigFiles) SetLanguage(name string, value any) {
 	if g.Languages == nil {
 		g.Languages = map[string]any{}
 	}
@@ -38,7 +38,7 @@ func (g *FilesConfig) SetLanguage(name string, value any) {
 }
 
 // SetCLI sets a CLI with its name.
-func (g *FilesConfig) SetCLI(name string) {
+func (g *ConfigFiles) SetCLI(name string) {
 	if g.Clis == nil {
 		g.Clis = map[string]struct{}{}
 	}
@@ -46,7 +46,7 @@ func (g *FilesConfig) SetCLI(name string) {
 }
 
 // SetCron sets a cronjob with its name.
-func (g *FilesConfig) SetCron(name string) {
+func (g *ConfigFiles) SetCron(name string) {
 	if g.Crons == nil {
 		g.Crons = map[string]struct{}{}
 	}
@@ -54,7 +54,7 @@ func (g *FilesConfig) SetCron(name string) {
 }
 
 // SetJob sets a job with its name.
-func (g *FilesConfig) SetJob(name string) {
+func (g *ConfigFiles) SetJob(name string) {
 	if g.Jobs == nil {
 		g.Jobs = map[string]struct{}{}
 	}
@@ -62,7 +62,7 @@ func (g *FilesConfig) SetJob(name string) {
 }
 
 // SetWorker sets a worker with its name.
-func (g *FilesConfig) SetWorker(name string) {
+func (g *ConfigFiles) SetWorker(name string) {
 	if g.Workers == nil {
 		g.Workers = map[string]struct{}{}
 	}

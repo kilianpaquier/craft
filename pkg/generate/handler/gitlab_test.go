@@ -62,7 +62,7 @@ func TestGitLab(t *testing.T) {
 		result, ok := handler.GitLab(".gitlab/config.yml", "", "config.yml")
 		require.True(t, ok)
 
-		config := craft.Config{GitConfig: craft.GitConfig{Platform: craft.GitLab}}
+		config := craft.Config{ConfigVCS: craft.ConfigVCS{Platform: craft.GitLab}}
 
 		// Act
 		ok = result.ShouldRemove(config)

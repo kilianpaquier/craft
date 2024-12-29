@@ -78,9 +78,9 @@ func TestGolang(t *testing.T) {
 		), cfs.RwRR)
 		require.NoError(t, err)
 
-		config := craft.Config{FilesConfig: craft.FilesConfig{Languages: map[string]any{}}}
+		config := craft.Config{ConfigFiles: craft.ConfigFiles{Languages: map[string]any{}}}
 		expected := craft.Config{
-			FilesConfig: craft.FilesConfig{
+			ConfigFiles: craft.ConfigFiles{
 				Languages: map[string]any{
 					"golang": parser.Gomod{
 						LangVersion: "1.22",
@@ -88,7 +88,7 @@ func TestGolang(t *testing.T) {
 					},
 				},
 			},
-			GitConfig: craft.GitConfig{
+			ConfigVCS: craft.ConfigVCS{
 				ProjectHost: "github.com",
 				ProjectName: "craft",
 				ProjectPath: "kilianpaquier/craft",
@@ -121,11 +121,11 @@ func TestGolang(t *testing.T) {
 		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{Languages: map[string]any{}},
+			ConfigFiles: craft.ConfigFiles{Languages: map[string]any{}},
 		}
 		expected := craft.Config{
-			FilesConfig: craft.FilesConfig{Languages: map[string]any{"hugo": nil}},
-			GitConfig: craft.GitConfig{
+			ConfigFiles: craft.ConfigFiles{Languages: map[string]any{"hugo": nil}},
+			ConfigVCS: craft.ConfigVCS{
 				ProjectHost: "github.com",
 				ProjectName: "craft",
 				ProjectPath: "kilianpaquier/craft",
@@ -167,7 +167,7 @@ func TestGolang(t *testing.T) {
 		}
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{
+			ConfigFiles: craft.ConfigFiles{
 				Languages: map[string]any{},
 				Clis:      map[string]struct{}{},
 				Crons:     map[string]struct{}{},
@@ -176,7 +176,7 @@ func TestGolang(t *testing.T) {
 			},
 		}
 		expected := craft.Config{
-			FilesConfig: craft.FilesConfig{
+			ConfigFiles: craft.ConfigFiles{
 				Clis:  map[string]struct{}{"cli-name": {}},
 				Crons: map[string]struct{}{"cron-name": {}},
 				Jobs:  map[string]struct{}{"job-name": {}},
@@ -188,7 +188,7 @@ func TestGolang(t *testing.T) {
 				},
 				Workers: map[string]struct{}{"worker-name": {}},
 			},
-			GitConfig: craft.GitConfig{
+			ConfigVCS: craft.ConfigVCS{
 				ProjectHost: "github.com",
 				ProjectName: "craft",
 				ProjectPath: "kilianpaquier/craft",

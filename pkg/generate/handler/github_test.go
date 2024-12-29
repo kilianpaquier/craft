@@ -81,7 +81,7 @@ func TestGitHub(t *testing.T) {
 		require.True(t, ok)
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{Languages: map[string]any{"golang": nil}},
+			ConfigFiles: craft.ConfigFiles{Languages: map[string]any{"golang": nil}},
 			CI:          &craft.CI{Name: craft.GitHub},
 		}
 
@@ -97,7 +97,7 @@ func TestGitHub(t *testing.T) {
 			{CI: &craft.CI{Name: craft.GitHub, Release: &craft.Release{}}},
 			{
 				CI:          &craft.CI{Name: craft.GitHub},
-				FilesConfig: craft.FilesConfig{Languages: map[string]any{"go": nil}},
+				ConfigFiles: craft.ConfigFiles{Languages: map[string]any{"go": nil}},
 			},
 		}
 		for i, config := range configs {
@@ -120,7 +120,7 @@ func TestGitHub(t *testing.T) {
 		result, ok := handler.GitHub(".github/file.yml", "", "file.yml")
 		require.True(t, ok)
 
-		config := craft.Config{GitConfig: craft.GitConfig{Platform: craft.GitHub}}
+		config := craft.Config{ConfigVCS: craft.ConfigVCS{Platform: craft.GitHub}}
 
 		// Act
 		ok = result.ShouldRemove(config)

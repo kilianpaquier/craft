@@ -65,9 +65,9 @@ func TestNode(t *testing.T) {
 		err := os.WriteFile(packagejson, []byte(`{ "name": "craft", "main": "index.js", "packageManager": "bun@1.1.6", "private": true }`), cfs.RwRR)
 		require.NoError(t, err)
 
-		config := craft.Config{FilesConfig: craft.FilesConfig{Languages: map[string]any{}}}
+		config := craft.Config{ConfigFiles: craft.ConfigFiles{Languages: map[string]any{}}}
 		expected := craft.Config{
-			FilesConfig: craft.FilesConfig{
+			ConfigFiles: craft.ConfigFiles{
 				Workers: map[string]struct{}{"main": {}},
 				Languages: map[string]any{
 					"node": parser.PackageJSON{
@@ -78,7 +78,7 @@ func TestNode(t *testing.T) {
 					},
 				},
 			},
-			GitConfig: craft.GitConfig{ProjectName: "craft"},
+			ConfigVCS: craft.ConfigVCS{ProjectName: "craft"},
 		}
 
 		// Act

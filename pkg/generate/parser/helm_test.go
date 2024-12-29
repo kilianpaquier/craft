@@ -67,7 +67,7 @@ func TestHelm(t *testing.T) {
 		require.NoError(t, err)
 
 		config := craft.Config{
-			FilesConfig: craft.FilesConfig{
+			ConfigFiles: craft.ConfigFiles{
 				Languages: map[string]any{},
 				Clis:      map[string]struct{}{"cli-name": {}},
 				Crons:     map[string]struct{}{"cron-name": {}},

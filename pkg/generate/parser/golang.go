@@ -49,7 +49,7 @@ func Golang(ctx context.Context, destdir string, config *craft.Config) error {
 		}
 		return nil
 	}
-	config.GitConfig = statements.GitConfig() // replace all git properties with golang parsed ones
+	config.ConfigVCS = statements.ConfigVCS() // replace all git properties with golang parsed ones
 
 	// check hugo repository
 	if ok := isHugo(ctx, destdir, config); ok {
@@ -106,8 +106,8 @@ type Gomod struct {
 	ModulePath  string
 }
 
-// GitConfig returns the git configuration associated to module statement in go.mod.
-func (g Gomod) GitConfig() craft.GitConfig {
+// ConfigVCS returns the vcs configuration associated to module statement in go.mod.
+func (g Gomod) ConfigVCS() craft.ConfigVCS {
 	sections := strings.Split(g.ModulePath, "/")
 	projectPath := func() string {
 		if versionRegexp.MatchString(sections[len(sections)-1]) {
@@ -116,7 +116,7 @@ func (g Gomod) GitConfig() craft.GitConfig {
 		return strings.Join(sections[1:], "/") // retrieve all sections
 	}()
 
-	return craft.GitConfig{
+	return craft.ConfigVCS{
 		Platform:    func() string { p, _ := parsePlatform(sections[0]); return p }(),
 		ProjectHost: sections[0],
 		ProjectPath: projectPath,
