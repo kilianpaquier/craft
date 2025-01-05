@@ -15,8 +15,9 @@
   - [Go](#go)
   - [Linux](#linux)
 - [Commands](#commands)
+  - [Init](#init)
   - [Generate](#generate)
-  - [Upgrade](#upgrade)
+  - [Chart](#chart)
 - [Craft file](#craft-file)
   - [VSCode association and schema](#vscode-association-and-schema)
 - [Generations](#generations)
@@ -34,11 +35,6 @@ go install github.com/kilianpaquier/craft/cmd/craft@latest
 ### Linux
 
 ```sh
-if which craft >/dev/null; then
-  craft upgrade
-  exit $?
-fi
-
 OS="linux" # change it depending on your case
 ARCH="amd64" # change it depending on your case
 INSTALL_DIR="$HOME/.local/bin" # change it depending on your case
@@ -52,15 +48,22 @@ cp "/tmp/craft/$new_version/craft" "$INSTALL_DIR/craft"
 ## Commands
 
 ```
+Craft initializes or generates craft projects. Craft projects are only defined by a .craft file 
+and multiple files automatically generated to avoid multiple hours to setup Continuous Integration, coverage, security analyses, helm chart, etc.
+
+Craft generation can be done with 'craft' command or 'craft generate' command.
+Additional generation command are available to generate only subparts of craft layout (like 'craft chart').
+
 Usage:
+  craft [flags]
   craft [command]
 
 Available Commands:
+  chart       Generate project layout's helm chart
   completion  Generate the autocompletion script for the specified shell
-  generate    Generate the project layout
+  generate    Generate project layout
   help        Help about any command
-  init        Initialize a project layout
-  upgrade     Upgrade or install craft
+  init        Initialize craft project
   version     Show current craft version
 
 Flags:
@@ -71,36 +74,48 @@ Flags:
 Use "craft [command] --help" for more information about a command.
 ```
 
-### Generate
+### Init
 
 ```
-Generate the project layout
+Initialize new craft project
 
 Usage:
-  craft generate [flags]
+  craft init [flags]
 
 Flags:
-  -h, --help            help for generate
+  -h, --help   help for init
 
 Global Flags:
       --log-format string   set logging format (either "text" or "json") (default "text")
       --log-level string    set logging level (default "info")
 ```
 
-### Upgrade
+### Generate
 
 ```
-Upgrade or install craft
+Generate project layout
 
 Usage:
-  craft upgrade [flags]
+  craft generate [flags]
 
 Flags:
-      --dest string    destination directory where craft will be upgraded / installed (by default "${HOME}/.local/bin")
-  -h, --help           help for upgrade
-      --major string   which major version to upgrade / install (must be of the form "v1", "v2", etc.) - mutually exclusive with --minor option
-      --minor string   which minor version to upgrade / install (must be of the form "v1.5", "v2.4", etc.) - mutually exclusive with --major option
-      --prereleases    whether prereleases are accepted for installation or not
+  -h, --help   help for generate
+
+Global Flags:
+      --log-format string   set logging format (either "text" or "json") (default "text")
+      --log-level string    set logging level (default "info")
+```
+
+### Chart
+
+```
+Generate project layout's helm chart
+
+Usage:
+  craft chart [flags]
+
+Flags:
+  -h, --help   help for chart
 
 Global Flags:
       --log-format string   set logging format (either "text" or "json") (default "text")

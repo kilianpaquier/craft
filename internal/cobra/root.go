@@ -16,9 +16,16 @@ var (
 	logLevel  = "info"
 	logFormat = "text"
 	rootCmd   = &cobra.Command{
-		Use:               "craft",
+		Use:   "craft",
+		Short: generateCmd.Short,
+		Long: `Craft initializes or generates craft projects. Craft projects are only defined by a .craft file 
+and multiple files automatically generated to avoid multiple hours to setup Continuous Integration, coverage, security analyzes, helm chart, etc.
+
+Craft generation can be done with 'craft' command or 'craft generate' command.
+Additional generation command are available to generate only subparts of craft layout (like 'craft chart').`,
 		SilenceErrors:     true, // don't print errors with cobra, let logger.Fatal handle them
 		PersistentPreRunE: func(_ *cobra.Command, _ []string) error { return preRun() },
+		Run:               generateCmd.Run,
 	}
 )
 
