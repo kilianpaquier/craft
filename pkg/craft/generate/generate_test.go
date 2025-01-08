@@ -10,7 +10,7 @@ import (
 
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/jarcoal/httpmock"
-	"github.com/kilianpaquier/cli-sdk/pkg/cfs/tests"
+	compare "github.com/kilianpaquier/compare/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -333,5 +333,5 @@ func test(ctx context.Context, t *testing.T, config craft.Config, parsers ...eng
 
 	// Assert
 	require.NoError(t, err)
-	assert.NoError(t, tests.EqualDirs(assertdir, destdir))
+	assert.NoError(t, compare.Dirs(assertdir, destdir))
 }
