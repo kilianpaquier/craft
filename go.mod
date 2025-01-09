@@ -12,11 +12,11 @@ require (
 	github.com/goccy/go-yaml v1.15.13
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/jarcoal/httpmock v1.3.1
-	github.com/kilianpaquier/compare v0.0.0-20250108202252-9bd8b3fa1c9e
+	github.com/kilianpaquier/compare v1.0.0
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.1
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
-	gitlab.com/gitlab-org/api/client-go v0.118.0
+	gitlab.com/gitlab-org/api/client-go v0.119.0
 	golang.org/x/mod v0.22.0
 	golang.org/x/text v0.21.0
 )
@@ -30,7 +30,7 @@ require (
 	github.com/charmbracelet/bubbles v0.20.0 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
 	github.com/charmbracelet/x/ansi v0.6.0 // indirect
-	github.com/charmbracelet/x/exp/strings v0.0.0-20241220083205-e9f42afc4e49 // indirect
+	github.com/charmbracelet/x/exp/strings v0.0.0-20250109123447-9d5df1da7993 // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -57,12 +57,12 @@ require (
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
-	golang.org/x/oauth2 v0.24.0 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
+	golang.org/x/oauth2 v0.25.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/time v0.8.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/time v0.9.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
