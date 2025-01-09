@@ -13,7 +13,7 @@
 FROM golang:{{ $specifics.LangVersion }} AS build
 
 ARG CGO_ENABLED=0
-ARG GIT_BRANCH
+ARG GIT_REF_NAME
 ARG GIT_COMMIT
 ARG VERSION=v0.0.0
 
@@ -24,7 +24,7 @@ COPY . .
 RUN go mod download{{ range $name, $config := $binaries }} && \
     CGO_ENABLED=$CGO_ENABLED go build \
         -ldflags "\
-            -X '{{ $specifics.ModulePath }}/internal/build.branch=$GIT_BRANCH' \
+            -X '{{ $specifics.ModulePath }}/internal/build.branch=$GIT_REF_NAME' \
             -X '{{ $specifics.ModulePath }}/internal/build.commit=$GIT_COMMIT' \
             -X '{{ $specifics.ModulePath }}/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
             -X '{{ $specifics.ModulePath }}/internal/build.version=$VERSION' \

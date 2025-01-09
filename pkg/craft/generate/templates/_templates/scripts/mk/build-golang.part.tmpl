@@ -1,8 +1,10 @@
 {{- define "golang" }}
 {{- $specifics := get .Languages "golang" }}
 
-VERSION         ?= v0.0.0
 GOCI_LINT_PATH  ?= .golangci.yml
+{{- if gt .Binaries 0 }}
+VERSION         ?= v0.0.0
+{{- end }}
 
 .PHONY: reports
 reports:
@@ -33,7 +35,23 @@ test-cover: reports
 {{- $binaries := dict }}
 {{- $_ := map $binaries .Clis .Crons .Jobs .Workers }}
 
-{{- if gt .Binaries 0 }}
+{{- if eq .Binaries 1 }}
+{{- $binary := "" }}
+{{- range $name, $config := $binaries }}{{ $binary = $name }}{{ end }}
+
+.PHONY: build
+build:
+	@CGO_ENABLED=0 go build \
+		-ldflags "\
+			-X '{{ $specifics.ModulePath }}/internal/build.branch=$(shell git rev-parse --abbrev-ref HEAD)' \
+			-X '{{ $specifics.ModulePath }}/internal/build.commit=$(shell git rev-parse HEAD)' \
+			-X '{{ $specifics.ModulePath }}/internal/build.date=$(shell TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+			-X '{{ $specifics.ModulePath }}/internal/build.version=${VERSION}' \
+		" \
+		-o {{ $binary }} cmd/{{ $binary }}/main.go
+{{- end }}
+
+{{- if gt .Binaries 1 }}
 
 .PHONY: buildall
 buildall:{{ range $name, $config := $binaries }} build-{{ $name }}{{ end }}
@@ -58,12 +76,12 @@ local-%:
 
 {{- if .Docker }}
 
-.PHONY: build-docker
-build-docker:
+.PHONY: docker
+docker:
 	@docker build . \
 		-f Dockerfile \
 		-t {{ .ProjectName }}:${VERSION} \
-		--build-arg GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD) \
+		--build-arg GIT_REF_NAME=$(shell git rev-parse --abbrev-ref HEAD) \
 		--build-arg GIT_COMMIT=$(shell git rev-parse HEAD) \
 		--build-arg VERSION=${VERSION}
 {{- end }}

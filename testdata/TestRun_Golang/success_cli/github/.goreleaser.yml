@@ -7,9 +7,9 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -X github.com/kilianpaquier/craft/internal/build.date={{ .CommitDate }}
       - -X github.com/kilianpaquier/craft/internal/build.branch={{ .Branch }}
       - -X github.com/kilianpaquier/craft/internal/build.commit={{ .Commit }}
+      - -X github.com/kilianpaquier/craft/internal/build.date={{ .CommitDate }}
       - -X github.com/kilianpaquier/craft/internal/build.version={{ .Env.VERSION }}
     goos:
       - linux

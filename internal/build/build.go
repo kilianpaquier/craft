@@ -18,13 +18,16 @@ var (
 // Info contains all build information.
 type Info struct {
 	// Branch is build branch.
-	Branch string `json:"branch,omitempty" yaml:"-"`
+	Branch string
+
 	// Commit is build specific commit hash (or sha).
-	Commit string `json:"commit,omitempty" yaml:"-"`
+	Commit string
+
 	// Date is the build date.
-	Date time.Time `json:"date,omitempty" yaml:"-"`
+	Date time.Time
+
 	// Version is the build version.
-	Version string `json:"version,omitempty" yaml:"-"`
+	Version string
 }
 
 var _ fmt.Stringer = (*Info)(nil) // ensure interface is implemented

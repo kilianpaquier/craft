@@ -6,7 +6,7 @@
 FROM golang:1.23 AS build
 
 ARG CGO_ENABLED=0
-ARG GIT_BRANCH
+ARG GIT_REF_NAME
 ARG GIT_COMMIT
 ARG VERSION=v0.0.0
 
@@ -17,7 +17,7 @@ COPY . .
 RUN go mod download && \
     CGO_ENABLED=$CGO_ENABLED go build \
         -ldflags "\
-            -X 'github.com/kilianpaquier/craft/internal/build.branch=$GIT_BRANCH' \
+            -X 'github.com/kilianpaquier/craft/internal/build.branch=$GIT_REF_NAME' \
             -X 'github.com/kilianpaquier/craft/internal/build.commit=$GIT_COMMIT' \
             -X 'github.com/kilianpaquier/craft/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
             -X 'github.com/kilianpaquier/craft/internal/build.version=$VERSION' \
@@ -25,7 +25,7 @@ RUN go mod download && \
         -o cron-name cmd/cron-name/main.go && \
     CGO_ENABLED=$CGO_ENABLED go build \
         -ldflags "\
-            -X 'github.com/kilianpaquier/craft/internal/build.branch=$GIT_BRANCH' \
+            -X 'github.com/kilianpaquier/craft/internal/build.branch=$GIT_REF_NAME' \
             -X 'github.com/kilianpaquier/craft/internal/build.commit=$GIT_COMMIT' \
             -X 'github.com/kilianpaquier/craft/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
             -X 'github.com/kilianpaquier/craft/internal/build.version=$VERSION' \
@@ -33,7 +33,7 @@ RUN go mod download && \
         -o job-name cmd/job-name/main.go && \
     CGO_ENABLED=$CGO_ENABLED go build \
         -ldflags "\
-            -X 'github.com/kilianpaquier/craft/internal/build.branch=$GIT_BRANCH' \
+            -X 'github.com/kilianpaquier/craft/internal/build.branch=$GIT_REF_NAME' \
             -X 'github.com/kilianpaquier/craft/internal/build.commit=$GIT_COMMIT' \
             -X 'github.com/kilianpaquier/craft/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
             -X 'github.com/kilianpaquier/craft/internal/build.version=$VERSION' \

@@ -23,7 +23,7 @@ variables:
   DOCKER_HEALTHCHECK_DISABLED: "true" # https://docs.docker.com/reference/dockerfile/#healthcheck
   DOCKER_KANIKO_IMAGE: "gcr.io/kaniko-project/executor:debug"
   DOCKER_METADATA: |
-    --build-arg GIT_BRANCH=$CI_COMMIT_REF_NAME
+    --build-arg GIT_REF_NAME=$CI_COMMIT_REF_NAME
     --build-arg GIT_COMMIT=$CI_COMMIT_SHA
     --build-arg VERSION=$SEMREL_INFO_NEXT_VERSION
     --label org.opencontainers.image.created=$CI_JOB_STARTED_AT

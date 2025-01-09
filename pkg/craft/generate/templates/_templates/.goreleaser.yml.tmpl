@@ -10,9 +10,9 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -X << $specifics.ModulePath >>/internal/build.date={{ .CommitDate }}
       - -X << $specifics.ModulePath >>/internal/build.branch={{ .Branch }}
       - -X << $specifics.ModulePath >>/internal/build.commit={{ .Commit }}
+      - -X << $specifics.ModulePath >>/internal/build.date={{ .CommitDate }}
       - -X << $specifics.ModulePath >>/internal/build.version={{ .Env.VERSION }}
     goos:
       - linux

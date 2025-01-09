@@ -253,6 +253,7 @@ Multiple examples:
 
 ## Who is using craft ?
 
+- https://github.com/kilianpaquier/compare (Golang library)
 - https://github.com/kilianpaquier/craft (Golang CLI with executables as artifacts in releases)
 - https://github.com/kilianpaquier/gitlab-storage-cleaner (Golang CLI with Docker deployment and executables as artifacts in releases)
 - https://github.com/kilianpaquier/go-builder-generator (Golang CLI with executables as artifacts in releases)
