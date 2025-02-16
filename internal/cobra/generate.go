@@ -1,6 +1,7 @@
 package cobra
 
 import (
+	"net/http"
 	"os"
 	"path/filepath"
 	"slices"
@@ -15,7 +16,7 @@ import (
 	"github.com/kilianpaquier/craft/pkg/engine/files"
 )
 
-func gen(opts ...engine.GenerateOption[craft.Config]) func(cmd *cobra.Command, args []string) {
+func gen(generators ...engine.Generator[craft.Config]) func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
 		ctx := cmd.Context()
 		destdir, _ := os.Getwd()
@@ -42,14 +43,9 @@ func gen(opts ...engine.GenerateOption[craft.Config]) func(cmd *cobra.Command, a
 		config.EnsureDefaults()
 
 		// run generation
-		options := slices.Concat(
-			[]engine.GenerateOption[craft.Config]{
-				engine.WithDestination[craft.Config](destdir),
-				engine.WithLogger[craft.Config](logger),
-			},
-			opts,
-		)
-		config, err := engine.Generate(ctx, config, options...)
+		engine.SetLogger(logger)
+		parsers := []engine.Parser[craft.Config]{generate.ParserGit, generate.ParserGolang, generate.ParserNode, generate.ParserChart}
+		config, err := engine.Generate(ctx, destdir, config, parsers, generators)
 		if err != nil {
 			logger.Fatal(err)
 		}
@@ -62,11 +58,20 @@ func gen(opts ...engine.GenerateOption[craft.Config]) func(cmd *cobra.Command, a
 }
 
 var generateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generate project layout",
+	Use:     "generate",
+	Aliases: []string{"g"},
+	Short:   "Generate project layout",
 	Run: gen(
-		engine.WithParsers(generate.ParserGit, generate.ParserLicense, generate.ParserGolang, generate.ParserNode, generate.ParserHelm),
-		engine.WithTemplates(templates.FS(), templates.All()),
+		generate.GeneratorGitignore(http.DefaultClient),                                                                               // gitignore
+		generate.GeneratorLicense(http.DefaultClient),                                                                                 // license
+		engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.Dependabot(), templates.Renovate())),                        // bot
+		engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.CodeCov(), templates.Sonar())),                              // coverage
+		engine.GeneratorTemplates(templates.FS(), templates.Docker()),                                                                 // docker
+		engine.GeneratorTemplates(templates.FS(), templates.Golang()),                                                                 // golang
+		engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.Codeowners(), templates.Readme())),                          // misc
+		engine.GeneratorTemplates(templates.FS(), templates.Makefile()),                                                               // makefile
+		engine.GeneratorTemplates(templates.FS(), templates.Chart()),                                                                  // chart
+		engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.GitHub(), templates.GitLab(), templates.SemanticRelease())), // ci
 	),
 }
 

@@ -3,7 +3,7 @@ jobs:
 
 <<- $node := hasKey .Languages "node" >>
 <<- $hugo := hasKey .Languages "hugo" >>
-<<- $golang := hasKey .Languages "golang" >>
+<<- $golang := hasKey .Languages "go" >>
 
 <<- $token := "REGISTRY_TOKEN" >>
 <<- if eq (fromPtr .Docker.Registry) "ghcr.io" >><<- $token = "GITHUB_TOKEN" >><<- end >>
@@ -31,6 +31,7 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-latest
     needs:
+      - docker-hadolint
       - version
 <<- if $node >>
       - node-test

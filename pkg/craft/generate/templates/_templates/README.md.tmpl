@@ -30,11 +30,11 @@
   <img alt="Coverage" src="https://img.shields.io/sonar/coverage/{{ .ProjectPath | replace "/" "_" }}/{{ $branch }}?server={{ $url }}&style={{ $style }}">
 {{- end }}
 
-{{- if or (hasKey .Languages "golang") (hasKey .Languages "hugo") }}
+{{- if or (hasKey .Languages "go") (hasKey .Languages "hugo") }}
   <img alt="Go Version" src="https://img.shields.io/{{ .Platform }}/go-mod/go-version/{{ .ProjectPath }}/{{ $branch }}?style={{ $style }}&label={{ toQuery "Go Version" }}">
 {{- end }}
 
-{{- if hasKey .Languages "golang" }}
+{{- if hasKey .Languages "go" }}
   <img alt="Go Report Card" src="https://goreportcard.com/badge/{{ print .ProjectHost "/" .ProjectPath }}?style={{ $style }}">
 {{- end }}
 </p>

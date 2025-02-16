@@ -48,7 +48,7 @@ func TestReadYAML(t *testing.T) {
 	t.Run("error_unmarshal", func(t *testing.T) {
 		// Arrange
 		src := filepath.Join(t.TempDir(), name)
-		require.NoError(t, os.WriteFile(src, []byte(`{ "key":: "value" }`), files.RwRR))
+		require.NoError(t, os.WriteFile(src, []byte(`{ "string":>> "value" }`), files.RwRR))
 
 		// Act
 		var c testconfig
@@ -56,6 +56,7 @@ func TestReadYAML(t *testing.T) {
 
 		// Assert
 		assert.ErrorContains(t, err, "unmarshal")
+		assert.Zero(t, c)
 	})
 
 	t.Run("success", func(t *testing.T) {

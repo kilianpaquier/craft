@@ -14,7 +14,7 @@ coverage:
         threshold: 2.5%
 
 ignore:
-{{- if hasKey .Languages "golang" }}
+{{- if hasKey .Languages "go" }}
   - "cmd"
   - "examples"
   - "**/cobra/**"

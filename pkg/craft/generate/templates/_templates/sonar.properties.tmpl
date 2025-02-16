@@ -13,7 +13,7 @@ sonar.projectName={{ .ProjectName }}
 {{- $exclusions := list }}
 {{- $inclusions := list }}
 
-{{- if hasKey .Languages "golang" }}
+{{- if hasKey .Languages "go" }}
 {{- $exclusions = concat $exclusions (list "cmd" "examples" "**/cobra/**" "**/testdata/**" "**/logger.go") }}
 {{- $inclusions = append $inclusions "**/*_test.go" }}
 {{- end }}
@@ -26,7 +26,7 @@ sonar.projectName={{ .ProjectName }}
 sonar.exclusions={{ join "," $exclusions }}
 sonar.test.inclusions={{ join "," $inclusions }}
 
-{{- if hasKey .Languages "golang" }}
+{{- if hasKey .Languages "go" }}
 sonar.coverage.exclusions=cmd/**,**/cobra/**,**/tests/**,**/testutils/**
 {{- if eq .CI.Name "gitlab" }}
 

@@ -28,16 +28,16 @@ import (
 //
 //	type config struct { ... }
 //
-//	func Helm(ctx context.Context, destdir string, c *config) error {
+//	func ParserChart(ctx context.Context, destdir string, c *config) error {
 //		chartdir := filepath.Join(destdir, "chart")
 //		if c.NoChart {
-//			engine.GetLogger(ctx).Infof("skipping helm chart, configuration has 'no_chart' key")
+//			engine.GetLogger().Infof("skipping helm chart, configuration has 'no_chart' key")
 //			if err := os.RemoveAll(chartdir); err != nil {
 //				return fmt.Errorf("remove chart dir: %w", err)
 //			}
 //			return nil
 //		}
-//		engine.GetLogger(ctx).Infof("helm chart detected, configuration doesn't have 'no_chart' key")
+//		engine.GetLogger().Infof("helm chart detected, configuration doesn't have 'no_chart' key")
 //
 //		values, err := parser.MergeValues(c,
 //			filepath.Join(chartdir, "values.custom1.yaml"),

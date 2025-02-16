@@ -25,12 +25,12 @@ func ReadYAML(src string, out any, read func(src string) ([]byte, error)) error 
 }
 
 // WriteYAML writes the input configuration into the dest in YAML format.
-func WriteYAML(dst string, config any, opts ...yaml.EncodeOption) error {
-	bytes, err := yaml.MarshalWithOptions(config, opts...)
+func WriteYAML(out string, data any, opts ...yaml.EncodeOption) error {
+	content, err := yaml.MarshalWithOptions(data, opts...)
 	if err != nil {
 		return fmt.Errorf("marshal: %w", err)
 	}
-	if err := os.WriteFile(dst, bytes, RwRR); err != nil {
+	if err := os.WriteFile(out, content, RwRR); err != nil {
 		return fmt.Errorf("write file: %w", err)
 	}
 	return nil

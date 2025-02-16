@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"context"
 	"fmt"
 	"io"
 )
@@ -21,9 +20,26 @@ type Logger interface {
 	Warnf(format string, args ...any)
 }
 
+var logger Logger
+
+// SetLogger sets the global logger only if the input one is not nil.
+func SetLogger(l Logger) {
+	if l != nil {
+		logger = l
+	}
+}
+
+// GetLogger returns global logger if it exists or a noop logger.
+func GetLogger() Logger {
+	if logger != nil {
+		return logger
+	}
+	return &noopLogger{}
+}
+
 type noopLogger struct{}
 
-var _noopLogger Logger = &noopLogger{} // ensure interface is implemented
+var _ Logger = (*noopLogger)(nil) // ensure interface is implemented
 
 // Debugf does nothing.
 func (*noopLogger) Debugf(string, ...any) {}
@@ -36,22 +52,6 @@ func (*noopLogger) Infof(string, ...any) {}
 
 // Warnf does nothing.
 func (*noopLogger) Warnf(string, ...any) {}
-
-type loggerKeyType string
-
-// loggerKey is the context key for the logger.
-const loggerKey loggerKeyType = "logger"
-
-// GetLogger returns the context logger.
-//
-// By default it will a noop logger, but it can be set with WithLogger run option.
-func GetLogger(ctx context.Context) Logger {
-	log, ok := ctx.Value(loggerKey).(Logger)
-	if !ok {
-		return _noopLogger
-	}
-	return log
-}
 
 type testLogger struct{ writer io.Writer }
 

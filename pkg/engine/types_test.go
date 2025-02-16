@@ -12,7 +12,7 @@ import (
 func TestGlobs(t *testing.T) {
 	t.Run("success_gitignore", func(t *testing.T) {
 		// Act
-		globs := engine.Globs(".gitignore")
+		globs := engine.GlobsWithPart(".gitignore")
 
 		// Assert
 		assert.Equal(t, []string{".gitignore.tmpl", ".gitignore-*.part.tmpl"}, globs)
@@ -20,7 +20,7 @@ func TestGlobs(t *testing.T) {
 
 	t.Run("success_releaserc", func(t *testing.T) {
 		// Act
-		globs := engine.Globs(".releaserc.yml")
+		globs := engine.GlobsWithPart(".releaserc.yml")
 
 		// Assert
 		assert.Equal(t, []string{".releaserc.yml.tmpl", ".releaserc-*.part.tmpl"}, globs)
@@ -28,7 +28,7 @@ func TestGlobs(t *testing.T) {
 
 	t.Run("success_random_yaml", func(t *testing.T) {
 		// Act
-		globs := engine.Globs("file.yml")
+		globs := engine.GlobsWithPart("file.yml")
 
 		// Assert
 		assert.Equal(t, []string{"file.yml.tmpl", "file-*.part.tmpl"}, globs)
@@ -38,7 +38,7 @@ func TestGlobs(t *testing.T) {
 		for _, sep := range []string{"/", `\`, `\\`} {
 			t.Run(sep, func(t *testing.T) {
 				// Act
-				globs := engine.Globs(strings.Join([]string{"path", "to", "file.yml"}, sep))
+				globs := engine.GlobsWithPart(strings.Join([]string{"path", "to", "file.yml"}, sep))
 
 				// Assert
 				assert.Equal(t, []string{

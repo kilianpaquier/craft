@@ -16,7 +16,7 @@ run-name: CodeQL
 
 <<- $languages := list >>
 <<- if hasKey .Languages "node" >><<- $languages = append $languages "javascript-typescript" >><<- end >>
-<<- if or (hasKey .Languages "golang") (hasKey .Languages "hugo") >><<- $languages = append $languages "go" >><<- end >>
+<<- if or (hasKey .Languages "go") (hasKey .Languages "hugo") >><<- $languages = append $languages "go" >><<- end >>
 
 on:
   push:

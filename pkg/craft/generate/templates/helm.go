@@ -7,8 +7,8 @@ import (
 	"github.com/kilianpaquier/craft/pkg/engine"
 )
 
-// Helm returns the slice of templates related to helm chart generation.
-func Helm() []engine.Template[craft.Config] {
+// Chart returns the slice of templates related to helm chart generation.
+func Chart() []engine.Template[craft.Config] {
 	var templates []engine.Template[craft.Config] //nolint:prealloc
 
 	tmplfiles := []string{
@@ -34,7 +34,6 @@ func Helm() []engine.Template[craft.Config] {
 		path.Join("chart", ".craft"),
 		path.Join("chart", ".helmignore"),
 		path.Join("chart", "Chart.yaml"),
-
 		path.Join("chart", "charts", ".gitkeep"),
 	}
 	for _, src := range chartfiles {
@@ -46,11 +45,10 @@ func Helm() []engine.Template[craft.Config] {
 		})
 	}
 
-	values := path.Join("chart", "values.yaml")
 	templates = append(templates, engine.Template[craft.Config]{
 		Delimiters: engine.DelimitersBracket(),
-		Globs:      engine.Globs(values),
-		Out:        values,
+		Globs:      engine.GlobsWithPart(path.Join("chart", "values.yaml")),
+		Out:        path.Join("chart", "values.yaml"),
 		Remove:     func(config craft.Config) bool { return config.NoChart },
 	})
 

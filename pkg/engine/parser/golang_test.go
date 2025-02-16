@@ -78,8 +78,8 @@ func TestReadGomod(t *testing.T) {
 		require.NoError(t, err)
 
 		expectedMod := parser.Gomod{
-			LangVersion: "1.22",
-			ModulePath:  "github.com/kilianpaquier/craft",
+			Go:     "1.22",
+			Module: "github.com/kilianpaquier/craft",
 		}
 		expectedVCS := parser.VCS{
 			ProjectHost: "github.com",

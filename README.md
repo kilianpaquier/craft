@@ -17,7 +17,6 @@
 - [Commands](#commands)
   - [Init](#init)
   - [Generate](#generate)
-  - [Chart](#chart)
 - [Craft file](#craft-file)
   - [VSCode association and schema](#vscode-association-and-schema)
 - [Generations](#generations)
@@ -59,7 +58,6 @@ Usage:
   craft [command]
 
 Available Commands:
-  chart       Generate project layout's helm chart
   completion  Generate the autocompletion script for the specified shell
   generate    Generate project layout
   help        Help about any command
@@ -106,7 +104,7 @@ Global Flags:
       --log-level string    set logging level (default "info")
 ```
 
-### Chart
+#### Chart
 
 ```
 Generate project layout's helm chart

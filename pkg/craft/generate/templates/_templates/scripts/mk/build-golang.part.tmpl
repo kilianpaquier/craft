@@ -1,5 +1,5 @@
 {{- define "golang" }}
-{{- $specifics := get .Languages "golang" }}
+{{- $specifics := get .Languages "go" }}
 
 GOCI_LINT_PATH  ?= .golangci.yml
 {{- if gt .Binaries 0 }}
@@ -43,10 +43,10 @@ test-cover: reports
 build:
 	@CGO_ENABLED=0 go build \
 		-ldflags "\
-			-X '{{ $specifics.ModulePath }}/internal/build.branch=$(shell git rev-parse --abbrev-ref HEAD)' \
-			-X '{{ $specifics.ModulePath }}/internal/build.commit=$(shell git rev-parse HEAD)' \
-			-X '{{ $specifics.ModulePath }}/internal/build.date=$(shell TZ="UTC" date '+%Y-%m-%dT%TZ')' \
-			-X '{{ $specifics.ModulePath }}/internal/build.version=${VERSION}' \
+			-X '{{ $specifics.Module }}/internal/build.branch=$(shell git rev-parse --abbrev-ref HEAD)' \
+			-X '{{ $specifics.Module }}/internal/build.commit=$(shell git rev-parse HEAD)' \
+			-X '{{ $specifics.Module }}/internal/build.date=$(shell TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+			-X '{{ $specifics.Module }}/internal/build.version=${VERSION}' \
 		" \
 		-o {{ $binary }} cmd/{{ $binary }}/main.go
 {{- end }}
@@ -61,10 +61,10 @@ build-%:
 	@[ -f "cmd/$*/main.go" ] || (echo "cmd/$*/main.go does not exist" && exit 1)
 	@CGO_ENABLED=0 go build \
 		-ldflags "\
-			-X '{{ $specifics.ModulePath }}/internal/build.branch=$(shell git rev-parse --abbrev-ref HEAD)' \
-			-X '{{ $specifics.ModulePath }}/internal/build.commit=$(shell git rev-parse HEAD)' \
-			-X '{{ $specifics.ModulePath }}/internal/build.date=$(shell TZ="UTC" date '+%Y-%m-%dT%TZ')' \
-			-X '{{ $specifics.ModulePath }}/internal/build.version=${VERSION}' \
+			-X '{{ $specifics.Module }}/internal/build.branch=$(shell git rev-parse --abbrev-ref HEAD)' \
+			-X '{{ $specifics.Module }}/internal/build.commit=$(shell git rev-parse HEAD)' \
+			-X '{{ $specifics.Module }}/internal/build.date=$(shell TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+			-X '{{ $specifics.Module }}/internal/build.version=${VERSION}' \
 		" \
 		-o $* cmd/$*/main.go
 

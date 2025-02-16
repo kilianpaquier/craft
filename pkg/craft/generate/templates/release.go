@@ -10,26 +10,21 @@ import (
 
 // SemanticRelease returns the slice of templates related to semantic-release configuration.
 func SemanticRelease() []engine.Template[craft.Config] {
-	var templates []engine.Template[craft.Config]
-
-	releaserc := ".releaserc.yml"
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters: engine.DelimitersBracket(),
-		Globs:      []string{releaserc + engine.TmplExtension},
-		Out:        releaserc,
-		Remove:     func(config craft.Config) bool { return !config.HasRelease() },
-	})
-
-	plugins := path.Join(".gitlab", "semrel-plugins.txt")
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters:     engine.DelimitersBracket(),
-		Globs:          []string{plugins + engine.TmplExtension},
-		Out:            plugins,
-		GeneratePolicy: engine.PolicyAlways, // always generate semrel-plugins.txt
-		Remove: func(config craft.Config) bool {
-			return !config.HasRelease() || !config.IsCI(parser.GitLab)
+	return []engine.Template[craft.Config]{
+		{
+			Delimiters: engine.DelimitersBracket(),
+			Globs:      []string{".releaserc.yml" + engine.TmplExtension},
+			Out:        ".releaserc.yml",
+			Remove:     func(config craft.Config) bool { return !config.HasRelease() },
 		},
-	})
-
-	return templates
+		{
+			Delimiters:     engine.DelimitersBracket(),
+			Globs:          []string{path.Join(".gitlab", "semrel-plugins.txt") + engine.TmplExtension},
+			Out:            path.Join(".gitlab", "semrel-plugins.txt"),
+			GeneratePolicy: engine.PolicyAlways, // always generate semrel-plugins.txt
+			Remove: func(config craft.Config) bool {
+				return !config.HasRelease() || !config.IsCI(parser.GitLab)
+			},
+		},
+	}
 }

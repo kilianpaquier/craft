@@ -1,6 +1,6 @@
 {{- define "golang" }}
 
-{{- $specifics := get .Languages "golang" }}
+{{- $specifics := get .Languages "go" }}
 
 {{- $binaries := dict }}
 {{- $_ := map $binaries .Clis .Crons .Jobs .Workers }}
@@ -10,7 +10,11 @@
 #############################
 #        STAGE BUILD        #
 #############################
-FROM golang:{{ $specifics.LangVersion }} AS build
+{{- if $specifics.Toolchain }}
+FROM golang:{{ $specifics.Toolchain }} AS build
+{{- else }}
+FROM golang:{{ $specifics.Go }} AS build
+{{- end }}
 
 ARG CGO_ENABLED=0
 ARG GIT_REF_NAME
@@ -24,10 +28,10 @@ COPY . .
 RUN go mod download{{ range $name, $config := $binaries }} && \
     CGO_ENABLED=$CGO_ENABLED go build \
         -ldflags "\
-            -X '{{ $specifics.ModulePath }}/internal/build.branch=$GIT_REF_NAME' \
-            -X '{{ $specifics.ModulePath }}/internal/build.commit=$GIT_COMMIT' \
-            -X '{{ $specifics.ModulePath }}/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
-            -X '{{ $specifics.ModulePath }}/internal/build.version=$VERSION' \
+            -X '{{ $specifics.Module }}/internal/build.branch=$GIT_REF_NAME' \
+            -X '{{ $specifics.Module }}/internal/build.commit=$GIT_COMMIT' \
+            -X '{{ $specifics.Module }}/internal/build.date=$(TZ="UTC" date '+%Y-%m-%dT%TZ')' \
+            -X '{{ $specifics.Module }}/internal/build.version=$VERSION' \
         " \
         -o {{ $name }} cmd/{{ $name }}/main.go
 {{- end }}

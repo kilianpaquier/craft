@@ -8,7 +8,7 @@ Initialize example:
 	type config struct { ... }
 
 	func main() {
-		ctx := context.Background()
+		ctx := t.Context()
 		destdir, _ := os.Getwd()
 
 		config, err := engine.Initialize(ctx, destdir, engine.WithFormGroups(License))
@@ -44,28 +44,24 @@ Generate example:
 	type config struct { ... }
 
 	func main() {
-		ctx := context.Background()
+		ctx := t.Context()
 		destdir, _ := os.Getwd()
 
 		// run generation
-		options := []engine.GenerateOption[config]{
-			engine.WithDestination[config](destdir),
-			engine.WithLogger[config](logger),
-			engine.WithParsers(ParserGit),
-			// WithTemplates takes a fs.FS, as such, anything implementing this interface can be given (like embed.FS)
-			engine.WithTemplates(os.DirFS("path/to/templates"), Templates()),
-		}
-		config, err := engine.Generate(ctx, config, options...)
+		engine.SetLogger(logger)
+		config, err := engine.Generate(ctx, destdir, config,
+			[]engine.Parser[config]{ParserGit},
+			[]engine.Generator[config]{engine.GeneratorTemplates(os.DirFS("path/to/templates"), Templates())})
 		// handle err
 	}
 
 	func ParserGit(ctx context.Context, destdir string, config *config) error {
 		vcs, err := parser.Git(destdir)
 		if err != nil {
-			engine.GetLogger(ctx).Warnf("failed to retrieve git vcs configuration: %v", err)
+			engine.GetLogger().Warnf("failed to retrieve git vcs configuration: %v", err)
 			return nil // a repository may not be a git repository
 		}
-		engine.GetLogger(ctx).Infof("git repository detected")
+		engine.GetLogger().Infof("git repository detected")
 
 		config.VCS = vcs
 		return nil

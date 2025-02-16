@@ -20,7 +20,7 @@ func githubWorkflow() []engine.Template[craft.Config] {
 	ci := path.Join(".github", "workflows", "ci.yml")
 	templates = append(templates, engine.Template[craft.Config]{
 		Delimiters: engine.DelimitersChevron(),
-		Globs:      engine.Globs(ci),
+		Globs:      engine.GlobsWithPart(ci),
 		Out:        ci,
 		Remove: func(config craft.Config) bool {
 			return !config.IsCI(parser.GitHub) || (len(config.Languages) == 0 && !config.HasRelease())
@@ -43,7 +43,7 @@ func githubWorkflow() []engine.Template[craft.Config] {
 		Globs:      []string{dependencies + engine.TmplExtension},
 		Out:        dependencies,
 		Remove: func(config craft.Config) bool {
-			_, ok := config.Languages["golang"]
+			_, ok := config.Languages["go"]
 			return !ok || !config.IsCI(parser.GitHub)
 		},
 	})

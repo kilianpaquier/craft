@@ -11,37 +11,30 @@ import (
 func Golang() []engine.Template[craft.Config] {
 	// Go wasn't parsed during parsers processing
 	noGo := func(config craft.Config) bool {
-		_, ok := config.Languages["golang"]
+		_, ok := config.Languages["go"]
 		return !ok
 	}
 
-	var templates []engine.Template[craft.Config]
-
-	lint := ".golangci.yml"
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters: engine.DelimitersChevron(),
-		Globs:      []string{lint + engine.TmplExtension},
-		Out:        lint,
-		Remove:     noGo,
-	})
-
-	goreleaser := ".goreleaser.yml"
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters: engine.DelimitersChevron(),
-		Globs:      []string{goreleaser + engine.TmplExtension},
-		Out:        goreleaser,
-		Remove: func(config craft.Config) bool {
-			return config.NoGoreleaser || noGo(config) || len(config.Clis) == 0 //nolint:revive
+	return []engine.Template[craft.Config]{
+		{
+			Delimiters: engine.DelimitersChevron(),
+			Globs:      []string{".golangci.yml" + engine.TmplExtension},
+			Out:        ".golangci.yml",
+			Remove:     noGo,
 		},
-	})
-
-	build := path.Join("internal", "build", "build.go")
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters: engine.DelimitersChevron(),
-		Globs:      []string{build + engine.TmplExtension},
-		Out:        build,
-		Remove:     func(config craft.Config) bool { return noGo(config) || config.Binaries() == 0 },
-	})
-
-	return templates
+		{
+			Delimiters: engine.DelimitersChevron(),
+			Globs:      []string{".goreleaser.yml" + engine.TmplExtension},
+			Out:        ".goreleaser.yml",
+			Remove: func(config craft.Config) bool {
+				return config.NoGoreleaser || noGo(config) || len(config.Clis) == 0 //nolint:revive
+			},
+		},
+		{
+			Delimiters: engine.DelimitersChevron(),
+			Globs:      []string{path.Join("internal", "build", "build.go") + engine.TmplExtension},
+			Out:        path.Join("internal", "build", "build.go"),
+			Remove:     func(config craft.Config) bool { return noGo(config) || config.Binaries() == 0 },
+		},
+	}
 }

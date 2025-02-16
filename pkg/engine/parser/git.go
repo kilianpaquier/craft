@@ -15,13 +15,13 @@ import (
 //
 //	type config struct { ... }
 //
-//	func Git(ctx context.Context, destdir string, c *config) error {
+//	func ParserGit(ctx context.Context, destdir string, c *config) error {
 //		vcs, err := parser.Git(destdir)
 //		if err != nil {
-//			engine.GetLogger(ctx).Warnf("failed to retrieve git vcs configuration: %v", err)
+//			engine.GetLogger().Warnf("failed to retrieve git vcs configuration: %v", err)
 //			return nil // a repository may not be a git repository
 //		}
-//		engine.GetLogger(ctx).Infof("git repository detected")
+//		engine.GetLogger().Infof("git repository detected")
 //		// do something with vcs (e.g. update config since it's a pointer)
 //		return nil
 //	}

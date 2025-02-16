@@ -1,7 +1,6 @@
 package engine_test
 
 import (
-	"context"
 	"strings"
 	"testing"
 
@@ -36,7 +35,7 @@ type testconfig struct {
 }
 
 func TestInitialize(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("success", func(t *testing.T) {
 		// Arrange

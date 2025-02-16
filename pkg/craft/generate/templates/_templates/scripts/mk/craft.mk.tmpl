@@ -6,7 +6,7 @@ generate:
 
 .PHONY: clean
 clean:
-{{- if hasKey .Languages "golang" }}
+{{- if hasKey .Languages "go" }}
 	@go clean
 {{- end }}
 	@git clean -dfX

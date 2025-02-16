@@ -37,18 +37,30 @@ var versionRegexp = regexp.MustCompile("^v[0-9]+$")
 
 // Gomod represents the parsed struct for go.mod file
 type Gomod struct {
-	LangVersion string
-	ModulePath  string
+	// Go is the go statement,
+	// i.e. "go 1.23.4" without "go" (and space) part.
+	Go string
+
+	// Module is the module statement,
+	// i.e. "module github.com/kilianpaquier/craft" without "module" (and space) part.
+	Module string
+
+	// Toolchain is the toolchain statement,
+	// i.e. "toolchain go1.23.4" without "toolchain go" part.
+	Toolchain string
 }
 
 // AsVCS returns the vcs configuration associated to module statement in go.mod.
 func (g Gomod) AsVCS() VCS {
-	sections := strings.Split(g.ModulePath, "/")
+	sections := strings.Split(g.Module, "/")
 	projectPath := func() string {
+		// retrieve all sections but the last element in case module is a suffixed by a major version,
+		// i.e. github.com/kilianpaquier/craft/v2
 		if versionRegexp.MatchString(sections[len(sections)-1]) {
-			return strings.Join(sections[1:len(sections)-1], "/") // retrieve all sections but the last element
+			return strings.Join(sections[1:len(sections)-1], "/")
 		}
-		return strings.Join(sections[1:], "/") // retrieve all sections
+		// retrieve all sections
+		return strings.Join(sections[1:], "/")
 	}()
 
 	return VCS{
@@ -79,7 +91,7 @@ func (g Gomod) AsVCS() VCS {
 //			}
 //			return fmt.Errorf("read go.mod: %w", err)
 //		}
-//		engine.GetLogger(ctx).Infof("golang detected, file '%s' is present and valid", parser.FileGomod)
+//		engine.GetLogger().Infof("golang detected, file '%s' is present and valid", parser.FileGomod)
 //		// do something with gomod (e.g. update config since it's a pointer)
 //		return nil
 //	}
@@ -87,13 +99,13 @@ func ReadGomod(destdir string) (Gomod, error) {
 	modpath := filepath.Join(destdir, FileGomod)
 
 	// read go.mod
-	bytes, err := os.ReadFile(modpath)
+	content, err := os.ReadFile(modpath)
 	if err != nil {
 		return Gomod{}, fmt.Errorf("read file: %w", err)
 	}
 
 	// parse go.mod into it's modfile representation
-	file, err := modfile.Parse(FileGomod, bytes, nil)
+	file, err := modfile.Parse(FileGomod, content, nil)
 	if err != nil {
 		return Gomod{}, fmt.Errorf("parse modfile: %w", err)
 	}
@@ -103,18 +115,18 @@ func ReadGomod(destdir string) (Gomod, error) {
 	if file.Module == nil || file.Module.Mod.Path == "" {
 		return Gomod{}, ErrMissingModuleStatement
 	}
-	gomod.ModulePath = file.Module.Mod.Path
+	gomod.Module = file.Module.Mod.Path
 
 	// parse go statement
 	if file.Go == nil {
 		return Gomod{}, ErrMissingGoStatement
 	}
-	gomod.LangVersion = file.Go.Version
+	gomod.Go = file.Go.Version
 
 	// override lang version if toolchain is present
 	// it's preempting provided go version for build purposes
 	if file.Toolchain != nil {
-		gomod.LangVersion = file.Toolchain.Name[2:]
+		gomod.Toolchain = file.Toolchain.Name[2:]
 	}
 
 	return gomod, nil
@@ -138,7 +150,7 @@ func ReadGomod(destdir string) (Gomod, error) {
 //
 //	type config struct { ... }
 //
-//	func Golang(ctx context.Context, destdir string, c *config) error {
+//	func ParserGolang(ctx context.Context, destdir string, c *config) error {
 //		gomod, err := parser.ReadGomod(destdir)
 //		if err != nil {
 //			if errors.Is(err, fs.ErrNotExist) {
@@ -147,7 +159,7 @@ func ReadGomod(destdir string) (Gomod, error) {
 //			return fmt.Errorf("read go.mod: %w", err)
 //		}
 //
-//		engine.GetLogger(ctx).Infof("golang detected, file '%s' is present and valid", parser.FileGomod)
+//		engine.GetLogger().Infof("golang detected, file '%s' is present and valid", parser.FileGomod)
 //		// do something with gomod (e.g. update config since it's a pointer)
 //
 //		executables, err := parser.ReadGoCmd(destdir)
@@ -204,12 +216,12 @@ type HugoConfig struct{}
 //
 //	type config struct { ... }
 //
-//	func Hugo(ctx context.Context, destdir string, c *config) error {
+//	func ParserHugo(ctx context.Context, destdir string, c *config) error {
 //		hugoc, ok := parser.Hugo(destdir)
 //		if !ok {
 //			return nil
 //		}
-//		engine.GetLogger(ctx).Infof("hugo detected, theme or hugo files are present")
+//		engine.GetLogger().Infof("hugo detected, theme or hugo files are present")
 //		// do something with hugo config (e.g. update config since it's a pointer)
 //		return nil
 //	}

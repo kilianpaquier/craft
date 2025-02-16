@@ -5,7 +5,7 @@ run-name: CICD
 
 <<- $node := hasKey .Languages "node" >>
 <<- $hugo := hasKey .Languages "hugo" >>
-<<- $golang := hasKey .Languages "golang" >>
+<<- $golang := hasKey .Languages "go" >>
 
 <<- $nodebuild := and $node (gt .Binaries 0) >>
 <<- $nodepublish := and $node (not (get .Languages "node").Private) >>

@@ -94,7 +94,7 @@ jobs:
   go-test:
     name: Go Test
     runs-on: ${{ matrix.os }}
-    needs: run-workflow
+    needs: go-lint
     strategy:
       fail-fast: false
       matrix:
@@ -178,6 +178,7 @@ jobs:
     name: Docker Build
     runs-on: ubuntu-latest
     needs:
+      - docker-hadolint
       - version
       - go-test
     permissions:

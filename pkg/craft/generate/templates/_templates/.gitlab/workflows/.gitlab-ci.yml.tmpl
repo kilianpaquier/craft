@@ -2,7 +2,7 @@
 
 {{- $node := hasKey .Languages "node" }}
 {{- $hugo := hasKey .Languages "hugo" }}
-{{- $golang := hasKey .Languages "golang" }}
+{{- $golang := hasKey .Languages "go" }}
 
 {{- $pages := and (.IsStatic "pages") (or $node $hugo) }}
 {{- $netlify := and (.IsStatic "netlify") (or $node $hugo) }}

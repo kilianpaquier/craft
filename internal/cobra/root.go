@@ -24,7 +24,7 @@ and multiple files automatically generated to avoid multiple hours to setup Cont
 Craft generation can be done with 'craft' command or 'craft generate' command.
 Additional generation command are available to generate only subparts of craft layout (like 'craft chart').`,
 		SilenceErrors:     true, // don't print errors with cobra, let logger.Fatal handle them
-		PersistentPreRunE: func(_ *cobra.Command, _ []string) error { return preRun() },
+		PersistentPreRunE: globalFlags,
 		Run:               generateCmd.Run,
 	}
 )
@@ -33,7 +33,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&logLevel, "log-level", "info", "set logging level")
 	rootCmd.PersistentFlags().StringVar(&logFormat, "log-format", "text", `set logging format (either "text" or "json")`)
 
-	_ = preRun() // ensure logging is correctly configured with default values even when a bad input flag is given
+	_ = globalFlags(nil, nil) // ensure logging is correctly configured with default values even when a bad input flag is given
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -44,7 +44,7 @@ func Execute() {
 	}
 }
 
-func preRun() error {
+func globalFlags(_ *cobra.Command, _ []string) error {
 	styles := log.DefaultStyles()
 	switch logFormat {
 	case "text":

@@ -6,7 +6,7 @@
 <<- $all := le (len .Languages) 0 >>
 
 <<- $categories := list "cd" "ci" >>
-<<- if or $all (hasKey .Languages "golang") (hasKey .Languages "hugo") >><<- $categories = append $categories "golang" >><<- end >>
+<<- if or $all (hasKey .Languages "go") (hasKey .Languages "hugo") >><<- $categories = append $categories "golang" >><<- end >>
 <<- if or $all (hasKey .Languages "node") >><<- $categories = append $categories "js" >><<- end >>
 <<- if or $all (hasKey .Languages "python") >><<- $categories = append $categories "python" >><<- end >>
 <<- if or $all (hasKey .Languages "rust") >><<- $categories = append $categories "rust" >><<- end >>

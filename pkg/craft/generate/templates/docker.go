@@ -7,36 +7,29 @@ import (
 
 // Docker returns the slice of templates related to Docker generation (Dockerfile, .dockerignore, etc.).
 func Docker() []engine.Template[craft.Config] {
-	var templates []engine.Template[craft.Config]
-
-	file := "Dockerfile"
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters: engine.DelimitersBracket(),
-		Globs:      engine.Globs(file),
-		Out:        file,
-		Remove:     func(config craft.Config) bool { return config.Docker == nil || config.Binaries() == 0 },
-	})
-
-	ignore := ".dockerignore"
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters: engine.DelimitersBracket(),
-		Globs:      []string{ignore + engine.TmplExtension},
-		Out:        ignore,
-		Remove:     func(config craft.Config) bool { return config.Docker == nil || config.Binaries() == 0 },
-	})
-
-	launcher := "launcher.sh"
-	templates = append(templates, engine.Template[craft.Config]{
-		Delimiters: engine.DelimitersBracket(),
-		Globs:      []string{launcher + engine.TmplExtension},
-		Out:        launcher,
-		// launcher.sh is a specific thing to golang being able to have multiple binaries inside a simple project (cmd folder)
-		// however, it may change in the future with python (or rust or others ?) depending on flexibility in repositories layout
-		Remove: func(config craft.Config) bool {
-			_, ok := config.Languages["golang"]
-			return !ok || config.Docker == nil || config.Binaries() <= 1
+	return []engine.Template[craft.Config]{
+		{
+			Delimiters: engine.DelimitersBracket(),
+			Globs:      engine.GlobsWithPart("Dockerfile"),
+			Out:        "Dockerfile",
+			Remove:     func(config craft.Config) bool { return config.Docker == nil || config.Binaries() == 0 },
 		},
-	})
-
-	return templates
+		{
+			Delimiters: engine.DelimitersBracket(),
+			Globs:      []string{".dockerignore" + engine.TmplExtension},
+			Out:        ".dockerignore",
+			Remove:     func(config craft.Config) bool { return config.Docker == nil || config.Binaries() == 0 },
+		},
+		{
+			Delimiters: engine.DelimitersBracket(),
+			Globs:      []string{"launcher.sh" + engine.TmplExtension},
+			Out:        "launcher.sh",
+			// launcher.sh is a specific thing to golang being able to have multiple binaries inside a simple project (cmd folder)
+			// however, it may change in the future with python (or rust or others ?) depending on flexibility in repositories layout
+			Remove: func(config craft.Config) bool {
+				_, ok := config.Languages["go"]
+				return !ok || config.Docker == nil || config.Binaries() <= 1
+			},
+		},
+	}
 }

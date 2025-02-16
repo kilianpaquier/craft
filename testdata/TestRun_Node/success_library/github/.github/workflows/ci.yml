@@ -58,7 +58,7 @@ jobs:
   node-test:
     name: Node Test
     runs-on: ${{ matrix.os }}
-    needs: run-workflow
+    needs: node-lint
     strategy:
       fail-fast: false
       matrix:

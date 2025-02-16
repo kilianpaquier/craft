@@ -24,11 +24,11 @@ dist/
 {{- if hasKey .Languages "node" }}
 node_modules/
 {{- end }}
-{{- if hasKey .Languages "golang" }}
+{{- if hasKey .Languages "go" }}
 vendor/
 {{- end }}
 
-{{- if hasKey .Languages "golang" }}
+{{- if hasKey .Languages "go" }}
 
 # binaries
 {{- range $name, $config := .Clis }}

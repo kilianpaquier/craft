@@ -1,10 +1,10 @@
 /*
-Package generate exposes pre-defined parsers for craft repositories parsing to use with engine.Generate.
+Package generate exposes pre-defined parsers and generator for craft repositories parsing to use with engine.Generate.
 
 Example:
 
 	func main() {
-		ctx := context.Background()
+		ctx := t.Context()
 		destdir, _ := os.Getwd()
 		dest := filepath.Join(destdir, craft.File)
 
@@ -16,12 +16,9 @@ Example:
 		config.EnsureDefaults()
 
 		// run generation
-		options := []engine.GenerateOption[craft.Config]{
-			...
-			engine.WithParsers(generate.ParserGit, generate.ParserLicense, generate.ParserGolang, generate.ParserNode, generate.ParserHelm),
-			...
-		}
-		config, err := engine.Generate(ctx, config, options...)
+		config, err := engine.Generate(ctx, destdir, config,
+			[]engine.Parser[craft.Config]{generate.ParserGit, generate.ParserGolang, generate.ParserNode, generate.ParserChart},
+			[]engine.Generator[craft.Config]{generate.GeneratorGitignore, generate.GeneratorLicense})
 		// handle err
 	}
 */
