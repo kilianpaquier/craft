@@ -26,3 +26,11 @@ repos:
       - id: mixed-line-ending
         args: [--fix=lf]
       - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: tidy
+        name: go mod tidy
+        # add -- at the end to never fail command
+        entry: bash -c 'go mod tidy && git add go.mod go.sum' --
+        language: system
