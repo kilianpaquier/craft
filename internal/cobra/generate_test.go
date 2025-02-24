@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"testing"
 
 	compare "github.com/kilianpaquier/compare/pkg"
@@ -21,7 +22,7 @@ import (
 	"github.com/kilianpaquier/craft/pkg/engine/parser"
 )
 
-func TestRun_NoLang(t *testing.T) {
+func TestGenerate_NoLang(t *testing.T) {
 	ctx := t.Context()
 
 	t.Run("success_chart", func(t *testing.T) {
@@ -30,9 +31,9 @@ func TestRun_NoLang(t *testing.T) {
 			t.Run(ci, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					CI:         &craft.CI{Name: ci},
-					NoMakefile: true,
-					VCS:        parser.VCS{Platform: ci},
+					CI:      &craft.CI{Name: ci},
+					Exclude: []string{craft.Makefile},
+					VCS:     parser.VCS{Platform: ci},
 				}
 
 				// Act & Assert
@@ -46,11 +47,25 @@ func TestRun_NoLang(t *testing.T) {
 			t.Run(ci, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					Bot:        helpers.ToPtr(craft.Renovate),
-					CI:         &craft.CI{Name: ci},
-					NoChart:    true,
-					NoMakefile: true,
-					VCS:        parser.VCS{Platform: ci},
+					Bot:     helpers.ToPtr(craft.Renovate),
+					CI:      &craft.CI{Name: ci},
+					Exclude: []string{craft.Chart, craft.Makefile},
+					VCS:     parser.VCS{Platform: ci},
+				}
+
+				// Act & Assert
+				test(ctx, t, config)
+			})
+		}
+	})
+
+	t.Run("success_precommit", func(t *testing.T) {
+		for _, precommit := range []bool{true, false} {
+			t.Run(strconv.FormatBool(precommit), func(t *testing.T) {
+				// Arrange
+				config := craft.Config{Exclude: []string{craft.Chart, craft.Makefile}}
+				if !precommit {
+					config.Exclude = append(config.Exclude, craft.PreCommit)
 				}
 
 				// Act & Assert
@@ -71,10 +86,9 @@ func TestRun_NoLang(t *testing.T) {
 			t.Run(name, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					CI:         &ci,
-					NoChart:    true,
-					NoMakefile: true,
-					VCS:        parser.VCS{Platform: ci.Name},
+					CI:      &ci,
+					Exclude: []string{craft.Chart, craft.Makefile},
+					VCS:     parser.VCS{Platform: ci.Name},
 				}
 
 				// Act & Assert
@@ -84,7 +98,46 @@ func TestRun_NoLang(t *testing.T) {
 	})
 }
 
-func TestRun_Golang(t *testing.T) {
+func TestGenerate_Shell(t *testing.T) {
+	ctx := t.Context()
+
+	shell := func(_ context.Context, _ string, config *craft.Config) error {
+		config.SetLanguage("shell", nil)
+		return nil
+	}
+
+	t.Run("success_ci", func(t *testing.T) {
+		for _, ci := range []string{parser.GitLab, parser.GitHub} {
+			t.Run(ci, func(t *testing.T) {
+				// Arrange
+				config := craft.Config{
+					CI:      &craft.CI{Name: ci},
+					Exclude: []string{craft.Chart, craft.Makefile},
+				}
+
+				// Act & Assert
+				test(ctx, t, config, shell)
+			})
+		}
+	})
+
+	t.Run("success_precommit", func(t *testing.T) {
+		for _, precommit := range []bool{true, false} {
+			t.Run(strconv.FormatBool(precommit), func(t *testing.T) {
+				// Arrange
+				config := craft.Config{Exclude: []string{craft.Chart, craft.Makefile}}
+				if !precommit {
+					config.Exclude = append(config.Exclude, craft.PreCommit)
+				}
+
+				// Act & Assert
+				test(ctx, t, config, shell)
+			})
+		}
+	})
+}
+
+func TestGenerate_Golang(t *testing.T) {
 	ctx := t.Context()
 
 	t.Run("success_cli", func(t *testing.T) {
@@ -94,7 +147,7 @@ func TestRun_Golang(t *testing.T) {
 				config := craft.Config{
 					Bot:     helpers.ToPtr(craft.Dependabot),
 					CI:      &craft.CI{Name: ci, Release: &craft.Release{}},
-					NoChart: true,
+					Exclude: []string{craft.Chart},
 					VCS:     parser.VCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
@@ -125,9 +178,8 @@ func TestRun_Golang(t *testing.T) {
 						Options: []string{craft.Sonar, craft.CodeQL, craft.Labeler},
 						Release: &craft.Release{},
 					},
-					NoChart:    true,
-					NoMakefile: true,
-					VCS:        parser.VCS{Platform: ci},
+					Exclude: []string{craft.Chart, craft.Makefile},
+					VCS:     parser.VCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
 					gomod := parser.Gomod{
@@ -156,6 +208,7 @@ func TestRun_Golang(t *testing.T) {
 					},
 					Description: helpers.ToPtr("A useful project description"),
 					Docker:      &craft.Docker{},
+					Exclude:     []string{craft.Shell},
 					VCS:         parser.VCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {
@@ -179,7 +232,7 @@ func TestRun_Golang(t *testing.T) {
 	})
 }
 
-func TestRun_Hugo(t *testing.T) {
+func TestGenerate_Hugo(t *testing.T) {
 	ctx := t.Context()
 
 	cases := []craft.CI{
@@ -197,10 +250,9 @@ func TestRun_Hugo(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			// Arrange
 			config := craft.Config{
-				CI:         &ci,
-				NoChart:    true,
-				NoMakefile: true,
-				VCS:        parser.VCS{Platform: ci.Name},
+				CI:      &ci,
+				Exclude: []string{craft.Chart, craft.Makefile},
+				VCS:     parser.VCS{Platform: ci.Name},
 			}
 			hugo := func(_ context.Context, _ string, config *craft.Config) error {
 				config.SetLanguage("hugo", nil)
@@ -213,7 +265,7 @@ func TestRun_Hugo(t *testing.T) {
 	}
 }
 
-func TestRun_Node(t *testing.T) {
+func TestGenerate_Node(t *testing.T) {
 	ctx := t.Context()
 
 	t.Run("success_package_managers", func(t *testing.T) {
@@ -222,7 +274,7 @@ func TestRun_Node(t *testing.T) {
 				// Arrange
 				config := craft.Config{
 					CI:      &craft.CI{Name: parser.GitHub},
-					NoChart: true,
+					Exclude: []string{craft.Chart},
 					VCS:     parser.VCS{Platform: parser.GitHub},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
@@ -248,7 +300,7 @@ func TestRun_Node(t *testing.T) {
 						Auth:    craft.Auth{Maintenance: helpers.ToPtr(craft.PersonalToken)},
 						Release: &craft.Release{Backmerge: true},
 					},
-					NoChart: true,
+					Exclude: []string{craft.Chart},
 					VCS:     parser.VCS{Platform: ci},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
@@ -278,10 +330,9 @@ func TestRun_Node(t *testing.T) {
 			t.Run(name, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					CI:         &ci,
-					NoChart:    true,
-					NoMakefile: true,
-					VCS:        parser.VCS{Platform: ci.Name},
+					CI:      &ci,
+					Exclude: []string{craft.Chart, craft.Makefile},
+					VCS:     parser.VCS{Platform: ci.Name},
 				}
 				node := func(_ context.Context, _ string, config *craft.Config) error {
 					config.SetWorker("index.js")
@@ -318,13 +369,13 @@ func test(ctx context.Context, t *testing.T, config craft.Config, parsers ...eng
 
 	// Act
 	_, err := engine.Generate(ctx, destdir, config,
-		slices.Concat(parsers, []engine.Parser[craft.Config]{ParserInfo, generate.ParserGolang, generate.ParserNode, generate.ParserChart}),
+		slices.Concat(parsers, []engine.Parser[craft.Config]{ParserInfo, generate.ParserGolang, generate.ParserNode, generate.ParserShell, generate.ParserChart}),
 		[]engine.Generator[craft.Config]{
 			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.Dependabot(), templates.Renovate())),
 			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.CodeCov(), templates.Sonar())),
 			engine.GeneratorTemplates(templates.FS(), templates.Docker()),
 			engine.GeneratorTemplates(templates.FS(), templates.Golang()),
-			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.Codeowners(), templates.Readme())),
+			engine.GeneratorTemplates(templates.FS(), templates.Misc()),
 			engine.GeneratorTemplates(templates.FS(), templates.Makefile()),
 			engine.GeneratorTemplates(templates.FS(), templates.Chart()),
 			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.GitHub(), templates.GitLab(), templates.SemanticRelease())),

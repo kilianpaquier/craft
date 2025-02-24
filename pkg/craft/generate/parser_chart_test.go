@@ -29,20 +29,6 @@ func TestParserChart(t *testing.T) {
 		assert.ErrorContains(t, err, "read yaml")
 	})
 
-	t.Run("success_remove_chart", func(t *testing.T) {
-		// Arrange
-		destdir := t.TempDir()
-		chartdir := filepath.Join(destdir, "chart")
-		require.NoError(t, os.Mkdir(chartdir, files.RwxRxRxRx))
-
-		// Act
-		err := generate.ParserChart(ctx, destdir, &craft.Config{NoChart: true})
-
-		// Assert
-		require.NoError(t, err)
-		assert.NoDirExists(t, chartdir)
-	})
-
 	t.Run("success_merge_values", func(t *testing.T) {
 		// Arrange
 		destdir := t.TempDir()

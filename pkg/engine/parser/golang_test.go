@@ -72,7 +72,7 @@ func TestReadGomod(t *testing.T) {
 
 		err := os.WriteFile(filepath.Join(destdir, parser.FileGomod), []byte(
 			`module github.com/kilianpaquier/craft
-			
+
 			go 1.22`,
 		), files.RwRR)
 		require.NoError(t, err)

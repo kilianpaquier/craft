@@ -2,6 +2,7 @@ package templates
 
 import (
 	"path"
+	"slices"
 
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/engine"
@@ -26,7 +27,7 @@ func Chart() []engine.Template[craft.Config] {
 			Delimiters: engine.DelimitersChevron(),
 			Globs:      []string{src + engine.TmplExtension},
 			Out:        src,
-			Remove:     func(config craft.Config) bool { return config.NoChart },
+			Remove:     func(config craft.Config) bool { return slices.Contains(config.Exclude, craft.Chart) },
 		})
 	}
 
@@ -41,7 +42,7 @@ func Chart() []engine.Template[craft.Config] {
 			Delimiters: engine.DelimitersBracket(),
 			Globs:      []string{src + engine.TmplExtension},
 			Out:        src,
-			Remove:     func(config craft.Config) bool { return config.NoChart },
+			Remove:     func(config craft.Config) bool { return slices.Contains(config.Exclude, craft.Chart) },
 		})
 	}
 
@@ -49,7 +50,7 @@ func Chart() []engine.Template[craft.Config] {
 		Delimiters: engine.DelimitersBracket(),
 		Globs:      engine.GlobsWithPart(path.Join("chart", "values.yaml")),
 		Out:        path.Join("chart", "values.yaml"),
-		Remove:     func(config craft.Config) bool { return config.NoChart },
+		Remove:     func(config craft.Config) bool { return slices.Contains(config.Exclude, craft.Chart) },
 	})
 
 	return templates

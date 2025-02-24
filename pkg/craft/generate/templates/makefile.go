@@ -2,6 +2,7 @@ package templates
 
 import (
 	"path"
+	"slices"
 
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/engine"
@@ -16,7 +17,7 @@ func Makefile() []engine.Template[craft.Config] {
 			Out:        "Makefile",
 			Remove: func(config craft.Config) bool {
 				_, ok := config.Languages["node"] // don't generate makefiles with node
-				return config.NoMakefile || ok
+				return ok || slices.Contains(config.Exclude, craft.Makefile)
 			},
 		},
 		{
@@ -25,7 +26,7 @@ func Makefile() []engine.Template[craft.Config] {
 			Out:        path.Join("scripts", "mk", "build.mk"),
 			Remove: func(config craft.Config) bool {
 				_, ok := config.Languages["node"] // don't generate makefiles with node
-				return config.NoMakefile || ok
+				return ok || slices.Contains(config.Exclude, craft.Makefile)
 			},
 		},
 		{
@@ -34,7 +35,7 @@ func Makefile() []engine.Template[craft.Config] {
 			Out:        path.Join("scripts", "mk", "craft.mk"),
 			Remove: func(config craft.Config) bool {
 				_, ok := config.Languages["node"] // don't generate makefiles with node
-				return config.NoMakefile || ok
+				return ok || slices.Contains(config.Exclude, craft.Makefile)
 			},
 		},
 	}

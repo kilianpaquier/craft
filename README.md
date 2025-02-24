@@ -47,7 +47,7 @@ cp "/tmp/craft/$new_version/craft" "$INSTALL_DIR/craft"
 ## Commands
 
 ```
-Craft initializes or generates craft projects. Craft projects are only defined by a .craft file 
+Craft initializes or generates craft projects. Craft projects are only defined by a .craft file
 and multiple files automatically generated to avoid multiple hours to setup Continuous Integration, coverage, security analyses, helm chart, etc.
 
 Craft generation can be done with 'craft' command or 'craft generate' command.
@@ -199,18 +199,13 @@ maintainers:
     email: maintainer@example.com
     url: maintainer.example.com
 
-# whether to generate an helm chart or not (optional)
-no_chart: true | false
-
-# whether to use goreleaser or not, it's only useful on golang based projects (optional)
-no_goreleaser: true | false
-
-# whether to generate a Makefile with useful commands (optional)
-# this option is automatically disabled when working with nodejs generation
-no_makefile: true | false
-
-# whether to generate a README.md with initial badges and informations (optional)
-no_readme: true | false
+# list of parts to not generate.
+exclude:
+  - chart
+  - goreleaser
+  - makefile
+  - pre-commit
+  - shell
 
 # platform override in case of gitlab on premise, bitbucket on premise, etc.
 # by default, an on premise gitlab will be matched if the host contains "gitlab"
@@ -231,20 +226,23 @@ When working on **vscode**, feel free to use craft's schemas to help setup your 
 }
 ```
 
-It's only creating the association between yaml files and `.craft`, however combined with **vscode** extension **redhat.vscode-yaml**, 
+It's only creating the association between yaml files and `.craft`, however combined with **vscode** extension **redhat.vscode-yaml**,
 it will load the schema fine since a header is added in all `.craft` when written.
 
 ## Generations
 
-Craft generation is based on separated parsers.
-Each parser checks from `.craft` configuration and project's files to add specific behaviors in a shared structure.
-Once all parsers are executed, generation iterates over all templates files and generates the right one needed depending on shared structure information.
+Craft generation is based on separated parsers and separated generators.
+
+- Each `parser` checks from `.craft` configuration and project's files to add specific behaviors in a shared structure.
+- Each `generator` generates a part of a project layout (for instance, a `generator` is in charge of generating the helm chart).
+
+Generation process first runs over all parsers to make sure a project is fully known with its specificities, then it runs over all generators.
 
 Multiple examples:
 - A `go.mod` is detected with `Golang` parser, combined with `ci` configuration, then the appropriate CI will be generated.
-- A `go.mod` is detected with `Golang` parser and a `hugo.(toml|yaml|...)` or `theme.(toml|yaml|...)` is detected too, combined with the `ci` and `static` options, 
+- A `go.mod` is detected with `Golang` parser and a `hugo.(toml|yaml|...)` or `theme.(toml|yaml|...)` is detected too, combined with the `ci` and `static` options,
   then the appropriate **Netlify** or **Pages** (it can be **GitLab** or **GitHub**) deployment will be generated in CI files.
-- If `no_chart` is not given, a custom craft helm chart will be generated. 
+- If `exclude: [chart]` is given, a custom craft helm chart will be generated.
   This helm chart can deploy cronjobs, jobs and workers easily from `values.yaml` file.
 - A `package.json` is detected with `Node` parser, combined with `ci` configuration, then the appropriate CI will be generated
   (codecov analysis, sonar analysis, lint, tests, build if needed).

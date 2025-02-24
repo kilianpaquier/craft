@@ -11,7 +11,7 @@ import (
 // Note that yaml tags are for .craft file property keys
 // and json tags for templating data.
 type Config struct {
-	parser.Executables `yaml:",inline"`
+	parser.Executables `yaml:"-"`
 
 	// Bot represents the name of the maintenance bot (renovate, dependabot, etc).
 	//
@@ -29,36 +29,20 @@ type Config struct {
 	// for Dockerfile (and Helm in case a chart is generated).
 	Docker *Docker `json:"docker,omitempty" yaml:"docker,omitempty"`
 
-	// License is the project license name.
-	License *string `json:"-" yaml:"license,omitempty"`
+	// Exclude is the slice of string indicating which part of generation must not be made.
+	//
+	// Json schema can be followed to get more information on that part
+	// and which parts can be excluded.
+	Exclude []string `json:"-" yaml:"exclude,omitempty"`
 
 	// Languages is a map of languages name with its specificities.
 	Languages map[string]any `json:"-" yaml:"-"`
 
+	// License is the project license name.
+	License *string `json:"-" yaml:"license,omitempty"`
+
 	// Maintainers is the slice of all project maintainers.
 	Maintainers []*Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"`
-
-	// NoChart can be given to avoid generating an Helm chart.
-	//
-	// By default, an Helm chart is generated since a project could satisfies one of the following possibilities:
-	//	- the project is just an Helm chart for another product
-	// 	- the project is a product with an Helm chart (with one or multiple resources, cronjobs, job, worker, etc)
-	NoChart bool `json:"-" yaml:"no_chart,omitempty"`
-
-	// NoGoreleaser can be given to avoid generating a .goreleaser.yml file.
-	//
-	// By default, if a given project is a Go project,
-	// and a cmd CLI is defined (cmd/<some useful CLI name>)
-	// a .goreleaser.yml file is generated.
-	//
-	// As such, it's unnecessary to specify this property when your project isn't a Go one.
-	NoGoreleaser bool `json:"-" yaml:"no_goreleaser,omitempty"`
-
-	// NoMakefile can be given to avoid generating a Makefile and additional Makefiles in scripts/mk/*.mk.
-	//
-	// When crafting a Node project, it's unnecessary to specify this property since no Makefile will be generated anyway.
-	// It's because Node projects contain all their scripts in package.json.
-	NoMakefile bool `json:"-" yaml:"no_makefile,omitempty"`
 
 	parser.VCS `yaml:",inline"` // put at the end to get sorted properties (Platform especially) in written yaml file.
 }
@@ -193,6 +177,8 @@ func (c Config) IsStatic(static string) bool {
 // EnsureDefaults migrates old properties into new fields and ensures default properties are always sets.
 func (c *Config) EnsureDefaults() {
 	c.retroCompatibility()
+
+	slices.Sort(c.Exclude)
 
 	// small sanitization for CI configuration part
 	func() {

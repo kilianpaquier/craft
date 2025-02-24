@@ -3,8 +3,8 @@ package generate
 import (
 	"context"
 	"fmt"
-	"os"
 	"path/filepath"
+	"slices"
 
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/engine"
@@ -14,16 +14,17 @@ import (
 // ParserChart parses the helm chart
 // and sets helm language in config by merging the config
 // and .craft overrides in chart fodler.
+//
+// Note, since it does marshal input configuration in JSON
+// and merges it with <destdir>/chart/.craft, this parser should be the last one call
+// to ensure the configuration is in a final state.
 func ParserChart(_ context.Context, destdir string, config *craft.Config) error {
 	chartdir := filepath.Join(destdir, "chart")
-	if config.NoChart {
-		engine.GetLogger().Infof("skipping helm chart, configuration has 'no_chart' key")
-		if err := os.RemoveAll(chartdir); err != nil {
-			return fmt.Errorf("remove chart dir: %w", err)
-		}
+	if slices.Contains(config.Exclude, craft.Chart) {
+		engine.GetLogger().Infof("skipping helm chart, configuration has 'exclude' key with 'chart' in it")
 		return nil
 	}
-	engine.GetLogger().Infof("helm chart detected, configuration doesn't have 'no_chart' key")
+	engine.GetLogger().Infof("helm chart detected, configuration doesn't have 'exclude' key or 'chart' isn't present in it")
 
 	values, err := parser.MergeValues(config, filepath.Join(chartdir, craft.File))
 	if err != nil {

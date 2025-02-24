@@ -3,16 +3,16 @@ package parser
 // Executables represents a collection of executables (clis, cronjobs, jobs, workers).
 type Executables struct {
 	// Clis is a map of CLI names without value (empty struct).
-	Clis map[string]struct{} `json:"-" yaml:"-"`
+	Clis map[string]struct{} `json:"clis,omitempty"`
 
 	// Crons is a map of cronjob names without value (empty struct).
-	Crons map[string]struct{} `json:"crons,omitempty" yaml:"-"`
+	Crons map[string]struct{} `json:"crons,omitempty"`
 
 	// Jobs is a map of job names without value (empty struct).
-	Jobs map[string]struct{} `json:"jobs,omitempty" yaml:"-"`
+	Jobs map[string]struct{} `json:"jobs,omitempty"`
 
 	// Workers is a map of workers names without value (empty struct).
-	Workers map[string]struct{} `json:"workers,omitempty" yaml:"-"`
+	Workers map[string]struct{} `json:"workers,omitempty"`
 }
 
 // Binaries returns the sum of all executables (clis, cronjobs, jobs, workers).

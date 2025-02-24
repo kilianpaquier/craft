@@ -18,7 +18,7 @@ var (
 	rootCmd   = &cobra.Command{
 		Use:   "craft",
 		Short: generateCmd.Short,
-		Long: `Craft initializes or generates craft projects. Craft projects are only defined by a .craft file 
+		Long: `Craft initializes or generates craft projects. Craft projects are only defined by a .craft file
 and multiple files automatically generated to avoid multiple hours to setup Continuous Integration, coverage, security analyzes, helm chart, etc.
 
 Craft generation can be done with 'craft' command or 'craft generate' command.

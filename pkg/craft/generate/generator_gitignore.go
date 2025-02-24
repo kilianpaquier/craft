@@ -3,7 +3,6 @@ package generate
 import (
 	"context"
 	"fmt"
-	"maps"
 	"net/http"
 	"path/filepath"
 	"slices"
@@ -21,7 +20,21 @@ import (
 // may be missing depending on craft layout generation.
 func GeneratorGitignore(httpClient *http.Client) func(ctx context.Context, destdir string, config craft.Config) error {
 	return func(ctx context.Context, destdir string, config craft.Config) error {
-		query := slices.Collect(maps.Keys(config.Languages))
+		mapping := map[string][]string{
+			"go":    {"go"},
+			"helm":  {"helm"},
+			"hugo":  {"hugo"},
+			"node":  {"node"},
+			"shell": nil,
+		}
+
+		query := make([]string, 0, len(config.Languages)+3)
+		for lang := range config.Languages {
+			s, ok := mapping[lang]
+			if ok {
+				query = append(query, s...)
+			}
+		}
 		query = append(query, "dotenv")
 
 		if config.CI != nil {

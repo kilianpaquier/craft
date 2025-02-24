@@ -44,7 +44,7 @@ func gen(generators ...engine.Generator[craft.Config]) func(cmd *cobra.Command, 
 
 		// run generation
 		engine.SetLogger(logger)
-		parsers := []engine.Parser[craft.Config]{generate.ParserGit, generate.ParserGolang, generate.ParserNode, generate.ParserChart}
+		parsers := []engine.Parser[craft.Config]{generate.ParserGit, generate.ParserGolang, generate.ParserNode, generate.ParserShell, generate.ParserChart}
 		config, err := engine.Generate(ctx, destdir, config, parsers, generators)
 		if err != nil {
 			logger.Fatal(err)
@@ -68,7 +68,7 @@ var generateCmd = &cobra.Command{
 		engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.CodeCov(), templates.Sonar())),                              // coverage
 		engine.GeneratorTemplates(templates.FS(), templates.Docker()),                                                                 // docker
 		engine.GeneratorTemplates(templates.FS(), templates.Golang()),                                                                 // golang
-		engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.Codeowners(), templates.Readme())),                          // misc
+		engine.GeneratorTemplates(templates.FS(), templates.Misc()),                                                                   // misc
 		engine.GeneratorTemplates(templates.FS(), templates.Makefile()),                                                               // makefile
 		engine.GeneratorTemplates(templates.FS(), templates.Chart()),                                                                  // chart
 		engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.GitHub(), templates.GitLab(), templates.SemanticRelease())), // ci

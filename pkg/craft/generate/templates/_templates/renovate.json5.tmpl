@@ -10,7 +10,7 @@
 <<- if or $all (hasKey .Languages "node") >><<- $categories = append $categories "js" >><<- end >>
 <<- if or $all (hasKey .Languages "python") >><<- $categories = append $categories "python" >><<- end >>
 <<- if or $all (hasKey .Languages "rust") >><<- $categories = append $categories "rust" >><<- end >>
-<<- if or $all (not .NoChart) >><<- $categories = concat $categories (list "helm" "kubernetes") >><<- end >>
+<<- if or $all (not (has "chart" .Exclude)) >><<- $categories = concat $categories (list "helm" "kubernetes") >><<- end >>
 <<- if or $all .Docker >><<- $categories = append $categories "docker" >><<- end >>
 
 {

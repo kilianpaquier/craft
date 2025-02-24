@@ -22,17 +22,12 @@ type VCS struct {
 	Platform string `json:"-" yaml:"platform,omitempty"`
 
 	// ProjectHost represents the host where the project is hosted.
-	//
-	// It will depend on the vcs origin URL
-	// or for golang the host of go.mod module name.
 	ProjectHost string `json:"projectHost,omitempty" yaml:"-"`
 
 	// ProjectName is the project name being generated.
-	// By default with Run function, it will be the base path of ParseRemote's subpath result following OriginURL result.
 	ProjectName string `json:"projectName,omitempty" yaml:"-"`
 
 	// ProjectPath is the project path.
-	// By default with Run function, it will be the subpath in ParseRemote result.
 	ProjectPath string `json:"projectPath,omitempty" yaml:"-"`
 }
 

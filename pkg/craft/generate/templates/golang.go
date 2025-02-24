@@ -2,6 +2,7 @@ package templates
 
 import (
 	"path"
+	"slices"
 
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/engine"
@@ -27,7 +28,7 @@ func Golang() []engine.Template[craft.Config] {
 			Globs:      []string{".goreleaser.yml" + engine.TmplExtension},
 			Out:        ".goreleaser.yml",
 			Remove: func(config craft.Config) bool {
-				return config.NoGoreleaser || noGo(config) || len(config.Clis) == 0 //nolint:revive
+				return slices.Contains(config.Exclude, craft.Goreleaser) || noGo(config) || len(config.Clis) == 0 //nolint:revive
 			},
 		},
 		{

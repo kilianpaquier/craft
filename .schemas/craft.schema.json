@@ -229,6 +229,27 @@
         "docker": {
             "$ref": "#/$defs/docker"
         },
+        "exclude": {
+            "description": "List of parts to not generate during craft generation.",
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "enum": [
+                            "chart",
+                            "goreleaser",
+                            "makefile",
+                            "pre-commit",
+                            "shell"
+                        ]
+                    },
+                    {
+                        "type": "string"
+                    }
+                ]
+            }
+        },
         "license": {
             "description": "License name.",
             "type": "string",
@@ -256,18 +277,6 @@
                 "$ref": "#/$defs/maintainer"
             },
             "minItems": 1
-        },
-        "no_chart": {
-            "description": "Disable and remove chart generation.",
-            "type": "boolean"
-        },
-        "no_goreleaser": {
-            "description": "Disable and remove goreleaser configuration for golang based projects with a CLI.",
-            "type": "boolean"
-        },
-        "no_makefile": {
-            "description": "Disable and remove makefile generation.",
-            "type": "boolean"
         },
         "platform": {
             "description": "Platform for README.md badges (automatically parsed with git origin URL by default).",

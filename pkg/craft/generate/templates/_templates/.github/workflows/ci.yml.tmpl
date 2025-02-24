@@ -6,6 +6,7 @@ run-name: CICD
 <<- $node := hasKey .Languages "node" >>
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $golang := hasKey .Languages "go" >>
+<<- $shell := hasKey .Languages "shell" >>
 
 <<- $nodebuild := and $node (gt .Binaries 0) >>
 <<- $nodepublish := and $node (not (get .Languages "node").Private) >>
@@ -73,6 +74,43 @@ jobs:
     steps:
       - id: skip
         run: echo "Running workflow"
+
+<<- if not (has "pre-commit" .Exclude) >>
+
+  pre-commit:
+    name: Pre-Commit
+    runs-on: ubuntu-latest
+    needs: run-workflow
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - uses: pre-commit/action@v3.0.1
+      - if: always()
+        # see https://github.com/marketplace/actions/git-auto-commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "fix(commit): pre-commit autofixes [skip ci]"
+<<- end >>
+
+<<- if $shell >>
+
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    needs: run-workflow
+    steps:
+      - uses: actions/checkout@v4
+      # see https://github.com/marketplace/actions/shellcheck
+      - uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          check_together: "yes"
+<<- end >>
 
 <<- if or (gt .Binaries 0) $hugo .Docker >>
 

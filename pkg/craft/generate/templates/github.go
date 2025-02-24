@@ -22,9 +22,7 @@ func githubWorkflow() []engine.Template[craft.Config] {
 		Delimiters: engine.DelimitersChevron(),
 		Globs:      engine.GlobsWithPart(ci),
 		Out:        ci,
-		Remove: func(config craft.Config) bool {
-			return !config.IsCI(parser.GitHub) || (len(config.Languages) == 0 && !config.HasRelease())
-		},
+		Remove:     func(config craft.Config) bool { return !config.IsCI(parser.GitHub) },
 	})
 
 	codeql := path.Join(".github", "workflows", "codeql.yml")
