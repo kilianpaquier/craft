@@ -2,8 +2,6 @@ module github.com/kilianpaquier/craft
 
 go 1.24
 
-toolchain go1.24.0
-
 require (
 	dario.cat/mergo v1.0.1
 	github.com/Masterminds/sprig/v3 v3.3.0
@@ -13,7 +11,7 @@ require (
 	github.com/charmbracelet/log v0.4.1
 	github.com/go-git/go-git/v5 v5.14.0
 	github.com/go-viper/mapstructure/v2 v2.2.1
-	github.com/goccy/go-yaml v1.16.0
+	github.com/goccy/go-yaml v1.17.1
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/kilianpaquier/compare v1.0.2
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.1
@@ -85,7 +83,6 @@ require (
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
-	golang.org/x/tools v0.31.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
