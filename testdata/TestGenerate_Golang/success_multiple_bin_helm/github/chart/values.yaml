@@ -44,11 +44,9 @@ crons:
       limits:
         cpu: 250m
         memory: 256Mi
-        storage: 10Gi
       requests:
         cpu: 50m
         memory: 128Mi
-        storage: 5Gi
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 3
     restartPolicy: OnFailure
@@ -147,11 +145,9 @@ jobs:
       limits:
         cpu: 250m
         memory: 256Mi
-        storage: 10Gi
       requests:
         cpu: 50m
         memory: 128Mi
-        storage: 5Gi
     restartPolicy: OnFailure
     configMap: {}
       # mountPath: /etc/config/
@@ -274,11 +270,9 @@ workers:
       limits:
         cpu: 250m
         memory: 256Mi
-        storage: 10Gi
       requests:
         cpu: 50m
         memory: 128Mi
-        storage: 5Gi
     autoscaling:
       enabled: false
       minReplicas: 1

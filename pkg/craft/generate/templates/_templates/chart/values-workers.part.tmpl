@@ -75,11 +75,15 @@ workers:
       limits:
         cpu: {{ $config.resources.limits.cpu | default "250m" }}
         memory: {{ $config.resources.limits.memory | default "256Mi" }}
-        storage: {{ $config.resources.limits.storage | default "10Gi" }}
+        {{- with $config.resources.limits.storage }}
+        storage: {{ . }}
+        {{- end }}
       requests:
         cpu: {{ $config.resources.requests.cpu | default "50m" }}
         memory: {{ $config.resources.requests.memory | default "128Mi" }}
-        storage: {{ $config.resources.requests.storage | default "5Gi" }}
+        {{- with $config.resources.requests.storage }}
+        storage: {{ . }}
+        {{- end }}
     autoscaling:
       enabled: {{ $config.autoscaling.enabled | default "false" }}
       minReplicas: {{ $config.autoscaling.minReplicas | default 1 }}
