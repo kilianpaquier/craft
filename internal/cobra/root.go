@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
@@ -70,12 +71,21 @@ func globalFlags(_ *cobra.Command, _ []string) error {
 	}
 	logger.SetLevel(level)
 
+	// retrieve current directory for generation if wd is empty
+	// or retrieve the absolute path for better print
+	// and avoid potential issues when generating files (never happened but we never know)
 	if wd == "" {
 		pwd, err := os.Getwd()
 		if err != nil {
 			return fmt.Errorf("get wd: %w", err)
 		}
 		wd = pwd
+	} else {
+		abs, err := filepath.Abs(wd)
+		if err != nil {
+			return fmt.Errorf("absolute path: %w", err)
+		}
+		wd = abs
 	}
 	return nil
 }
