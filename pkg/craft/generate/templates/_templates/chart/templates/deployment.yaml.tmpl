@@ -50,7 +50,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ $config.service.port }}
+              containerPort: {{ $config.env.BINARY_PORT | default 3000 }}
               protocol: TCP
           {{- with $config.env }}
           env:
