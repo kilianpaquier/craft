@@ -123,7 +123,7 @@ jobs:
       - run: mkdir -p reports/
       - run: |
           yarn install --frozen-lockfile
-          yarn run test
+          yarn run test -- --coverage --coverageDirectory=reports --reporters="jest-junit" --reporters="jest-sonar"
 
   node-build:
     name: Node Build

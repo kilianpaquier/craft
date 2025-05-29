@@ -124,7 +124,9 @@ jobs:
           cache: pnpm
           node-version: lts/*
       - run: mkdir -p reports/
-      - run: pnpm install-test --frozen-lockfile
+      - run: |
+          pnpm install --frozen-lockfile
+          pnpm run test -- --coverage --coverageDirectory=reports --reporters="jest-junit" --reporters="jest-sonar"
 
   node-build:
     name: Node Build

@@ -109,7 +109,7 @@ jobs:
       - run: mkdir -p reports/
       - run: |
           bun install --frozen-lockfile
-          bun test --rerun-each 10 --coverage --coverage-reporter=lcov --coverage-dir=reports
+          bun test --rerun-each 10 --coverage --coverage-reporter=lcov --coverage-dir=reports --reporter=junit --reporter-outfile="reports/node-test.xunit.xml"
 
   node-build:
     name: Node Build

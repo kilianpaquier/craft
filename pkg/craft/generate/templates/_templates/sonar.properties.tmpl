@@ -38,7 +38,7 @@ sonar.go.golangci-lint.reportPaths=reports/go-ci-lint.checkstyle.xml
 
 {{- if hasKey .Languages "node" }}
 
-sonar.testExecutionReportPaths=reports/node-test.sonar.xml
+sonar.testExecutionReportPaths=reports/node-test.sonar.xml,reports/node-test.xunit.xml
 sonar.eslint.reportPaths=reports/node-lint.xslint.json
 sonar.javascript.lcov.reportPaths=reports/lcov.info
 {{- end }}

@@ -124,7 +124,7 @@ jobs:
       - run: npm ci
       - run: |
           npm install --frozen-lockfile
-          npm run test
+          npm run test -- --coverage --coverageDirectory=reports --reporters="jest-junit" --reporters="jest-sonar"
 
   node-build:
     name: Node Build

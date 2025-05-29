@@ -95,15 +95,26 @@ jobs:
 <<- if eq $manager "bun" >>
       - run: |
           << $manager >> install --frozen-lockfile
-          << $manager >> test --rerun-each 10 --coverage --coverage-reporter=lcov --coverage-dir=reports
-<<- else if eq $manager "pnpm" >>
-      - run: << $manager >> install-test --frozen-lockfile
+          << $manager >> test --rerun-each 10 --coverage --coverage-reporter=lcov --coverage-dir=reports --reporter=junit --reporter-outfile="reports/node-test.xunit.xml"
 <<- else >>
       - run: |
           << $manager >> install --frozen-lockfile
-          << $manager >> run test
+          << $manager >> run test -- --coverage --coverageDirectory=reports --reporters="jest-junit" --reporters="jest-sonar"
 <<- end >>
 <<- if has "codecov" .CI.Options >>
+      - if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          codecov_yml_path: .codecov.yml
+          disable_search: true
+          env_vars: OS
+          fail_ci_if_error: false
+          files: reports/node-test.xunit.xml
+          flags: ${{ matrix.os }}
+          slug: ${{ github.repository }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+        env:
+          OS: ${{ matrix.os }}
       - uses: codecov/codecov-action@v5
         with:
           codecov_yml_path: .codecov.yml
