@@ -1,4 +1,4 @@
-package cobra_test
+package generate_test
 
 import (
 	"os"

@@ -1,0 +1,232 @@
+---
+# Source: craft/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: craft-worker-name
+  labels:
+    helm.sh/chart: craft-0.1.0
+    app.kubernetes.io/name: craft
+    app.kubernetes.io/instance: craft
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: craft
+    app.kubernetes.io/instance: craft
+---
+# Source: craft/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: craft-worker-name
+  labels:
+    helm.sh/chart: craft-0.1.0
+    app.kubernetes.io/name: craft
+    app.kubernetes.io/instance: craft
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  paused: true
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: craft
+      app.kubernetes.io/instance: craft
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: craft
+        app.kubernetes.io/instance: craft
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 2
+        fsGroupChangePolicy: Always
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: worker-name
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add: []
+              drop: []
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          image: "kilianpaquier/craft:0.1.0"
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: BINARY_NAME
+              value: "worker-name"
+            - name: BINARY_PORT
+              value: "3000"
+          resources:
+            limits:
+              cpu: 250m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+      restartPolicy: Always
+---
+# Source: craft/templates/job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: craft-job-name
+  namespace: default
+  labels:
+    helm.sh/chart: craft-0.1.0
+    app.kubernetes.io/name: craft
+    app.kubernetes.io/instance: craft
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  suspend: true
+  completionMode: NonIndexed
+  completions: 1
+  parallelism: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: craft
+      app.kubernetes.io/instance: craft
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: craft
+        app.kubernetes.io/instance: craft
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 2
+        fsGroupChangePolicy: Always
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+      containers:
+        - name: job-name
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add: []
+              drop: []
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          image: "kilianpaquier/craft:0.1.0"
+          env:
+            - name: BINARY_NAME
+              value: "job-name"
+            - name: BINARY_PORT
+              value: "3000"
+          resources:
+            limits:
+              cpu: 250m
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+      restartPolicy: OnFailure
+---
+# Source: craft/templates/cronjob.yaml
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: craft-cron-name
+  labels:
+    helm.sh/chart: craft-0.1.0
+    app.kubernetes.io/name: craft
+    app.kubernetes.io/instance: craft
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  suspend: true
+  schedule: "0 0 */1 * *"
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      completionMode: NonIndexed
+      completions: 1
+      parallelism: 1
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: craft
+          app.kubernetes.io/instance: craft
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: craft
+            app.kubernetes.io/instance: craft
+        spec:
+          serviceAccountName: default
+          securityContext:
+            fsGroup: 2
+            fsGroupChangePolicy: Always
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          containers:
+            - name: cron-name
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  add: []
+                  drop: []
+                privileged: false
+                readOnlyRootFilesystem: true
+                runAsGroup: 1001
+                runAsNonRoot: true
+                runAsUser: 1001
+              image: "kilianpaquier/craft:0.1.0"
+              env:
+                - name: BINARY_NAME
+                  value: "cron-name"
+                - name: BINARY_PORT
+                  value: "3000"
+              resources:
+                limits:
+                  cpu: 250m
+                  memory: 256Mi
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+          restartPolicy: OnFailure
+---
+# Source: craft/templates/configmap.yaml
+# Code generated by craft; DO NOT EDIT.
+---
+# Source: craft/templates/cronjob.yaml
+# Code generated by craft; DO NOT EDIT.
+---
+# Source: craft/templates/deployment.yaml
+# Code generated by craft; DO NOT EDIT.
+---
+# Source: craft/templates/hpa.yaml
+# Code generated by craft; DO NOT EDIT.
+---
+# Source: craft/templates/job.yaml
+# Code generated by craft; DO NOT EDIT.
+---
+# Source: craft/templates/service.yaml
+# Code generated by craft; DO NOT EDIT.
+---
+# Source: craft/templates/serviceaccount.yaml
+# Code generated by craft; DO NOT EDIT.

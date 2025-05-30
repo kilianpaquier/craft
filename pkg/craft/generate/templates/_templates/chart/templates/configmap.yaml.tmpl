@@ -4,6 +4,7 @@
 
 {{ range $name, $config := merge .Values.crons .Values.jobs .Values.workers }}
 {{ with $config.configMap }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,7 +13,7 @@ data:
 {{- range .tpl_folders }}
 {{- range $path, $_ := $.Files.Glob (print . "/**") }}
   {{ base $path }}: |-
-    {{ tpl ($.Files.Get $path) . }}
+    {{ tpl ($.Files.Get $path) $config }}
 {{- end }}
 {{- end }}
 
@@ -23,8 +24,9 @@ data:
 {{- end }}
 {{- end }}
 
-{{- if .data }}
-  {{- toYaml (tpl .data .) | nindent 2 }}
+{{- range $key, $value := .data }}
+  {{ $key }}: |-
+    {{ tpl $value $config }}
 {{- end }}
 {{ end }}
 {{ end }}

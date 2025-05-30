@@ -5,6 +5,7 @@
 
 {{ range $name, $config := .Values.workers }}
 {{- if $config.autoscaling.enabled }}
+---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:

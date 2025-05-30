@@ -6,6 +6,7 @@
 {{- $serviceAccountName := include (print .Chart.Name ".serviceAccountName") . -}}
 
 {{ range $name, $config := .Values.workers }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

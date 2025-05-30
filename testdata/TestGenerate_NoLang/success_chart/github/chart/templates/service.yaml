@@ -5,6 +5,7 @@
 {{- $selectorLabels := include (print .Chart.Name ".selectorLabels") . -}}
 
 {{ range $name, $config := .Values.workers }}
+---
 apiVersion: v1
 kind: Service
 metadata:
