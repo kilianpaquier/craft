@@ -14,7 +14,7 @@ sonar.projectName={{ .ProjectName }}
 {{- $inclusions := list }}
 
 {{- if hasKey .Languages "go" }}
-{{- $exclusions = concat $exclusions (list "cmd" "examples" "**/cobra/**" "**/testdata/**" "**/logger.go") }}
+{{- $exclusions = concat $exclusions (list "cmd" "examples" "**/testdata/**" "**/logger.go") }}
 {{- $inclusions = append $inclusions "**/*_test.go" }}
 {{- end }}
 

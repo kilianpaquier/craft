@@ -148,7 +148,7 @@ variables:
   GO_IMAGE: "registry.hub.docker.com/library/golang:latest"
   GO_OUTDATED_DISABLED: "false" # https://github.com/psampaz/go-mod-outdated
   GO_SBOM_DISABLED: "true"
-  GO_TEST_FLAGS: "-coverpkg=./... -covermode=count"
+  GO_TEST_FLAGS: "-v -coverpkg=./... -covermode=count -timeout=15s"
   GO_TEST_IMAGE: "registry.hub.docker.com/library/golang:latest"
 {{- end }}
 

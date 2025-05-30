@@ -10,7 +10,7 @@ reports:
 .PHONY: lint
 lint: reports
 	@golangci-lint run -c ${GOCI_LINT_PATH} --timeout 240s --allow-parallel-runners \
-		--output.checkstyle.path reports/go-ci-lint.checkstyle.xml \
+		--output.checkstyle.path "reports/go-ci-lint.checkstyle.xml" \
 		--output.text.path stdout $(ARGS) || \
 		echo "golangci-lint failed, running 'make lint-fix' may fix some issues"
 
@@ -28,7 +28,9 @@ test-race:
 
 .PHONY: test-cover
 test-cover: reports
-	@go test ./... -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out" -timeout=15s
+	@go test ./... -v -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out" -timeout=15s | tee "reports/tests.log"
+	@go run github.com/jstemmer/go-junit-report/v2@latest -in "reports/tests.log" -out "reports/go-test.xunit.xml"
+	@go tool test2json < "reports/tests.log" > "reports/go-test.native.json"
 
 .PHONY: build
 build:

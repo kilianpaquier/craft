@@ -90,7 +90,7 @@ jobs:
       - run: mkdir -p reports/
       - uses: golangci/golangci-lint-action@v8
         with:
-          args: --config .golangci.yml --timeout 240s --allow-parallel-runners --output.checkstyle.path reports/go-ci-lint.checkstyle.xml --output.text.path stdout
+          args: --config .golangci.yml --timeout 240s --allow-parallel-runners --output.checkstyle.path "reports/go-ci-lint.checkstyle.xml" --output.text.path stdout
       - uses: actions/upload-artifact@v4
         with:
           name: lint
@@ -116,7 +116,13 @@ jobs:
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
-      - run: go test ./... -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out" -timeout=15s
+      - run: |-
+          go test ./... -v -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out" -timeout=15s | tee "reports/tests.log"
+      - if: ${{ !cancelled() }}
+        shell: bash
+        run: |-
+          go run github.com/jstemmer/go-junit-report/v2@latest -in "reports/tests.log" -out "reports/go-test.xunit.xml"
+          go tool test2json < "reports/tests.log" > "reports/go-test.native.json"
       - uses: actions/upload-artifact@v4
         with:
           name: coverage
