@@ -9,11 +9,12 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	compare "github.com/kilianpaquier/compare/pkg"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/craft/generate"
 	"github.com/kilianpaquier/craft/pkg/engine/generator"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestGeneratorGitignore(t *testing.T) {

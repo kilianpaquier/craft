@@ -248,6 +248,11 @@ issues:
   max-same-issues: 0
 
 formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - golines
   settings:
     gci:
       # Section configuration to compare against.
@@ -268,6 +273,13 @@ formatters:
           replacement: any
         - pattern: a[b:len(a)]
           replacement: a[b:]
+    golines:
+      # Target maximum line length.
+      # Default: 100
+      max-len: 200
+      # Shorten single-line comments.
+      # Default: false
+      shorten-comments: true
   exclusions:
     generated: lax
     paths:

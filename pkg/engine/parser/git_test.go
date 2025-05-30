@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/kilianpaquier/craft/testutils"
 )
 
 func TestGit(t *testing.T) {
@@ -27,7 +29,7 @@ func TestGit(t *testing.T) {
 		}
 
 		// Act
-		vcs, err := Git(filepath.Join("..", "..", ".."))
+		vcs, err := Git(filepath.Join(testutils.Testdata(t), ".."))
 
 		// Assert
 		require.NoError(t, err)
@@ -50,7 +52,7 @@ func TestGitOriginURL(t *testing.T) {
 
 	t.Run("valid_git_repository", func(t *testing.T) {
 		// Act
-		originURL, err := gitOriginURL(filepath.Join("..", "..", ".."))
+		originURL, err := gitOriginURL(filepath.Join(testutils.Testdata(t), ".."))
 
 		// Assert
 		require.NoError(t, err)

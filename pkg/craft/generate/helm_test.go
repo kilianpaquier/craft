@@ -24,12 +24,13 @@ import (
 	"github.com/kilianpaquier/craft/pkg/craft/generate/templates"
 	"github.com/kilianpaquier/craft/pkg/engine"
 	"github.com/kilianpaquier/craft/pkg/engine/files"
+	"github.com/kilianpaquier/craft/testutils"
 )
 
 func TestHelmTemplate(t *testing.T) {
 	t.Parallel()
 	ctx := t.Context()
-	testdir := filepath.Join("..", "..", "testdata", t.Name())
+	testdir := filepath.Join(testutils.Testdata(t), t.Name())
 	generate := engine.GeneratorTemplates(templates.FS(), templates.Chart()) // chart generation
 
 	// read all tests (simpler in case new test cases would be added)

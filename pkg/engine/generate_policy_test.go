@@ -5,10 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/kilianpaquier/craft/pkg/engine"
-	"github.com/kilianpaquier/craft/pkg/engine/files"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/kilianpaquier/craft/pkg/engine"
+	"github.com/kilianpaquier/craft/pkg/engine/files"
 )
 
 func TestShouldGenerate(t *testing.T) {

@@ -10,6 +10,7 @@ import (
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/craft/generate"
 	"github.com/kilianpaquier/craft/pkg/engine/parser"
+	"github.com/kilianpaquier/craft/testutils"
 )
 
 func TestParserGit(t *testing.T) {
@@ -41,7 +42,7 @@ func TestParserGit(t *testing.T) {
 		config := craft.Config{}
 
 		// Act
-		err := generate.ParserGit(ctx, filepath.Join("..", "..", ".."), &config)
+		err := generate.ParserGit(ctx, filepath.Join(testutils.Testdata(t), ".."), &config)
 
 		// Assert
 		require.NoError(t, err)

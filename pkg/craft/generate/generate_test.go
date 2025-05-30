@@ -20,6 +20,7 @@ import (
 	"github.com/kilianpaquier/craft/pkg/engine"
 	"github.com/kilianpaquier/craft/pkg/engine/files"
 	"github.com/kilianpaquier/craft/pkg/engine/parser"
+	"github.com/kilianpaquier/craft/testutils"
 )
 
 func TestGenerate_NoLang(t *testing.T) {
@@ -382,7 +383,7 @@ func test(ctx context.Context, t *testing.T, config craft.Config, parsers ...eng
 	// Arrange
 	config.Maintainers = append(config.Maintainers, &craft.Maintainer{Name: "kilianpaquier"})
 	destdir := t.TempDir()
-	assertdir := filepath.Join("..", "..", "testdata", t.Name())
+	assertdir := filepath.Join(testutils.Testdata(t), t.Name())
 	require.NoError(t, os.MkdirAll(assertdir, files.RwxRxRxRx))
 
 	// Act

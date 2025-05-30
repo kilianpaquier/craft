@@ -10,13 +10,14 @@ import (
 	schemas "github.com/kilianpaquier/craft/.schemas"
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/engine/files"
+	"github.com/kilianpaquier/craft/testutils"
 )
 
 func TestValidate(t *testing.T) {
 	readSchema := func(out any) error { return files.ReadJSON(schemas.Craft, out, schemas.ReadFile) }
 	readFile := func(t *testing.T) func(out any) error {
 		t.Helper()
-		src := filepath.Join("..", "..", "..", "testdata", t.Name()+craft.File)
+		src := filepath.Join(testutils.Testdata(t), t.Name()+craft.File)
 		return func(out any) error { return files.ReadYAML(src, out, os.ReadFile) }
 	}
 
