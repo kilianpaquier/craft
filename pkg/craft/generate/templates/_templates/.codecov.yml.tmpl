@@ -17,10 +17,13 @@ ignore:
 {{- if hasKey .Languages "go" }}
   - "cmd"
   - "examples"
-  - "**/cobra/**"
-  - "**/testdata/**"
+  - "testdata"
+  - "testutils"
   - "**/build.go"
+  - "**/cobra/**"
   - "**/logger.go"
+  - "**/testdata/**"
+  - "**/testutils/**"
 {{- end }}
 {{- if hasKey .Languages "node" }}
   - "dist"
