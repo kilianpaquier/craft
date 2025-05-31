@@ -11,22 +11,21 @@ metadata:
   name: {{ print $fullname "-" $name }}
 data:
 {{- range .tpl_folders }}
-{{- range $path, $_ := $.Files.Glob (print . "/**") }}
+{{- range $path, $_ := $.Files.Glob (print . "/*") }}
   {{ base $path }}: |-
-    {{ tpl ($.Files.Get $path) $config }}
+    {{- tpl ($.Files.Get $path) $config | trimSuffix "\n" | nindent 4 }}
 {{- end }}
 {{- end }}
 
 {{- range .include_folders }}
-{{- range $path, $_ := $.Files.Glob (print . "/**") }}
+{{- range $path, $_ := $.Files.Glob (print . "/*") }}
   {{ base $path }}: |-
-    {{ $.Files.Get $path }}
+    {{- $.Files.Get $path | trimSuffix "\n" | nindent 4 }}
 {{- end }}
 {{- end }}
 
-{{- range $key, $value := .data }}
-  {{ $key }}: |-
-    {{ tpl $value $config }}
+{{- with .data }}
+  {{- tpl (toYaml .) $config | nindent 2 }}
 {{- end }}
 {{ end }}
 {{ end }}

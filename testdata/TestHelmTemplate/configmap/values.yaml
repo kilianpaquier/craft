@@ -59,7 +59,8 @@ crons:
       data:
         name: value
         multiline: |-
-          Some multiple data with tpl need {{ .env.BINARY_PORT }}
+          Some multiple data
+          with tpl need {{ .env.BINARY_PORT }}
 
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#volume-v1-core
     volumes: []
@@ -160,7 +161,8 @@ jobs:
       data:
         name: value
         multiline: |-
-          Some multiple data with tpl need {{ .env.BINARY_PORT }}
+          Some multiple data
+          with tpl need {{ .env.BINARY_PORT }}
 
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#volume-v1-core
     volumes: []
@@ -304,7 +306,8 @@ workers:
       data:
         name: value
         multiline: |-
-          Some multiple data with tpl need {{ .env.BINARY_PORT }}
+          Some multiple data
+          with tpl need {{ .env.BINARY_PORT }}
 
     # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#volume-v1-core
     volumes: []

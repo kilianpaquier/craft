@@ -19,6 +19,7 @@ require (
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
+	github.com/yannh/kubeconform v0.7.0
 	gitlab.com/gitlab-org/api/client-go v0.129.0
 	golang.org/x/mod v0.24.0
 	golang.org/x/text v0.25.0

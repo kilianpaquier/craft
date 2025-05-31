@@ -7,7 +7,7 @@
 
 {{ range $name, $config := .Values.crons }}
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: {{ print $fullname "-" $name }}

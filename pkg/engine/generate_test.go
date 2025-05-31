@@ -75,9 +75,9 @@ func TestGenerate(t *testing.T) {
 		require.NoError(t, os.WriteFile(
 			filepath.Join(destdir, template.Globs[0]),
 			[]byte("value {{ .Str }} is empty, since no parser updated it"), files.RwRR))
-		outfile, err := os.Create(out)
+		file, err := os.Create(out)
 		require.NoError(t, err)
-		require.NoError(t, outfile.Close())
+		require.NoError(t, file.Close())
 
 		// Act
 		_, err = engine.Generate(ctx, destdir, testconfig{},

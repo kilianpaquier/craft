@@ -55,7 +55,7 @@ func TestShouldGenerate(t *testing.T) {
 		dest := filepath.Join(t.TempDir(), "file.txt")
 		file, err := os.Create(dest)
 		require.NoError(t, err)
-		t.Cleanup(func() { assert.NoError(t, file.Close()) })
+		require.NoError(t, file.Close())
 
 		// Act
 		ok, err := engine.ShouldGenerate(dest, engine.PolicyNone)

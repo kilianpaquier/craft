@@ -152,7 +152,7 @@ spec:
       restartPolicy: OnFailure
 ---
 # Source: craft/templates/cronjob.yaml
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: craft-cron-name
