@@ -346,7 +346,7 @@ func TestMergeMaps(t *testing.T) {
 		m := mergeMap(map[string]any{}, "hey !")
 
 		// Assert
-		assert.Equal(t, map[string]any{"0_decode_error": "'' expected a map, got 'string'"}, m)
+		assert.Equal(t, map[string]any{"0_decode_error": "'' expected type 'map[string]interface {}', got unconvertible type 'string'"}, m)
 	})
 
 	t.Run("success", func(t *testing.T) {

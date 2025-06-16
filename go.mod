@@ -11,8 +11,8 @@ require (
 	github.com/charmbracelet/bubbletea v1.3.5
 	github.com/charmbracelet/huh v0.7.0
 	github.com/charmbracelet/log v0.4.2
-	github.com/go-git/go-git/v5 v5.16.0
-	github.com/go-viper/mapstructure/v2 v2.2.1
+	github.com/go-git/go-git/v5 v5.16.2
+	github.com/go-viper/mapstructure/v2 v2.3.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/jarcoal/httpmock v1.4.0
 	github.com/kilianpaquier/compare v1.1.0
@@ -20,9 +20,9 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/yannh/kubeconform v0.7.0
-	gitlab.com/gitlab-org/api/client-go v0.129.0
-	golang.org/x/mod v0.24.0
-	golang.org/x/text v0.25.0
+	gitlab.com/gitlab-org/api/client-go v0.130.1
+	golang.org/x/mod v0.25.0
+	golang.org/x/text v0.26.0
 	helm.sh/helm/v3 v3.18.1
 )
 
@@ -46,7 +46,7 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0 // indirect
 	github.com/charmbracelet/x/ansi v0.9.2 // indirect
 	github.com/charmbracelet/x/cellbuf v0.0.13 // indirect
-	github.com/charmbracelet/x/exp/strings v0.0.0-20250528180458-2d5d6cb84620 // indirect
+	github.com/charmbracelet/x/exp/strings v0.0.0-20250616121729-19b66ab4499b // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
 	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/containerd/containerd v1.7.27 // indirect
@@ -130,11 +130,11 @@ require (
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
 	github.com/rubenv/sql-migrate v1.8.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
+	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/skeema/knownhosts v1.3.1 // indirect
-	github.com/spf13/cast v1.8.0 // indirect
+	github.com/spf13/cast v1.9.2 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
@@ -143,14 +143,14 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	github.com/xlab/treeprint v1.2.0 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
+	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476 // indirect
+	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
+	golang.org/x/sync v0.15.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/time v0.11.0 // indirect
+	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241209162323-e6fa225c2576 // indirect
 	google.golang.org/grpc v1.68.1 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
