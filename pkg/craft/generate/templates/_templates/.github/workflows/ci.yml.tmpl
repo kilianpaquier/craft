@@ -96,7 +96,7 @@ jobs:
 <<- if not (has "pre-commit:auto-commit" .Exclude) >>
       - if: ${{ !cancelled() }}
         # see https://github.com/marketplace/actions/git-auto-commit
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "fix(commit): pre-commit autofixes [skip ci]"
 <<- end >>
