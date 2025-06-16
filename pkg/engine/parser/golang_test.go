@@ -80,6 +80,7 @@ func TestReadGomod(t *testing.T) {
 		expectedMod := parser.Gomod{
 			Go:     "1.22",
 			Module: "github.com/kilianpaquier/craft",
+			Tools:  []string{},
 		}
 		expectedVCS := parser.VCS{
 			ProjectHost: "github.com",

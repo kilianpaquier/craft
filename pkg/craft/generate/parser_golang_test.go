@@ -80,7 +80,11 @@ func TestParserGolang(t *testing.T) {
 		err := os.WriteFile(filepath.Join(destdir, parser.FileGomod), []byte(
 			`module github.com/kilianpaquier/craft
 
-			go 1.22`,
+			go 1.22
+
+			tool (
+				example.com/tool-example
+			)`,
 		), files.RwRR)
 		require.NoError(t, err)
 
@@ -89,6 +93,7 @@ func TestParserGolang(t *testing.T) {
 				"go": parser.Gomod{
 					Module: "github.com/kilianpaquier/craft",
 					Go:     "1.22",
+					Tools:  []string{"example.com/tool-example"},
 				},
 			},
 		}
@@ -129,6 +134,7 @@ func TestParserGolang(t *testing.T) {
 				"go": parser.Gomod{
 					Module: "github.com/kilianpaquier/craft",
 					Go:     "1.22",
+					Tools:  []string{},
 				},
 			},
 		}

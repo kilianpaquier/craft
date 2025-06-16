@@ -48,6 +48,10 @@ type Gomod struct {
 	// Toolchain is the toolchain statement,
 	// i.e. "toolchain go1.23.4" without "toolchain go" part.
 	Toolchain string
+
+	// Tools is the slice of tools present in go.mod file.
+	// Nothing is done on it like formatting, as such the path of each tool is the full path given in go.mod.
+	Tools []string
 }
 
 // AsVCS returns the vcs configuration associated to module statement in go.mod.
@@ -127,6 +131,15 @@ func ReadGomod(destdir string) (Gomod, error) {
 	// it's preempting provided go version for build purposes
 	if file.Toolchain != nil {
 		gomod.Toolchain = file.Toolchain.Name[2:]
+	}
+
+	// populate tools to add behaviors on it if necessary
+	gomod.Tools = make([]string, 0, len(file.Tool))
+	for _, tool := range file.Tool {
+		if tool == nil {
+			continue
+		}
+		gomod.Tools = append(gomod.Tools, tool.Path)
 	}
 
 	return gomod, nil
