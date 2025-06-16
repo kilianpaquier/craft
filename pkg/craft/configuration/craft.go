@@ -31,9 +31,15 @@ type Config struct {
 
 	// Exclude is the slice of string indicating which part of generation must not be made.
 	//
-	// Json schema can be followed to get more information on that part
+	// JSON schema can be followed to get more information on that part
 	// and which parts can be excluded.
 	Exclude []string `json:"-" yaml:"exclude,omitempty"`
+
+	// Include is the slice of string indicating optional part to generate (additionally to base generation).
+	//
+	// JSON schema can be followed to get more information on that part
+	// and which parts can be included.
+	Include []string `json:"-" yaml:"include,omitempty"`
 
 	// Languages is a map of languages name with its specificities.
 	Languages map[string]any `json:"-" yaml:"-"`

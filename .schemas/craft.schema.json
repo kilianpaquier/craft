@@ -241,8 +241,24 @@
                             "goreleaser",
                             "makefile",
                             "pre-commit",
-                            "pre-commit:auto-commit",
                             "shell"
+                        ]
+                    },
+                    {
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "include": {
+            "description": "List of optional parts to generate during craft generation.",
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "string",
+                        "enum": [
+                            "pre-commit:auto-commit"
                         ]
                     },
                     {

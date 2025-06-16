@@ -12,7 +12,6 @@ ci:
   release: {}
 exclude:
   - chart
-  - pre-commit:auto-commit
   - shell
 license: mit
 maintainers:

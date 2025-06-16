@@ -64,9 +64,14 @@ func TestGenerate_NoLang(t *testing.T) {
 		for _, precommit := range []bool{true, false} {
 			t.Run(strconv.FormatBool(precommit), func(t *testing.T) {
 				// Arrange
-				config := craft.Config{Exclude: []string{craft.Chart, craft.Makefile}}
+				config := craft.Config{
+					CI:      &craft.CI{Name: parser.GitHub},
+					Exclude: []string{craft.Chart, craft.Makefile},
+				}
 				if !precommit {
 					config.Exclude = append(config.Exclude, craft.PreCommit)
+				} else {
+					config.Include = append(config.Include, craft.PreCommit+":auto-commit")
 				}
 
 				// Act & Assert
