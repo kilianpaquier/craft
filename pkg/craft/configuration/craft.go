@@ -87,6 +87,7 @@ type CI struct {
 	Release *Release `json:"-" yaml:"release,omitempty"`
 }
 
+// Helm represents the configuration for Helm.
 type Helm struct {
 	// Path is the chart fullname.
 	// It's optional and by default will be computed with VCS informations (owner/repository).
@@ -114,7 +115,7 @@ type Deployment struct {
 	Auto bool `json:"-" yaml:"auto,omitempty"`
 
 	// Platform is the deployment platform name (netlify, pages, kubernetes, azure, gcp, etc.).
-	Platform string `json:"-" yaml:"name,omitempty"`
+	Platform string `json:"-" yaml:"platform,omitempty"`
 }
 
 // Docker is the struct for craft docker tuning.

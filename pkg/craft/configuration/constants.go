@@ -68,8 +68,8 @@ const (
 const (
 	// HelmAuto is the constant indicating that Helm chart publication should be made automatically.
 	HelmAuto string = "auto"
-	// HelmAuto is the constant indicating that Helm chart publication should be made manually.
+	// HelmManual is the constant indicating that Helm chart publication should be made manually.
 	HelmManual string = "manual"
-	// HelmAuto is the constant indicating that Helm chart publication should not be made.
+	// HelmNone is the constant indicating that Helm chart publication should not be made.
 	HelmNone string = "none"
 )
