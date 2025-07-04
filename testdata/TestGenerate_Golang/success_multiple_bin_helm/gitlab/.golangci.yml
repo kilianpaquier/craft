@@ -16,6 +16,7 @@ linters:
     - lll
     - mnd
     - nlreturn
+    - noinlineerr
     - nonamedreturns
     - paralleltest
     - recvcheck
@@ -23,6 +24,7 @@ linters:
     - unparam
     - wrapcheck
     - wsl
+    - wsl_v5
 
   settings:
     cyclop:

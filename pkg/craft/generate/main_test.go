@@ -15,5 +15,5 @@ func TestMain(m *testing.M) {
 		Level:           log.WarnLevel,
 		ReportCaller:    true,
 	}))
-	os.Exit(m.Run())
+	m.Run()
 }

@@ -17,7 +17,7 @@ if [ "$cmd" = "" ]; then
 fi
 log_info "Found craft generator named '$cmd'"
 
-workspaces=$(find / -name workspaces 2>&1 | grep -v "Permission denied")
+workspaces=$(find / -name workspaces 2>&1 | grep -v "Permission denied" | grep -v "No such file or directory")
 for workspace in $workspaces; do
   dirs=$(find "$workspace" -name testdata -prune -o -name .craft -exec dirname {} +;)
   for dir in $dirs; do

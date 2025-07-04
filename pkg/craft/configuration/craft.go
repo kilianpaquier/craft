@@ -46,7 +46,7 @@ type Config struct {
 	// Maintainers is the slice of all project maintainers.
 	Maintainers []*Maintainer `json:"maintainers,omitempty" yaml:"maintainers,omitempty"`
 
-	parser.VCS `yaml:",inline"` // put at the end to get sorted properties (Platform especially) in written yaml file.
+	parser.VCS `yaml:",inline"` //nolint:embeddedstructfieldcheck // put at the end to get sorted properties (Platform especially) in written yaml file.
 }
 
 // Auth contains all authentication methods related to CI configuration.
