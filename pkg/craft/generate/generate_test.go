@@ -85,7 +85,7 @@ func TestGenerate_NoLang(t *testing.T) {
 				if !precommit {
 					config.Exclude = append(config.Exclude, craft.PreCommit)
 				} else {
-					config.Include = append(config.Include, craft.PreCommit+":auto-commit")
+					config.CI.Options = append(config.CI.Options, craft.PreCommit+":auto-commit")
 				}
 
 				// Act & Assert

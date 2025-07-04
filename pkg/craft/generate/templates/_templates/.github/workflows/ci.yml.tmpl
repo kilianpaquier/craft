@@ -79,7 +79,7 @@ jobs:
         with:
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
-<<- if has "pre-commit:auto-commit" .Include >>
+<<- if has "pre-commit:auto-commit" .CI.Options >>
       - if: ${{ !cancelled() }}
         # see https://github.com/marketplace/actions/git-auto-commit
         uses: stefanzweifel/git-auto-commit-action@v6

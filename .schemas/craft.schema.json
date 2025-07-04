@@ -141,6 +141,7 @@
                                     "codecov",
                                     "codeql",
                                     "labeler",
+                                    "pre-commit:auto-commit",
                                     "sonar"
                                 ]
                             },
@@ -296,9 +297,7 @@
                 "anyOf": [
                     {
                         "type": "string",
-                        "enum": [
-                            "pre-commit:auto-commit"
-                        ]
+                        "enum": []
                     },
                     {
                         "type": "string"

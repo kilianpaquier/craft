@@ -166,6 +166,7 @@ ci:
     - codecov
     - codeql
     - labeler
+    - pre-commit:auto-commit
     - sonar
 
   # release specific options
@@ -206,8 +207,7 @@ exclude:
   - shell
 
 # list of optional parts to generate.
-include:
-  - pre-commit:auto-commit
+include: []
 
 # platform override in case of gitlab on premise, bitbucket on premise, etc.
 # by default, an on premise gitlab will be matched if the host contains "gitlab"
