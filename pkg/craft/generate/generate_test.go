@@ -85,7 +85,7 @@ func TestGenerate_NoLang(t *testing.T) {
 				if !precommit {
 					config.Exclude = append(config.Exclude, craft.PreCommit)
 				} else {
-					config.CI.Options = append(config.CI.Options, craft.PreCommit+":auto-commit")
+					config.CI.Options = append(config.CI.Options, craft.PreCommitAutoCommit)
 				}
 
 				// Act & Assert
@@ -198,6 +198,7 @@ func TestGenerate_Golang(t *testing.T) {
 						Release: &craft.Release{},
 					},
 					Exclude: []string{craft.Makefile},
+					Include: []string{craft.PreCommitGomodTidy},
 					VCS:     parser.VCS{Platform: ci},
 				}
 				golang := func(_ context.Context, _ string, config *craft.Config) error {

@@ -35,6 +35,8 @@ const (
 	CodeQL string = "codeql"
 	// Labeler is the auto labeling option for CI tuning.
 	Labeler string = "labeler"
+	// PreCommitAutoCommit is the CI option to auto-commit issues identified by pre-commit.
+	PreCommitAutoCommit = "pre-commit:auto-commit"
 	// Sonar is the sonar option for CI tuning.
 	Sonar string = "sonar"
 )
@@ -72,4 +74,10 @@ const (
 	HelmManual string = "manual"
 	// HelmNone is the constant indicating that Helm chart publication should not be made.
 	HelmNone string = "none"
+)
+
+const (
+	// PreCommitGomodTidy is an available include for pre-commit configuration file.
+	// It will ensure go.mod and go.sum are tidied before committing anything.
+	PreCommitGomodTidy = "pre-commit:gomod-tidy"
 )

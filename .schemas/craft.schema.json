@@ -297,7 +297,9 @@
                 "anyOf": [
                     {
                         "type": "string",
-                        "enum": []
+                        "enum": [
+                            "pre-commit:gomod-tidy"
+                        ]
                     },
                     {
                         "type": "string"

@@ -207,7 +207,8 @@ exclude:
   - shell
 
 # list of optional parts to generate.
-include: []
+include:
+  - pre-commit:gomod-tidy
 
 # platform override in case of gitlab on premise, bitbucket on premise, etc.
 # by default, an on premise gitlab will be matched if the host contains "gitlab"
