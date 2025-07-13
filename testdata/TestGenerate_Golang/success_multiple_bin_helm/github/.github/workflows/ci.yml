@@ -122,8 +122,12 @@ jobs:
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
       - run: mkdir -p reports/
-      - run: |-
+      - if: ${{ matrix.os != 'windows-latest' }}
+        run: |-
+          set -o pipefail
           go test ./... -v -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out" -timeout=15s | tee "reports/tests.log"
+      - if: ${{ matrix.os == 'windows-latest' }}
+        run: go test ./... -v -coverpkg="./..." -covermode="count" -coverprofile="reports/go-coverage.native.out" -timeout=15s | tee "reports/tests.log"
       - if: ${{ !cancelled() }}
         shell: bash
         run: |-
