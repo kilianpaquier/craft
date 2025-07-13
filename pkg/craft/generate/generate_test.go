@@ -58,14 +58,33 @@ func TestGenerate_NoLang(t *testing.T) {
 	})
 
 	t.Run("success_renovate", func(t *testing.T) {
-		for _, ci := range []string{parser.GitLab, parser.GitHub} {
-			t.Run(ci, func(t *testing.T) {
+		type testcase struct {
+			CI   string
+			Auth string
+		}
+
+		cases := []testcase{
+			{CI: parser.GitHub},
+
+			{CI: parser.GitHub, Auth: craft.GitHubApp},
+			{CI: parser.GitHub, Auth: craft.GitHubToken},
+			{CI: parser.GitHub, Auth: craft.PersonalToken},
+
+			{CI: parser.GitLab},
+		}
+		for _, tc := range cases {
+			name := tc.CI
+			if tc.Auth != "" {
+				name += "_auth_" + tc.Auth
+			}
+
+			t.Run(name, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
 					Bot:     craft.Renovate,
-					CI:      &craft.CI{Name: ci},
+					CI:      &craft.CI{Auth: craft.Auth{Maintenance: tc.Auth}, Name: tc.CI},
 					Exclude: []string{craft.Makefile},
-					VCS:     parser.VCS{Platform: ci},
+					VCS:     parser.VCS{Platform: tc.CI},
 				}
 
 				// Act & Assert
@@ -111,20 +130,42 @@ func TestGenerate_NoLang(t *testing.T) {
 	})
 
 	t.Run("success_release", func(t *testing.T) {
-		cases := []craft.CI{
-			{Name: parser.GitHub, Release: &craft.Release{}},
-			{Name: parser.GitHub, Release: &craft.Release{Auto: true}},
-			{Name: parser.GitLab, Release: &craft.Release{}},
-			{Name: parser.GitLab, Release: &craft.Release{Auto: true}},
+		type testcase struct {
+			Auth string
+			Auto bool
+			CI   string
 		}
-		for _, ci := range cases {
-			name := fmt.Sprint(ci.Name, "_auto_", ci.Release.Auto)
+
+		cases := []testcase{
+			{CI: parser.GitHub},
+			{CI: parser.GitHub, Auto: true},
+
+			{CI: parser.GitHub, Auth: craft.GitHubApp},
+			{CI: parser.GitHub, Auth: craft.GitHubToken},
+			{CI: parser.GitHub, Auth: craft.PersonalToken},
+
+			{CI: parser.GitLab},
+			{CI: parser.GitLab, Auto: true},
+		}
+		for _, tc := range cases {
+			name := tc.CI
+			if tc.Auto {
+				name += "_auto"
+			}
+			if tc.Auth != "" {
+				name += "_auth_" + tc.Auth
+			}
+
 			t.Run(name, func(t *testing.T) {
 				// Arrange
 				config := craft.Config{
-					CI:      &ci,
+					CI: &craft.CI{
+						Auth:    craft.Auth{Release: tc.Auth},
+						Name:    tc.CI,
+						Release: &craft.Release{Auto: tc.Auto},
+					},
 					Exclude: []string{craft.Makefile},
-					VCS:     parser.VCS{Platform: ci.Name},
+					VCS:     parser.VCS{Platform: tc.CI},
 				}
 
 				// Act & Assert

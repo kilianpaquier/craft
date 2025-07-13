@@ -22,39 +22,20 @@ jobs:
   renovate:
     name: Renovate
     runs-on: ubuntu-latest
-<<- if eq .CI.Auth.Maintenance "github-token" >>
-    permissions:
-      contents: write
-      pull-requests: write
-      statuses: write
-<<- end >>
     steps:
-<<- if eq .CI.Auth.Maintenance "github-app" >>
       - id: app_token
-        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ vars.RENOVATE_APP_ID }}
           private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
-<<- end >>
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
-<<- if eq .CI.Auth.Maintenance "github-app" >>
         with:
           token: ${{ steps.app_token.outputs.token }}
-<<- end >>
-      <<- /* renovate: datasource=github-tags versioning=semver */>>
       - uses: renovatebot/github-action@v41.0.6
         with:
-<<- if eq .CI.Auth.Maintenance "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
-<<- else if eq .CI.Auth.Maintenance "personal-token" >>
-          token: ${{ secrets.RENOVATE_TOKEN }}
-<<- else >>
-          token: ${{ secrets.GITHUB_TOKEN }}
-<<- end >>
         env:
           LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL || 'info' }}
           RENOVATE_AUTODISCOVER: "true"
-          RENOVATE_AUTODISCOVER_FILTER: << eq (len .Languages) 0 | ternary "${{ github.repository_owner }}" "${{ github.repository }}" >>
+          RENOVATE_AUTODISCOVER_FILTER: ${{ github.repository_owner }}
           RENOVATE_DRY_RUN: ${{ inputs.dry_run }}
