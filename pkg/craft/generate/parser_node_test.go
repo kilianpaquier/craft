@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/craft/generate"
 	"github.com/kilianpaquier/craft/pkg/engine/files"
@@ -81,7 +80,7 @@ func TestParserNode(t *testing.T) {
 			},
 			Languages: map[string]any{
 				"node": parser.PackageJSON{
-					Main:           helpers.ToPtr("index.js"),
+					Main:           func() *string { v := "index.js"; return &v }(),
 					Name:           "craft",
 					PackageManager: "bun@1.1.6",
 				},

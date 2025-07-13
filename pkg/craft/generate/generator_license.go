@@ -11,7 +11,6 @@ import (
 
 	gitlab "gitlab.com/gitlab-org/api/client-go"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/engine"
 	"github.com/kilianpaquier/craft/pkg/engine/files"
@@ -20,10 +19,13 @@ import (
 
 // GeneratorLicense generates the license file for the project.
 func GeneratorLicense(httpClient *http.Client) func(ctx context.Context, destdir string, config craft.Config) error {
+	if httpClient == nil {
+		httpClient = http.DefaultClient //nolint:revive
+	}
 	return func(ctx context.Context, destdir string, config craft.Config) error {
 		client, err := gitlab.NewClient(os.Getenv("GITLAB_TOKEN"),
 			gitlab.WithBaseURL(generator.GitLabURL),
-			gitlab.WithHTTPClient(helpers.Or(httpClient != nil, httpClient, http.DefaultClient)),
+			gitlab.WithHTTPClient(httpClient),
 			gitlab.WithoutRetries(),
 			gitlab.WithRequestOptions(gitlab.WithContext(ctx)))
 		if err != nil {

@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/require"
 	gitlab "gitlab.com/gitlab-org/api/client-go"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	"github.com/kilianpaquier/craft/pkg/engine/generator"
 )
 
@@ -32,8 +31,8 @@ func TestLicense_Write(t *testing.T) {
 	opts := generator.LicenseOptions{
 		Client:     client,
 		License:    "mit",
-		Maintainer: helpers.ToPtr("name"),
-		Project:    helpers.ToPtr("craft"),
+		Maintainer: func() *string { v := "name"; return &v }(),
+		Project:    func() *string { v := "craft"; return &v }(),
 	}
 	url := generator.GitLabURL + "/templates/licenses/mit"
 

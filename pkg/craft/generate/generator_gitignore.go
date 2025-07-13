@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/craft/generate/templates"
 	"github.com/kilianpaquier/craft/pkg/engine"
@@ -19,6 +18,9 @@ import (
 // It patches it alongside with custom craft patches as some exclusion
 // may be missing depending on craft layout generation.
 func GeneratorGitignore(httpClient *http.Client) func(ctx context.Context, destdir string, config craft.Config) error {
+	if httpClient == nil {
+		httpClient = http.DefaultClient //nolint:revive
+	}
 	return func(ctx context.Context, destdir string, config craft.Config) error {
 		mapping := map[string][]string{
 			"go":    {"go"},
@@ -43,7 +45,7 @@ func GeneratorGitignore(httpClient *http.Client) func(ctx context.Context, destd
 			}
 		}
 
-		if err := generator.DownloadGitignore(ctx, helpers.Or(httpClient != nil, httpClient, http.DefaultClient), filepath.Join(destdir, generator.FileGitignore), query...); err != nil {
+		if err := generator.DownloadGitignore(ctx, httpClient, filepath.Join(destdir, generator.FileGitignore), query...); err != nil {
 			return fmt.Errorf("download gitignore: %w", err)
 		}
 

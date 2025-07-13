@@ -19,7 +19,6 @@ import (
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/release"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/craft/generate/templates"
 	"github.com/kilianpaquier/craft/pkg/engine"
@@ -75,7 +74,10 @@ func TestHelmTemplate(t *testing.T) {
 			// Act
 			r, err := template(ctx, kubeVersion, chartdir, filepath.Join(assertdir, "values.yaml"))
 			if err != nil {
-				t.Fatal(err, helpers.FromPtr(r).Manifest)
+				if r != nil {
+					t.Fatal(err, r.Manifest)
+				}
+				t.Fatal(err)
 			}
 			require.NoError(t, os.WriteFile(actual, []byte(r.Manifest), files.RwRR))
 

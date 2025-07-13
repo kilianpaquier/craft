@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/kilianpaquier/craft/internal/helpers"
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/craft/generate"
 	"github.com/kilianpaquier/craft/pkg/craft/generate/templates"
@@ -41,7 +40,10 @@ func TestGenerate_NoLang(t *testing.T) {
 		}
 
 		for _, ci := range cases {
-			publish := helpers.Coalesce(ci.Helm.Publish, "nil")
+			publish := "nil"
+			if ci.Helm != nil && ci.Helm.Publish != "" {
+				publish = ci.Helm.Publish
+			}
 			name := fmt.Sprint(ci.Name, "_publish_", publish)
 			t.Run(name, func(t *testing.T) {
 				// Arrange
@@ -453,7 +455,10 @@ func TestGenerate_Node(t *testing.T) {
 			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Kubernetes}, Helm: &craft.Helm{Publish: craft.HelmManual}},
 		}
 		for _, ci := range cases {
-			publish := helpers.Or(ci.Helm != nil && ci.Helm.Publish != "", ci.Helm.Publish, craft.HelmNone)
+			publish := craft.HelmNone
+			if ci.Helm != nil && ci.Helm.Publish != "" {
+				publish = ci.Helm.Publish
+			}
 			name := fmt.Sprint(ci.Name, "_", ci.Deployment.Platform, "_helm_", ci.Helm != nil, "_publish_", publish)
 			t.Run(name, func(t *testing.T) {
 				// Arrange
