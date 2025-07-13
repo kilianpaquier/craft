@@ -146,7 +146,8 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
         env:
           OS: ${{ matrix.os }}
-      - uses: codecov/codecov-action@v5
+      - if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v5
         with:
           codecov_yml_path: .codecov.yml
           disable_search: true
