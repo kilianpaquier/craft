@@ -215,7 +215,6 @@ variables:
 
 {{- if has "sonar" .CI.Options }}
 
-  SONAR_HOST_URL: https://sonarcloud.io
   SONAR_BASE_ARGS: |
     -Dsonar.properties=sonar.properties
     -Dsonar.links.homepage=$CI_PROJECT_URL

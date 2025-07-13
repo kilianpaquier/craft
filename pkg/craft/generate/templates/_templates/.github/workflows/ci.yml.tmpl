@@ -219,6 +219,7 @@ jobs:
             -Dsonar.pullrequest.branch=${{ github.head_ref }}
             -Dsonar.pullrequest.key=${{ github.event.issue.number }}
         env:
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - if: ${{ github.event_name == 'push' }}
         <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
@@ -227,6 +228,7 @@ jobs:
             -Dproject.settings=sonar.properties
             -Dsonar.branch.name=${{ github.ref_name }}
         env:
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 <<- end >>
 

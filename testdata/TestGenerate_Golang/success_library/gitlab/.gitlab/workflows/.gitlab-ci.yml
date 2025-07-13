@@ -42,7 +42,6 @@ variables:
   GO_TEST_FLAGS: "-v -coverpkg=./... -covermode=count -timeout=15s"
   GO_TEST_IMAGE: "registry.hub.docker.com/library/golang:latest"
 
-  SONAR_HOST_URL: https://sonarcloud.io
   SONAR_BASE_ARGS: |
     -Dsonar.properties=sonar.properties
     -Dsonar.links.homepage=$CI_PROJECT_URL

@@ -85,6 +85,7 @@ include: .gitlab/workflows/.gitlab-ci.yml
 {{- if has "sonar" .CI.Options }}
 
 # https://gitlab.com/to-be-continuous/sonar
+# SONAR_HOST_URL: SonarQube URL
 # SONAR_TOKEN: SonarQube authentication token (depends on your authentication method)
 # SONAR_LOGIN: SonarQube login (depends on your authentication method)
 # SONAR_PASSWORD: SonarQube password (depends on your authentication method)
