@@ -85,7 +85,7 @@ jobs:
       - uses: pre-commit/action@v3.0.1
 <<- if has "pre-commit:auto-commit" .CI.Options >>
       - if: ${{ !cancelled() }}
-        # see https://github.com/marketplace/actions/git-auto-commit
+        # https://github.com/marketplace/actions/git-auto-commit
         <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
@@ -102,7 +102,7 @@ jobs:
     steps:
       <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
-      # see https://github.com/marketplace/actions/shellcheck
+      # https://github.com/marketplace/actions/shellcheck
       <<- /* renovate: datasource=github-tags versioning=semver */>>
       - uses: ludeeus/action-shellcheck@2.0.0
         with:
