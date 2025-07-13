@@ -144,7 +144,7 @@ jobs:
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
-        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
+        <<- /* renovate: datasource=git-refs versioning=regex:^(?<major>\\d+)$ */>>
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: true
@@ -295,7 +295,7 @@ jobs:
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
-        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
+        <<- /* renovate: datasource=git-refs versioning=regex:^(?<major>\\d+)$ */>>
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: ${{ inputs.release == 'false' }}
