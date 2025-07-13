@@ -146,7 +146,7 @@ jobs:
           path: ${{ env.SONAR_USER_HOME }}
           key: sonar-cache
       - if: ${{ github.event_name == 'pull_request' }}
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: sonarsource/sonarqube-github-action@v5
         with:
           args: |
             -Dproject.settings=sonar.properties
@@ -157,7 +157,7 @@ jobs:
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - if: ${{ github.event_name == 'push' }}
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: sonarsource/sonarqube-github-action@v5
         with:
           args: |
             -Dproject.settings=sonar.properties

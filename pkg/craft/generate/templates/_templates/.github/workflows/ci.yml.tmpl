@@ -212,6 +212,7 @@ jobs:
           key: sonar-cache
       - if: ${{ github.event_name == 'pull_request' }}
         <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
+        uses: sonarsource/sonarqube-github-action@v5
         with:
           args: |
             -Dproject.settings=sonar.properties
@@ -223,6 +224,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - if: ${{ github.event_name == 'push' }}
         <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
+        uses: sonarsource/sonarqube-github-action@v5
         with:
           args: |
             -Dproject.settings=sonar.properties
