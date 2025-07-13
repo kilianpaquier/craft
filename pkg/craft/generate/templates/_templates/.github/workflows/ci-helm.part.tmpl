@@ -14,6 +14,7 @@ jobs:
         with:
           <<- /* renovate: datasource=github-tags packageName=helm/helm versioning=semver */>>
           version: v3.16.2
+      # https://github.com/actions/setup-python
       <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/setup-python@v5
         with:
