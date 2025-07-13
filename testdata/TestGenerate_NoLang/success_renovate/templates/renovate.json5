@@ -41,8 +41,8 @@
 
     "baseBranches": [
         "$default",
-        "/^v[0-9]+\.x/",
-        "/^v[0-9]+\.[0-9]+\.x/",
+        "/^v[0-9]+\\.x/",
+        "/^v[0-9]+\\.[0-9]+\\.x/",
     ],
 
     "reviewers": [
@@ -92,13 +92,13 @@
             "managerFilePatterns": [ "/^*.tmpl$/" ],
             "matchStrings": [
                 // GitLab CI/CD 'include' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?ref:\\s?\\"?(?<currentValue>.+)\\"?",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?ref:\\s?\\\"?(?<currentValue>.+)\\\"?",
 
                 // GitHub Actions 'uses' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
 
                 // GitHub Actions 'with' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?.*?version:\\s?v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?.*?version:\\s?v?(?<currentValue>.+)",
             ]
         }
     ],
