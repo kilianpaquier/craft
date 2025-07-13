@@ -2,19 +2,6 @@
 
 // https://docs.renovatebot.com/configuration-options/
 
-<<- /* add all categories in case the current repository is an "empty" one, meaning not language associated */ ->>
-<<- $all := le (len .Languages) 0 >>
-
-<<- $categories := list >>
-<<- if or $all .CI >><<- $categories = concat $categories (list "cd" "ci") >><<- end >>
-<<- if or $all (and .CI .CI.Docker) >><<- $categories = append $categories "docker" >><<- end >>
-<<- if or $all (and .CI .CI.Helm) (.IsDeployment "kubernetes") >><<- $categories = append $categories "kubernetes" >><<- end >>
-<<- if or $all (and .CI .CI.Helm) >><<- $categories = append $categories "helm" >><<- end >>
-<<- if or $all (hasKey .Languages "go") (hasKey .Languages "hugo") >><<- $categories = append $categories "golang" >><<- end >>
-<<- if or $all (hasKey .Languages "node") >><<- $categories = append $categories "js" >><<- end >>
-<<- if or $all (hasKey .Languages "python") >><<- $categories = append $categories "python" >><<- end >>
-<<- if or $all (hasKey .Languages "rust") >><<- $categories = append $categories "rust" >><<- end >>
-
 {
     "extends": [ ":gitSignOff" ],
     "enabled": true,
@@ -59,9 +46,7 @@
     ],
 
     "reviewers": [
-<<- range $.Maintainers >>
-        "<< .Name >>",
-<<- end >>
+        "kilianpaquier",
     ],
     "bbUseDefaultReviewers": true,
     "gitLabIgnoreApprovals": true,
@@ -98,24 +83,7 @@
     "pin": { "automerge": true },
 
     "packageRules": [
-<<- range $categories >>
-        {
-            "addLabels": [ "non-major" ],
-            "groupName": "<< . >> dependencies (non major)",
-            "matchCategories": [ "<< . >>" ],
-            "matchUpdateTypes": [ "!major" ]
-        },
-        {
-            "addLabels": [ "major" ],
-            "groupName": "<< . >> dependencies (major)",
-            "matchCategories": [ "<< . >>" ],
-            "matchUpdateTypes": [ "major" ]
-        },
-<<- end >>
     ],
-
-<<- if hasKey .Languages "tmpl" >>
-<<- $comment := "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?" >>
 
     "customManagers": [
         {
@@ -124,15 +92,14 @@
             "managerFilePatterns": [ "/^*.tmpl$/" ],
             "matchStrings": [
                 // GitLab CI/CD 'include' versions
-                "<< $comment >>ref:\\s?\\"?(?<currentValue>.+)\\"?",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?ref:\\s?\\"?(?<currentValue>.+)\\"?",
 
                 // GitHub Actions 'uses' versions
-                "<< $comment >>-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
 
                 // GitHub Actions 'with' versions
-                "<< $comment >>.*?version:\\s?v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?.*?version:\\s?v?(?<currentValue>.+)",
             ]
         }
     ],
-<<- end >>
 }

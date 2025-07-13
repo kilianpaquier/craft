@@ -1,8 +1,9 @@
 # Craft configuration file (https://github.com/kilianpaquier/craft)
 # yaml-language-server: $schema=https://raw.githubusercontent.com/kilianpaquier/craft/beta/.schemas/craft.schema.json
-bot: dependabot
+bot: renovate
 ci:
   auth:
+    maintenance: github-token
     release: github-token
   name: github
   options:

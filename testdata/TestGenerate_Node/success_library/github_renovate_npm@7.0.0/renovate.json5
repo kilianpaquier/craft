@@ -14,13 +14,13 @@
     "prHourlyLimit": 0,
 
     "ignorePaths": [
-      "**/bower_components/**",
-      "**/examples/**",
-      "**/fixtures/**",
-      "**/node_modules/**",
-      "**/test/**",
-      "**/testdata/**",
-      "**/tests/**",
+        "**/bower_components/**",
+        "**/examples/**",
+        "**/fixtures/**",
+        "**/node_modules/**",
+        "**/test/**",
+        "**/testdata/**",
+        "**/tests/**",
     ],
 
     "dependencyDashboard": false,
@@ -40,13 +40,13 @@
     "separateMultipleMinor": false,
 
     "baseBranches": [
-      "$default",
-      "/^v[0-9]+\.x/",
-      "/^v[0-9]+\.[0-9]+\.x/",
+        "$default",
+        "/^v[0-9]+\.x/",
+        "/^v[0-9]+\.[0-9]+\.x/",
     ],
 
     "reviewers": [
-      "kilianpaquier",
+        "kilianpaquier",
     ],
     "bbUseDefaultReviewers": true,
     "gitLabIgnoreApprovals": true,
@@ -84,40 +84,40 @@
 
     "packageRules": [
         {
-          "addLabels": [ "non-major" ],
-          "groupName": "cd dependencies (non major)",
-          "matchCategories": [ "cd" ],
-          "matchUpdateTypes": [ "!major" ]
+            "addLabels": [ "non-major" ],
+            "groupName": "cd dependencies (non major)",
+            "matchCategories": [ "cd" ],
+            "matchUpdateTypes": [ "!major" ]
         },
         {
-          "addLabels": [ "major" ],
-          "groupName": "cd dependencies (major)",
-          "matchCategories": [ "cd" ],
-          "matchUpdateTypes": [ "major" ]
+            "addLabels": [ "major" ],
+            "groupName": "cd dependencies (major)",
+            "matchCategories": [ "cd" ],
+            "matchUpdateTypes": [ "major" ]
         },
         {
-          "addLabels": [ "non-major" ],
-          "groupName": "ci dependencies (non major)",
-          "matchCategories": [ "ci" ],
-          "matchUpdateTypes": [ "!major" ]
+            "addLabels": [ "non-major" ],
+            "groupName": "ci dependencies (non major)",
+            "matchCategories": [ "ci" ],
+            "matchUpdateTypes": [ "!major" ]
         },
         {
-          "addLabels": [ "major" ],
-          "groupName": "ci dependencies (major)",
-          "matchCategories": [ "ci" ],
-          "matchUpdateTypes": [ "major" ]
+            "addLabels": [ "major" ],
+            "groupName": "ci dependencies (major)",
+            "matchCategories": [ "ci" ],
+            "matchUpdateTypes": [ "major" ]
         },
         {
-          "addLabels": [ "non-major" ],
-          "groupName": "js dependencies (non major)",
-          "matchCategories": [ "js" ],
-          "matchUpdateTypes": [ "!major" ]
+            "addLabels": [ "non-major" ],
+            "groupName": "js dependencies (non major)",
+            "matchCategories": [ "js" ],
+            "matchUpdateTypes": [ "!major" ]
         },
         {
-          "addLabels": [ "major" ],
-          "groupName": "js dependencies (major)",
-          "matchCategories": [ "js" ],
-          "matchUpdateTypes": [ "major" ]
+            "addLabels": [ "major" ],
+            "groupName": "js dependencies (major)",
+            "matchCategories": [ "js" ],
+            "matchUpdateTypes": [ "major" ]
         },
     ],
 }

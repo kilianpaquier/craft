@@ -35,7 +35,7 @@ type PackageJSON struct {
 		Provenance bool   `json:"provenance,omitempty"`
 		Registry   string `json:"registry,omitempty"`
 		Tag        string `json:"tag,omitempty"`
-	} `json:"publishConfig,omitempty"`
+	} `json:"publishConfig,omitzero"`
 	Repository *struct {
 		URL string `json:"url,omitempty"`
 	} `json:"repository,omitempty"`

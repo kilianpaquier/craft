@@ -12,15 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: run-workflow
     steps:
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
 <<- if eq $manager "pnpm" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: pnpm/action-setup@v4
 <<- end >>
 <<- if eq $manager "bun" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 <<- end >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/setup-node@v4
         with:
           cache: << $manager >>
@@ -33,15 +37,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: run-workflow
     steps:
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
 <<- if eq $manager "pnpm" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: pnpm/action-setup@v4
 <<- end >>
 <<- if eq $manager "bun" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 <<- else >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/setup-node@v4
         with:
           cache: << $manager >>
@@ -55,6 +63,7 @@ jobs:
 <<- end >>
       - run: << $manager >> run lint -o reports/node-lint.xslint.json -f json
 <<- if has "sonar" .CI.Options >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/upload-artifact@v4
         with:
           name: lint
@@ -74,15 +83,19 @@ jobs:
           - ubuntu-latest
           - windows-latest
     steps:
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
 <<- if eq $manager "pnpm" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: pnpm/action-setup@v4
 <<- end >>
 <<- if eq $manager "bun" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 <<- else >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/setup-node@v4
         with:
           cache: << $manager >>
@@ -103,6 +116,7 @@ jobs:
 <<- end >>
 <<- if has "codecov" .CI.Options >>
       - if: ${{ !cancelled() }}
+        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: codecov/test-results-action@v1
         with:
           codecov_yml_path: .codecov.yml
@@ -115,6 +129,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
         env:
           OS: ${{ matrix.os }}
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: codecov/codecov-action@v5
         with:
           codecov_yml_path: .codecov.yml
@@ -128,6 +143,7 @@ jobs:
           OS: ${{ matrix.os }}
 <<- end >>
 <<- if has "sonar" .CI.Options >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/upload-artifact@v4
         with:
           name: coverage
@@ -144,15 +160,19 @@ jobs:
       - node-test
       - version
     steps:
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
 <<- if eq $manager "pnpm" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: pnpm/action-setup@v4
 <<- end >>
 <<- if eq $manager "bun" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: package.json
 <<- else >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/setup-node@v4
         with:
           cache: << $manager >>
@@ -167,12 +187,14 @@ jobs:
         env:
           VERSION: ${{ needs.version.outputs.version }}
 <<- if .IsDeployment "pages" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
           path: dist
           retention-days: 1
 <<- end >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/upload-artifact@v4
         with:
           name: build

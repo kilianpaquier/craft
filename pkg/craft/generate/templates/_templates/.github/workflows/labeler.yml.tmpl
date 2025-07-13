@@ -23,6 +23,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/release-drafter
       - id: drafter
+        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: release-drafter/release-drafter@v6
         with:
           commitish: ${{ github.base_ref }}

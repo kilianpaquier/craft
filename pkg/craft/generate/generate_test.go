@@ -72,6 +72,22 @@ func TestGenerate_NoLang(t *testing.T) {
 				test(ctx, t, config)
 			})
 		}
+
+		t.Run("templates", func(t *testing.T) {
+			// Arrange
+			tmpl := func(_ context.Context, _ string, config *craft.Config) error {
+				config.SetLanguage("tmpl", nil)
+				return nil
+			}
+
+			config := craft.Config{
+				Bot:     craft.Renovate,
+				Exclude: []string{craft.Makefile},
+			}
+
+			// Act & Assert
+			test(ctx, t, config, tmpl)
+		})
 	})
 
 	t.Run("success_precommit", func(t *testing.T) {

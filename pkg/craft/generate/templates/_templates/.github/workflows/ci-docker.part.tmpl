@@ -16,12 +16,15 @@ jobs:
       pull-requests: write
       security-events: write
     steps:
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
+      <<- /* renovate: datasource=github-tags versioning=semver */>>
       - uses: hadolint/hadolint-action@v3.1.0
         continue-on-error: true # ensure sarif and tty formats are run for CodeQL and logs observability
         with:
           format: sarif
           output-file: hadolint-results.sarif
+      <<- /* renovate: datasource=github-tags packageName=github/codeql-action versioning=regex:^(?<major>\\d+)$ */>>
       - uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: hadolint-results.sarif
@@ -43,6 +46,7 @@ jobs:
       packages: << $ghcr | ternary "write" "none" >>
       security-events: write
     steps:
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
       - id: image
         run: |-
@@ -62,6 +66,7 @@ jobs:
         env:
           VERSION: ${{ needs.version.outputs.version }}
       - id: meta
+        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: docker/metadata-action@v5
         with:
           images: ${{ steps.image.outputs.image }}
@@ -74,12 +79,15 @@ jobs:
             type=semver,enable=true,pattern={{raw}},value=${{ needs.version.outputs.version }}
             type=semver,enable=${{ steps.image.outputs.stable }},pattern=v{{major}}.{{minor}},value=${{ needs.version.outputs.version }}
             type=semver,enable=${{ steps.image.outputs.stable }},pattern=v{{major}},value=${{ needs.version.outputs.version }}
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: docker/setup-buildx-action@v3
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: docker/login-action@v3
         with:
           registry: << $registry >>
           username: ${{ github.repository_owner }}
           password: << $ghcr | ternary "${{ secrets.GITHUB_TOKEN }}" "${{ secrets.REGISTRY_TOKEN }}" >>
+      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: docker/build-push-action@v6
         with:
           context: .
@@ -101,6 +109,7 @@ jobs:
         env:
           TRIVY_USERNAME: ${{ github.repository_owner }}
           TRIVY_PASSWORD: << $ghcr | ternary "${{ secrets.GITHUB_TOKEN }}" "${{ secrets.REGISTRY_TOKEN }}" >>
+      <<- /* renovate: datasource=github-tags packageName=github/codeql-action versioning=regex:^(?<major>\\d+)$ */>>
       - uses: github/codeql-action/upload-sarif@v3
         with:
           category: docker-trivy
