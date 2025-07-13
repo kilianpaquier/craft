@@ -47,15 +47,11 @@ jobs:
           - << . >>
 <<- end >>
     steps:
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
-      <<- /* renovate: datasource=github-tags packageName=github/codeql-action versioning=regex:^(?<major>\\d+)$ */>>
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-      <<- /* renovate: datasource=github-tags packageName=github/codeql-action versioning=regex:^(?<major>\\d+)$ */>>
       - uses: github/codeql-action/autobuild@v3
-      <<- /* renovate: datasource=github-tags packageName=github/codeql-action versioning=regex:^(?<major>\\d+)$ */>>
       - uses: github/codeql-action/analyze@v3
         with:
           category: /language:${{ matrix.language }}

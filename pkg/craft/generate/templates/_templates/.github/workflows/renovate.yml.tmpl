@@ -31,20 +31,17 @@ jobs:
     steps:
 <<- if eq .CI.Auth.Maintenance "github-app" >>
       - id: app_token
-        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ vars.RENOVATE_APP_ID }}
           private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
 <<- end >>
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
 <<- if eq .CI.Auth.Maintenance "github-app" >>
         with:
           token: ${{ steps.app_token.outputs.token }}
 <<- end >>
-      <<- /* renovate: datasource=github-tags versioning=semver */>>
-      - uses: renovatebot/github-action@v41.0.6
+      - uses: renovatebot/github-action@v43.0.2
         with:
 <<- if eq .CI.Auth.Maintenance "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
@@ -55,6 +52,9 @@ jobs:
 <<- end >>
         env:
           LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL || 'info' }}
-          RENOVATE_AUTODISCOVER: "true"
+<<- if has "renovate:post-upgrade" .Include >>
+          RENOVATE_ALLOWED_COMMANDS: ^\.\/scripts\/sh\/renovate\.sh$
+<<- end >>
           RENOVATE_AUTODISCOVER_FILTER: << eq (len .Languages) 0 | ternary "${{ github.repository_owner }}" "${{ github.repository }}" >>
+          RENOVATE_AUTODISCOVER: "true"
           RENOVATE_DRY_RUN: ${{ inputs.dry_run }}

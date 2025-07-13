@@ -11,14 +11,13 @@ import (
 	"github.com/kilianpaquier/craft/pkg/engine/files"
 )
 
-func TestHasGlob(t *testing.T) {
+func TestGlob(t *testing.T) {
 	t.Run("no_dir", func(t *testing.T) {
 		// Act
-		ok, err := files.HasGlob(filepath.Join(t.TempDir(), "invalid"), "*.tmpl")
+		matches := files.Glob(filepath.Join(t.TempDir(), "invalid"), "*.tmpl")
 
 		// Assert
-		require.NoError(t, err)
-		assert.False(t, ok)
+		assert.Empty(t, matches)
 	})
 
 	t.Run("no_glob", func(t *testing.T) {
@@ -29,33 +28,33 @@ func TestHasGlob(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		// Act
-		ok, err := files.HasGlob(destdir, "*.tmpl")
+		matches := files.Glob(destdir, "*.tmpl")
 
 		// Assert
-		require.NoError(t, err)
-		assert.False(t, ok)
+		assert.Empty(t, matches)
 	})
 
-	t.Run("has_glob", func(t *testing.T) {
+	t.Run("glob", func(t *testing.T) {
 		for _, filename := range []string{"template.tmpl", "template.yaml.tmpl", "template-part.json.tmpl"} {
 			t.Run(filename, func(t *testing.T) {
 				// Arrange
 				destdir := t.TempDir()
-				file, err := os.Create(filepath.Join(destdir, filename))
+				target := filepath.Join(destdir, filename)
+
+				file, err := os.Create(target)
 				require.NoError(t, err)
 				require.NoError(t, file.Close())
 
 				// Act
-				ok, err := files.HasGlob(destdir, "*.tmpl")
+				matches := files.Glob(destdir, "*.tmpl")
 
 				// Assert
-				require.NoError(t, err)
-				assert.True(t, ok)
+				assert.Equal(t, []string{target}, matches)
 			})
 		}
 	})
 
-	t.Run("has_sub_glob", func(t *testing.T) {
+	t.Run("sub_glob", func(t *testing.T) {
 		for _, filename := range []string{"template.tmpl", "template.yaml.tmpl", "template-part.json.tmpl"} {
 			t.Run(filename, func(t *testing.T) {
 				// Arrange
@@ -68,11 +67,10 @@ func TestHasGlob(t *testing.T) {
 				require.NoError(t, file.Close())
 
 				// Act
-				ok, err := files.HasGlob(destdir, "*.tmpl")
+				matches := files.Glob(destdir, "*.tmpl")
 
 				// Assert
-				require.NoError(t, err)
-				assert.True(t, ok)
+				assert.Equal(t, []string{target}, matches)
 			})
 		}
 	})

@@ -85,7 +85,8 @@ func TestGenerate_NoLang(t *testing.T) {
 				config := craft.Config{
 					Bot:     craft.Renovate,
 					CI:      &craft.CI{Auth: craft.Auth{Maintenance: tc.Auth}, Name: tc.CI},
-					Exclude: []string{craft.Makefile},
+					Exclude: []string{craft.Makefile, craft.Shell},
+					Include: []string{craft.RenovatePostUpgrade},
 					VCS:     parser.VCS{Platform: tc.CI},
 				}
 
@@ -96,9 +97,12 @@ func TestGenerate_NoLang(t *testing.T) {
 
 		t.Run("templates", func(t *testing.T) {
 			// Arrange
-			tmpl := func(_ context.Context, _ string, config *craft.Config) error {
-				config.SetLanguage("tmpl", nil)
-				return nil
+			tmpl := func(_ context.Context, destdir string, _ *craft.Config) error {
+				file, err := os.Create(filepath.Join(destdir, "template.tmpl"))
+				if err != nil {
+					return fmt.Errorf("create: %w", err)
+				}
+				return file.Close()
 			}
 
 			config := craft.Config{
@@ -180,9 +184,8 @@ func TestGenerate_NoLang(t *testing.T) {
 func TestGenerate_Shell(t *testing.T) {
 	ctx := t.Context()
 
-	shell := func(_ context.Context, _ string, config *craft.Config) error {
-		config.SetLanguage("shell", nil)
-		return nil
+	shell := func(_ context.Context, destdir string, _ *craft.Config) error {
+		return os.WriteFile(filepath.Join(destdir, "script.sh"), []byte("#!/bin/sh\n"), files.RwxRxRxRx)
 	}
 
 	t.Run("success_ci", func(t *testing.T) {
@@ -496,13 +499,17 @@ func test(ctx context.Context, t *testing.T, config craft.Config, parsers ...eng
 
 	// Arrange
 	config.Maintainers = append(config.Maintainers, &craft.Maintainer{Name: "kilianpaquier"})
-	destdir := t.TempDir()
 	assertdir := filepath.Join(testutils.Testdata(t), t.Name())
 	require.NoError(t, os.MkdirAll(assertdir, files.RwxRxRxRx))
 
+	destdir := t.TempDir()
+	if ok, _ := strconv.ParseBool(os.Getenv("TESTDATA")); ok {
+		destdir = assertdir
+	}
+
 	// Act
 	_, err := engine.Generate(ctx, destdir, config,
-		slices.Concat(parsers, []engine.Parser[craft.Config]{ParserInfo, generate.ParserGolang, generate.ParserNode, generate.ParserShell, generate.ParserHelm}),
+		slices.Concat(parsers, []engine.Parser[craft.Config]{ParserInfo, generate.ParserGolang, generate.ParserNode, generate.ParserHelm}),
 		[]engine.Generator[craft.Config]{
 			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.Dependabot(), templates.Renovate())),
 			engine.GeneratorTemplates(templates.FS(), slices.Concat(templates.CodeCov(), templates.Sonar())),

@@ -25,15 +25,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/setup-go@v5
         with:
           check-latest: true
           go-version-file: go.mod
           token: ${{ secrets.GITHUB_TOKEN }}
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/go-dependency-submission@v2
         with:
           go-mod-path: go.mod

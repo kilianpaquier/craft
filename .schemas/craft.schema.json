@@ -298,7 +298,8 @@
                     {
                         "type": "string",
                         "enum": [
-                            "pre-commit:gomod-tidy"
+                            "pre-commit:gomod-tidy",
+                            "renovate:post-upgrade"
                         ]
                     },
                     {

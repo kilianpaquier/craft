@@ -51,6 +51,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
+          # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
 
@@ -60,7 +61,7 @@ jobs:
     needs: run-workflow
     steps:
       - uses: actions/checkout@v4
-      # see https://github.com/marketplace/actions/shellcheck
+      # https://github.com/marketplace/actions/shellcheck
       - uses: ludeeus/action-shellcheck@2.0.0
         with:
           check_together: "yes"

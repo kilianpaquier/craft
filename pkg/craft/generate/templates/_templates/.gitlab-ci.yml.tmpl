@@ -3,7 +3,7 @@
 {{- $golang := hasKey .Languages "go" }}
 {{- $hugo := hasKey .Languages "hugo" }}
 {{- $node := hasKey .Languages "node" }}
-{{- $shell := hasKey .Languages "shell" }}
+{{- $shell := and (not (has "shell" .Exclude)) (gt (len (glob "*.*sh")) 0) }}
 
 {{- $pages := and (.IsDeployment "pages") (or $node $hugo) }}
 {{- $netlify := and (.IsDeployment "netlify") (or $node $hugo) }}

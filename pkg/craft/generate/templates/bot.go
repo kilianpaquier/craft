@@ -2,6 +2,7 @@ package templates
 
 import (
 	"path"
+	"slices"
 
 	craft "github.com/kilianpaquier/craft/pkg/craft/configuration"
 	"github.com/kilianpaquier/craft/pkg/engine"
@@ -13,7 +14,7 @@ func Dependabot() []engine.Template[craft.Config] {
 	return []engine.Template[craft.Config]{
 		{
 			Delimiters: engine.DelimitersBracket(),
-			Globs:      []string{path.Join(".github", "dependabot.yml") + engine.TmplExtension},
+			Globs:      []string{path.Join(".github", "dependabot.yml"+engine.TmplExtension)},
 			Out:        path.Join(".github", "dependabot.yml"),
 			Remove: func(config craft.Config) bool {
 				return config.Bot != craft.Dependabot || config.Platform != parser.GitHub
@@ -21,7 +22,7 @@ func Dependabot() []engine.Template[craft.Config] {
 		},
 		{
 			Delimiters: engine.DelimitersBracket(),
-			Globs:      []string{path.Join(".gitlab", "dependabot.yml") + engine.TmplExtension},
+			Globs:      []string{path.Join(".gitlab", "dependabot.yml"+engine.TmplExtension)},
 			Out:        path.Join(".gitlab", "dependabot.yml"),
 			Remove: func(config craft.Config) bool {
 				return config.Bot != craft.Dependabot || !config.IsCI(parser.GitLab)
@@ -35,10 +36,18 @@ func Renovate() []engine.Template[craft.Config] {
 	return []engine.Template[craft.Config]{
 		{
 			Delimiters: engine.DelimitersChevron(),
-			Globs:      []string{path.Join(".github", "workflows", "renovate.yml") + engine.TmplExtension},
+			Globs:      []string{path.Join(".github", "workflows", "renovate.yml"+engine.TmplExtension)},
 			Out:        path.Join(".github", "workflows", "renovate.yml"),
 			Remove: func(config craft.Config) bool {
 				return config.Bot != craft.Renovate || !config.IsCI(parser.GitHub)
+			},
+		},
+		{
+			Delimiters: engine.DelimitersChevron(),
+			Globs:      []string{path.Join("scripts", "sh", "renovate.sh"+engine.TmplExtension)},
+			Out:        path.Join("scripts", "sh", "renovate.sh"),
+			Remove: func(config craft.Config) bool {
+				return config.Bot != craft.Renovate || !slices.Contains(config.Include, craft.RenovatePostUpgrade)
 			},
 		},
 		{

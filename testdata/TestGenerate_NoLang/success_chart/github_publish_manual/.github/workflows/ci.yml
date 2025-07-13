@@ -51,6 +51,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
+          # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
 
@@ -63,11 +64,13 @@ jobs:
       # https://github.com/marketplace/actions/helm-tool-installer
       - uses: azure/setup-helm@v4
         with:
+          # renovate: datasource=github-tags packageName=helm/helm versioning=semver
           version: v3.16.2
-      # https://github.com/actions/setup-python
+      # https://github.com/marketplace/actions/setup-python
       - uses: actions/setup-python@v5
         with:
           check-latest: true
+          # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
           python-version: 3.x
       # https://github.com/marketplace/actions/helm-chart-testing
       - uses: helm/chart-testing-action@v2
@@ -98,6 +101,7 @@ jobs:
       # https://github.com/marketplace/actions/helm-tool-installer
       - uses: azure/setup-helm@v4
         with:
+          # renovate: datasource=github-tags packageName=helm/helm versioning=semver
           version: v3.16.2
       - run: helm package --version "$VERSION" --app-version "$VERSION" --dependency-update "$HELM_CHART_DIR"
         env:

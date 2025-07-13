@@ -191,6 +191,7 @@ exclude:
 # list of optional parts to generate.
 include:
   - pre-commit:gomod-tidy
+  - renovate:post-upgrade
 
 # project's license (optional)
 # providing it will download the appropriate license

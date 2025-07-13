@@ -23,6 +23,10 @@ lint: reports
 lint-fix: reports
 	@ARGS="--fix" make -s lint
 
+.PHONY: testdata
+testdata:
+	@TESTDATA=1 make -s test
+
 .PHONY: test
 test:
 	@go test ./... -count 1 -timeout=15s

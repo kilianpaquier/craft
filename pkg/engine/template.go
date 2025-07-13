@@ -6,20 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"net/url"
 	"os"
 	"path"
 	"path/filepath"
 	"slices"
-	"strconv"
-	"strings"
 	"text/template"
 
-	"dario.cat/mergo"
 	"github.com/Masterminds/sprig/v3"
 	"github.com/bluekeyes/go-gitdiff/gitdiff"
-	"github.com/go-viper/mapstructure/v2"
-	"github.com/goccy/go-yaml"
 
 	"github.com/kilianpaquier/craft/pkg/engine/files"
 )
@@ -73,7 +67,7 @@ func ApplyTemplate[T any](fsys fs.FS, destdir string, tmpl Template[T], config T
 	default:
 		tt, err := template.New(path.Base(tmpl.Globs[0])).
 			Funcs(sprig.FuncMap()).
-			Funcs(FuncMap()).
+			Funcs(FuncMap(destdir)).
 			Delims(tmpl.StartDelim, tmpl.EndDelim).
 			ParseFS(fsys, tmpl.Globs...)
 		if err != nil {
@@ -125,7 +119,7 @@ func ApplyPatches[T any](fsys fs.FS, destdir string, tmpl Template[T], data any)
 	for _, patch := range tmpl.Patches {
 		tt, err := template.New(path.Base(patch)).
 			Funcs(sprig.FuncMap()).
-			Funcs(FuncMap()).
+			Funcs(FuncMap(destdir)).
 			Delims(tmpl.StartDelim, tmpl.EndDelim).
 			ParseFS(fsys, patch)
 		if err != nil {
@@ -179,61 +173,8 @@ func ExecuteTemplate(tmpl *template.Template, data any, out string) error {
 	}
 
 	// force refresh rights
-	if err := os.Chmod(out, mode); err != nil {
+	if err := file.Chmod(mode); err != nil {
 		return fmt.Errorf("chmod: %w", err)
 	}
 	return nil
-}
-
-// FuncMap returns a minimal template.FuncMap.
-//
-// It can be extended with MergeMaps.
-func FuncMap() template.FuncMap {
-	return template.FuncMap{
-		"cutAfter": cutAfter,
-		"map":      mergeMaps,
-		"toQuery":  toQuery,
-		"toYaml":   toYAML,
-	}
-}
-
-// cutAfter cuts the input string at the first separator appearance
-// and returns the resulting string.
-func cutAfter(in, sep string) string {
-	out, _, _ := strings.Cut(in, sep)
-	return out
-}
-
-// mergeMaps mergs all src maps (an error is added to result map if those aren't maps) into dst map.
-func mergeMaps(dst map[string]any, src ...any) map[string]any {
-	for i, in := range src {
-		var cast map[string]any
-		if err := mapstructure.Decode(in, &cast); err != nil {
-			dst[strconv.Itoa(i)+"_decode_error"] = err.Error()
-			continue
-		}
-		if err := mergo.Merge(&dst, cast); err != nil {
-			dst[strconv.Itoa(i)+"_merge_error"] = err.Error()
-			continue
-		}
-	}
-	return dst
-}
-
-// toQuery transforms a specific into its query parameter format.
-func toQuery(in string) string {
-	return url.QueryEscape(in)
-}
-
-// toYAML takes an interface, marshals it to yaml, and returns a string.
-// It will always return a string, even on marshal error (empty string).
-//
-// This is designed to be called from a go template.
-func toYAML(v any) string {
-	b, err := yaml.MarshalWithOptions(v, yaml.Indent(2))
-	if err != nil {
-		// Swallow errors inside of a template.
-		return ""
-	}
-	return string(bytes.TrimSuffix(b, []byte("\n")))
 }

@@ -3,7 +3,7 @@
 bot: renovate
 ci:
   auth:
-    maintenance: github-token
+    maintenance: personal-token
     release: github-token
   name: github
   options:
@@ -14,6 +14,8 @@ ci:
 exclude:
   - chart
   - shell
+include:
+  - renovate:post-upgrade
 license: mit
 maintainers:
   - name: kilianpaquier

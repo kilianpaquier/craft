@@ -25,6 +25,13 @@ lint: reports
 lint-fix: reports
 	@ARGS="--fix" make -s lint
 
+{{- if gt (len (glob "*.tmpl")) 0 }}
+
+.PHONY: testdata
+testdata:
+	@TESTDATA=1 make -s test
+{{- end }}
+
 .PHONY: test
 test:
 	@go test ./... -count 1 -timeout=15s

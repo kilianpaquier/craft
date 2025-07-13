@@ -3,7 +3,7 @@
 {{- $golang := hasKey .Languages "go" }}
 {{- $hugo := hasKey .Languages "hugo" }}
 {{- $node := hasKey .Languages "node" }}
-{{- $shell := hasKey .Languages "shell" }}
+{{- $shell := and (not (has "shell" .Exclude)) (gt (len (glob "*.*sh")) 0) }}
 
 {{- $pages := and (.IsDeployment "pages") (or $node $hugo) }}
 {{- $netlify := and (.IsDeployment "netlify") (or $node $hugo) }}
@@ -13,7 +13,6 @@ include:
 
   # semantic-release template
   - project: to-be-continuous/semantic-release
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/semantic-release versioning=regex:^(?<major>\\d+)$ */}}
     ref: "3"
     file: "templates/gitlab-ci-semrel.yml"
 
@@ -21,7 +20,6 @@ include:
 
   # pre-commit template
   - project: to-be-continuous/pre-commit
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/pre-commit versioning=regex:^(?<major>\\d+)$ */}}
     ref: "1"
     file: "templates/gitlab-ci-pre-commit.yml"
 {{- end }}
@@ -30,7 +28,6 @@ include:
 
   # Bash template
   - project: to-be-continuous/bash
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/bash versioning=regex:^(?<major>\\d+)$ */}}
     ref: "3"
     file: "/templates/gitlab-ci-bash.yml"
 {{- end }}
@@ -39,7 +36,6 @@ include:
 
   # Renovate template
   - project: to-be-continuous/renovate
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/renovate versioning=regex:^(?<major>\\d+)$ */}}
     ref: "1"
     file: "templates/gitlab-ci-renovate.yml"
 {{- end }}
@@ -48,7 +44,6 @@ include:
 
   # Dependabot template
   - project: dependabot-gitlab/dependabot-standalone
-    {{- /* renovate: datasource=gitlab-tags packageName=dependabot-gitlab/dependabot-standalone versioning=semver */}}
     ref: 3.58.0
     file: .gitlab-ci.yml
 {{- end }}
@@ -57,7 +52,6 @@ include:
 
   # Docker template
   - project: to-be-continuous/docker
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/docker versioning=regex:^(?<major>\\d+)$ */}}
     ref: "5"
     file: "templates/gitlab-ci-docker.yml"
 {{- end }}
@@ -66,7 +60,6 @@ include:
 
   # Helm template
   - project: to-be-continuous/helm
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/helm versioning=regex:^(?<major>\\d+)$ */}}
     ref: "8"
     file: "templates/gitlab-ci-helm.yml"
 {{- end }}
@@ -75,7 +68,6 @@ include:
 
   # Go template
   - project: to-be-continuous/golang
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/golang versioning=regex:^(?<major>\\d+)$ */}}
     ref: "4"
     file: "templates/gitlab-ci-golang.yml"
 {{- end }}
@@ -84,7 +76,6 @@ include:
 
   # Node.js template
   - project: to-be-continuous/node
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/node versioning=regex:^(?<major>\\d+)$ */}}
     ref: "3"
     file: "templates/gitlab-ci-node.yml"
 {{- end }}
@@ -93,7 +84,6 @@ include:
 
   # SonarQube template
   - project: to-be-continuous/sonar
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/sonar versioning=regex:^(?<major>\\d+)$ */}}
     ref: "4"
     file: "templates/gitlab-ci-sonar.yml"
 {{- end }}
@@ -119,7 +109,9 @@ variables:
 {{- end }}
 
 {{- if eq .Bot "renovate" }}
-
+{{ if has "renovate:post-upgrade" .Include }}
+  RENOVATE_ALLOWED_COMMANDS: /^\.\/scripts\/sh\/renovate\.sh$/
+{{- end }}
   RENOVATE_AUTODISCOVER: "true"
   RENOVATE_AUTODISCOVER_FILTER: {{ eq (len .Languages) 0 | ternary "$CI_PROJECT_NAMESPACE" "$CI_PROJECT_PATH" }}
 {{- end }}

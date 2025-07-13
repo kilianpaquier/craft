@@ -27,9 +27,7 @@ jobs:
       deployments: write
       pull-requests: write
     steps:
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/download-artifact@v4
         with:
           name: build
@@ -42,7 +40,6 @@ jobs:
         run: |-
           [ ! -f netlify.toml ] || echo "path=netlify.toml" >> $GITHUB_OUTPUT
       - id: netlify
-        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: nwtgck/actions-netlify@v3
         with:
           alias: ${{ steps.branch_sha.outputs.branch_sha }}
@@ -80,7 +77,6 @@ jobs:
       pull-requests: write
     steps:
       - id: deployment
-        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
         uses: actions/deploy-pages@v4
         with:
           artifact_name: github-pages

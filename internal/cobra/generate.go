@@ -48,9 +48,6 @@ func gen(generators ...engine.Generator[craft.Config]) func(cmd *cobra.Command, 
 			generate.ParserGit,
 			generate.ParserGolang,
 			generate.ParserNode,
-			// misc parsers
-			generate.ParserShell,
-			generate.ParserTmpl,
 			// must be kept last since it marshals config and merges it with chart overrides
 			generate.ParserHelm,
 		}

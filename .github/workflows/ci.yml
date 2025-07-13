@@ -55,6 +55,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
+          # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
 
@@ -76,9 +77,11 @@ jobs:
           fetch-depth: 0
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
+        # renovate: datasource=git-refs packageName=https://github.com/cycjimmy/semantic-release-action depName=cycjimmy/semantic-release-action versioning=docker
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: true
+          # renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker
           semantic_version: 24
           extra_plugins: |-
             @semantic-release/changelog
@@ -133,6 +136,7 @@ jobs:
       - uses: golangci/golangci-lint-action@v8
         with:
           args: --config .golangci.yml --timeout 240s --allow-parallel-runners --output.checkstyle.path "reports/go-ci-lint.checkstyle.xml" --output.text.path stdout
+          # renovate: datasource=github-tags packageName=golangci/golangci-lint versioning=docker
           version: v2.2
 
   go-test:
@@ -247,9 +251,11 @@ jobs:
           path: dist
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
+        # renovate: datasource=git-refs packageName=https://github.com/cycjimmy/semantic-release-action depName=cycjimmy/semantic-release-action versioning=docker
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: ${{ inputs.release == 'false' }}
+          # renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker
           semantic_version: 24
           extra_plugins: |-
             @semantic-release/changelog

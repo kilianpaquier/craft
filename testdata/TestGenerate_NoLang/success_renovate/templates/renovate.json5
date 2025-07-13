@@ -3,25 +3,22 @@
 // https://docs.renovatebot.com/configuration-options/
 
 {
-    "extends": [ ":gitSignOff" ],
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
     "enabled": true,
+    "extends": [
+        ":automergeMinor",
+        ":disableRateLimiting",
+        ":enablePreCommit",
+        ":enableVulnerabilityAlertsWithLabel(vulnerability)",
+        ":gitSignOff",
+        ":labels(dependencies, renovate)",
+        ":separateMultipleMajorReleases"
+    ],
     "branchPrefix": "renovate/",
-    "labels": [ "dependencies" ],
 
     "branchConcurrentLimit": 0,
-    "prConcurrentLimit": 0,
     "prCreation": "immediate",
-    "prHourlyLimit": 0,
-
-    "ignorePaths": [
-        "**/bower_components/**",
-        "**/examples/**",
-        "**/fixtures/**",
-        "**/node_modules/**",
-        "**/test/**",
-        "**/testdata/**",
-        "**/tests/**",
-    ],
 
     "dependencyDashboard": false,
     "osvVulnerabilityAlerts": false, // https://github.com/renovatebot/renovate/discussions/20542
@@ -34,31 +31,26 @@
     "semanticCommitType": "chore",
     "semanticCommitScope": "deps",
 
-    "separateMajorMinor": true,
     "separateMinorPatch": false,
-    "separateMultipleMajor": true,
     "separateMultipleMinor": false,
 
     "baseBranches": [
         "$default",
-        "/^v[0-9]+\.x/",
-        "/^v[0-9]+\.[0-9]+\.x/",
+        "/^v[0-9]+\\.x$/",
+        "/^v[0-9]+\\.[0-9]+\\.x$/"
     ],
 
-    "reviewers": [
-        "kilianpaquier",
-    ],
+    "assigneesFromCodeOwners": true,
     "bbUseDefaultReviewers": true,
     "gitLabIgnoreApprovals": true,
+    "reviewersFromCodeOwners": true,
 
     "assignAutomerge": true,
-    "automerge": "false",
     "automergeStrategy": "fast-forward",
     "automergeType": "pr",
     "platformAutomerge": true,
 
     "rebaseLabel": "rebase",
-    "rebaseWhen": "behind-base-branch",
     "recreateWhen": "auto",
     "stopUpdatingLabel": "pause",
 
@@ -76,30 +68,186 @@
     "updateLockFiles": true,
     "useBaseBranchConfig": "none",
 
-    "lockFileMaintenance": { "automerge": true },
-    "major": { "automerge": false },
-    "minor": { "automerge": true },
-    "patch": { "automerge": true },
-    "pin": { "automerge": true },
-
     "packageRules": [
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "custom dependencies (non major)",
+            "matchCategories": [ "custom" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "custom dependencies (major)",
+            "matchCategories": [ "custom" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "cd dependencies (non major)",
+            "matchCategories": [ "cd" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "cd dependencies (major)",
+            "matchCategories": [ "cd" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "ci dependencies (non major)",
+            "matchCategories": [ "ci" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "ci dependencies (major)",
+            "matchCategories": [ "ci" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "docker dependencies (non major)",
+            "matchCategories": [ "docker" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "docker dependencies (major)",
+            "matchCategories": [ "docker" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "kubernetes dependencies (non major)",
+            "matchCategories": [ "kubernetes" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "kubernetes dependencies (major)",
+            "matchCategories": [ "kubernetes" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "helm dependencies (non major)",
+            "matchCategories": [ "helm" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "helm dependencies (major)",
+            "matchCategories": [ "helm" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "golang dependencies (non major)",
+            "matchCategories": [ "golang" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "golang dependencies (major)",
+            "matchCategories": [ "golang" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "js dependencies (non major)",
+            "matchCategories": [ "js" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "js dependencies (major)",
+            "matchCategories": [ "js" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "python dependencies (non major)",
+            "matchCategories": [ "python" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "python dependencies (major)",
+            "matchCategories": [ "python" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "rust dependencies (non major)",
+            "matchCategories": [ "rust" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "rust dependencies (major)",
+            "matchCategories": [ "rust" ],
+            "matchUpdateTypes": [ "major" ]
+        },
     ],
 
     "customManagers": [
         {
             "customType": "regex",
-            "description": "Update versions in .tmpl files",
-            "managerFilePatterns": [ "/^*.tmpl$/" ],
+            "datasourceTemplate": "github-tags",
+            "description": "Update versions without needing a comment for 'uses' in GitHub Actions template files",
+            "managerFilePatterns": [
+                "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml\\.tmpl$/",
+                "/(^|/)action\\.ya?ml\\.tmpl$/"
+            ],
             "matchStrings": [
-                // GitLab CI/CD 'include' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?ref:\\s?\\"?(?<currentValue>.+)\\"?",
+                // see https://regex101.com/r/SXViyG/2
+                // uses: <packageName>@<the version>
+                "uses:\\s*(?<packageName>[^@\\s'\"]+)@(?<currentValue>[\\w.+-]+)"
+            ],
+            "versioningTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "datasourceTemplate": "gitlab-tags",
+            "description": "Update versions without needing a comment for 'ref' in GitLab CI/CD template files",
+            "managerFilePatterns": [
+                "/\\.gitlab-ci\\.ya?ml\\.tmpl$/"
+            ],
+            "matchStrings": [
+                // see https://regex101.com/r/9JD1ox/1
+                // project: <packageName> ... <newline, tab, spaces, etc.> ref: <the version> (quotes may or may not be there)
+                "project:\\s*(?<packageName>\\S+)\\s*ref:\\s*['\"]?(?<currentValue>[\\w.+-]+)['\"]?"
+            ],
+            "versioningTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "description": "Update versions in any files with generic regex",
+            "managerFilePatterns": [
+                "/(^|/|\\.)([Dd]ocker|[Cc]ontainer)file$/",
+                "/(^|/)([Dd]ocker|[Cc]ontainer)file[^/]*$/",
 
-                // GitHub Actions 'uses' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
+                "/^.*\\.[\\w]*sh.*?$/",
+                "/^.*\\.json.*?$/",
+                "/^.*\\.ya?ml.*?$/"
+            ],
+            "matchStrings": [
+                // https://regex101.com/r/DMKexv/4
+                // matches <packageName> <the version>
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<packageName>\\S+)\\s['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<name>\\S+)\\s['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
 
-                // GitHub Actions 'with' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\n\s*?.*?version:\\s?v?(?<currentValue>.+)",
+                // https://regex101.com/r/BzJNUM/2
+                // matches *_VERSION=<the version>
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<packageName>[^\\s_]+)_VERSION=['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<name>[^\\s_]+)_VERSION=['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+
+                // see https://regex101.com/r/qXn2n5/9
+                // matches <yaml key>: <the version> or <yaml key>=<the version> or <yaml key>: <packageName>@<the version>, things like that
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n\\s*(?<key>\\S+)[:=]\\s{0,1}['\"]?(?:(?<packageName>\\S+)?@)?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n\\s*(?<key>\\S+)[:=]\\s{0,1}['\"]?(?:(?<name>\\S+)?@)?(?<currentValue>[\\w.+-]+)['\"]?"
             ]
         }
-    ],
+    ]
 }

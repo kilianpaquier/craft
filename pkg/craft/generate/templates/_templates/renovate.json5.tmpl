@@ -5,7 +5,7 @@
 <<- /* add all categories in case the current repository is an "empty" one, meaning not language associated */ ->>
 <<- $all := le (len .Languages) 0 >>
 
-<<- $categories := list >>
+<<- $categories := list "custom" >>
 <<- if or $all .CI >><<- $categories = concat $categories (list "cd" "ci") >><<- end >>
 <<- if or $all (and .CI .CI.Docker) >><<- $categories = append $categories "docker" >><<- end >>
 <<- if or $all (and .CI .CI.Helm) (.IsDeployment "kubernetes") >><<- $categories = append $categories "kubernetes" >><<- end >>
@@ -16,25 +16,24 @@
 <<- if or $all (hasKey .Languages "rust") >><<- $categories = append $categories "rust" >><<- end >>
 
 {
-    "extends": [ ":gitSignOff" ],
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
     "enabled": true,
+    "extends": [
+        ":automergeMinor",
+        ":disableRateLimiting",
+<<- if not (has "pre-commit" .Exclude) >>
+        ":enablePreCommit",
+<<- end >>
+        ":enableVulnerabilityAlertsWithLabel(vulnerability)",
+        ":gitSignOff",
+        ":labels(dependencies, renovate)",
+        ":separateMultipleMajorReleases"
+    ],
     "branchPrefix": "renovate/",
-    "labels": [ "dependencies" ],
 
     "branchConcurrentLimit": 0,
-    "prConcurrentLimit": 0,
     "prCreation": "immediate",
-    "prHourlyLimit": 0,
-
-    "ignorePaths": [
-        "**/bower_components/**",
-        "**/examples/**",
-        "**/fixtures/**",
-        "**/node_modules/**",
-        "**/test/**",
-        "**/testdata/**",
-        "**/tests/**",
-    ],
 
     "dependencyDashboard": false,
     "osvVulnerabilityAlerts": false, // https://github.com/renovatebot/renovate/discussions/20542
@@ -47,33 +46,26 @@
     "semanticCommitType": "chore",
     "semanticCommitScope": "deps",
 
-    "separateMajorMinor": true,
     "separateMinorPatch": false,
-    "separateMultipleMajor": true,
     "separateMultipleMinor": false,
 
     "baseBranches": [
         "$default",
-        "/^v[0-9]+\.x/",
-        "/^v[0-9]+\.[0-9]+\.x/",
+        "/^v[0-9]+\\.x$/",
+        "/^v[0-9]+\\.[0-9]+\\.x$/"
     ],
 
-    "reviewers": [
-<<- range $.Maintainers >>
-        "<< .Name >>",
-<<- end >>
-    ],
+    "assigneesFromCodeOwners": true,
     "bbUseDefaultReviewers": true,
     "gitLabIgnoreApprovals": true,
+    "reviewersFromCodeOwners": true,
 
     "assignAutomerge": true,
-    "automerge": "false",
     "automergeStrategy": "fast-forward",
     "automergeType": "pr",
     "platformAutomerge": true,
 
     "rebaseLabel": "rebase",
-    "rebaseWhen": "behind-base-branch",
     "recreateWhen": "auto",
     "stopUpdatingLabel": "pause",
 
@@ -90,12 +82,6 @@
     "rangeStrategy": "bump",
     "updateLockFiles": true,
     "useBaseBranchConfig": "none",
-
-    "lockFileMaintenance": { "automerge": true },
-    "major": { "automerge": false },
-    "minor": { "automerge": true },
-    "patch": { "automerge": true },
-    "pin": { "automerge": true },
 
     "packageRules": [
 <<- range $categories >>
@@ -114,25 +100,73 @@
 <<- end >>
     ],
 
-<<- if hasKey .Languages "tmpl" >>
-<<- $comment := "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?" >>
+<<- if has "renovate:post-upgrade" .Include >>
+
+    "postUpgradeTasks": {
+        "commands": [ "./scripts/sh/renovate.sh" ],
+        "executionMode": "branch"
+    },
+<<- end >>
 
     "customManagers": [
+<<- if gt (len (glob "*.tmpl")) 0 >>
         {
             "customType": "regex",
-            "description": "Update versions in .tmpl files",
-            "managerFilePatterns": [ "/^*.tmpl$/" ],
+            "datasourceTemplate": "github-tags",
+            "description": "Update versions without needing a comment for 'uses' in GitHub Actions template files",
+            "managerFilePatterns": [
+                "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml\\.tmpl$/",
+                "/(^|/)action\\.ya?ml\\.tmpl$/"
+            ],
             "matchStrings": [
-                // GitLab CI/CD 'include' versions
-                "<< $comment >>ref:\\s?\\"?(?<currentValue>.+)\\"?",
+                // see https://regex101.com/r/SXViyG/2
+                // uses: <packageName>@<the version>
+                "uses:\\s*(?<packageName>[^@\\s'\"]+)@(?<currentValue>[\\w.+-]+)"
+            ],
+            "versioningTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "datasourceTemplate": "gitlab-tags",
+            "description": "Update versions without needing a comment for 'ref' in GitLab CI/CD template files",
+            "managerFilePatterns": [
+                "/\\.gitlab-ci\\.ya?ml\\.tmpl$/"
+            ],
+            "matchStrings": [
+                // see https://regex101.com/r/9JD1ox/1
+                // project: <packageName> ... <newline, tab, spaces, etc.> ref: <the version> (quotes may or may not be there)
+                "project:\\s*(?<packageName>\\S+)\\s*ref:\\s*['\"]?(?<currentValue>[\\w.+-]+)['\"]?"
+            ],
+            "versioningTemplate": "docker"
+        },
+<<- end >>
+        {
+            "customType": "regex",
+            "description": "Update versions in any files with generic regex",
+            "managerFilePatterns": [
+                "/(^|/|\\.)([Dd]ocker|[Cc]ontainer)file$/",
+                "/(^|/)([Dd]ocker|[Cc]ontainer)file[^/]*$/",
 
-                // GitHub Actions 'uses' versions
-                "<< $comment >>-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
+                "/^.*\\.[\\w]*sh.*?$/",
+                "/^.*\\.json.*?$/",
+                "/^.*\\.ya?ml.*?$/"
+            ],
+            "matchStrings": [
+                // https://regex101.com/r/DMKexv/4
+                // matches <packageName> <the version>
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<packageName>\\S+)\\s['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<name>\\S+)\\s['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
 
-                // GitHub Actions 'with' versions
-                "<< $comment >>.*?version:\\s?v?(?<currentValue>.+)",
+                // https://regex101.com/r/BzJNUM/2
+                // matches *_VERSION=<the version>
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<packageName>[^\\s_]+)_VERSION=['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<name>[^\\s_]+)_VERSION=['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+
+                // see https://regex101.com/r/qXn2n5/9
+                // matches <yaml key>: <the version> or <yaml key>=<the version> or <yaml key>: <packageName>@<the version>, things like that
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n\\s*(?<key>\\S+)[:=]\\s{0,1}['\"]?(?:(?<packageName>\\S+)?@)?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n\\s*(?<key>\\S+)[:=]\\s{0,1}['\"]?(?:(?<name>\\S+)?@)?(?<currentValue>[\\w.+-]+)['\"]?"
             ]
         }
-    ],
-<<- end >>
+    ]
 }

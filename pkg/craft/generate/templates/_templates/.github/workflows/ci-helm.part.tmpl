@@ -6,23 +6,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: run-workflow
     steps:
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
       # https://github.com/marketplace/actions/helm-tool-installer
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: azure/setup-helm@v4
         with:
-          <<- /* renovate: datasource=github-tags packageName=helm/helm versioning=semver */>>
+          # renovate: datasource=github-tags packageName=helm/helm versioning=semver
           version: v3.16.2
-      # https://github.com/actions/setup-python
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
+      # https://github.com/marketplace/actions/setup-python
       - uses: actions/setup-python@v5
         with:
           check-latest: true
-          <<- /* renovate: datasource=github-tags packageName=actions/python-versions versioning=regex:(?<major>\\d+)\\.x$ */>>
+          # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
           python-version: 3.x
       # https://github.com/marketplace/actions/helm-chart-testing
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: helm/chart-testing-action@v2
       - id: changed
         run: |-
@@ -73,13 +69,11 @@ jobs:
     permissions:
       packages: << $ghcr | ternary "write" "none" >>
     steps:
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
       # https://github.com/marketplace/actions/helm-tool-installer
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: azure/setup-helm@v4
         with:
-          <<- /* renovate: datasource=github-tags packageName=helm/helm versioning=semver */>>
+          # renovate: datasource=github-tags packageName=helm/helm versioning=semver
           version: v3.16.2
       - run: helm package --version "$VERSION" --app-version "$VERSION" --dependency-update "$HELM_CHART_DIR"
         env:
@@ -158,13 +152,11 @@ jobs:
           - environment: production # disable on non-production branches
             production: false
     steps:
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: actions/checkout@v4
       # https://github.com/marketplace/actions/helm-tool-installer
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
       - uses: azure/setup-helm@v4
         with:
-          <<- /* renovate: datasource=github-tags packageName=helm/helm versioning=semver */>>
+          # renovate: datasource=github-tags packageName=helm/helm versioning=semver
           version: v3.16.2
       - shell: bash
         run: |-
