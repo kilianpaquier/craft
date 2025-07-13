@@ -1,14 +1,12 @@
 module github.com/kilianpaquier/craft
 
-go 1.24.0
-
-toolchain go1.24.3
+go 1.24.5
 
 require (
 	dario.cat/mergo v1.0.2
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/bluekeyes/go-gitdiff v0.8.1
-	github.com/charmbracelet/bubbletea v1.3.5
+	github.com/charmbracelet/bubbletea v1.3.6
 	github.com/charmbracelet/huh v0.7.0
 	github.com/charmbracelet/log v0.4.2
 	github.com/go-git/go-git/v5 v5.16.2
@@ -20,7 +18,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/yannh/kubeconform v0.7.0
-	gitlab.com/gitlab-org/api/client-go v0.133.0
+	gitlab.com/gitlab-org/api/client-go v0.134.0
 	golang.org/x/mod v0.25.0
 	golang.org/x/text v0.26.0
 	helm.sh/helm/v3 v3.18.3
