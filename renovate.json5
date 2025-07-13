@@ -131,7 +131,8 @@
                 "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?ref:\\s?\\\"?(?<currentValue>.+)\\\"?",
 
                 // GitHub Actions 'uses' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?-?uses:\\s?.+@v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
 
                 // GitHub Actions 'with' versions
                 "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?.*?version:\\s?v?(?<currentValue>.+)",

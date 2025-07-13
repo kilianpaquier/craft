@@ -115,7 +115,6 @@
     ],
 
 <<- if hasKey .Languages "tmpl" >>
-<<- $comment := "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\\\n\\\\s*?" >>
 
     "customManagers": [
         {
@@ -124,13 +123,14 @@
             "managerFilePatterns": [ "/^*.tmpl$/" ],
             "matchStrings": [
                 // GitLab CI/CD 'include' versions
-                "<< $comment >>ref:\\s?\\\"?(?<currentValue>.+)\\\"?",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?ref:\\s?\\\"?(?<currentValue>.+)\\\"?",
 
                 // GitHub Actions 'uses' versions
-                "<< $comment >>-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?-?uses:\\s?.+@v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
 
                 // GitHub Actions 'with' versions
-                "<< $comment >>.*?version:\\s?v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>.+).+?\\n\\s*?.*?version:\\s?v?(?<currentValue>.+)",
             ]
         }
     ],
