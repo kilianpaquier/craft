@@ -55,7 +55,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: 3.13.5
       - uses: pre-commit/action@v3.0.1
 
   version:
