@@ -130,7 +130,7 @@ jobs:
 <<- if eq .CI.Auth.Release "github-app" >>
       - id: app_token
         <<- /* renovate: datasource=github-tags versioning=docker */>>
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_PRIVATE_KEY }}
@@ -274,7 +274,7 @@ jobs:
 <<- if eq .CI.Auth.Release "github-app" >>
       - id: app_token
         <<- /* renovate: datasource=github-tags versioning=docker */>>
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_PRIVATE_KEY }}
