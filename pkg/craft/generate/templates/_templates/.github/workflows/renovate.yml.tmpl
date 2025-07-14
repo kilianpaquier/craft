@@ -31,13 +31,13 @@ jobs:
     steps:
 <<- if eq .CI.Auth.Maintenance "github-app" >>
       - id: app_token
-        <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
+        <<- /* renovate: datasource=github-tags versioning=docker */>>
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ vars.RENOVATE_APP_ID }}
           private-key: ${{ secrets.RENOVATE_PRIVATE_KEY }}
 <<- end >>
-      <<- /* renovate: datasource=github-tags versioning=regex:^(?<major>\\d+)$ */>>
+      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/checkout@v4
 <<- if eq .CI.Auth.Maintenance "github-app" >>
         with:

@@ -13,7 +13,7 @@ include:
 
   # semantic-release template
   - project: to-be-continuous/semantic-release
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/semantic-release versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/semantic-release versioning=docker */}}
     ref: "3"
     file: "templates/gitlab-ci-semrel.yml"
 
@@ -21,7 +21,7 @@ include:
 
   # pre-commit template
   - project: to-be-continuous/pre-commit
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/pre-commit versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/pre-commit versioning=docker */}}
     ref: "1"
     file: "templates/gitlab-ci-pre-commit.yml"
 {{- end }}
@@ -30,7 +30,7 @@ include:
 
   # Bash template
   - project: to-be-continuous/bash
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/bash versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/bash versioning=docker */}}
     ref: "3"
     file: "/templates/gitlab-ci-bash.yml"
 {{- end }}
@@ -39,7 +39,7 @@ include:
 
   # Renovate template
   - project: to-be-continuous/renovate
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/renovate versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/renovate versioning=docker */}}
     ref: "1"
     file: "templates/gitlab-ci-renovate.yml"
 {{- end }}
@@ -57,7 +57,7 @@ include:
 
   # Docker template
   - project: to-be-continuous/docker
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/docker versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/docker versioning=docker */}}
     ref: "5"
     file: "templates/gitlab-ci-docker.yml"
 {{- end }}
@@ -66,7 +66,7 @@ include:
 
   # Helm template
   - project: to-be-continuous/helm
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/helm versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/helm versioning=docker */}}
     ref: "8"
     file: "templates/gitlab-ci-helm.yml"
 {{- end }}
@@ -75,7 +75,7 @@ include:
 
   # Go template
   - project: to-be-continuous/golang
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/golang versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/golang versioning=docker */}}
     ref: "4"
     file: "templates/gitlab-ci-golang.yml"
 {{- end }}
@@ -84,7 +84,7 @@ include:
 
   # Node.js template
   - project: to-be-continuous/node
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/node versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/node versioning=docker */}}
     ref: "3"
     file: "templates/gitlab-ci-node.yml"
 {{- end }}
@@ -93,7 +93,7 @@ include:
 
   # SonarQube template
   - project: to-be-continuous/sonar
-    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/sonar versioning=regex:^(?<major>\\d+)$ */}}
+    {{- /* renovate: datasource=gitlab-tags packageName=to-be-continuous/sonar versioning=docker */}}
     ref: "4"
     file: "templates/gitlab-ci-sonar.yml"
 {{- end }}
