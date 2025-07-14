@@ -72,21 +72,17 @@ jobs:
     permissions:
       contents: write
     steps:
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/setup-python@v5
         with:
-          <<- /* renovate: datasource=github-tags packageName=actions/python-versions versioning=docker */>>
+          # renovate: datasource=github-tags packageName=actions/python-versions versioning=docker
           python-version: 3.x
-      <<- /* renovate: datasource=github-tags versioning=semver */>>
       - uses: pre-commit/action@v3.0.1
 <<- if has "pre-commit:auto-commit" .CI.Options >>
       - if: ${{ !cancelled() }}
         # https://github.com/marketplace/actions/git-auto-commit
-        <<- /* renovate: datasource=github-tags versioning=docker */>>
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "fix(commit): pre-commit autofixes [skip ci]"
@@ -100,10 +96,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: run-workflow
     steps:
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/checkout@v4
       # https://github.com/marketplace/actions/shellcheck
-      <<- /* renovate: datasource=github-tags versioning=semver */>>
       - uses: ludeeus/action-shellcheck@2.0.0
         with:
           check_together: "yes"
@@ -129,13 +123,11 @@ jobs:
 <<- if .CI.Release >>
 <<- if eq .CI.Auth.Release "github-app" >>
       - id: app_token
-        <<- /* renovate: datasource=github-tags versioning=docker */>>
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_PRIVATE_KEY }}
 <<- end >>
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -144,11 +136,10 @@ jobs:
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
-        <<- /* renovate: datasource=git-refs depName=cycjimmy/semantic-release-action packageName=https://github.com/cycjimmy/semantic-release-action versioning=docker */>>
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: true
-          <<- /* renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker */>>
+          # renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker
           semantic_version: 24
           <<- template "release-args" . >>
       - id: version
@@ -162,7 +153,6 @@ jobs:
         env:
           SEMREL_INFO_NEXT_VERSION: ${{ steps.semrel_version.outputs.new_release_version }}
 <<- else >>
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/checkout@v4
       - id: version
         run: |-
@@ -196,22 +186,18 @@ jobs:
     env:
       SONAR_USER_HOME: .sonar
     steps:
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
           path: reports
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/cache@v4
         with:
           path: ${{ env.SONAR_USER_HOME }}
           key: sonar-cache
       - if: ${{ github.event_name == 'pull_request' }}
-        <<- /* renovate: datasource=github-tags versioning=docker */>>
         uses: SonarSource/sonarqube-github-action@v5
         with:
           args: |
@@ -223,7 +209,6 @@ jobs:
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - if: ${{ github.event_name == 'push' }}
-        <<- /* renovate: datasource=github-tags versioning=docker */>>
         uses: SonarSource/sonarqube-github-action@v5
         with:
           args: |
@@ -273,13 +258,11 @@ jobs:
     steps:
 <<- if eq .CI.Auth.Release "github-app" >>
       - id: app_token
-        <<- /* renovate: datasource=github-tags versioning=docker */>>
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ vars.RELEASE_APP_ID }}
           private-key: ${{ secrets.RELEASE_PRIVATE_KEY }}
 <<- end >>
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -287,7 +270,6 @@ jobs:
           << . >>
 <<- end >>
 <<- if gt .Binaries 0 >>
-      <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/download-artifact@v4
         with:
           name: build
@@ -295,11 +277,10 @@ jobs:
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
-        <<- /* renovate: datasource=git-refs depName=cycjimmy/semantic-release-action packageName=https://github.com/cycjimmy/semantic-release-action versioning=docker */>>
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: ${{ inputs.release == 'false' }}
-          <<- /* renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker */>>
+          # renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker
           semantic_version: 24
           <<- template "release-args" . >>
       - id: environment_url

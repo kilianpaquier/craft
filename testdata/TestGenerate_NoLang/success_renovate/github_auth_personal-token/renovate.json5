@@ -193,4 +193,22 @@
             "matchUpdateTypes": [ "major" ]
         },
     ],
+
+    "customManagers": [
+        {
+            "customType": "regex",
+            "description": "Update versions in any files with generic regex",
+            "managerFilePatterns": [
+                "/(^|/|\\.)([Dd]ocker|[Cc]ontainer)file$/",
+                "/(^|/)([Dd]ocker|[Cc]ontainer)file[^/]*$/",
+
+                "/^.*\\.ya?ml.*$/",
+                "/^.*\\.json.*?$/"
+            ],
+            "matchStrings": [
+                // renovate: datasource=<datasource> depName=<depName> packageName=<packageName> versioning=<versioning> ... <newline, tab, spaces, etc.> version: <version>
+                "renovate: datasource=(?<datasource>.+)(?: depName=(?<depName>.+))? (?: packageName=(?<packageName>.+))? versioning=(?<versioning>[a-z-]+?)\\s*?[\\w\\.+-]+(?::|=)\\s?v?(?<currentValue>[\\w\\.+-]*)"
+            ]
+        }
+    ]
 }

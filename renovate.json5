@@ -134,21 +134,39 @@
         },
     ],
 
+    "github-actions": {
+        "managerFilePatterns": [
+            "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml(\\.tmpl)?$/",
+            "/(^|/)action\\.ya?ml(\\.tmpl)?$/"
+        ]
+    },
+
+    "gitlabci-include": {
+        "managerFilePatterns": [
+            "/\\.gitlab-ci\\.ya?ml(\\.tmpl)?$/"
+        ]
+    },
+
+    "gitlabci": {
+        "managerFilePatterns": [
+            "/\\.gitlab-ci\\.ya?ml(\\.tmpl)?$/"
+        ]
+    },
+
     "customManagers": [
         {
             "customType": "regex",
-            "description": "Update versions in .tmpl files",
-            "managerFilePatterns": [ "/^*.tmpl$/" ],
+            "description": "Update versions in any files with generic regex",
+            "managerFilePatterns": [
+                "/(^|/|\\.)([Dd]ocker|[Cc]ontainer)file$/",
+                "/(^|/)([Dd]ocker|[Cc]ontainer)file[^/]*$/",
+
+                "/^.*\\.ya?ml.*$/",
+                "/^.*\\.json.*?$/"
+            ],
             "matchStrings": [
-                // GitLab CI/CD 'include' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?ref:\\s?\"?(?<currentValue>.+)\"?",
-
-                // GitHub Actions 'uses' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?-?uses:\\s?.+@v?(?<currentValue>.+)",
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
-
-                // GitHub Actions 'with' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?.*?version:\\s?v?(?<currentValue>.+)"
+                // renovate: datasource=<datasource> depName=<depName> packageName=<packageName> versioning=<versioning> ... <newline, tab, spaces, etc.> version: <version>
+                "renovate: datasource=(?<datasource>.+)(?: depName=(?<depName>.+))? (?: packageName=(?<packageName>.+))? versioning=(?<versioning>[a-z-]+?)\\s*?[\\w\\.+-]+(?::|=)\\s?v?(?<currentValue>[\\w\\.+-]*)"
             ]
         }
     ]
