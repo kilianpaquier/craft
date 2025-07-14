@@ -79,7 +79,7 @@ jobs:
       <<- /* renovate: datasource=github-tags versioning=docker */>>
       - uses: actions/setup-python@v5
         with:
-          <<- /* renovate: datasource=github-tags packageName=actions/python-versions versioning=regex:(?<major>\\d+)\\.x$ */>>
+          <<- /* renovate: datasource=github-tags packageName=actions/python-versions versioning=docker */>>
           python-version: 3.x
       <<- /* renovate: datasource=github-tags versioning=semver */>>
       - uses: pre-commit/action@v3.0.1
@@ -144,7 +144,7 @@ jobs:
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
-        <<- /* renovate: datasource=git-refs versioning=docker */>>
+        <<- /* renovate: datasource=git-refs depName=cycjimmy/semantic-release-action packageName=https://github.com/cycjimmy/semantic-release-action versioning=docker */>>
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: true
@@ -212,7 +212,7 @@ jobs:
           key: sonar-cache
       - if: ${{ github.event_name == 'pull_request' }}
         <<- /* renovate: datasource=github-tags versioning=docker */>>
-        uses: sonarsource/sonarqube-github-action@v5
+        uses: SonarSource/sonarqube-github-action@v5
         with:
           args: |
             -Dproject.settings=sonar.properties
@@ -224,7 +224,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - if: ${{ github.event_name == 'push' }}
         <<- /* renovate: datasource=github-tags versioning=docker */>>
-        uses: sonarsource/sonarqube-github-action@v5
+        uses: SonarSource/sonarqube-github-action@v5
         with:
           args: |
             -Dproject.settings=sonar.properties
@@ -295,7 +295,7 @@ jobs:
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
-        <<- /* renovate: datasource=git-refs versioning=docker */>>
+        <<- /* renovate: datasource=git-refs depName=cycjimmy/semantic-release-action packageName=https://github.com/cycjimmy/semantic-release-action versioning=docker */>>
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: ${{ inputs.release == 'false' }}

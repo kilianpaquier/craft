@@ -55,6 +55,6 @@ jobs:
 <<- end >>
         env:
           LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL || 'info' }}
-          RENOVATE_AUTODISCOVER: "true"
           RENOVATE_AUTODISCOVER_FILTER: << eq (len .Languages) 0 | ternary "${{ github.repository_owner }}" "${{ github.repository }}" >>
+          RENOVATE_AUTODISCOVER: "true"
           RENOVATE_DRY_RUN: ${{ inputs.dry_run }}

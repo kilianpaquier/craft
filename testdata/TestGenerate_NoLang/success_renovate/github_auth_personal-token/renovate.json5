@@ -3,6 +3,8 @@
 // https://docs.renovatebot.com/configuration-options/
 
 {
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
     "extends": [ ":gitSignOff" ],
     "enabled": true,
     "branchPrefix": "renovate/",
@@ -20,7 +22,7 @@
         "**/node_modules/**",
         "**/test/**",
         "**/testdata/**",
-        "**/tests/**",
+        "**/tests/**"
     ],
 
     "dependencyDashboard": false,
@@ -42,17 +44,16 @@
     "baseBranches": [
         "$default",
         "/^v[0-9]+\\.x/",
-        "/^v[0-9]+\\.[0-9]+\\.x/",
+        "/^v[0-9]+\\.[0-9]+\\.x/"
     ],
 
-    "reviewers": [
-        "kilianpaquier",
-    ],
+    "assigneesFromCodeOwners": true,
     "bbUseDefaultReviewers": true,
     "gitLabIgnoreApprovals": true,
+    "reviewersFromCodeOwners": true,
 
     "assignAutomerge": true,
-    "automerge": "false",
+    "automerge": false,
     "automergeStrategy": "fast-forward",
     "automergeType": "pr",
     "platformAutomerge": true,

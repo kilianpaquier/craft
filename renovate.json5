@@ -3,6 +3,8 @@
 // https://docs.renovatebot.com/configuration-options/
 
 {
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
     "extends": [ ":gitSignOff" ],
     "enabled": true,
     "branchPrefix": "renovate/",
@@ -20,7 +22,7 @@
         "**/node_modules/**",
         "**/test/**",
         "**/testdata/**",
-        "**/tests/**",
+        "**/tests/**"
     ],
 
     "dependencyDashboard": false,
@@ -42,17 +44,16 @@
     "baseBranches": [
         "$default",
         "/^v[0-9]+\\.x/",
-        "/^v[0-9]+\\.[0-9]+\\.x/",
+        "/^v[0-9]+\\.[0-9]+\\.x/"
     ],
 
-    "reviewers": [
-        "kilianpaquier",
-    ],
+    "assigneesFromCodeOwners": true,
     "bbUseDefaultReviewers": true,
     "gitLabIgnoreApprovals": true,
+    "reviewersFromCodeOwners": true,
 
     "assignAutomerge": true,
-    "automerge": "false",
+    "automerge": false,
     "automergeStrategy": "fast-forward",
     "automergeType": "pr",
     "platformAutomerge": true,
@@ -83,6 +84,18 @@
     "pin": { "automerge": true },
 
     "packageRules": [
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "custom dependencies (non major)",
+            "matchCategories": [ "custom" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "custom dependencies (major)",
+            "matchCategories": [ "custom" ],
+            "matchUpdateTypes": [ "major" ]
+        },
         {
             "addLabels": [ "non-major" ],
             "groupName": "cd dependencies (non major)",
@@ -128,15 +141,15 @@
             "managerFilePatterns": [ "/^*.tmpl$/" ],
             "matchStrings": [
                 // GitLab CI/CD 'include' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?ref:\\s?\\\"?(?<currentValue>.+)\\\"?",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?ref:\\s?\"?(?<currentValue>.+)\"?",
 
                 // GitHub Actions 'uses' versions
                 "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?-?uses:\\s?.+@v?(?<currentValue>.+)",
                 "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?-?uses:\\s?(?<packageName>.+)@v?(?<currentValue>.+)",
 
                 // GitHub Actions 'with' versions
-                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?.*?version:\\s?v?(?<currentValue>.+)",
+                "renovate: datasource=(?<datasource>.+)( depName=(?<depName>.+))? ( packageName=(?<packageName>.+))? versioning=(?<versioning>[^\\s]+).+?\\n\\s*?.*?version:\\s?v?(?<currentValue>.+)"
             ]
         }
-    ],
+    ]
 }
