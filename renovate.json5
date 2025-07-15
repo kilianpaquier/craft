@@ -141,18 +141,6 @@
         ]
     },
 
-    "gitlabci-include": {
-        "managerFilePatterns": [
-            "/\\.gitlab-ci\\.ya?ml(\\.tmpl)?$/"
-        ]
-    },
-
-    "gitlabci": {
-        "managerFilePatterns": [
-            "/\\.gitlab-ci\\.ya?ml(\\.tmpl)?$/"
-        ]
-    },
-
     "customManagers": [
         {
             "customType": "regex",
@@ -165,8 +153,8 @@
                 "/^.*\\.json.*?$/"
             ],
             "matchStrings": [
-                // renovate: datasource=<datasource> depName=<depName> packageName=<packageName> versioning=<versioning> ... <newline, tab, spaces, etc.> version: <version>
-                "renovate: datasource=(?<datasource>.+)(?: depName=(?<depName>.+))? (?: packageName=(?<packageName>.+))? versioning=(?<versioning>[a-z-]+?)\\s*?[\\w\\.+-]+(?::|=)\\s?v?(?<currentValue>[\\w\\.+-]*)"
+                // renovate: datasource=<datasource> depName=<depName> packageName=<packageName> versioning=<versioning> ... <newline, tab, spaces, etc.> <ref, version, etc.>: <the version>
+                "renovate:\\s+datasource=(?<datasource>\\S+)(?:\\s+depName=(?<depName>\\S+))?(?:\\s+packageName=(?<packageName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?[\\s\\S]{0,10}?\\s*(?<key>[^\\s:=]+)[:=]\\s*['\"]?(?<currentValue>[\\w.+-]+)['\"]?"
             ]
         }
     ]
