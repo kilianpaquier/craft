@@ -111,7 +111,7 @@ jobs:
           persist-credentials: false
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
-        # renovate: datasource=git-refs registryUrl=https://github.com versioning=docker
+        # renovate: datasource=git-refs packageName=https://github.com/cycjimmy/semantic-release-action depName=cycjimmy/semantic-release-action versioning=docker
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: ${{ inputs.release == 'false' }}

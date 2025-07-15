@@ -98,14 +98,38 @@
         },
     ],
 
-    "github-actions": {
-        "managerFilePatterns": [
-            "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml(\\.tmpl)?$/",
-            "/(^|/)action\\.ya?ml(\\.tmpl)?$/"
-        ]
-    },
-
     "customManagers": [
+        {
+            "customType": "regex",
+            "datasourceTempalte": "github-tags",
+            "description": "Update versions without needing a comment for 'uses' in GitHub Actions files",
+            "managerFilePatterns": [
+                "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml\\.tmpl$/",
+                "/(^|/)action\\.ya?ml\\.tmpl$/"
+            ],
+            "matchStrings": [
+                // see https://regex101.com/r/SXViyG/1
+
+                // uses: <packageName>@<the version>
+                "uses:\\s*(?<packageName>[^@\\s'\"]+)@(?<currentValue>[\\w.+-]+)"
+            ],
+            "versioningTemplate": "docker"
+        },
+        {
+            "customType": "regex",
+            "datasourceTempalte": "gitlab-tags",
+            "description": "Update versions without needing a comment for 'ref' in GitLab CI/CD files",
+            "managerFilePatterns": [
+                "/\\.gitlab-ci\\.ya?ml\\.tmpl$/"
+            ],
+            "matchStrings": [
+                // see TBD
+
+                // project: <packageName> ... <newline, tab, spaces, etc.> ref: <the version> (quotes may or may not be there)
+                "project:\\s*(?<packageName>\\S+)\\s*ref:\\s*['\"]?(?<currentValue>[\\w.+-]+)['\"]?"
+            ],
+            "versioningTemplate": "docker"
+        },
         {
             "customType": "regex",
             "description": "Update versions in any files with generic regex",
@@ -119,11 +143,11 @@
             "matchStrings": [
                 // see https://regex101.com/r/qXn2n5/5
 
-                // renovate: datasource=<datasource> registryUrl=<registryUrl> packageName=<packageName> depName=<depName> versioning=<versioning> ... <newline, tab, spaces, etc.> <ref, version, etc.>: <the version>
-                "renovate:\\s+datasource=(?<datasource>\\S+)(?:\\s+registryUrl=(?<registryUrl>\\S+))?(?:\\s+packageName=(?<packageName>\\S+))?(?:\\s+depName=(?<depName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?[\\s\\S]{0,50}?\\s*(?<key>[^\\s:=]+)[:=]\\s*['\"]?(?:(?<titi>[^@\\s'\"]+)?@)?(?<currentValue>[\\w.+-]+)['\"]?",
+                // renovate: datasource=<datasource> packageName=<packageName> depName=<depName> versioning=<versioning> ... <newline, tab, spaces, etc.> <ref, version, etc.>: <the version>
+                "renovate:\\s+datasource=(?<datasource>\\S+)(?:\\s+packageName=(?<packageName>\\S+))?(?:\\s+depName=(?<depName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?[\\s\\S]{0,50}?\\s*(?<key>[^\\s:=]+)[:=]\\s*['\"]?(?:(?:[^@\\s'\"]+)?@)?(?<currentValue>[\\w.+-]+)['\"]?",
 
-                // renovate: datasource=<datasource> registryUrl=<registryUrl> depName=<depName> versioning=<versioning> ... <newline, tab, spaces, etc.> <ref, version, etc.>: <packageName>@<the version>
-                "renovate:\\s+datasource=(?<datasource>\\S+)(?:\\s+registryUrl=(?<registryUrl>\\S+))?(?:\\s+depName=(?<depName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?[\\s\\S]{0,50}?\\s*(?<key>[^\\s:=]+)[:=]\\s*['\"]?(?:(?<packageName>[^@\\s'\"]+)?@)?(?<currentValue>[\\w.+-]+)['\"]?"
+                // renovate: datasource=<datasource> depName=<depName> versioning=<versioning> ... <newline, tab, spaces, etc.> <ref, version, etc.>: <packageName>@<the version>
+                "renovate:\\s+datasource=(?<datasource>\\S+)(?:\\s+depName=(?<depName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?[\\s\\S]{0,50}?\\s*(?<key>[^\\s:=]+)[:=]\\s*['\"]?(?:(?<packageName>[^@\\s'\"]+)?@)?(?<currentValue>[\\w.+-]+)['\"]?"
             ]
         }
     ]
