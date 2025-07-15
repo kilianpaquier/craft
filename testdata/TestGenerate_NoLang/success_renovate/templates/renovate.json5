@@ -101,7 +101,7 @@
     "customManagers": [
         {
             "customType": "regex",
-            "datasourceTempalte": "github-tags",
+            "datasourceTemplate": "github-tags",
             "description": "Update versions without needing a comment for 'uses' in GitHub Actions files",
             "managerFilePatterns": [
                 "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml\\.tmpl$/",
@@ -117,7 +117,7 @@
         },
         {
             "customType": "regex",
-            "datasourceTempalte": "gitlab-tags",
+            "datasourceTemplate": "gitlab-tags",
             "description": "Update versions without needing a comment for 'ref' in GitLab CI/CD files",
             "managerFilePatterns": [
                 "/\\.gitlab-ci\\.ya?ml\\.tmpl$/"
