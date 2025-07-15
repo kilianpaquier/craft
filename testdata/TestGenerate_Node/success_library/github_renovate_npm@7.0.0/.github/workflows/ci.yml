@@ -55,7 +55,7 @@ jobs:
           ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
-          # renovate: datasource=github-tags packageName=actions/python-versions versioning=docker
+          # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
           python-version: 3.x
       - uses: pre-commit/action@v3.0.1
 
@@ -126,6 +126,7 @@ jobs:
           persist-credentials: false
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
+        # renovate: datasource=git-refs registryUrl=https://github.com versioning=docker
         uses: cycjimmy/semantic-release-action@v4
         with:
           dry_run: ${{ inputs.release == 'false' }}
