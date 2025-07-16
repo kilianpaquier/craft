@@ -134,7 +134,6 @@
         },
     ],
 
-    "allowedCommands": [ "^make\\s[\\w]+$" ],
     "postUpgradeTasks": {
         "commands": [ "make testdata" ],
         "executionMode": "branch"
