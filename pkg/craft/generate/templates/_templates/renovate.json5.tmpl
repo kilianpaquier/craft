@@ -113,8 +113,16 @@
 <<- end >>
     ],
 
+<<- if has "renovate:post-upgrade" .Include >>
+
+    "postUpgradeTasks": {
+        "commands": [ "./scripts/sh/renovate.sh" ],
+        "executionMode": "branch"
+    },
+<<- end >>
+
     "customManagers": [
-<<- if gt (len (mustGlob "*.tmpl")) 0 >>
+<<- if gt (len (glob "*.tmpl")) 0 >>
         {
             "customType": "regex",
             "datasourceTemplate": "github-tags",

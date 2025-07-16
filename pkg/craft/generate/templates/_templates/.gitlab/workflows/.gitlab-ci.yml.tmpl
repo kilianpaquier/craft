@@ -3,7 +3,7 @@
 {{- $golang := hasKey .Languages "go" }}
 {{- $hugo := hasKey .Languages "hugo" }}
 {{- $node := hasKey .Languages "node" }}
-{{- $shell := and (not (has "shell" .Exclude)) (gt (len (mustGlob "*.*sh")) 0) }}
+{{- $shell := and (not (has "shell" .Exclude)) (gt (len (glob "*.*sh")) 0) }}
 
 {{- $pages := and (.IsDeployment "pages") (or $node $hugo) }}
 {{- $netlify := and (.IsDeployment "netlify") (or $node $hugo) }}
@@ -109,7 +109,9 @@ variables:
 {{- end }}
 
 {{- if eq .Bot "renovate" }}
-
+{{ if has "renovate:post-upgrade" .Include }}
+  RENOVATE_ALLOWED_COMMANDS: /^\.\/scripts\/sh\/renovate\.sh$/
+{{- end }}
   RENOVATE_AUTODISCOVER: "true"
   RENOVATE_AUTODISCOVER_FILTER: {{ eq (len .Languages) 0 | ternary "$CI_PROJECT_NAMESPACE" "$CI_PROJECT_PATH" }}
 {{- end }}

@@ -67,13 +67,13 @@ func TestToYAML(t *testing.T) {
 func TestMustGlob(t *testing.T) {
 	tmp := t.TempDir()
 
-	fm := engine.FuncMap(tmp)["mustGlob"]
-	mustGlob, ok := fm.(func(glob string) []string)
+	fm := engine.FuncMap(tmp)["glob"]
+	glob, ok := fm.(func(glob string) []string)
 	require.True(t, ok)
 
 	t.Run("no_glob", func(t *testing.T) {
 		// Act
-		matches := mustGlob("*.tmpl")
+		matches := glob("*.tmpl")
 
 		// Assert
 		assert.Empty(t, matches)
@@ -89,7 +89,7 @@ func TestMustGlob(t *testing.T) {
 		require.NoError(t, file.Close())
 
 		// Act
-		matches := mustGlob("*.tmpl")
+		matches := glob("*.tmpl")
 
 		// Assert
 		assert.Equal(t, []string{target}, matches)

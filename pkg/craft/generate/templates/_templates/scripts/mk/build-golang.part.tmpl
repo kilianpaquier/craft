@@ -25,7 +25,7 @@ lint: reports
 lint-fix: reports
 	@ARGS="--fix" make -s lint
 
-{{- if gt (len (mustGlob "*.tmpl")) 0 }}
+{{- if gt (len (glob "*.tmpl")) 0 }}
 
 .PHONY: testdata
 testdata:

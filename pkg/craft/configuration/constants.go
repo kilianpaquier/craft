@@ -80,4 +80,10 @@ const (
 	// PreCommitGomodTidy is an available include for pre-commit configuration file.
 	// It will ensure go.mod and go.sum are tidied before committing anything.
 	PreCommitGomodTidy = "pre-commit:gomod-tidy"
+
+	// RenovatePostUpgrade is an available include for renovate
+	// to run a specific script renovate.sh after an upgrade is made (global to concerned branch).
+	//
+	// Generated script is by default empty and will never be regenerated to let projects do whatever they want with it.
+	RenovatePostUpgrade = "renovate:post-upgrade"
 )

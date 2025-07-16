@@ -19,7 +19,7 @@ func SemanticRelease() []engine.Template[craft.Config] {
 		},
 		{
 			Delimiters:     engine.DelimitersBracket(),
-			Globs:          []string{path.Join(".gitlab", "semrel-plugins.txt") + engine.TmplExtension},
+			Globs:          []string{path.Join(".gitlab", "semrel-plugins.txt"+engine.TmplExtension)},
 			Out:            path.Join(".gitlab", "semrel-plugins.txt"),
 			GeneratePolicy: engine.PolicyAlways, // always generate semrel-plugins.txt
 			Remove: func(config craft.Config) bool {

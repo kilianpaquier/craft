@@ -135,7 +135,7 @@
     ],
 
     "postUpgradeTasks": {
-        "commands": [ "make testdata" ],
+        "commands": [ "./scripts/sh/renovate.sh" ],
         "executionMode": "branch"
     },
 

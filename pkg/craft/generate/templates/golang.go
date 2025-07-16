@@ -33,7 +33,7 @@ func Golang() []engine.Template[craft.Config] {
 		},
 		{
 			Delimiters: engine.DelimitersChevron(),
-			Globs:      []string{path.Join("internal", "build", "build.go") + engine.TmplExtension},
+			Globs:      []string{path.Join("internal", "build", "build.go"+engine.TmplExtension)},
 			Out:        path.Join("internal", "build", "build.go"),
 			Remove:     func(config craft.Config) bool { return noGo(config) || config.Binaries() == 0 },
 		},

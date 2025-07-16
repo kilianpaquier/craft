@@ -21,14 +21,14 @@ func FuncMap(root string) template.FuncMap {
 	return template.FuncMap{
 		"cutAfter": cutAfter,
 		"map":      mergeMaps,
-		"mustGlob": mustGlob(root),
+		"glob":     glob(root),
 		"toQuery":  toQuery,
 		"toYaml":   toYAML,
 	}
 }
 
-// mustGlob returns a function checking with files.Glob if the input glob is present in root or its subdirectories.
-func mustGlob(root string) func(glob string) []string {
+// glob returns a function checking with files.Glob if the input glob is present in root or its subdirectories.
+func glob(root string) func(glob string) []string {
 	return func(glob string) []string {
 		return files.Glob(root, glob)
 	}

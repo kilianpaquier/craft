@@ -85,7 +85,8 @@ func TestGenerate_NoLang(t *testing.T) {
 				config := craft.Config{
 					Bot:     craft.Renovate,
 					CI:      &craft.CI{Auth: craft.Auth{Maintenance: tc.Auth}, Name: tc.CI},
-					Exclude: []string{craft.Makefile},
+					Exclude: []string{craft.Makefile, craft.Shell},
+					Include: []string{craft.RenovatePostUpgrade},
 					VCS:     parser.VCS{Platform: tc.CI},
 				}
 
