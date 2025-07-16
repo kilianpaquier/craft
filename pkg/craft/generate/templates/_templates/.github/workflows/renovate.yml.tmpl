@@ -53,7 +53,7 @@ jobs:
         env:
           LOG_LEVEL: ${{ vars.RENOVATE_LOG_LEVEL || 'info' }}
 <<- if has "renovate:post-upgrade" .Include >>
-          RENOVATE_ALLOWED_COMMANDS: /^\.\/scripts\/sh\/renovate\.sh$/
+          RENOVATE_ALLOWED_COMMANDS: ^\.\/scripts\/sh\/renovate\.sh$
 <<- end >>
           RENOVATE_AUTODISCOVER_FILTER: << eq (len .Languages) 0 | ternary "${{ github.repository_owner }}" "${{ github.repository }}" >>
           RENOVATE_AUTODISCOVER: "true"
