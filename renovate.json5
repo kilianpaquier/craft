@@ -134,6 +134,10 @@
         },
     ],
 
+    "constraints": {
+        "go": "1.24.5"
+    },
+
     "postUpgradeTasks": {
         "commands": [ "./scripts/sh/renovate.sh" ],
         "executionMode": "branch"

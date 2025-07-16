@@ -10,11 +10,7 @@
 #############################
 #        STAGE BUILD        #
 #############################
-{{- if $specifics.Toolchain }}
-FROM golang:{{ $specifics.Toolchain }} AS build
-{{- else }}
-FROM golang:{{ $specifics.Go }} AS build
-{{- end }}
+FROM golang:{{ $specifics.Toolchain | default $specifics.Go }} AS build
 
 ARG CGO_ENABLED=0
 ARG GIT_REF_NAME

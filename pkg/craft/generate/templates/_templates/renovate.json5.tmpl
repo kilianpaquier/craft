@@ -113,6 +113,14 @@
 <<- end >>
     ],
 
+<<- if hasKey .Languages "go" >>
+<<- $specifics := get .Languages "go" >>
+
+    "constraints": {
+        "go": "<< $specifics.Toolchain | default $specifics.Go >>"
+    },
+<<- end >>
+
 <<- if has "renovate:post-upgrade" .Include >>
 
     "postUpgradeTasks": {
