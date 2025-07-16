@@ -96,13 +96,121 @@
             "matchCategories": [ "custom" ],
             "matchUpdateTypes": [ "major" ]
         },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "cd dependencies (non major)",
+            "matchCategories": [ "cd" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "cd dependencies (major)",
+            "matchCategories": [ "cd" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "ci dependencies (non major)",
+            "matchCategories": [ "ci" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "ci dependencies (major)",
+            "matchCategories": [ "ci" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "docker dependencies (non major)",
+            "matchCategories": [ "docker" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "docker dependencies (major)",
+            "matchCategories": [ "docker" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "kubernetes dependencies (non major)",
+            "matchCategories": [ "kubernetes" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "kubernetes dependencies (major)",
+            "matchCategories": [ "kubernetes" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "helm dependencies (non major)",
+            "matchCategories": [ "helm" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "helm dependencies (major)",
+            "matchCategories": [ "helm" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "golang dependencies (non major)",
+            "matchCategories": [ "golang" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "golang dependencies (major)",
+            "matchCategories": [ "golang" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "js dependencies (non major)",
+            "matchCategories": [ "js" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "js dependencies (major)",
+            "matchCategories": [ "js" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "python dependencies (non major)",
+            "matchCategories": [ "python" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "python dependencies (major)",
+            "matchCategories": [ "python" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
+            "groupName": "rust dependencies (non major)",
+            "matchCategories": [ "rust" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "rust dependencies (major)",
+            "matchCategories": [ "rust" ],
+            "matchUpdateTypes": [ "major" ]
+        },
     ],
 
     "customManagers": [
         {
             "customType": "regex",
             "datasourceTemplate": "github-tags",
-            "description": "Update versions without needing a comment for 'uses' in GitHub Actions files",
+            "description": "Update versions without needing a comment for 'uses' in GitHub Actions template files",
             "managerFilePatterns": [
                 "/(^|/)(workflow-templates|\\.(?:github|gitea|forgejo)/(?:workflows|actions))/.+\\.ya?ml\\.tmpl$/",
                 "/(^|/)action\\.ya?ml\\.tmpl$/"
@@ -118,12 +226,12 @@
         {
             "customType": "regex",
             "datasourceTemplate": "gitlab-tags",
-            "description": "Update versions without needing a comment for 'ref' in GitLab CI/CD files",
+            "description": "Update versions without needing a comment for 'ref' in GitLab CI/CD template files",
             "managerFilePatterns": [
                 "/\\.gitlab-ci\\.ya?ml\\.tmpl$/"
             ],
             "matchStrings": [
-                // see TBD
+                // see https://regex101.com/r/9JD1ox/1
 
                 // project: <packageName> ... <newline, tab, spaces, etc.> ref: <the version> (quotes may or may not be there)
                 "project:\\s*(?<packageName>\\S+)\\s*ref:\\s*['\"]?(?<currentValue>[\\w.+-]+)['\"]?"

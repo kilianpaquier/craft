@@ -86,6 +86,18 @@
     "packageRules": [
         {
             "addLabels": [ "non-major" ],
+            "groupName": "custom dependencies (non major)",
+            "matchCategories": [ "custom" ],
+            "matchUpdateTypes": [ "!major" ]
+        },
+        {
+            "addLabels": [ "major" ],
+            "groupName": "custom dependencies (major)",
+            "matchCategories": [ "custom" ],
+            "matchUpdateTypes": [ "major" ]
+        },
+        {
+            "addLabels": [ "non-major" ],
             "groupName": "cd dependencies (non major)",
             "matchCategories": [ "cd" ],
             "matchUpdateTypes": [ "!major" ]

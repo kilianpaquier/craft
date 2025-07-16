@@ -152,7 +152,7 @@ func TestHugo(t *testing.T) {
 
 		hugo, err := os.Create(filepath.Join(destdir, "hugo.toml"))
 		require.NoError(t, err)
-		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
+		require.NoError(t, hugo.Close())
 
 		expected := parser.HugoConfig{IsTheme: false}
 
@@ -170,7 +170,7 @@ func TestHugo(t *testing.T) {
 
 		hugo, err := os.Create(filepath.Join(destdir, "theme.toml"))
 		require.NoError(t, err)
-		t.Cleanup(func() { assert.NoError(t, hugo.Close()) })
+		require.NoError(t, hugo.Close())
 
 		expected := parser.HugoConfig{IsTheme: true}
 

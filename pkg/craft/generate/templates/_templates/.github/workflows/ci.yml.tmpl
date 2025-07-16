@@ -6,7 +6,7 @@ run-name: CICD
 <<- $golang := hasKey .Languages "go" >>
 <<- $hugo := hasKey .Languages "hugo" >>
 <<- $node := hasKey .Languages "node" >>
-<<- $shell := hasKey .Languages "shell" >>
+<<- $shell := and (not (has "shell" .Exclude)) (gt (len (mustGlob "*.*sh")) 0) >>
 
 <<- $nodebuild := and $node (gt .Binaries 0) >>
 <<- $nodepublish := and $node (not (get .Languages "node").Private) >>

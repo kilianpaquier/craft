@@ -5,8 +5,7 @@
 <<- /* add all categories in case the current repository is an "empty" one, meaning not language associated */ ->>
 <<- $all := le (len .Languages) 0 >>
 
-<<- $categories := list >>
-<<- if hasKey .Languages "tmpl" >><<- $categories = append $categories "custom" >><<- end >>
+<<- $categories := list "custom" >>
 <<- if or $all .CI >><<- $categories = concat $categories (list "cd" "ci") >><<- end >>
 <<- if or $all (and .CI .CI.Docker) >><<- $categories = append $categories "docker" >><<- end >>
 <<- if or $all (and .CI .CI.Helm) (.IsDeployment "kubernetes") >><<- $categories = append $categories "kubernetes" >><<- end >>
@@ -115,7 +114,7 @@
     ],
 
     "customManagers": [
-<<- if hasKey .Languages "tmpl" >>
+<<- if gt (len (mustGlob "*.tmpl")) 0 >>
         {
             "customType": "regex",
             "datasourceTemplate": "github-tags",

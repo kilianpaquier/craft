@@ -134,6 +134,12 @@
         },
     ],
 
+    "allowedCommands": [ "make testdata" ],
+    "postUpgradeTasks": {
+        "commands": [ "make testdata" ],
+        "executionMode": "branch"
+    },
+
     "customManagers": [
         {
             "customType": "regex",

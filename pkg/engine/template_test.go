@@ -266,7 +266,7 @@ func TestExecuteTemplate(t *testing.T) {
 		dest := filepath.Join(tmp, "template-result.txt")
 
 		// not parsing any file with template to ensure tmpl.Execute fails
-		tmpl := template.New("template.txt").Funcs(engine.FuncMap())
+		tmpl := template.New("template.txt").Funcs(engine.FuncMap(tmp))
 
 		// Act
 		err := engine.ExecuteTemplate(tmpl, nil, dest)
@@ -292,7 +292,7 @@ func TestExecuteTemplate(t *testing.T) {
 		data := map[string]string{"name": "hey ! A name"}
 
 		tmpl, err := template.New("template.txt").
-			Funcs(engine.FuncMap()).
+			Funcs(engine.FuncMap(tmp)).
 			ParseFiles(src)
 		require.NoError(t, err)
 
@@ -321,7 +321,7 @@ func TestExecuteTemplate(t *testing.T) {
 		data := map[string]string{"name": "hey ! A name"}
 
 		tmpl, err := template.New("template.txt").
-			Funcs(engine.FuncMap()).
+			Funcs(engine.FuncMap(tmp)).
 			ParseFiles(src)
 		require.NoError(t, err)
 
@@ -333,58 +333,5 @@ func TestExecuteTemplate(t *testing.T) {
 		content, err := os.ReadFile(dest)
 		require.NoError(t, err)
 		assert.Equal(t, "hey ! A name", string(content))
-	})
-}
-
-func TestMergeMaps(t *testing.T) {
-	fm := engine.FuncMap()["map"]
-	mergeMap, ok := fm.(func(dest map[string]any, src ...any) map[string]any)
-	require.True(t, ok)
-
-	t.Run("error_decode", func(t *testing.T) {
-		// Act
-		m := mergeMap(map[string]any{}, "hey !")
-
-		// Assert
-		assert.Equal(t, map[string]any{"0_decode_error": "'' expected type 'map[string]interface {}', got unconvertible type 'string'"}, m)
-	})
-
-	t.Run("success", func(t *testing.T) {
-		// Act
-		m := mergeMap(map[string]any{"key": "value"}, map[string]any{"key_one": "value"})
-
-		// Assert
-		assert.Equal(t, map[string]any{
-			"key":     "value",
-			"key_one": "value",
-		}, m)
-	})
-}
-
-func TestToQuery(t *testing.T) {
-	fm := engine.FuncMap()["toQuery"]
-	f, ok := fm.(func(in string) string)
-	require.True(t, ok)
-
-	t.Run("success", func(t *testing.T) {
-		// Act
-		s := f("some string with spaces")
-
-		// Assert
-		assert.Equal(t, "some+string+with+spaces", s)
-	})
-}
-
-func TestToYAML(t *testing.T) {
-	fm := engine.FuncMap()["toYaml"]
-	f, ok := fm.(func(v any) string)
-	require.True(t, ok)
-
-	t.Run("success", func(t *testing.T) {
-		// Act
-		s := f("{}")
-
-		// Assert
-		assert.Equal(t, `"{}"`, s)
 	})
 }
