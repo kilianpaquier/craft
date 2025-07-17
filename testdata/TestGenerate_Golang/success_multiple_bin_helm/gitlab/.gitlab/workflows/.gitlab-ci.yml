@@ -15,7 +15,7 @@ include:
 
   # Docker template
   - project: to-be-continuous/docker
-    ref: "5"
+    ref: "6.2.2"
     file: "templates/gitlab-ci-docker.yml"
 
   # Helm template
