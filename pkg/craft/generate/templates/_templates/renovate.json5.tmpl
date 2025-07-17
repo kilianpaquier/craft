@@ -18,15 +18,22 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
 
-    "extends": [ ":gitSignOff" ],
     "enabled": true,
+    "extends": [
+        ":automergeMinor",
+        ":disableRateLimiting",
+<<- if not (has "pre-commit" .Exclude) >>
+        ":enablePreCommit",
+<<- end >>
+        ":enableVulnerabilityAlertsWithLabel(vulnerability)",
+        ":gitSignOff",
+        ":labels(dependencies, renovate)",
+        ":separateMultipleMajorReleases"
+    ],
     "branchPrefix": "renovate/",
-    "labels": [ "dependencies" ],
 
     "branchConcurrentLimit": 0,
-    "prConcurrentLimit": 0,
     "prCreation": "immediate",
-    "prHourlyLimit": 0,
 
     "ignorePaths": [
         "**/bower_components/**",
@@ -49,15 +56,13 @@
     "semanticCommitType": "chore",
     "semanticCommitScope": "deps",
 
-    "separateMajorMinor": true,
     "separateMinorPatch": false,
-    "separateMultipleMajor": true,
     "separateMultipleMinor": false,
 
     "baseBranches": [
         "$default",
-        "/^v[0-9]+\\.x/",
-        "/^v[0-9]+\\.[0-9]+\\.x/"
+        "/^v[0-9]+\\.x$/",
+        "/^v[0-9]+\\.[0-9]+\\.x$/"
     ],
 
     "assigneesFromCodeOwners": true,
@@ -66,7 +71,6 @@
     "reviewersFromCodeOwners": true,
 
     "assignAutomerge": true,
-    "automerge": false,
     "automergeStrategy": "fast-forward",
     "automergeType": "pr",
     "platformAutomerge": true,
@@ -90,12 +94,6 @@
     "updateLockFiles": true,
     "useBaseBranchConfig": "none",
 
-    "lockFileMaintenance": { "automerge": true },
-    "major": { "automerge": false },
-    "minor": { "automerge": true },
-    "patch": { "automerge": true },
-    "pin": { "automerge": true },
-
     "packageRules": [
 <<- range $categories >>
         {
@@ -112,14 +110,6 @@
         },
 <<- end >>
     ],
-
-<<- if hasKey .Languages "go" >>
-<<- $specifics := get .Languages "go" >>
-
-    "constraints": {
-        "go": "<< $specifics.Toolchain | default $specifics.Go >>"
-    },
-<<- end >>
 
 <<- if has "renovate:post-upgrade" .Include >>
 
@@ -140,8 +130,7 @@
                 "/(^|/)action\\.ya?ml\\.tmpl$/"
             ],
             "matchStrings": [
-                // see https://regex101.com/r/SXViyG/1
-
+                // see https://regex101.com/r/SXViyG/2
                 // uses: <packageName>@<the version>
                 "uses:\\s*(?<packageName>[^@\\s'\"]+)@(?<currentValue>[\\w.+-]+)"
             ],
@@ -156,7 +145,6 @@
             ],
             "matchStrings": [
                 // see https://regex101.com/r/9JD1ox/1
-
                 // project: <packageName> ... <newline, tab, spaces, etc.> ref: <the version> (quotes may or may not be there)
                 "project:\\s*(?<packageName>\\S+)\\s*ref:\\s*['\"]?(?<currentValue>[\\w.+-]+)['\"]?"
             ],
@@ -170,17 +158,25 @@
                 "/(^|/|\\.)([Dd]ocker|[Cc]ontainer)file$/",
                 "/(^|/)([Dd]ocker|[Cc]ontainer)file[^/]*$/",
 
-                "/^.*\\.ya?ml.*$/",
-                "/^.*\\.json.*?$/"
+                "/^.*\\.[\\w]*sh.*?$/",
+                "/^.*\\.json.*?$/",
+                "/^.*\\.ya?ml.*?$/"
             ],
             "matchStrings": [
-                // see https://regex101.com/r/qXn2n5/5
+                // https://regex101.com/r/DMKexv/4
+                // matches <packageName> <the version>
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<packageName>\\S+)\\s['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<name>\\S+)\\s['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
 
-                // renovate: datasource=<datasource> packageName=<packageName> depName=<depName> versioning=<versioning> ... <newline, tab, spaces, etc.> <ref, version, etc.>: <the version>
-                "renovate:\\s+datasource=(?<datasource>\\S+)(?:\\s+packageName=(?<packageName>\\S+))?(?:\\s+depName=(?<depName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?[\\s\\S]{0,50}?\\s*(?<key>[^\\s:=]+)[:=]\\s*['\"]?(?:(?:[^@\\s'\"]+)?@)?(?<currentValue>[\\w.+-]+)['\"]?",
+                // https://regex101.com/r/BzJNUM/2
+                // matches *_VERSION=<the version>
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<packageName>[^\\s_]+)_VERSION=['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n(?:(?<key>\\S+)\\s)?(?<name>[^\\s_]+)_VERSION=['\"]?(?<currentValue>[\\w.+-]+)['\"]?",
 
-                // renovate: datasource=<datasource> depName=<depName> versioning=<versioning> ... <newline, tab, spaces, etc.> <ref, version, etc.>: <packageName>@<the version>
-                "renovate:\\s+datasource=(?<datasource>\\S+)(?:\\s+depName=(?<depName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?[\\s\\S]{0,50}?\\s*(?<key>[^\\s:=]+)[:=]\\s*['\"]?(?:(?<packageName>[^@\\s'\"]+)?@)?(?<currentValue>[\\w.+-]+)['\"]?"
+                // see https://regex101.com/r/qXn2n5/9
+                // matches <yaml key>: <the version> or <yaml key>=<the version> or <yaml key>: <packageName>@<the version>, things like that
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n\\s*(?<key>\\S+)[:=]\\s{0,1}['\"]?(?:(?<packageName>\\S+)?@)?(?<currentValue>[\\w.+-]+)['\"]?",
+                "renovate:\\sdatasource=(?<datasource>\\S+)(?:\\spackageName=(?<packageName>\\S+))?(?:\\sdepName=(?<depName>\\S+))?(?:\\sversioning=(?<versioning>\\S+))?\n\\s*(?<key>\\S+)[:=]\\s{0,1}['\"]?(?:(?<name>\\S+)?@)?(?<currentValue>[\\w.+-]+)['\"]?"
             ]
         }
     ]
