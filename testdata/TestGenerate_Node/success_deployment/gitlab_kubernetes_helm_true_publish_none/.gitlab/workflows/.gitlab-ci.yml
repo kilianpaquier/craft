@@ -20,7 +20,7 @@ include:
 
   # Node.js template
   - project: to-be-continuous/node
-    ref: "3"
+    ref: "4"
     file: "templates/gitlab-ci-node.yml"
 
 variables:
