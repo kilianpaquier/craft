@@ -52,7 +52,7 @@ include:
 
   # Docker template
   - project: to-be-continuous/docker
-    ref: "5"
+    ref: "6"
     file: "templates/gitlab-ci-docker.yml"
 {{- end }}
 
@@ -142,7 +142,7 @@ variables:
   DOCKER_SBOM_DISABLED: "true" # https://github.com/anchore/syft
   DOCKER_SEMREL_RELEASE_DISABLED: "true" # handled by docker build and push jobs to avoid too much dependency on semantic-release
   DOCKER_TRIVY_ARGS: --ignore-unfixed --exit-code 1 --exit-on-eol 1
-  DOCKER_TRIVY_SECURITY_LEVEL_THRESHOLD: MEDIUM,HIGH,CRITICAL
+  TRIVY_SEVERITY: MEDIUM,HIGH,CRITICAL
 {{- end }}
 
 {{- if .CI.Helm }}
