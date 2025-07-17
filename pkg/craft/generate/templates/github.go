@@ -17,12 +17,22 @@ func GitHub() []engine.Template[craft.Config] {
 func githubWorkflow() []engine.Template[craft.Config] {
 	var templates []engine.Template[craft.Config]
 
-	ci := path.Join(".github", "workflows", "ci.yml")
+	integration := path.Join(".github", "workflows", "integration.yml")
 	templates = append(templates, engine.Template[craft.Config]{
 		Delimiters: engine.DelimitersChevron(),
-		Globs:      engine.GlobsWithPart(ci),
-		Out:        ci,
+		Globs:      engine.GlobsWithPart(integration),
+		Out:        integration,
 		Remove:     func(config craft.Config) bool { return !config.IsCI(parser.GitHub) },
+	})
+
+	deployment := path.Join(".github", "workflows", "deployment.yml")
+	templates = append(templates, engine.Template[craft.Config]{
+		Delimiters: engine.DelimitersChevron(),
+		Globs:      engine.GlobsWithPart(deployment),
+		Out:        deployment,
+		Remove: func(config craft.Config) bool {
+			return !config.IsCI(parser.GitHub) || (!config.HasHelmPublish() && !config.HasDeployment() && !config.HasRelease())
+		},
 	})
 
 	codeql := path.Join(".github", "workflows", "codeql.yml")

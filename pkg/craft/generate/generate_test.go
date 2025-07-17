@@ -416,15 +416,11 @@ func TestGenerate_Node(t *testing.T) {
 
 	t.Run("success_deployment", func(t *testing.T) {
 		statics := []craft.CI{
-			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Kubernetes, Auto: true}},
-			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Kubernetes}},
 			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Netlify, Auto: true}},
 			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Netlify}},
 			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Pages, Auto: true}},
 			{Name: parser.GitHub, Deployment: &craft.Deployment{Platform: craft.Pages}},
 
-			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Kubernetes, Auto: true}},
-			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Kubernetes}},
 			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Netlify, Auto: true}},
 			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Netlify}},
 			{Name: parser.GitLab, Deployment: &craft.Deployment{Platform: craft.Pages, Auto: true}},

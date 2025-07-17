@@ -60,6 +60,7 @@ variables:
 
   NODE_AUDIT_DISABLED: "false"
   NODE_BUILD_ARGS: run build --prod
+  NODE_BUILD_DISABLED: "false"
   NODE_IMAGE: registry.hub.docker.com/library/node:lts-alpine
   NODE_LINT_ARGS: "run lint"
   NODE_LINT_ENABLED: "true"

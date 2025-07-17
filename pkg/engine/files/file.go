@@ -4,6 +4,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 )
 
 const (
@@ -35,7 +36,7 @@ func Glob(root, glob string) []string {
 	matches, _ := filepath.Glob(filepath.Join(root, glob))
 	entries, _ := os.ReadDir(root)
 	for _, entry := range entries {
-		if !entry.IsDir() {
+		if !entry.IsDir() || slices.Contains([]string{"node_modules"}, entry.Name()) {
 			continue
 		}
 		matches = append(matches, Glob(filepath.Join(root, entry.Name()), glob)...)

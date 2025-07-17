@@ -182,15 +182,30 @@ func (c Config) HasRelease() bool {
 	return c.CI != nil && c.CI.Release != nil
 }
 
-// IsAutoRelease returns truthy in case the configuration has CI enabled, release enabled and auto actived.
-func (c Config) IsAutoRelease() bool {
+// IsReleaseAuto returns truthy in case the configuration has CI enabled, release enabled and auto actived.
+func (c Config) IsReleaseAuto() bool {
 	return c.CI != nil && c.CI.Release != nil && c.CI.Release.Auto
+}
+
+// IsHelmPublishAuto returns truthy in case the configuration has CI enabled, helm publish enabled and auto actived.
+func (c Config) IsHelmPublishAuto() bool {
+	return c.CI != nil && c.CI.Helm != nil && c.CI.Helm.Publish == HelmAuto
 }
 
 // HasHelmPublish returns truthy in case the configuration has CI enabled, helm chart generation enabled
 // and publication to an helm repository enabled.
 func (c Config) HasHelmPublish() bool {
 	return c.CI != nil && c.CI.Helm != nil && slices.Contains([]string{HelmAuto, HelmManual}, c.CI.Helm.Publish)
+}
+
+// IsDeploymentAuto returns truthy in case the configuration has CI enabled, deployment enabled and auto actived.
+func (c Config) IsDeploymentAuto() bool {
+	return c.CI != nil && c.CI.Deployment != nil && c.CI.Deployment.Auto
+}
+
+// HasDeployment returns truthy in case the configuration has CI enabled and Deployment configuration.
+func (c Config) HasDeployment() bool {
+	return c.CI != nil && c.CI.Deployment != nil
 }
 
 // IsDeployment returns truthy in case the input platform value is the one specified in configuration as deployment platform name.

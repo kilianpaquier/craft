@@ -1,0 +1,91 @@
+jobs:
+<<- define "static" >>
+
+<<- $hugo := hasKey .Languages "hugo" >>
+<<- $node := hasKey .Languages "node" >>
+<<- $nodebuild := and $node (gt .Binaries 0) >>
+
+<<- $pages := and (.IsDeployment "pages") (or $nodebuild $hugo) >>
+<<- $netlify := and (.IsDeployment "netlify") (or $nodebuild $hugo) >>
+
+<<- if $netlify >>
+
+  netlify:
+    name: Netlify
+    runs-on: ubuntu-latest
+<<- if and (not .CI.Deployment.Auto) (or .IsHelmPublishAuto .IsReleaseAuto) >>
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+<<- end >>
+    needs:
+<<- if $hugo >>
+      - hugo-build
+<<- end >>
+<<- if $nodebuild >>
+      - node-build
+<<- end >>
+    environment:
+      name: netlify
+      url: ${{ steps.netlify.outputs.deploy-url }}
+    permissions:
+      deployments: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+      # https://github.com/marketplace/actions/netlify-actions
+      - id: branch_sha
+        run: |-
+          echo "branch_sha=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)" >> $GITHUB_OUTPUT
+      - id: config
+        run: |-
+          [ ! -f netlify.toml ] || echo "path=netlify.toml" >> $GITHUB_OUTPUT
+      - id: netlify
+        uses: nwtgck/actions-netlify@v3
+        with:
+          alias: ${{ steps.branch_sha.outputs.branch_sha }}
+          deploy-message: ${{ github.ref_name }}
+          enable-commit-comment: false
+          enable-commit-status: false
+          github-deployment-environment: netlify
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          netlify-config-path: ${{ steps.config.outputs.path }}
+          production-branch: ${{ github.event.repository.default_branch }}
+          publish-dir: dist
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+<<- end >>
+
+<<- if $pages >>
+
+  pages:
+    name: Pages
+    runs-on: ubuntu-latest
+<<- if and (not .CI.Deployment.Auto) (or .IsHelmPublishAuto .IsReleaseAuto) >>
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+<<- end >>
+    needs:
+<<- if $hugo >>
+      - hugo-build
+<<- end >>
+<<- if $nodebuild >>
+      - node-build
+<<- end >>
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      id-token: write
+      pages: write
+      pull-requests: write
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
+          preview: ${{ github.ref_name != github.event.repository.default_branch }}
+<<- end >>
+<<- end >>

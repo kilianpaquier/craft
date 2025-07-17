@@ -1,0 +1,45 @@
+jobs:
+<<- define "node" >>
+<<- $specifics := get .Languages "node" >>
+<<- $manager := cutAfter $specifics.PackageManager "@" >>
+
+  node-build:
+    name: Node Build
+    runs-on: ubuntu-latest
+    needs: version
+    steps:
+      - uses: actions/checkout@v4
+<<- if eq $manager "pnpm" >>
+      - uses: pnpm/action-setup@v4
+<<- end >>
+<<- if eq $manager "bun" >>
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
+<<- else >>
+      - uses: actions/setup-node@v4
+        with:
+          cache: << $manager >>
+          node-version: lts/*
+<<- end >>
+<<- if eq $manager "npm" >>
+      - run: << $manager >> ci
+<<- else >>
+      - run: << $manager >> install --frozen-lockfile
+<<- end >>
+      - run: << $manager >> run build
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+<<- if .IsDeployment "pages" >>
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: dist
+          retention-days: 1
+<<- end >>
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+          retention-days: 1
+<<- end >>

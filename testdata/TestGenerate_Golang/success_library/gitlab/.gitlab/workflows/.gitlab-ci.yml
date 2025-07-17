@@ -71,24 +71,3 @@ semantic-release-info:
 semantic-release:
   variables:
     GIT_DEPTH: "0"
-
-go-build:
-  image: ghcr.io/goreleaser/goreleaser:latest
-  rules:
-    # https://gitlab.com/to-be-continuous/golang/-/blob/master/templates/gitlab-ci-golang.yml?ref_type=heads#L651
-    - if: $GO_TEST_IMAGE != ""
-      exists:
-        - .goreleaser.yml
-  variables:
-    VERSION: $SEMREL_INFO_NEXT_VERSION
-  script:
-    - goreleaser release --clean --config .goreleaser.yml --skip=validate --skip=announce --skip=publish --snapshot
-  artifacts:
-    name: "$CI_JOB_NAME artifacts from $CI_PROJECT_NAME on $CI_COMMIT_REF_SLUG"
-    paths:
-      - dist/
-    exclude:
-      - dist/*.json
-      - dist/*.yaml
-      - dist/*/
-    expire_in: 1 day

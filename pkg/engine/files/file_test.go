@@ -34,6 +34,27 @@ func TestGlob(t *testing.T) {
 		assert.Empty(t, matches)
 	})
 
+	t.Run("ignored_directories", func(t *testing.T) {
+		for _, directory := range []string{"node_modules"} {
+			t.Run(directory, func(t *testing.T) {
+				// Arrange
+				destdir := t.TempDir()
+				target := filepath.Join(destdir, directory, "file.txt")
+
+				require.NoError(t, os.MkdirAll(filepath.Dir(target), files.RwxRxRxRx))
+				file, err := os.Create(target)
+				require.NoError(t, err)
+				require.NoError(t, file.Close())
+
+				// Act
+				matches := files.Glob(destdir, "*.txt")
+
+				// Assert
+				assert.Empty(t, matches)
+			})
+		}
+	})
+
 	t.Run("glob", func(t *testing.T) {
 		for _, filename := range []string{"template.tmpl", "template.yaml.tmpl", "template-part.json.tmpl"} {
 			t.Run(filename, func(t *testing.T) {

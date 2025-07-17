@@ -1,0 +1,127 @@
+jobs:
+<<- define "helm" >>
+
+<<- $golang := hasKey .Languages "go" >>
+<<- $node := hasKey .Languages "node" >>
+
+<<- $registry := .CI.Helm.Registry | default "oci://ghcr.io" >>
+<<- $path := .CI.Helm.Path | default .ProjectPath >>
+<<- $ghcr := and (eq $registry "oci://ghcr.io") (eq $path .ProjectPath) >>
+
+<<- if .HasHelmPublish >>
+
+  helm-push:
+    name: Helm Push
+    runs-on: ubuntu-latest
+<<- if and (not .IsHelmPublishAuto) (or .IsDeploymentAuto .IsReleaseAuto) >>
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+<<- end >>
+    needs:
+<<- if .CI.Docker >>
+      - docker-build
+<<- end >>
+      - version
+    permissions:
+      packages: << $ghcr | ternary "write" "none" >>
+    steps:
+      - uses: actions/checkout@v4
+      # https://github.com/marketplace/actions/helm-tool-installer
+      - uses: azure/setup-helm@v4
+        with:
+          # renovate: datasource=github-tags packageName=helm/helm versioning=semver
+          version: v3.16.2
+      - run: helm package --version "$VERSION" --app-version "$VERSION" --dependency-update "$HELM_CHART_DIR"
+        env:
+          HELM_CHART_DIR: chart/
+          VERSION: ${{ needs.version.outputs.version }}
+      - run: |-
+<<- if not (hasPrefix "oci://" $registry) >>
+          helm plugin install https://github.com/chartmuseum/helm-push
+<<- end >>
+          helm registry login "$HELM_REGISTRY" -u "$HELM_REPO_USERNAME" -p "$HELM_REPO_ACCESS_TOKEN"
+          helm << hasPrefix "oci://" $registry | ternary "push" "cm-push" >> "$HELM_CHART_PATH" "$HELM_PUBLISH_URL"
+        env:
+          HELM_CHART_PATH: ${{ github.event.repository.name }}-${{ needs.version.outputs.version }}.tgz
+          HELM_PUBLISH_URL: << $registry >>/<< trimSuffix (print "/" .ProjectName) $path >>
+          HELM_REGISTRY: << trimPrefix "oci://" $registry >>
+<<- if $ghcr >>
+          HELM_REPO_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HELM_REPO_USERNAME: ${{ github.repository_owner }}
+<<- else >>
+          HELM_REPO_ACCESS_TOKEN: ${{ secrets.HELM_REPO_ACCESS_TOKEN || secrets.HELM_REPO_PASSWORD }}
+          HELM_REPO_AUTH_HEADER: ${{ secrets.HELM_REPO_AUTH_HEADER }}
+          HELM_REPO_USE_HTTP: ${{ secrets.HELM_REPO_USE_HTTP }}
+          HELM_REPO_USERNAME: ${{ secrets.HELM_REPO_USERNAME || github.repository_owner }}
+<<- end >>
+<<- end >>
+
+<<- if .IsDeployment "kubernetes" >>
+
+  helm-deploy:
+    name: Helm Deploy
+    runs-on: ubuntu-latest
+<<- if and (not .CI.Deployment.Auto) (or .IsHelmPublishAuto .IsReleaseAuto) >>
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+<<- end >>
+    needs:
+<<- if not .HasHelmPublish >>
+      - helm-lint-test
+<<- end >>
+<<- if .HasHelmPublish >>
+      - helm-push
+<<- else if .CI.Docker >>
+      - docker-build
+<<- end >>
+      - version
+    environment: ${{ matrix.environment }}
+    strategy:
+      fail-fast: false
+      # see https://github.com/orgs/community/discussions/26253#discussioncomment-3250989
+      # for more information about how to exclude environments depending on branches
+      matrix:
+        environment:
+          - review
+          - integration
+          - staging
+          - production
+        production:
+          - ${{ github.ref_name == github.event.repository.default_branch }}
+        protected:
+          - ${{ github.ref_name == github.event.repository.default_branch || github.ref_protected }}
+        exclude:
+          - environment: review # disable on protected branches
+            protected: true
+          - environment: integration # disable on non-protected branches
+            protected: false
+          - environment: staging # disable on non-production branches
+            production: false
+          - environment: production # disable on non-production branches
+            production: false
+    steps:
+      - uses: actions/checkout@v4
+      # https://github.com/marketplace/actions/helm-tool-installer
+      - uses: azure/setup-helm@v4
+        with:
+          # renovate: datasource=github-tags packageName=helm/helm versioning=semver
+          version: v3.16.2
+      - shell: bash
+        run: |-
+          args=(--install --kube-context "$ENVIRONMENT" --version "$VERSION" -f "$HELM_CHART_DIR/values.yaml" --set "appVersion=$VERSION")
+          [ -z "$HELM_ARGS" ] || args+=("$HELM_ARGS")
+
+          name="$GITHUB_REPOSITORY_NAME-$VERSION"
+          [ "$ENVIRONMENT" = "review" ] || name="$GITHUB_REPOSITORY_NAME"
+
+          echo "Running helm upgrade with args '${args[@]}'"
+          helm upgrade "${args[@]}" "$name" "${HELM_CHART_URL:-$HELM_CHART_DIR}"
+        env:
+          ENVIRONMENT: ${{ matrix.environment }}
+          GITHUB_REPOSITORY_NAME: ${{ github.event.repository.name }}
+          HELM_ARGS: ${{ vars.HELM_ARGS }}
+          HELM_CHART_DIR: chart/
+<<- if .HasHelmPublish >>
+          HELM_CHART_URL: << $registry >>/<< $path >>
+<<- end >>
+          VERSION: ${{ needs.version.outputs.version }}
+<<- end >>
+<<- end >>
