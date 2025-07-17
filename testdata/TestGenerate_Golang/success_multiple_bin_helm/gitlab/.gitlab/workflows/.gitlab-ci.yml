@@ -5,27 +5,27 @@ include:
 
   # semantic-release template
   - project: to-be-continuous/semantic-release
-    ref: "3"
+    ref: "3.14.4"
     file: "templates/gitlab-ci-semrel.yml"
 
   # pre-commit template
   - project: to-be-continuous/pre-commit
-    ref: "1"
+    ref: "1.2.2"
     file: "templates/gitlab-ci-pre-commit.yml"
 
   # Docker template
   - project: to-be-continuous/docker
-    ref: "5"
+    ref: "5.14.1"
     file: "templates/gitlab-ci-docker.yml"
 
   # Helm template
   - project: to-be-continuous/helm
-    ref: "8"
+    ref: "8.1.4"
     file: "templates/gitlab-ci-helm.yml"
 
   # Go template
   - project: to-be-continuous/golang
-    ref: "4"
+    ref: "4.13.3"
     file: "templates/gitlab-ci-golang.yml"
 
 variables:

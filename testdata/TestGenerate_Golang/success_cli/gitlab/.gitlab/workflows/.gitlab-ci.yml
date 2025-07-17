@@ -5,22 +5,22 @@ include:
 
   # semantic-release template
   - project: to-be-continuous/semantic-release
-    ref: "3"
+    ref: "3.14.4"
     file: "templates/gitlab-ci-semrel.yml"
 
   # pre-commit template
   - project: to-be-continuous/pre-commit
-    ref: "1"
+    ref: "1.2.2"
     file: "templates/gitlab-ci-pre-commit.yml"
 
   # Dependabot template
   - project: dependabot-gitlab/dependabot-standalone
-    ref: 3.58.0
+    ref: 3.60.0
     file: .gitlab-ci.yml
 
   # Go template
   - project: to-be-continuous/golang
-    ref: "4"
+    ref: "4.13.3"
     file: "templates/gitlab-ci-golang.yml"
 
 variables:

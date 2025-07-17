@@ -5,22 +5,22 @@ include:
 
   # semantic-release template
   - project: to-be-continuous/semantic-release
-    ref: "3"
+    ref: "3.14.4"
     file: "templates/gitlab-ci-semrel.yml"
 
   # pre-commit template
   - project: to-be-continuous/pre-commit
-    ref: "1"
+    ref: "1.2.2"
     file: "templates/gitlab-ci-pre-commit.yml"
 
   # Go template
   - project: to-be-continuous/golang
-    ref: "4"
+    ref: "4.13.3"
     file: "templates/gitlab-ci-golang.yml"
 
   # SonarQube template
   - project: to-be-continuous/sonar
-    ref: "4"
+    ref: "4.3.3"
     file: "templates/gitlab-ci-sonar.yml"
 
 variables:

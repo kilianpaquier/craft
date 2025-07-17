@@ -5,17 +5,17 @@ include:
 
   # semantic-release template
   - project: to-be-continuous/semantic-release
-    ref: "3"
+    ref: "3.14.4"
     file: "templates/gitlab-ci-semrel.yml"
 
   # pre-commit template
   - project: to-be-continuous/pre-commit
-    ref: "1"
+    ref: "1.2.2"
     file: "templates/gitlab-ci-pre-commit.yml"
 
   # Bash template
   - project: to-be-continuous/bash
-    ref: "3"
+    ref: "3.7.0"
     file: "/templates/gitlab-ci-bash.yml"
 
 variables:

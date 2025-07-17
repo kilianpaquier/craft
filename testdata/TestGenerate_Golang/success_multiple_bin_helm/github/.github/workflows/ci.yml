@@ -52,7 +52,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
-          python-version: 3.x
+          python-version: 3.13.5
       - uses: pre-commit/action@v3.0.1
 
   version:
@@ -209,7 +209,7 @@ jobs:
         with:
           check-latest: true
           # renovate: datasource=github-tags packageName=actions/python-versions versioning=npm
-          python-version: 3.x
+          python-version: 3.13.5
       # https://github.com/marketplace/actions/helm-chart-testing
       - uses: helm/chart-testing-action@v2
       - id: changed
