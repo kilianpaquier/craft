@@ -22,7 +22,7 @@ require (
 	github.com/yannh/kubeconform v0.7.0
 	gitlab.com/gitlab-org/api/client-go v0.133.0
 	golang.org/x/mod v0.25.0
-	golang.org/x/text v0.26.0
+	golang.org/x/text v0.27.0
 	helm.sh/helm/v3 v3.18.3
 )
 
@@ -147,7 +147,7 @@ require (
 	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.15.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
