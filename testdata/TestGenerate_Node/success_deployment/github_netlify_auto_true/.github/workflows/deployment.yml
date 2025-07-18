@@ -33,13 +33,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
+    env:
+      WORKFLOW_RUN: integration
     steps:
       - if: ${{ github.event_name == 'workflow_dispatch' }}
-        id: integration_status
+        id: conclusion
         uses: actions/github-script@v7
         with:
+          result-encoding: string
           script: |-
-            const { data } = github.rest.actions.listWorkflowRuns({
+            const branch = process.env.GITHUB_REF_NAME
+            const { data } = await github.rest.actions.listWorkflowRuns({
               branch: process.env.GITHUB_REF_NAME,
               owner: context.repo.owner,
               page: 1,
@@ -47,11 +51,20 @@ jobs:
               repo: context.repo.repo,
               workflow_id: process.env.WORKFLOW_NAME,
             })
-            return data[0].status
+
+            const latest = data.workflow_runs.at(0)
+            if (!latest) {
+              throw new Error(`No '${process.env.WORKFLOW_RUN}' workflow runs found on branch '${branch}'`)
+            }
+            return latest.conclusion
         env:
-          WORKFLOW_NAME: "integration.yml"
-      - if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success') || (github.event_name == 'workflow_dispatch' && steps.integration_status.outputs.result != 'success') }}
-        run: echo "Previous integration workflow for $GITHUB_REF_NAME isn't in success state" && exit 1
+          WORKFLOW_NAME: ${{ env.WORKFLOW_RUN }}.yml
+      - if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success') || (github.event_name == 'workflow_dispatch' && steps.conclusion.outputs.result != 'success') }}
+        id: skip
+        run: |-
+          echo "Latest '$WORKFLOW_RUN' workflow on '$GITHUB_REF_NAME' isn't in success conclusion: '$WORKFLOW_CONCLUSION'" && exit 1
+        env:
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion || steps.conclusion.outputs.result }}
 
   version:
     name: Version

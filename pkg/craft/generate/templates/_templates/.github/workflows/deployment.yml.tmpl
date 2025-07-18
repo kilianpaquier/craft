@@ -49,17 +49,21 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
+    env:
+      WORKFLOW_RUN: integration
     steps:
 <<- if $wrun >>
       - if: ${{ github.event_name == 'workflow_dispatch' }}
-        id: integration_status
+        id: conclusion
 <<- else >>
-      - id: integration_status
+      - id: conclusion
 <<- end >>
         uses: actions/github-script@v7
         with:
+          result-encoding: string
           script: |-
-            const { data } = github.rest.actions.listWorkflowRuns({
+            const branch = process.env.GITHUB_REF_NAME
+            const { data } = await github.rest.actions.listWorkflowRuns({
               branch: process.env.GITHUB_REF_NAME,
               owner: context.repo.owner,
               page: 1,
@@ -67,15 +71,28 @@ jobs:
               repo: context.repo.repo,
               workflow_id: process.env.WORKFLOW_NAME,
             })
-            return data[0].status
+
+            const latest = data.workflow_runs.at(0)
+            if (!latest) {
+              throw new Error(`No '${process.env.WORKFLOW_RUN}' workflow runs found on branch '${branch}'`)
+            }
+            return latest.conclusion
         env:
-          WORKFLOW_NAME: "integration.yml"
+          WORKFLOW_NAME: ${{ env.WORKFLOW_RUN }}.yml
 <<- if $wrun >>
-      - if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success') || (github.event_name == 'workflow_dispatch' && steps.integration_status.outputs.result != 'success') }}
+      - if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success') || (github.event_name == 'workflow_dispatch' && steps.conclusion.outputs.result != 'success') }}
 <<- else >>
-      - if: ${{ steps.integration_status.outputs.result != 'success' }}
+      - if: ${{ steps.conclusion.outputs.result != 'success' }}
 <<- end >>
-        run: echo "Previous integration workflow for $GITHUB_REF_NAME isn't in success state" && exit 1
+        id: skip
+        run: |-
+          echo "Latest '$WORKFLOW_RUN' workflow on '$GITHUB_REF_NAME' isn't in success conclusion: '$WORKFLOW_CONCLUSION'" && exit 1
+        env:
+<<- if $wrun >>
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion || steps.conclusion.outputs.result }}
+<<- else >>
+          WORKFLOW_CONCLUSION: ${{ steps.conclusion.outputs.result }}
+<<- end >>
 
   version:
     name: Version
@@ -189,7 +206,11 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: ${{<< and (not .CI.Release.Auto) (or .IsHelmPublishAuto .IsDeploymentAuto) | ternary "github.event_name == 'workflow_dispatch' &&" "" >> github.ref_protected }}
+<<- if and (not .CI.Release.Auto) (or .IsHelmPublishAuto .IsDeploymentAuto) >>
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref_protected }}
+<<- else >>
+    if: ${{ github.ref_protected }}
+<<- end >>
 <<- if gt (len $needs) 0 >>
     needs:
 <<- range $needs >>
