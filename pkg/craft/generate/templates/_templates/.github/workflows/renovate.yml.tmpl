@@ -45,7 +45,7 @@ jobs:
         with:
           token: ${{ steps.app_token.outputs.token }}
 <<- end >>
-      - uses: renovatebot/github-action@v43.0.2
+      - uses: renovatebot/github-action@v43.0.3
         with:
 <<- if eq .CI.Auth.Maintenance "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
