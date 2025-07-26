@@ -130,7 +130,7 @@ jobs:
       - uses: azure/setup-helm@v4
         with:
           # renovate: datasource=github-tags packageName=helm/helm versioning=semver
-          version: v3.16.2
+          version: v3.18.4
       - shell: bash
         run: |-
           args=(--install --kube-context "$ENVIRONMENT" --version "$VERSION" -f "$HELM_CHART_DIR/values.yaml" --set "appVersion=$VERSION")
