@@ -20,7 +20,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	github.com/yannh/kubeconform v0.7.0
-	gitlab.com/gitlab-org/api/client-go v0.135.0
+	gitlab.com/gitlab-org/api/client-go v0.137.0
 	golang.org/x/mod v0.26.0
 	golang.org/x/text v0.27.0
 	helm.sh/helm/v3 v3.18.4
