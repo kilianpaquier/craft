@@ -12,6 +12,7 @@
 
 version: 2
 updates:
+{{- if gt (len (glob ".gitmodules")) 0 }}
 
   - package-ecosystem: gitsubmodule
     directory: /
@@ -25,6 +26,7 @@ updates:
     commit-message:
       include: scope
       prefix: chore
+{{- end }}
 
 {{- if .CI.Docker }}
 

@@ -4,7 +4,7 @@ name: Labeler
 run-name: Labeler
 
 on:
-  pull_request: # autolabeler on project pull requests
+  pull_request:
     types:
       - opened
       - reopened

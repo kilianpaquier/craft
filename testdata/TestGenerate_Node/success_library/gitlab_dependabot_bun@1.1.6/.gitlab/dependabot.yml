@@ -8,19 +8,6 @@
 version: 2
 updates:
 
-  - package-ecosystem: gitsubmodule
-    directory: /
-    auto-merge:
-      allow:
-        - dependency-name: "*"
-          update-types:
-            - version-update:semver-minor
-            - version-update:semver-patch
-      delay: 10
-    commit-message:
-      include: scope
-      prefix: chore
-
   - package-ecosystem: bun
     directory: /
     auto-merge:
