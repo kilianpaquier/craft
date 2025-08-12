@@ -1,24 +1,12 @@
 jobs:
 <<- define "golang" >>
 
-<<- $wrun := or .IsHelmPublishAuto .IsDeploymentAuto .IsReleaseAuto >>
-
   go-build:
     name: Go Build
     runs-on: ubuntu-latest
-<<- if $wrun >>
-    needs:
-      - run-workflow
-      - version
-<<- else >>
     needs: version
-<<- end >>
     steps:
       - uses: actions/checkout@v4
-<<- if $wrun >>
-        with:
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
       - uses: actions/setup-go@v5
         with:
           check-latest: true

@@ -7,6 +7,7 @@ jobs:
   node-audit:
     name: Node Audit
     runs-on: ubuntu-latest
+    if: ${{ needs.run-workflow.outputs.skip == 'false' }}
     needs: run-workflow
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +30,7 @@ jobs:
   node-lint:
     name: Node Lint
     runs-on: ubuntu-latest
+    if: ${{ needs.run-workflow.outputs.skip == 'false' }}
     needs: run-workflow
     steps:
       - uses: actions/checkout@v4

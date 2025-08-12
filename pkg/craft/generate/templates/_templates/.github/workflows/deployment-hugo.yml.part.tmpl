@@ -1,27 +1,15 @@
 jobs:
 <<- define "hugo" >>
-
 <<- $specifics := get .Languages "hugo" >>
-
-<<- $wrun := or .IsHelmPublishAuto .IsDeploymentAuto .IsReleaseAuto >>
 
   hugo-build:
     name: Hugo Build
     runs-on: ubuntu-latest
-<<- if $wrun >>
-    needs:
-      - run-workflow
-      - version
-<<- else >>
     needs: version
-<<- end >>
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # fetch all history for .GitInfo and .Lastmod
-<<- if $wrun >>
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
           submodules: true # fetch Hugo themes (true OR recursive)
       - uses: actions/cache@v4
         with:

@@ -8,36 +8,21 @@ jobs:
 <<- $path := .CI.Helm.Path | default .ProjectPath >>
 <<- $ghcr := and (eq $registry "oci://ghcr.io") (eq $path .ProjectPath) >>
 
-<<- $wrun := or .IsHelmPublishAuto .IsDeploymentAuto .IsReleaseAuto >>
-
 <<- if .HasHelmPublish >>
 
   helm-push:
     name: Helm Push
     runs-on: ubuntu-latest
-<<- if eq .CI.Helm.Publish "auto" >>
-    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && inputs.helm_push != 'none') }}
-<<- else if $wrun >>
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.helm_push != 'none' }}
-<<- else >>
     if: ${{ inputs.helm_push != 'none' }}
-<<- end >>
     needs:
 <<- if .CI.Docker >>
       - docker-build
-<<- end >>
-<<- if $wrun >>
-      - run-workflow
 <<- end >>
       - version
     permissions:
       packages: << $ghcr | ternary "write" "none" >>
     steps:
       - uses: actions/checkout@v4
-<<- if $wrun >>
-        with:
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
       # https://github.com/marketplace/actions/helm-tool-installer
       - uses: azure/setup-helm@v4
         with:
@@ -59,13 +44,7 @@ jobs:
           fi
         env:
           HELM_CHART_PATH: ${{ github.event.repository.name }}-${{ needs.version.outputs.version }}.tgz
-<<- if eq .CI.Helm.Publish "auto" >>
-          HELM_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.helm_push != 'full' }}
-<<- else if $wrun >>
-          HELM_DRY_RUN: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && inputs.helm_push != 'full') }}
-<<- else >>
           HELM_DRY_RUN: ${{ inputs.helm_push != 'full' }}
-<<- end >>
           HELM_PUBLISH_URL: << $registry >>/<< trimSuffix (print "/" .ProjectName) $path >>
           HELM_REGISTRY: << trimPrefix "oci://" $registry >>
 <<- if $ghcr >>
@@ -84,13 +63,7 @@ jobs:
   helm-deploy:
     name: Helm Deploy
     runs-on: ubuntu-latest
-<<- if .CI.Deployment.Auto >>
-    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && inputs.deploy != 'none') }}
-<<- else if $wrun >>
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy != 'none' }}
-<<- else >>
     if: ${{ inputs.deploy != 'none' }}
-<<- end >>
     needs:
 <<- if not .HasHelmPublish >>
       - helm-lint-test
@@ -99,9 +72,6 @@ jobs:
       - helm-push
 <<- else if .CI.Docker >>
       - docker-build
-<<- end >>
-<<- if $wrun >>
-      - run-workflow
 <<- end >>
       - version
     environment: ${{ matrix.environment }}
@@ -116,9 +86,9 @@ jobs:
           - staging
           - production
         production:
-          - ${{ << $wrun | ternary "needs.run-workflow.outputs.ref_name" "github.ref_name" >> == github.event.repository.default_branch }}
+          - ${{ github.ref_name == github.event.repository.default_branch }}
         protected:
-          - ${{ << $wrun | ternary "needs.run-workflow.outputs.ref_name" "github.ref_name" >> == github.event.repository.default_branch || github.ref_protected }}
+          - ${{ github.ref_name == github.event.repository.default_branch || github.ref_protected }}
         exclude:
           - environment: review # disable on protected branches
             protected: true
@@ -130,10 +100,6 @@ jobs:
             production: false
     steps:
       - uses: actions/checkout@v4
-<<- if $wrun >>
-        with:
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
       # https://github.com/marketplace/actions/helm-tool-installer
       - uses: azure/setup-helm@v4
         with:

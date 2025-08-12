@@ -8,29 +8,18 @@ jobs:
 <<- $pages := and (.IsDeployment "pages") (or $nodebuild $hugo) >>
 <<- $netlify := and (.IsDeployment "netlify") (or $nodebuild $hugo) >>
 
-<<- $wrun := or .IsHelmPublishAuto .IsDeploymentAuto .IsReleaseAuto >>
-
 <<- if $netlify >>
 
   netlify:
     name: Netlify
     runs-on: ubuntu-latest
-<<- if .CI.Deployment.Auto >>
-    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && inputs.deploy != 'none') }}
-<<- else if $wrun >>
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy != 'none' }}
-<<- else >>
     if: ${{ inputs.deploy != 'none' }}
-<<- end >>
     needs:
 <<- if $hugo >>
       - hugo-build
 <<- end >>
 <<- if $nodebuild >>
       - node-build
-<<- end >>
-<<- if $wrun >>
-      - run-workflow
 <<- end >>
     environment:
       name: netlify
@@ -40,25 +29,14 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-<<- if $wrun >>
-        with:
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
       - uses: actions/download-artifact@v4
         with:
           name: build
           path: dist
       # https://github.com/marketplace/actions/netlify-actions
       - id: branch_sha
-<<- if $wrun >>
         run: |-
-          echo "branch_sha=$(echo "${WORKFLOW_REF_NAME}" | sha256sum | cut -c -8)" >> $GITHUB_OUTPUT
-        env:
-          WORKFLOW_REF_NAME: ${{ needs.run-workflow.outputs.ref_name }}
-<<- else >>
-        run: |-
-          echo "branch_sha=$(echo "${GITHUB_REF_NAME}" | sha256sum | cut -c -8)" >> $GITHUB_OUTPUT
-<<- end >>
+          echo "branch_sha=$(echo "$GITHUB_REF_NAME" | sha256sum | cut -c -8)" >> $GITHUB_OUTPUT
       - id: config
         run: |-
           [ ! -f netlify.toml ] || echo "path=netlify.toml" >> $GITHUB_OUTPUT
@@ -66,7 +44,7 @@ jobs:
         uses: nwtgck/actions-netlify@v3
         with:
           alias: ${{ steps.branch_sha.outputs.branch_sha }}
-          deploy-message: ${{ << $wrun | ternary "needs.run-workflow.outputs.ref_name" "github.ref_name" >> }}
+          deploy-message: ${{ github.ref_name }}
           enable-commit-comment: false
           enable-commit-status: false
           github-deployment-environment: netlify
@@ -84,22 +62,13 @@ jobs:
   pages:
     name: Pages
     runs-on: ubuntu-latest
-<<- if .CI.Deployment.Auto >>
-    if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && inputs.deploy != 'none') }}
-<<- else if $wrun >>
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy != 'none' }}
-<<- else >>
     if: ${{ inputs.deploy != 'none' }}
-<<- end >>
     needs:
 <<- if $hugo >>
       - hugo-build
 <<- end >>
 <<- if $nodebuild >>
       - node-build
-<<- end >>
-<<- if $wrun >>
-      - run-workflow
 <<- end >>
     environment:
       name: github-pages
@@ -113,6 +82,6 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           artifact_name: github-pages
-          preview: ${{ << $wrun | ternary "needs.run-workflow.outputs.ref_name" "github.ref_name" >> != github.event.repository.default_branch }}
+          preview: ${{ github.ref_name != github.event.repository.default_branch }}
 <<- end >>
 <<- end >>

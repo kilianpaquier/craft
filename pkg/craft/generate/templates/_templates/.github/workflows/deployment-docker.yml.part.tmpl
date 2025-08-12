@@ -8,27 +8,15 @@ jobs:
 <<- $path := .CI.Docker.Path | default .ProjectPath >>
 <<- $ghcr := and (eq $registry "ghcr.io") (eq $path .ProjectPath) >>
 
-<<- $wrun := or .IsHelmPublishAuto .IsDeploymentAuto .IsReleaseAuto >>
-
   docker-build:
     name: Docker Build
     runs-on: ubuntu-latest
-<<- if $wrun >>
-    needs:
-      - run-workflow
-      - version
-<<- else >>
     needs: version
-<<- end >>
     permissions:
       packages: << $ghcr | ternary "write" "none" >>
       security-events: write
     steps:
       - uses: actions/checkout@v4
-<<- if $wrun >>
-        with:
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
       - id: image
         run: |-
           image_name="<< $path >>"
@@ -52,7 +40,7 @@ jobs:
           images: ${{ steps.image.outputs.image }}
           labels: |
             org.opencontainers.image.created={{date 'YYYY-MM-DDTHH:mm:ssZ'}}
-            org.opencontainers.image.ref.name=${{ << $wrun | ternary "needs.run-workflow.outputs.ref_name" "github.ref_name" >> }}
+            org.opencontainers.image.ref.name=${{ github.ref_name }}
             org.opencontainers.image.version=${{ needs.version.outputs.version }}
             org.opencontainers.image.revision=${{ github.sha }}
           tags: |

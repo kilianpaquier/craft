@@ -4,24 +4,12 @@ jobs:
 <<- $specifics := get .Languages "node" >>
 <<- $manager := cutAfter $specifics.PackageManager "@" >>
 
-<<- $wrun := or .IsHelmPublishAuto .IsDeploymentAuto .IsReleaseAuto >>
-
   node-build:
     name: Node Build
     runs-on: ubuntu-latest
-<<- if $wrun >>
-    needs:
-      - run-workflow
-      - version
-<<- else >>
     needs: version
-<<- end >>
     steps:
       - uses: actions/checkout@v4
-<<- if $wrun >>
-        with:
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
 <<- if eq $manager "pnpm" >>
       - uses: pnpm/action-setup@v4
 <<- end >>

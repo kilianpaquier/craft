@@ -15,28 +15,7 @@ run-name: Deployment
 <<- $pages := and (.IsDeployment "pages") (or $nodebuild $hugo) >>
 <<- $netlify := and (.IsDeployment "netlify") (or $nodebuild $hugo) >>
 
-<<- $wrun := or .IsHelmPublishAuto .IsDeploymentAuto .IsReleaseAuto >>
-
 on:
-<<- if $wrun >>
-  workflow_run:
-    workflows:
-      - Integration
-    types:
-      - completed
-    branches:
-      - alpha
-      - beta
-      - dev
-      - develop
-      - development
-      - next
-      - staging
-      - main
-      - master
-      - v[0-9]+.x
-      - v[0-9]+.[0-9]+.x
-<<- end >>
   workflow_dispatch:
     inputs:
 <<- if .CI.Deployment >>
@@ -78,7 +57,7 @@ on:
 <<- end >>
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -87,58 +66,34 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-    env:
-      WORKFLOW_RUN: integration
-<<- if $wrun >>
-    outputs:
-      ref_name: ${{ steps.ref_name.outputs.ref_name }}
-<<- end >>
     steps:
       - id: conclusion
-<<- if $wrun >>
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-<<- end >>
         uses: actions/github-script@v7
         with:
           result-encoding: string
           script: |-
-            const branch = process.env.GITHUB_REF_NAME
             const { data } = await github.rest.actions.listWorkflowRuns({
               branch: process.env.GITHUB_REF_NAME,
               owner: context.repo.owner,
               page: 1,
               per_page: 1,
               repo: context.repo.repo,
-              workflow_id: process.env.WORKFLOW_NAME,
+              workflow_id: process.env.WORKFLOW_ID,
             })
 
             const latest = data.workflow_runs.at(0)
             if (!latest) {
-              throw new Error(`No '${process.env.WORKFLOW_RUN}' workflow runs found on branch '${branch}'`)
+              throw new Error(`No '${process.env.WORKFLOW_ID}' workflow runs found on ref name '${process.env.GITHUB_REF_NAME}'`)
             }
+            console.log(latest)
             return latest.conclusion
         env:
-          WORKFLOW_NAME: ${{ env.WORKFLOW_RUN }}.yml
-<<- if $wrun >>
-      - id: ref_name
-        run: echo "ref_name=$WORKFLOW_REF_NAME" >> $GITHUB_OUTPUT
-        env:
-          WORKFLOW_REF_NAME: ${{ github.event.workflow_run.head_branch || github.ref_name }}
-      - if: ${{ (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success') || (github.event_name == 'workflow_dispatch' && steps.conclusion.outputs.result != 'success') }}
-        id: skip
-        run: |-
-          echo "Latest '$WORKFLOW_RUN' workflow on '$WORKFLOW_REF_NAME' isn't in success conclusion: '$WORKFLOW_CONCLUSION'" && exit 1
-        env:
-          WORKFLOW_REF_NAME: ${{ steps.ref_name.outputs.ref_name }}
-          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion || steps.conclusion.outputs.result }}
-<<- else >>
+          WORKFLOW_ID: integration.yml
       - if: ${{ steps.conclusion.outputs.result != 'success' }}
-        id: skip
         run: |-
           echo "Latest '$WORKFLOW_RUN' workflow on '$GITHUB_REF_NAME' isn't in success conclusion: '$WORKFLOW_CONCLUSION'" && exit 1
         env:
           WORKFLOW_CONCLUSION: ${{ steps.conclusion.outputs.result }}
-<<- end >>
 
   version:
     name: Version
@@ -170,16 +125,13 @@ jobs:
 <<- if ne .CI.Auth.Release "github-token" >>
           persist-credentials: false
 <<- end >>
-<<- if $wrun >>
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
 <<- if eq .CI.Auth.Release "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
 <<- end >>
       # https://github.com/marketplace/actions/action-for-semantic-release
       - id: semrel_version
         # renovate: datasource=git-refs packageName=https://github.com/cycjimmy/semantic-release-action depName=cycjimmy/semantic-release-action versioning=docker
-        uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@v4 # FIXME there seems to be an issue on workflow_run since it runs on default_branch then semantic-release fucks up trying to check tags on default ...
         with:
           dry_run: true
           # renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker
@@ -224,10 +176,6 @@ jobs:
           SEMREL_INFO_NEXT_VERSION: ${{ steps.semrel_version.outputs.new_release_version }}
 <<- else >>
       - uses: actions/checkout@v4
-<<- if $wrun >>
-        with:
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
       - id: version
         run: |-
           DESCRIBE=$(git describe --tags || echo "v0.0.0")
@@ -255,18 +203,11 @@ jobs:
 <<- if $netlify >><<- $needs = append $needs "netlify" >><<- end >>
 <<- if $nodebuild >><<- $needs = append $needs "node-build" >><<- end >>
 <<- if $pages >><<- $needs = append $needs "pages" >><<- end >>
-<<- if $wrun >><<- $needs = append $needs "run-workflow" >><<- end >>
 
   release:
     name: Release
     runs-on: ubuntu-latest
-<<- if .CI.Release.Auto >>
-    if: ${{ github.ref_protected && (github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && inputs.release != 'none')) }}
-<<- else if $wrun >>
-    if: ${{ github.ref_protected && github.event_name == 'workflow_dispatch' && inputs.release != 'none' }}
-<<- else >>
     if: ${{ inputs.release != 'none' && github.ref_protected }}
-<<- end >>
 <<- if gt (len $needs) 0 >>
     needs:
 <<- range $needs >>
@@ -297,9 +238,6 @@ jobs:
 <<- if ne .CI.Auth.Release "github-token" >>
           persist-credentials: false
 <<- end >>
-<<- if $wrun >>
-          ref: ${{ needs.run-workflow.outputs.ref_name }}
-<<- end >>
 <<- if eq .CI.Auth.Release "github-app" >>
           token: ${{ steps.app_token.outputs.token }}
 <<- end >>
@@ -314,13 +252,7 @@ jobs:
         # renovate: datasource=git-refs packageName=https://github.com/cycjimmy/semantic-release-action depName=cycjimmy/semantic-release-action versioning=docker
         uses: cycjimmy/semantic-release-action@v4
         with:
-<<- if .CI.Release.Auto >>
-          dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.release != 'release' }}
-<<- else if $wrun >>
-          dry_run: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && inputs.release != 'release') }}
-<<- else >>
           dry_run: ${{ inputs.release != 'release' }}
-<<- end >>
           # renovate: datasource=github-tags packageName=semantic-release/semantic-release versioning=docker
           semantic_version: 24
           extra_plugins: |-
