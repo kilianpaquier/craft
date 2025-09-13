@@ -9,6 +9,10 @@
   <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/kilianpaquier/craft?style=for-the-badge">
 </p>
 
+> [!WARNING]
+>
+> This repository was moved and split to https://github.com/kickr-dev/kickr and https://github.com/kickr-dev/engine
+
 ---
 
 - [How to use ?](#how-to-use-)
